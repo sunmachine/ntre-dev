@@ -231,7 +231,7 @@ tr.hl .uqbar i { background: var(--accent); }
       <li><div><strong>Support gets the MX at Corporal, the second rank.</strong> Assault waits until Sergeant. Support has 225 HP and pays nothing extra for the gun. The MX also has the highest penetration of any automatic primary (38).</div></li>
       <li><div id="finding-uq"><strong>The MX scores 57 on the usefulness quotient, third of 20 and the best rifle at every range.</strong> Only the SRS (100) and AA13 (72) score higher. Both are Lieutenant-only Assault guns, and the AA13 falls behind the MX at 39 m. The next rifle is the ZR68S at 50.</div></li>
     </ol>
-    <p class="callout"><strong>Check first:</strong> <code>skill.cfg</code> sets <code>sk_player_head</code> to 1, so in this code a headshot does chest damage. If live servers override it, every shots-to-kill figure below changes for head hits. Confirm the server value before acting on any of this.</p>
+    <p class="callout"><strong>Headshots do chest damage.</strong> <code>sk_player_head</code> is 1 in <code>skill.cfg</code>, and a running server reported the same value on 18 October 2026. A head hit counts the same as a chest hit, so every figure here holds for head hits too.</p>
   </section>
 
   <section id="breakdown">
@@ -355,7 +355,6 @@ tr.hl .uqbar i { background: var(--accent); }
     <ul>
       <li>Moving targets, strafing and partial cover. These favor automatics over one-shot guns, so the SRS score is an upper bound.</li>
       <li>Reload time, aim-in time (0.115 s for every gun) and switch time.</li>
-      <li>Headshot bonus, because <code>sk_player_head</code> is 1 in this code.</li>
       <li>Movement penalty and jumping. A moving shooter from the hip gains 2.0 penalty per second.</li>
       <li>The Supa 7 slug, the Tachi burst mode and the BALC (Juggernaut only).</li>
     </ul>
