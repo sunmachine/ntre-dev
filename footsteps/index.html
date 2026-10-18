@@ -964,7 +964,7 @@ if (GetFlags() &amp; FL_DUCKING)
           <tr><td>Leaving the ground, or on a ladder</td><td>Held step forgotten: a landing makes its own step, and ladders are always audible</td></tr>
           <tr><td>Key released later than that</td><td>Nothing extra; normal rules continue</td></tr>
           <tr><td>Another loud step while settling into the crouch</td><td>Joins the held step</td></tr>
-          <tr><td>A held step plays</td><td>The next step keeps its timing, at least 100 ms later</td></tr>
+          <tr><td>A held step plays</td><td>At the volume for how you move when it plays, so a step held while standing plays at the crouched 65% once you have crouched. The next step keeps its timing, at least 100 ms later</td></tr>
         </tbody>
       </table>
     </div>
@@ -1299,16 +1299,16 @@ nb_stop 0; bot_mimic 1</pre>
       <table>
         <thead><tr><th>Commit</th><th>Change</th><th>Branch</th></tr></thead>
         <tbody>
-          <tr><td class="commit">71b6a820</td><td>Fix footstep sounds playing from an unset origin (copy of PR #2230)</td><td>base</td></tr>
-          <tr><td class="commit">7bff49e7</td><td>Silence crouched footsteps below the player's crouch walk speed</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit">cba8102a</td><td>Allow for speed gained by turning or switching keys while crouched</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit">1cb5a791</td><td>Pick footstep volume by movement mode instead of speed</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit">f6077b2a</td><td>Share one silent movement threshold across crouch, walk and aim</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit">fc99a26f</td><td>Hold the first footstep after pressing crouch, walk or aim</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit">9280e9fe</td><td>Keep the step on landing audible in every posture</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit">a7f3271f</td><td>Start other players' ground surface trace clear of floors and walls</td><td class="muted">-docs only</td></tr>
-          <tr><td class="commit">3fc7ef19</td><td><code>neo_footstep_debug</code> instrumentation</td><td class="muted">-docs only</td></tr>
-          <tr><td class="commit">051d09cd</td><td>An experimental crouched threshold setting</td><td class="muted">-docs only</td></tr>
+          <tr><td class="commit">16dd7ef1</td><td>Fix footstep sounds playing from an unset origin (copy of PR #2230)</td><td>base</td></tr>
+          <tr><td class="commit">c2b93eb0</td><td>Silence crouched footsteps below the player's crouch walk speed</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">d71c60f3</td><td>Allow for speed gained by turning or switching keys while crouched</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">124ac092</td><td>Pick footstep volume by movement mode instead of speed</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">6737d239</td><td>Share one silent movement threshold across crouch, walk and aim</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">73291af2</td><td>Hold the first footstep after pressing crouch, walk or aim</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">5e81a24c</td><td>Keep the step on landing audible in every posture</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">068ab898</td><td>Start other players' ground surface trace clear of floors and walls</td><td class="muted">-docs only</td></tr>
+          <tr><td class="commit">4b403dc4</td><td><code>neo_footstep_debug</code> instrumentation</td><td class="muted">-docs only</td></tr>
+          <tr><td class="commit">596c994d</td><td>An experimental crouched threshold setting</td><td class="muted">-docs only</td></tr>
         </tbody>
       </table>
     </div>
