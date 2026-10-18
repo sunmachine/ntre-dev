@@ -483,11 +483,17 @@ svg text, .fx svg text { font-family: var(--font-display); }
 
   <section class="problem" id="history" aria-labelledby="history-h">
     <div class="problem-head"><h3 id="history-h"><span class="secno">1.2</span>How the current rule came about</h3></div>
-    <p>Each step below was a reasonable answer to the problem in front of the team at the time. Together they explain why master's rule depends on the aim and walk keys, and why some questions were deliberately left open.</p>
+    <p>The first row is engine behavior inherited from the Source SDK. Each later step was a reasonable answer to the problem in front of the team at the time. Together they explain why master's rule depends on the aim and walk keys, and why some questions were deliberately left open.</p>
     <div class="table-wrap">
       <table class="history">
         <thead><tr><th>When</th><th>Decision</th><th>Goal</th><th>Left open</th></tr></thead>
         <tbody>
+          <tr>
+            <td class="when">2019-05<br><span class="muted">SDK import, 4508d865</span></td>
+            <td>Inherit the Source SDK 2013 rule: crouched footsteps play at 65% volume (<code>fvol *= 0.65</code> while <code>FL_DUCKING</code>).</td>
+            <td>Stock engine behavior. The only rationale in the code is its comment, "65% volume if ducking".</td>
+            <td>Never revisited. Later changes moved the silent threshold around it, so crouch walking stayed audible at 65%.</td>
+          </tr>
           <tr>
             <td class="when">2024-06<br><span class="muted">#275, #363</span></td>
             <td>Follow the original Neotokyo: footsteps decided by speed alone, above 90 u/s standing and 60 u/s crouched.</td>
@@ -526,6 +532,7 @@ svg text, .fx svg text { font-family: var(--font-display); }
         <span class="label">Where this proposal sits</span>
         <ul class="plain">
           <li>The standing rule from #1431 stays as it is.</li>
+          <li>The SDK's 65% crouched volume stays, for crouched steps that are still audible, such as crouch sprinting.</li>
           <li>Crouching moves to a speed-only check, relative to the player's own crouch walk speed, which picks up the speed-only and analog input suggestions from #1431.</li>
           <li>The turn headroom answers the 90° turn issue raised in #1431, for crouching.</li>
         </ul>
@@ -650,7 +657,7 @@ svg text, .fx svg text { font-family: var(--font-display); }
 <span class="cm">otherwise loud, if v ≥ 50</span>
 <span class="cm">C = class crouch speed, no weapon</span></pre>
         <ol class="problems">
-          <li><strong>(aiming or +walk)</strong>: crouching alone was never silent. A plain crouch walk was audible, only lowered to 65% volume.</li>
+          <li><strong>(aiming or +walk)</strong>: crouching alone was never silent. A plain crouch walk was audible, only lowered to 65% volume by the stock SDK rule.</li>
           <li><strong>0.7 ×</strong>: crouch with +walk sat only about 10% under the limit, so looking around while moving pushed it over.</li>
           <li><strong>v</strong>: full speed, including the vertical speed other clients see when a player steps up stairs.</li>
           <li><strong>crouched</strong>: only true after the 0.4 s crouch animation, so one running step leaked when dropping into a crouch.</li>
