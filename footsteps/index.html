@@ -1,0 +1,1206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Footstep Consistency Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Standalone page: base reset and the theme toggle */
+:root { color-scheme: light; box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+*, *::before, *::after { box-sizing: inherit; }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+.theme-toggle {
+  position: fixed; z-index: 20;
+  top: max(12px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px));
+  font: 500 0.78rem/1.2 "IBM Plex Sans", "Segoe UI", system-ui, sans-serif; letter-spacing: 0.02em;
+  background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 2px;
+  padding: 6px 10px; cursor: pointer;
+}
+.theme-toggle:hover { border-color: var(--ink); }
+.theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+<style>
+/* Layout: white paper; one narrow reading column, numbered sections and figures, rule-lined tables; diagrams unchanged */
+:root {
+  --bg: #f3f5f7;
+  --surface: #ffffff;
+  --ink: #18212c;
+  --muted: #586474;
+  --line: #d3dae2;
+  --floor: #c9d1db;
+  --accent: #0b7380;
+  --accent-soft: #dcefF1;
+  --bug: #b93d0f;
+  --bug-soft: #fbe6dc;
+  --fix: #2d7a33;
+  --fix-soft: #e0f0e1;
+  --hold: #8a6408;
+  --hold-soft: #f6ecd2;
+  --font-display: "Chakra Petch", "Bahnschrift", "Arial Narrow", sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10151c; --surface: #17202a; --ink: #e4e9ef; --muted: #98a4b3; --line: #2b3644; --floor: #3a4757;
+    --accent: #45bccb; --accent-soft: #15333a; --bug: #f08a55; --bug-soft: #3a2218; --fix: #74c27a; --fix-soft: #1a3220;
+    --hold: #e2bb55; --hold-soft: #352b14; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10151c; --surface: #17202a; --ink: #e4e9ef; --muted: #98a4b3; --line: #2b3644; --floor: #3a4757;
+  --accent: #45bccb; --accent-soft: #15333a; --bug: #f08a55; --bug-soft: #3a2218; --fix: #74c27a; --fix-soft: #1a3220;
+  --hold: #e2bb55; --hold-soft: #352b14; color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.page {
+  max-width: 920px;
+  margin: 0 auto;
+  padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.2; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 2.8rem); letter-spacing: 0.01em; }
+h2 { font-size: 1.55rem; }
+h3 { font-size: 1.1rem; }
+p { margin: 0; max-width: 68ch; }
+code { font-family: var(--font-mono); font-size: 0.88em; background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.stack { display: flex; flex-direction: column; gap: 16px; }
+.muted { color: var(--muted); }
+
+header.hero { display: flex; flex-direction: column; gap: 14px; }
+header.hero p { font-size: 1.08rem; }
+
+/* Summary rows */
+.summary { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.summary a { color: inherit; text-decoration: none; }
+.srow {
+  display: grid;
+  grid-template-columns: 9.5rem minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--line);
+  align-items: start;
+}
+.srow:hover .sname, .srow:focus-visible .sname { color: var(--accent); }
+.srow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sname { font-weight: 600; }
+.shead { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding-block: 8px; }
+@media (max-width: 680px) {
+  .srow { grid-template-columns: 1fr; gap: 6px; }
+  .shead { display: none; }
+}
+.chip {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 2px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.chip.fixed { background: var(--fix-soft); color: var(--fix); }
+.chip.proposed { background: var(--hold-soft); color: var(--hold); }
+.chip.none { background: var(--accent-soft); color: var(--accent); }
+
+/* Decision lanes */
+.lanes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 760px) { .lanes { grid-template-columns: 1fr; } }
+.lane { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.lane ol { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; font-size: 0.93rem; }
+.lane .who { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); }
+.flag { display: inline-block; font-family: var(--font-mono); font-size: 0.72rem; padding: 0 6px; border-radius: 4px; margin-left: 4px; }
+.flag.bug { background: var(--bug-soft); color: var(--bug); }
+
+/* Problem sections */
+section.problem { display: flex; flex-direction: column; gap: 18px; scroll-margin-top: 16px; }
+.problem-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 14px; }
+.figure { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; overflow-x: auto; }
+.figure svg { display: block; width: 100%; height: auto; min-width: 540px; }
+.figure figcaption { font-size: 0.86rem; color: var(--muted); margin-top: 10px; max-width: 72ch; }
+figure { margin: 0; }
+.cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 700px) { .cols { grid-template-columns: 1fr; } }
+.panel { border-left: 3px solid var(--line); padding: 4px 0 4px 14px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.panel.bug { border-left-color: var(--bug); }
+.panel.fix { border-left-color: var(--fix); }
+.panel.hold { border-left-color: var(--hold); }
+.panel .label { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.panel.bug .label { color: var(--bug); }
+.panel.fix .label { color: var(--fix); }
+.panel.hold .label { color: var(--hold); }
+
+pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 14px;
+  overflow-x: auto;
+}
+pre .add { color: var(--fix); }
+pre .del { color: var(--bug); }
+pre .cm { color: var(--muted); }
+
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+td.num, th.num { text-align: right; }
+td.bad { color: var(--bug); font-weight: 600; }
+td.good { color: var(--fix); font-weight: 600; }
+
+ul.plain { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; max-width: 72ch; }
+.commit { font-family: var(--font-mono); font-size: 0.85rem; }
+
+/* SVG styling through tokens */
+.s-floor { fill: var(--floor); }
+.s-wall { fill: var(--floor); }
+.s-ink { fill: var(--ink); }
+.s-muted { fill: var(--muted); }
+.s-bugtext { fill: var(--bug); }
+.s-fixtext { fill: var(--fix); }
+.s-accenttext { fill: var(--accent); }
+.s-trace { stroke: var(--muted); stroke-width: 2; stroke-dasharray: 5 4; fill: none; }
+.s-box-bug { fill: var(--bug-soft); stroke: var(--bug); stroke-width: 1.5; }
+.s-box-fix { fill: var(--fix-soft); stroke: var(--fix); stroke-width: 1.5; }
+.s-box-ghost { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; }
+.s-dot { fill: var(--accent); }
+.s-dot-bug { fill: var(--bug); }
+.s-axis { stroke: var(--line); stroke-width: 1; }
+.s-grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 4; }
+.s-old { stroke: var(--bug); stroke-width: 2; stroke-dasharray: 6 4; }
+.s-silent { fill: var(--fix-soft); }
+.s-silent-edge { stroke: var(--fix); stroke-width: 2; }
+
+/* Speed matrix */
+.controls { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; }
+.controls label, .controls legend { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.controls .field { display: flex; flex-direction: column; gap: 6px; }
+.controls select { font: inherit; font-family: var(--font-body); font-size: 0.95rem; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); max-width: 100%; }
+.controls fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.seg label { display: flex; align-items: center; gap: 6px; padding: 6px 12px; cursor: pointer; text-transform: none; letter-spacing: 0; font-family: var(--font-body); font-size: 0.92rem; color: var(--ink); background: var(--surface); }
+.seg label + label { border-left: 1px solid var(--line); }
+.seg input { accent-color: var(--accent); }
+.seg label:has(input:checked) { background: var(--accent-soft); }
+.seg input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#matrix-table td.cell { white-space: nowrap; }
+#matrix-table .v { font-family: var(--font-mono); font-size: 0.9rem; }
+#matrix-table .chip { margin-left: 6px; }
+.chip.silent { background: var(--fix-soft); color: var(--fix); }
+.chip.audible { background: var(--bug-soft); color: var(--bug); }
+#matrix-table th.group { text-align: center; border-bottom: 0; padding-bottom: 0; color: var(--ink); }
+#matrix-table td.limit { font-family: var(--font-mono); font-size: 0.88rem; color: var(--muted); white-space: nowrap; }
+.callout { border: 1px solid var(--line); border-left: 3px solid var(--hold); border-radius: 6px; padding: 12px 14px; background: var(--surface); display: flex; flex-direction: column; gap: 6px; }
+.callout .label { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--hold); }
+.s-walk { fill: var(--ink); }
+.s-walkslow { fill: var(--surface); stroke: var(--ink); stroke-width: 1.5; }
+.s-sprint { fill: var(--accent); }
+.s-divider { stroke: var(--line); stroke-width: 1; }
+svg text { font-family: var(--font-body); font-size: 12px; }
+svg .mono { font-family: var(--font-mono); font-size: 11px; }
+svg .title { font-family: var(--font-display); font-size: 14px; font-weight: 600; }
+/* Speed by gun and class */
+#guns-table { font-size: 0.86rem; }
+#guns-table th, #guns-table td { padding: 6px 8px; white-space: nowrap; }
+#guns-table td { font-family: var(--font-mono); text-align: right; }
+#guns-table td.scale { text-align: left; }
+#guns-table th[scope="row"] { font-family: var(--font-body); font-size: 0.88rem; letter-spacing: 0; text-transform: none; color: var(--ink); font-weight: 600; position: sticky; left: 0; background: var(--bg); }
+#guns-table th.group { text-align: center; border-bottom: 0; padding-bottom: 0; color: var(--ink); }
+#guns-table .grp { border-left: 1px solid var(--line); }
+#guns-table td.own { font-weight: 700; color: var(--ink); }
+#guns-table td.pick { color: var(--muted); }
+#guns-table td.no { color: var(--line); text-align: center; }
+.s-loud { fill: var(--bug-soft); }
+.s-speed { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; }
+.s-dot-fix { fill: var(--fix); }
+.s-dot-plain { fill: var(--muted); }
+
+/* Parts */
+section.part { display: flex; flex-direction: column; gap: 16px; border-top: 2px solid var(--ink); padding-top: 20px; scroll-margin-top: 16px; }
+section.part h2 { font-size: 1.9rem; }
+.problem-head h3 { font-size: 1.35rem; }
+h4 { font-family: var(--font-display); font-weight: 600; font-size: 1rem; margin: 8px 0 0; }
+.toc { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 6px; }
+@media (max-width: 640px) { .toc { grid-template-columns: 1fr; } }
+.toc a { display: flex; gap: 12px; align-items: baseline; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; color: inherit; text-decoration: none; }
+.toc a:hover strong, .toc a:focus-visible strong { color: var(--accent); }
+.toc a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.toc-n, .rule-n { font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); font-weight: 500; }
+.toc a .muted { display: block; font-size: 0.88rem; }
+.rules { display: flex; flex-direction: column; gap: 10px; }
+.rule { display: flex; gap: 12px; max-width: none; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; padding: 12px 14px; font-size: 1.05rem; font-weight: 500; }
+pre.formula { font-size: 0.84rem; }
+pre .hl { color: var(--hold); }
+.flag.hold { background: var(--hold-soft); color: var(--hold); }
+.panel a, .part a { color: var(--accent); }
+.s-keybar { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1; }
+.s-release { stroke: var(--accent); stroke-width: 2.5; }
+.s-held { fill: var(--surface); stroke: var(--hold); stroke-width: 2.5; }
+.s-holdtext { fill: var(--hold); }
+.s-drop { stroke: var(--fix); stroke-width: 3; stroke-linecap: round; fill: none; }
+
+/* Formula figures */
+.fx svg { color: var(--ink); min-width: 560px; }
+.fx svg text { font-family: var(--font-body); font-size: 12px; }
+.f-tick { fill: var(--muted); font-family: var(--font-mono); font-size: 11px; }
+.f-row { fill: var(--ink); font-weight: 600; }
+.f-lbl { fill: var(--ink); } .f-lblfix { fill: var(--fix); } .f-lblbad { fill: var(--bug); } .f-lblhold { fill: var(--hold); }
+.f-band { fill: var(--ink); font-size: 11.5px; } .f-bandt { fill: var(--fix); font-size: 11.5px; }
+.f-grid { stroke: var(--line); stroke-width: 1; }
+.f-axis { stroke: var(--muted); stroke-width: 1.5; }
+.f-silent { fill: var(--fix-soft); stroke: var(--fix); stroke-width: 1.5; }
+.f-turn { fill: var(--fix-soft); stroke: var(--fix); stroke-width: 1.5; stroke-dasharray: 5 4; fill-opacity: 0.5; }
+.f-cond { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.f-none { fill: var(--line); }
+.f-mk { stroke: var(--ink); stroke-width: 2.5; } .f-mkbad { stroke: var(--bug); stroke-width: 2.5; }
+.f-margin { fill: var(--fix-soft); }
+.f-hdr { fill: none; stroke: var(--fix); stroke-width: 2.5; }
+.f-sim { fill: none; stroke: var(--ink); stroke-width: 2; stroke-dasharray: 6 4; }
+.f-anim { fill: var(--hold-soft); stroke: var(--hold); stroke-width: 1.5; }
+.f-settle { fill: var(--fix-soft); stroke: var(--fix); stroke-width: 1.5; }
+.f-window { fill: var(--bug-soft); stroke: var(--bug); stroke-width: 1.5; }
+.f-held { fill: var(--surface); stroke: var(--hold); stroke-width: 2.5; }
+.f-drop { stroke: var(--fix); stroke-width: 3; stroke-linecap: round; fill: none; }
+.f-quiet { fill: var(--surface); stroke: var(--muted); stroke-width: 1.5; }
+.f-loud { fill: var(--bug); }
+.fkey { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px; font-size: 0.93rem; margin: 0; max-width: 72ch; }
+.fkey dt { font-family: var(--font-mono); font-weight: 500; }
+.fkey dd { margin: 0; min-width: 0; }
+.problems { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 8px; }
+.problems li::marker { font-family: var(--font-mono); color: var(--bug); }
+.solutions li::marker { color: var(--fix); }
+.history td.when { white-space: nowrap; font-family: var(--font-mono); font-size: 0.86rem; }
+.history td { min-width: 9rem; }
+
+/* ---------- White paper layer: overrides the tokens and components above ---------- */
+:root {
+  --bg: #ffffff; --surface: #ffffff; --code: #f4f5f7; --ink: #1a1d21; --muted: #59626d; --line: #d8dce1; --floor: #c8cdd4;
+  --accent: #1f5f8b; --accent-soft: #e5eef5;
+  --bug: #a63a12; --bug-soft: #f8e6dd; --fix: #2f6f36; --fix-soft: #e3efe3; --hold: #85620c; --hold-soft: #f4ecd5;
+  --font-display: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15181c; --surface: #15181c; --code: #1c2026; --ink: #e2e5e9; --muted: #9aa3ad; --line: #2f353d; --floor: #3a414a;
+    --accent: #7fb2da; --accent-soft: #1c2a36; --bug: #ef8c5e; --bug-soft: #3a2318; --fix: #7cc283; --fix-soft: #1b2e1e; --hold: #e0bb5c; --hold-soft: #33290f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15181c; --surface: #15181c; --code: #1c2026; --ink: #e2e5e9; --muted: #9aa3ad; --line: #2f353d; --floor: #3a414a;
+  --accent: #7fb2da; --accent-soft: #1c2a36; --bug: #ef8c5e; --bug-soft: #3a2318; --fix: #7cc283; --fix-soft: #1b2e1e; --hold: #e0bb5c; --hold-soft: #33290f;
+  color-scheme: dark;
+}
+body { font-size: 17px; line-height: 1.65; }
+.page { max-width: 800px; gap: 52px; counter-reset: fig; }
+p { max-width: 70ch; }
+h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: 0; }
+h1 { font-size: clamp(1.8rem, 4.6vw, 2.35rem); font-weight: 600; }
+section.part { border-top: 1.5px solid var(--ink); padding-top: 14px; gap: 14px; }
+section.part h2 { font-size: 1.45rem; }
+.problem-head h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; font-weight: 600; margin-top: 10px; }
+.secno { color: var(--muted); font-variant-numeric: tabular-nums; margin-right: 0.55em; font-weight: 500; }
+.eyebrow { font-family: var(--font-display); letter-spacing: 0.08em; }
+code { background: var(--code); border-radius: 2px; }
+pre { background: var(--code); border: 0; border-left: 2px solid var(--line); border-radius: 0; }
+
+/* Title block */
+header.hero { gap: 10px; padding-bottom: 6px; }
+.byline { font-family: var(--font-display); font-size: 0.92rem; color: var(--muted); }
+.abstract { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding-block: 14px; display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.abstract .label, .toc-head { font-family: var(--font-display); font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.abstract p { font-size: 1rem; }
+.toc { display: flex; flex-direction: column; gap: 0; margin-top: 4px; }
+.toc a { background: none; border: 0; border-radius: 0; padding: 5px 0; border-bottom: 1px dotted var(--line); }
+.toc a .muted { display: inline; font-size: 0.92rem; }
+.toc-n { font-family: var(--font-display); color: var(--muted); min-width: 1.4em; }
+
+/* Rules, panels, notes */
+.rule { background: none; border: 0; border-left: 2px solid var(--ink); border-radius: 0; padding: 4px 0 4px 14px; font-size: 1rem; font-weight: 400; }
+.rule-n { font-family: var(--font-display); color: var(--ink); font-weight: 600; }
+.panel { border-left-width: 2px; }
+.panel .label, .callout .label { font-family: var(--font-display); }
+.callout { background: none; border: 0; border-left: 2px solid var(--hold); border-radius: 0; }
+.lane { background: none; border: 1px solid var(--line); border-radius: 0; }
+details { border-radius: 0; background: none; }
+.chip { font-family: var(--font-display); background: none !important; border: 1px solid currentColor; border-radius: 2px; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.66rem; padding: 1px 7px; }
+.controls select { border-radius: 2px; }
+.seg { border-radius: 2px; }
+
+/* Figures: numbered, ruled, no card */
+.figure, figure.figure { background: none; border: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); border-radius: 0; padding: 14px 0; counter-increment: fig; }
+.figure figcaption, figure.figure figcaption { font-size: 0.9rem; max-width: 72ch; }
+.figure figcaption::before { content: "Figure " counter(fig) ". "; font-family: var(--font-display); font-weight: 600; color: var(--ink); }
+
+/* Tables: rule-lined */
+table { font-size: 0.93rem; border-top: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); }
+th { font-family: var(--font-display); text-transform: none; letter-spacing: 0; font-size: 0.84rem; color: var(--ink); font-weight: 600; border-bottom: 1px solid var(--ink); }
+#matrix-table th.group, #guns-table th.group { border-bottom: 0; }
+td { border-bottom: 1px solid var(--line); }
+
+/* Diagram labels stay in the sans and mono faces, not the serif body */
+svg text, .fx svg text { font-family: var(--font-display); }
+.fx svg text.f-tick, svg text.mono, svg .mono text { font-family: var(--font-mono); }
+
+/* References */
+.refs { margin: 0; padding-left: 2.2em; display: flex; flex-direction: column; gap: 6px; font-size: 0.95rem; }
+.refs a { color: var(--accent); }
+</style>
+<script>
+(function () {
+  // Theme: system (no attribute), light or dark; remembered per browser when storage is available
+  var KEY = "footstep-audit-theme";
+  var state = null;
+  try { state = localStorage.getItem(KEY); } catch (e) {}
+  function apply() {
+    var root = document.documentElement;
+    if (state === "light" || state === "dark") root.setAttribute("data-theme", state);
+    else root.removeAttribute("data-theme");
+    var b = document.getElementById("theme-toggle");
+    if (b) {
+      var name = state === "light" ? "Light" : state === "dark" ? "Dark" : "System";
+      b.textContent = "Theme: " + name;
+      b.setAttribute("aria-label", "Color theme: " + name + ". Select to change.");
+    }
+  }
+  apply();
+  document.addEventListener("DOMContentLoaded", function () {
+    apply();
+    document.getElementById("theme-toggle").addEventListener("click", function () {
+      state = state === "light" ? "dark" : state === "dark" ? null : "light";
+      try { if (state) localStorage.setItem(KEY, state); else localStorage.removeItem(KEY); } catch (e) {}
+      apply();
+    });
+  });
+})();
+</script>
+</head>
+<body>
+<button type="button" class="theme-toggle" id="theme-toggle">Theme: System</button>
+<div class="page">
+
+  <header class="hero">
+    <span class="eyebrow">Technical proposal · Draft for review</span>
+    <h1>Footstep Consistency Audit</h1>
+    <p class="byline">Neotokyo Rebuild · branch footsteps/sound-consistency · 17 October 2026</p>
+    <div class="abstract">
+      <span class="label">Abstract</span>
+      <p>Footstep sounds in Neotokyo Rebuild were inconsistent: crouch walking made noise, looking around while crouch walking made noise, a stray step played when dropping into a crouch, and other players heard different steps than the stepping player. This paper traces each case to its cause across ten instrumented play passes, reviews how the current rule came about, and proposes one footstep formula that every client evaluates the same way, without changing movement. Sections 1 and 2 state the problem and the proposal; sections 3 to 5 add the per-change breakdown, the supporting data and the references.</p>
+    </div>
+    <nav class="toc" aria-label="Contents">
+      <span class="toc-head">Contents</span>
+      <a href="#problem"><span class="toc-n">1</span><span><strong>Problem</strong> <span class="muted">· what was expected, what happened, how the rule got here</span></span></a>
+      <a href="#proposal"><span class="toc-n">2</span><span><strong>Proposal</strong> <span class="muted">· the rules, the formula before and after, the changes</span></span></a>
+      <a href="#breakdown"><span class="toc-n">3</span><span><strong>Breakdown</strong> <span class="muted">· each change with diagrams and code</span></span></a>
+      <a href="#detail"><span class="toc-n">4</span><span><strong>Supporting detail</strong> <span class="muted">· speed tables, test evidence, branch state</span></span></a>
+      <a href="#references"><span class="toc-n">5</span><span><strong>References</strong> <span class="muted">· issues and pull requests</span></span></a>
+    </nav>
+  </header>
+
+  <section class="part" id="problem" aria-labelledby="problem-h">
+        <h2 id="problem-h"><span class="secno">1</span>Problem</h2>
+    <p>Footsteps sounded inconsistent compared with other games in the genre. What a player heard from their own feet, what the server sent, and what other players heard often disagreed.</p>
+    <div class="cols">
+      <div class="panel fix">
+        <span class="label">Expected</span>
+        <ul class="plain">
+          <li>Crouching is silent unless sprinting.</li>
+          <li>Breaking a speed threshold for any reason still makes noise: a slide from a running jump, being pushed.</li>
+          <li>Standing in place never makes noise.</li>
+          <li>Movement feel stays the same.</li>
+        </ul>
+      </div>
+      <div class="panel bug">
+        <span class="label">What happened instead</span>
+        <ul class="plain">
+          <li><a href="#crouch">Crouch walking was audible.</a></li>
+          <li><a href="#held">One last step played after pressing crouch.</a></li>
+          <li><a href="#turning">Looking around or switching keys while crouch walking made footsteps.</a></li>
+          <li><a href="#origin">Players out of sight but in earshot heard nothing from the server.</a></li>
+          <li><a href="#spin">Steps while turning in place: reported, not reproduced.</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="problem" id="paths" aria-labelledby="paths-h">
+    <div class="problem-head"><h3 id="paths-h"><span class="secno">1.1</span>Why players heard different things</h3></div>
+    <p>Each footstep is decided separately in three places. Each one runs <code>UpdateStepSound</code>, then <code>IsMakingFootstepSounds</code> decides whether the step is silent. The marks show where each defect sits.</p>
+    <div class="lanes">
+      <div class="lane">
+        <h3>Server</h3>
+        <span class="who">every player, every tick</span>
+        <ol>
+          <li><code>PlayerMove</code> runs the step timer</li>
+          <li>Silent movement threshold <span class="flag bug">crouch</span> <span class="flag hold">last step</span></li>
+          <li><code>PlayStepSound</code> sends to players who can hear the stepper but cannot see them <span class="flag bug">origin</span></li>
+        </ol>
+      </div>
+      <div class="lane">
+        <h3>Your client</h3>
+        <span class="who">your own steps, predicted</span>
+        <ol>
+          <li>Same movement code, first prediction only</li>
+          <li>Silent movement threshold <span class="flag bug">crouch</span> <span class="flag hold">last step</span></li>
+          <li>Plays locally, surface from movement code</li>
+        </ol>
+      </div>
+      <div class="lane">
+        <h3>Other clients</h3>
+        <span class="who">your steps, as others hear them</span>
+        <ol>
+          <li><code>C_BasePlayer::Simulate</code> estimates speed from position updates</li>
+          <li>Silent movement threshold <span class="flag bug">crouch</span> <span class="flag hold">last step</span>, then plays locally</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="problem" id="history" aria-labelledby="history-h">
+    <div class="problem-head"><h3 id="history-h"><span class="secno">1.2</span>How the current rule came about</h3></div>
+    <p>Each step below was a reasonable answer to the problem in front of the team at the time. Together they explain why master's rule depends on the aim and walk keys, and why some questions were deliberately left open.</p>
+    <div class="table-wrap">
+      <table class="history">
+        <thead><tr><th>When</th><th>Decision</th><th>Goal</th><th>Left open</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="when">2024-06<br><span class="muted">#275, #363</span></td>
+            <td>Follow the original Neotokyo: footsteps decided by speed alone, above 90 u/s standing and 60 u/s crouched.</td>
+            <td>Parity with the original game, after a report that crouching still made footsteps.</td>
+            <td>Nothing at the time.</td>
+          </tr>
+          <tr>
+            <td class="when">2025-02<br><span class="muted">#877</span></td>
+            <td>Implement those limits: standing above 90, crouched above 60.</td>
+            <td>Parity.</td>
+            <td>Every crouch walk speed (102 to 150 u/s) is above 60, so crouch walking made footsteps, as in the original.</td>
+          </tr>
+          <tr>
+            <td class="when">2025-07<br><span class="muted">#1097, from #992</span></td>
+            <td>Let the walk key decide: holding +walk is silent below a raised limit, so bunny hopping still makes noise. Walking speed was raised to at least 90.</td>
+            <td>Players could not tell whether they were moving quietly. A held key gives a predictable answer, without a new HUD element.</td>
+            <td>The code comment already named turning and changing direction as ways to gain speed. Raising walk speed changed movement.</td>
+          </tr>
+          <tr>
+            <td class="when">2025-10<br><span class="muted">#1431</span></td>
+            <td>Make aiming silent too, set the limit per class (0.7 × run speed, or 0.7 × crouch speed while crouched), and return walk speeds to parity.</td>
+            <td>Aiming moved slower than walking yet made footsteps, and the walk speed change had altered movement.</td>
+            <td>Parity against key-based sneaking was deferred to a later discussion. 90° turns made footsteps, and a higher limit was suggested. Slow analog movement without a key stayed audible, and a speed-only check was suggested.</td>
+          </tr>
+          <tr>
+            <td class="when">2026-09<br><span class="muted">#2151</span></td>
+            <td>Move the check into <code>IsMakingFootstepSounds</code> and let water splashes follow footsteps.</td>
+            <td>Sneaking players can enter and leave water silently.</td>
+            <td>No change to the rule itself.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="cols">
+      <div class="panel">
+        <span class="label">Where this proposal sits</span>
+        <ul class="plain">
+          <li>The standing rule from #1431 stays as it is.</li>
+          <li>Crouching moves to a speed-only check, relative to the player's own crouch walk speed, which picks up the speed-only and analog input suggestions from #1431.</li>
+          <li>The turn headroom answers the 90° turn issue raised in #1431, for crouching.</li>
+        </ul>
+      </div>
+      <div class="panel hold">
+        <span class="label">The open parity question</span>
+        <p>Under the original game's 60 u/s crouched limit, a crouch walk makes footsteps. Under this proposal it is silent. #1431 deferred the parity discussion; this proposal takes a position for crouching, and that choice is worth discussing on its own.</p>
+      </div>
+    </div>
+    <p class="muted">#1097 also links a Discord thread and a change document, which are not summarised here.</p>
+  </section>
+
+  <section class="part" id="proposal" aria-labelledby="proposal-h">
+        <h2 id="proposal-h"><span class="secno">2</span>Proposal</h2>
+    <p>Make every footstep follow one formula, decided the same way by the server, the stepping player and everyone listening. Movement speed and feel do not change; only whether and when a step sound plays.</p>
+    <div class="rules">
+      <p class="rule"><span class="rule-n">1</span>While crouched, you are silent unless you move more than 10% faster than your own crouch walk speed.</p>
+      <p class="rule"><span class="rule-n">2</span>Pressing crouch or walk holds back your next footstep. If you settle into the crouch or walk, it is dropped. If you let go too early, it plays right away.</p>
+      <p class="rule"><span class="rule-n">3</span>Looking around while crouch walking does not count as speeding up. Turning widens the threshold, and one brief switch of movement keys is forgiven.</p>
+    </div>
+    <h3 id="formula"><span class="secno">2.1</span>The footstep formula</h3>
+    <p>The same shared code decides a footstep in three places: the server, the stepping player's own client, and every other client that can see them. The terms come in three groups: speeds, turning and timers. Each group gets one picture, and the formulas reuse the same letters.</p>
+    <h4><span class="secno">2.1.1</span>Speeds</h4>
+    <figure class="figure fx">
+      <svg viewBox="0 0 680 240" role="img" aria-label="Speed ruler for an assault with an SRM. Crouched, steps are silent up to 1.1 times crouch walk speed, and up to 1.55 times while turning; crouch sprint is above both. Standing, steps are silent below 0.7 times run speed only while aiming or walking.">
+  <line class="f-grid" x1="60.0" y1="34" x2="60.0" y2="206"/><text class="f-tick" x="60.0" y="222" text-anchor="middle">0</text><line class="f-grid" x1="160.0" y1="34" x2="160.0" y2="206"/><text class="f-tick" x="160.0" y="222" text-anchor="middle">40</text><line class="f-grid" x1="260.0" y1="34" x2="260.0" y2="206"/><text class="f-tick" x="260.0" y="222" text-anchor="middle">80</text><line class="f-grid" x1="360.0" y1="34" x2="360.0" y2="206"/><text class="f-tick" x="360.0" y="222" text-anchor="middle">120</text><line class="f-grid" x1="460.0" y1="34" x2="460.0" y2="206"/><text class="f-tick" x="460.0" y="222" text-anchor="middle">160</text><line class="f-grid" x1="560.0" y1="34" x2="560.0" y2="206"/><text class="f-tick" x="560.0" y="222" text-anchor="middle">200</text><line class="f-grid" x1="660.0" y1="34" x2="660.0" y2="206"/><text class="f-tick" x="660.0" y="222" text-anchor="middle">240</text>
+  <text class="f-tick" x="660" y="236" text-anchor="end">u/s</text>
+  <text class="f-row" x="56" y="82" text-anchor="end">Crouched</text>
+  <text class="f-row" x="56" y="164" text-anchor="end">Standing</text>
+  <rect class="f-silent" x="60.0" y="66" width="280.5" height="24"/>
+  <rect class="f-turn" x="340.5" y="66" width="114.75" height="24"/>
+  <text class="f-band" x="262.75" y="82" text-anchor="middle">silent up to 1.1 c = 112.2</text>
+  <text class="f-bandt" x="417.875" y="111" text-anchor="middle">+ turning, up to 1.55 c = 158.1</text>
+  <line class="f-mk" x1="251.25" y1="90" x2="251.25" y2="98"/><text class="f-lbl" x="251.25" y="111" text-anchor="middle">crouch +walk 76.5</text>
+  <line class="f-mk" x1="315.0" y1="58" x2="315.0" y2="66"/><text class="f-lbl" x="315.0" y="52" text-anchor="middle">c = crouch walk 102</text>
+  <line class="f-mkbad" x1="468.00000000000006" y1="58" x2="468.00000000000006" y2="66"/><text class="f-lbl" x="468.00000000000006" y="52" text-anchor="middle">crouch sprint 163.2</text>
+  <rect class="f-cond" x="60.0" y="148" width="280.0" height="24"/>
+  <text class="f-band" x="262.5" y="164" text-anchor="middle">silent only aiming or +walk</text>
+  <text class="f-lbl" x="340.0" y="193" text-anchor="middle">0.7 n = 112</text>
+  <line class="f-mk" x1="315.0" y1="140" x2="315.0" y2="148"/><text class="f-lbl" x="315.0" y="134" text-anchor="middle">+walk 102</text>
+  <line class="f-mkbad" x1="400.0" y1="140" x2="400.0" y2="148"/><text class="f-lbl" x="400.0" y="134" text-anchor="middle">run 136</text>
+  <line class="f-mkbad" x1="604.0" y1="140" x2="604.0" y2="148"/><text class="f-lbl" x="604.0" y="134" text-anchor="middle">sprint 217.6</text>
+  <rect class="f-none" x="60.0" y="66" width="125.0" height="24"/>
+  <rect class="f-none" x="60.0" y="148" width="125.0" height="24"/>
+  <text class="f-tick" x="122.5" y="193" text-anchor="middle">below 50: never</text>
+</svg>
+      <figcaption>Drawn for an assault holding an SRM (weapon speed 0.85). Every crouched line is a multiple of c, so the picture has the same shape for every class and weapon. Red marks are speeds that make footsteps.</figcaption>
+    </figure>
+    <dl class="fkey">
+      <dt>v</dt><dd>The player's speed. While crouched, only the horizontal part, because other clients guess vertical speed badly on stairs.</dd>
+      <dt>c</dt><dd>Your own crouch walk speed: class crouch speed × your weapon's speed scale. The crouched threshold is a multiple of it.</dd>
+      <dt>n</dt><dd>Class run speed with no weapon slowdown (recon 200, others 160). Only the standing rule uses it, unchanged.</dd>
+      <dt>50</dt><dd>No footsteps below 50 u/s in any posture.</dd>
+    </dl>
+    <h4><span class="secno">2.1.2</span>Turning</h4>
+    <figure class="figure fx">
+      <svg viewBox="0 0 680 250" role="img" aria-label="The crouched threshold rises from 1.1 to 1.55 times crouch walk speed as the view turns up to 180 degrees per second, and stays above the simulated speed gained from turning at every rate.">
+  <line class="f-grid" x1="80.0" y1="30" x2="80.0" y2="210"/><text class="f-tick" x="80.0" y="226" text-anchor="middle">0</text><line class="f-grid" x1="215.0" y1="30" x2="215.0" y2="210"/><text class="f-tick" x="215.0" y="226" text-anchor="middle">90</text><line class="f-grid" x1="350.0" y1="30" x2="350.0" y2="210"/><text class="f-tick" x="350.0" y="226" text-anchor="middle">180</text><line class="f-grid" x1="485.0" y1="30" x2="485.0" y2="210"/><text class="f-tick" x="485.0" y="226" text-anchor="middle">270</text><line class="f-grid" x1="620.0" y1="30" x2="620.0" y2="210"/><text class="f-tick" x="620.0" y="226" text-anchor="middle">360</text><line class="f-grid" x1="80" y1="210.0" x2="620" y2="210.0"/><text class="f-tick" x="72" y="214.0" text-anchor="end">1.0</text><line class="f-grid" x1="80" y1="150.0" x2="620" y2="150.0"/><text class="f-tick" x="72" y="154.0" text-anchor="end">1.2</text><line class="f-grid" x1="80" y1="90.00000000000003" x2="620" y2="90.00000000000003"/><text class="f-tick" x="72" y="94.00000000000003" text-anchor="end">1.4</text><line class="f-grid" x1="80" y1="29.99999999999997" x2="620" y2="29.99999999999997"/><text class="f-tick" x="72" y="33.99999999999997" text-anchor="end">1.6</text>
+  <text class="f-tick" x="620" y="244" text-anchor="end">view turn rate r, degrees per second</text>
+  <text class="f-tick" x="80" y="20">× crouch walk speed c</text>
+  <polygon class="f-margin" points="80.0,180.0 350.0,45.0 620.0,45.0 620.0,66.3 552.5,67.5 485.0,71.7 417.5,105.0 350.0,139.5 282.5,168.0 215.0,190.5 147.5,204.0 80.0,210.0"/>
+  <polyline class="f-hdr" points="80.0,180.0 350.0,45.0 620.0,45.0"/>
+  <polyline class="f-sim" points="80.0,210.0 147.5,204.0 215.0,190.5 282.5,168.0 350.0,139.5 417.5,105.0 485.0,71.7 552.5,67.5 620.0,66.3"/>
+  <text class="f-lblfix" x="380.0" y="35.0">threshold 1.1 + 0.45 · min(r / 180, 1)</text>
+  <text class="f-lbl" x="455.0" y="123.99999999999999">real speed while turning</text>
+  <text class="f-lbl" x="455.0" y="138.0">(simulated peak)</text>
+</svg>
+      <figcaption>Holding a movement key while turning builds speed toward the new direction faster than friction removes the old one, so turning really makes you faster. Switching keys (W+D to W+A) does the same without turning the view. The green line is the crouched threshold; the dashed line is the speed turning can reach (simulated with sv_accelerate 10, sv_friction 4). The shaded gap is the margin.</figcaption>
+    </figure>
+    <dl class="fkey">
+      <dt>r</dt><dd>How fast the view is turning, in degrees per second. It keeps its peak and fades over about 0.25 s, about as long as friction takes to remove the extra speed.</dd>
+      <dt>t</dt><dd>Turn headroom: 0.45 × min(r / 180, 1). Zero while sprinting, so crouch sprinting stays loud mid-turn.</dd>
+    </dl>
+    <h4><span class="secno">2.1.3</span>Timers</h4>
+    <figure class="figure fx">
+      <svg viewBox="0 0 680 230" role="img" aria-label="Held step timeline. Crouch is pressed at 0. The step at 0.2 seconds is held during the 0.4 second crouch animation. Speed settles about 0.05 seconds after the animation and the held step is dropped. Letting go within one step interval after that plays it.">
+  <line class="f-grid" x1="60.0" y1="40" x2="60.0" y2="186"/><text class="f-tick" x="60.0" y="202" text-anchor="middle">0.0</text><line class="f-grid" x1="144.0" y1="40" x2="144.0" y2="186"/><text class="f-tick" x="144.0" y="202" text-anchor="middle">0.2</text><line class="f-grid" x1="228.0" y1="40" x2="228.0" y2="186"/><text class="f-tick" x="228.0" y="202" text-anchor="middle">0.4</text><line class="f-grid" x1="312.0" y1="40" x2="312.0" y2="186"/><text class="f-tick" x="312.0" y="202" text-anchor="middle">0.6</text><line class="f-grid" x1="396.0" y1="40" x2="396.0" y2="186"/><text class="f-tick" x="396.0" y="202" text-anchor="middle">0.8</text><line class="f-grid" x1="480.0" y1="40" x2="480.0" y2="186"/><text class="f-tick" x="480.0" y="202" text-anchor="middle">1.0</text><line class="f-grid" x1="564.0" y1="40" x2="564.0" y2="186"/><text class="f-tick" x="564.0" y="202" text-anchor="middle">1.2</text><line class="f-grid" x1="648.0" y1="40" x2="648.0" y2="186"/><text class="f-tick" x="648.0" y="202" text-anchor="middle">1.4</text>
+  <text class="f-tick" x="648" y="220" text-anchor="end">seconds after pressing crouch</text>
+  <rect class="f-anim" x="60" y="52" width="168.0" height="20"/>
+  <text class="f-band" x="144.0" y="66" text-anchor="middle">crouch animation, 0.4 s</text>
+  <rect class="f-settle" x="228.0" y="52" width="42.0" height="20"/>
+  <text class="f-lbl" x="249.0" y="46" text-anchor="middle">settle 0.1 s</text>
+  <line class="f-axis" x1="60" y1="120" x2="648.0" y2="120"/>
+  <circle class="f-held" cx="144.0" cy="120" r="7"/><text class="f-lblhold" x="144.0" y="104" text-anchor="middle">step held</text>
+  <path class="f-drop" d="M 243.0 114 L 255.0 126 M 243.0 126 L 255.0 114"/><text class="f-lblfix" x="259.0" y="104">dropped</text>
+  <circle class="f-quiet" cx="354.0" cy="120" r="5"/><text class="f-tick" x="354.0" y="104" text-anchor="middle">quiet step</text>
+  <circle class="f-quiet" cx="564.0" cy="120" r="5"/><text class="f-tick" x="564.0" y="104" text-anchor="middle">quiet step</text>
+  <rect class="f-window" x="249.0" y="146" width="168.0" height="20"/>
+  <text class="f-lblbad" x="333.0" y="160" text-anchor="middle">let go here: it plays</text>
+  <text class="f-lbl" x="429.6" y="160">later: gone</text>
+  <text class="f-tick" x="333.0" y="182" text-anchor="middle">one step interval T after the drop</text>
+</svg>
+      <figcaption>Held step. The game only counts you as crouched once the 0.4 s crouch animation ends, and you keep run speed until then. Now the step that lands in that window waits: once you settle into the crouch it is dropped, and it plays if you stand up again within one step interval, so tapping crouch cannot skip steps.</figcaption>
+    </figure>
+    <figure class="figure fx">
+      <svg viewBox="0 0 680 214" role="img" aria-label="Forgiveness timeline. After 0.5 seconds crouched on the ground, the first step that is slightly too fast is skipped. The next one plays. One second under the threshold earns the skip back.">
+  <line class="f-grid" x1="60.0" y1="40" x2="60.0" y2="170"/><text class="f-tick" x="60.0" y="186" text-anchor="middle">0.0</text><line class="f-grid" x1="155.0" y1="40" x2="155.0" y2="170"/><text class="f-tick" x="155.0" y="186" text-anchor="middle">0.5</text><line class="f-grid" x1="250.0" y1="40" x2="250.0" y2="170"/><text class="f-tick" x="250.0" y="186" text-anchor="middle">1.0</text><line class="f-grid" x1="345.0" y1="40" x2="345.0" y2="170"/><text class="f-tick" x="345.0" y="186" text-anchor="middle">1.5</text><line class="f-grid" x1="440.0" y1="40" x2="440.0" y2="170"/><text class="f-tick" x="440.0" y="186" text-anchor="middle">2.0</text><line class="f-grid" x1="535.0" y1="40" x2="535.0" y2="170"/><text class="f-tick" x="535.0" y="186" text-anchor="middle">2.5</text><line class="f-grid" x1="630.0" y1="40" x2="630.0" y2="170"/><text class="f-tick" x="630.0" y="186" text-anchor="middle">3.0</text>
+  <text class="f-tick" x="630" y="204" text-anchor="end">seconds crouched on the ground</text>
+  <rect class="f-anim" x="60" y="52" width="95.0" height="20"/>
+  <text class="f-band" x="107.5" y="66" text-anchor="middle">0.5 s first</text>
+  <line class="f-axis" x1="60" y1="110" x2="630.0" y2="110"/>
+  <path class="f-drop" d="M 244.0 104 L 256.0 116 M 244.0 116 L 256.0 104"/><text class="f-lblfix" x="250.0" y="94" text-anchor="middle">wiggle: forgiven</text>
+  <circle class="f-loud" cx="345.0" cy="110" r="6"/><text class="f-lblbad" x="345.0" y="94" text-anchor="middle">again: plays</text>
+  <rect class="f-settle" x="364.0" y="132" width="190.0" height="20"/>
+  <text class="f-band" x="459.0" y="146" text-anchor="middle">1 s under the threshold</text>
+  <path class="f-drop" d="M 586.0 104 L 598.0 116 M 586.0 116 L 598.0 104"/><text class="f-lblfix" x="592.0" y="94" text-anchor="middle">forgiven again</text>
+</svg>
+      <figcaption>One-step forgiveness, crouched only. Covers the speed from switching movement keys, which turning headroom cannot see. A slide from a run or a landing stays audible, because it happens before the 0.5 s.</figcaption>
+    </figure>
+    <dl class="fkey">
+      <dt>T</dt><dd>Step interval: 300 ms when fast, 400 ms when slower, plus 100 ms crouched. A footstep is checked each time it runs out.</dd>
+      <dt>0.4 s</dt><dd>Crouch animation. Speed and footsteps only count you as crouched after it.</dd>
+      <dt>0.1 s</dt><dd>Settle time: still loud this long after crouch or walk takes effect means a slide, push or sprint, so the held step plays.</dd>
+      <dt>0.5 s, 1 s</dt><dd>Forgiveness: crouched on the ground at least 0.5 s before a step can be forgiven; 1 s under the threshold to earn it back.</dd>
+    </dl>
+    <h4><span class="secno">2.1.4</span>Before and after</h4>
+    <div class="cols">
+      <div class="panel bug">
+        <span class="label">Before: master</span>
+        <pre>silent  if  (aiming or +walk)
+        and v ≤ 0.7 × (crouched ? C : n)
+<span class="cm">otherwise loud, if v ≥ 50</span>
+<span class="cm">C = class crouch speed, no weapon</span></pre>
+        <ol class="problems">
+          <li><strong>(aiming or +walk)</strong>: crouching alone was never silent. A plain crouch walk was audible, only lowered to 65% volume.</li>
+          <li><strong>0.7 ×</strong>: crouch with +walk sat only about 10% under the limit, so looking around while moving pushed it over.</li>
+          <li><strong>v</strong>: full speed, including the vertical speed other clients see when a player steps up stairs.</li>
+          <li><strong>crouched</strong>: only true after the 0.4 s crouch animation, so one running step leaked when dropping into a crouch.</li>
+          <li><strong>Outside the formula</strong>: server footsteps reached nobody (#2230).</li>
+        </ol>
+      </div>
+      <div class="panel fix">
+        <span class="label">After: this PR</span>
+        <pre>crouched, not on a ladder:
+    silent  if  v ≤ c × (1.1 + t)
+standing, or on a ladder:
+    unchanged</pre>
+        <ol class="problems solutions">
+          <li>Crouching alone is silent up to 1.1 c, your own crouch walk speed with your weapon, plus 10%. Crouch sprinting, slides and pushes stay above it.</li>
+          <li>Turn headroom t widens the crouched threshold with turn rate, and one brief key switch is forgiven.</li>
+          <li>Crouched checks use horizontal speed only.</li>
+          <li>The held step: the step during the crouch animation waits, and is dropped once you settle.</li>
+          <li>The server footstep origin is fixed in #2230, a separate PR.</li>
+        </ol>
+      </div>
+    </div>
+    <p class="muted">Ladders keep the standing rule: climb speed is a fixed 200 u/s whether crouched or not, and horizontal speed is near zero while climbing. The turning speed curve comes from a movement simulation; every other number is a constant in the code.</p>
+    <h4><span class="secno">2.1.5</span>What this fixes</h4>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Scenario</th><th>Before</th><th>After</th></tr></thead>
+        <tbody>
+          <tr><td>Crouch walking</td><td class="bad">audible at 65%</td><td class="good">silent</td></tr>
+          <tr><td>Crouch walking with +walk or aim</td><td class="bad">silent until a turn</td><td class="good">silent</td></tr>
+          <tr><td>Crouch sprinting</td><td>audible</td><td>audible</td></tr>
+          <tr><td>Slide from a run</td><td>audible</td><td>audible</td></tr>
+          <tr><td>Pushed while crouched</td><td>audible</td><td>audible</td></tr>
+          <tr><td>Turning while crouch walking</td><td class="bad">audible</td><td class="good">silent</td></tr>
+          <tr><td>Wiggle walking crouched</td><td>audible</td><td>first step forgiven, repeats audible</td></tr>
+          <tr><td>Dropping into a crouch from a run</td><td class="bad">one running step leaks</td><td class="good">silent</td></tr>
+          <tr><td>Tapping crouch or walk</td><td>steps unchanged</td><td>steps unchanged, at most 100 ms later</td></tr>
+          <tr><td>Crouched ladder climbing</td><td>audible</td><td>audible</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3><span class="secno">2.2</span>Changes</h3>
+    <div class="summary">
+      <div class="srow" aria-hidden="true" style="padding-block:0">
+        <span class="shead">Status</span><span class="shead">Change</span><span class="shead">Effect</span>
+      </div>
+      <a class="srow" href="#crouch">
+        <span><span class="chip fixed">On branch</span></span>
+        <span><span class="sname">Crouched threshold.</span> Relative to your own crouch walk speed, with weapon slowdown, plus 10%.</span>
+        <span>Crouch walking is silent. Crouch sprinting, slides and pushes are audible.</span>
+      </a>
+      <a class="srow" href="#held">
+        <span><span class="chip fixed">On branch</span></span>
+        <span><span class="sname">Held step.</span> Pressing crouch or walk holds back the next step.</span>
+        <span>No last step when starting a crouch. Letting go early plays it, so tapping crouch cannot skip steps.</span>
+      </a>
+      <a class="srow" href="#turning">
+        <span><span class="chip fixed">On branch</span></span>
+        <span><span class="sname">Turning and key switching.</span> Turn headroom on the crouched threshold, and one forgiven step.</span>
+        <span>Looking around while crouch walking is silent. Repeated wiggle walking still makes footsteps.</span>
+      </a>
+      <a class="srow" href="#origin">
+        <span><span class="chip none">Separate PR #2230</span></span>
+        <span><span class="sname">Server footstep origin.</span> Set the position the server sends steps from.</span>
+        <span>Players out of sight but in earshot hear footsteps again.</span>
+      </a>
+    </div>
+    <h3><span class="secno">2.3</span>What players will notice</h3>
+    <ul class="plain">
+      <li>Crouch walking is silent for every class and weapon, with or without aim or walk.</li>
+      <li>Crouch sprinting, sliding from a run, and being pushed while crouched still make footsteps.</li>
+      <li>No extra step when dropping into a crouch from a run.</li>
+      <li>Looking around while crouch walking stays silent; repeated wiggle walking does not.</li>
+      <li>Players out of sight but within hearing range hear footsteps again.</li>
+    </ul>
+  </section>
+
+  <section class="part" id="breakdown" aria-labelledby="breakdown-h">
+        <h2 id="breakdown-h"><span class="secno">3</span>Breakdown of the proposal</h2>
+    <p>Each change in the order a footstep meets it: first the formula's two parts, then the fixes that make other players hear the same answer.</p>
+  </section>
+
+  <section class="problem" id="crouch" aria-labelledby="crouch-h">
+    <div class="problem-head"><h3 id="crouch-h"><span class="secno">3.1</span>Crouched silent movement threshold</h3><span class="chip fixed">Fixed</span></div>
+    <p><strong>Formula part 1, crouched line.</strong> Crouching used to be silent only while also aiming or holding +walk, so a plain crouch walk was audible. The threshold is now relative to the player's own crouch walk speed, including weapon slowdown, with 10% headroom.</p>
+    <figure class="figure">
+      <svg viewBox="0 0 660 250" role="img" aria-labelledby="crouch-svg-t crouch-svg-d">
+        <title id="crouch-svg-t">Crouched speeds per class against the old and new silent movement thresholds</title>
+        <desc id="crouch-svg-d">The old threshold makes any crouched step above 50 units per second audible unless aiming or walking. The new threshold keeps crouched steps silent up to 1.1 times the class crouch speed, so crouch walking is silent and crouch sprinting is audible.</desc>
+        <!-- scale: x = 110 + speed * 2.1 -->
+        <g class="mono">
+          <line class="s-axis" x1="110" y1="196" x2="635" y2="196"/>
+          <line class="s-grid" x1="110" y1="30" x2="110" y2="196"/><text class="s-muted" x="110" y="212" text-anchor="middle">0</text>
+          <line class="s-grid" x1="215" y1="30" x2="215" y2="196"/><text class="s-muted" x="215" y="212" text-anchor="middle">50</text>
+          <line class="s-grid" x1="320" y1="30" x2="320" y2="196"/><text class="s-muted" x="320" y="212" text-anchor="middle">100</text>
+          <line class="s-grid" x1="425" y1="30" x2="425" y2="196"/><text class="s-muted" x="425" y="212" text-anchor="middle">150</text>
+          <line class="s-grid" x1="530" y1="30" x2="530" y2="196"/><text class="s-muted" x="530" y="212" text-anchor="middle">200</text>
+          <line class="s-grid" x1="635" y1="30" x2="635" y2="196"/><text class="s-muted" x="635" y="212" text-anchor="middle">250</text>
+          <text class="s-muted" x="372" y="232" text-anchor="middle">ground speed, units per second</text>
+        </g>
+        <!-- recon: crouch 150, walk 112.5, sprint 202.5, threshold 165 -->
+        <rect class="s-silent" x="110" y="52" width="346.5" height="24"/>
+        <line class="s-silent-edge" x1="456.5" y1="48" x2="456.5" y2="80"/>
+        <text class="s-ink" x="12" y="68">Recon</text>
+        <circle class="s-walkslow" cx="346.3" cy="64" r="6"/>
+        <circle class="s-walk" cx="425" cy="64" r="6"/>
+        <rect class="s-sprint" x="529.3" y="58" width="12" height="12" transform="rotate(45 535.3 64)"/>
+        <text class="s-fixtext mono" x="462" y="48">165</text>
+        <!-- assault: crouch 120, walk 90, sprint 192, threshold 132 -->
+        <rect class="s-silent" x="110" y="102" width="277.2" height="24"/>
+        <line class="s-silent-edge" x1="387.2" y1="98" x2="387.2" y2="130"/>
+        <text class="s-ink" x="12" y="118">Assault</text>
+        <circle class="s-walkslow" cx="299" cy="114" r="6"/>
+        <circle class="s-walk" cx="362" cy="114" r="6"/>
+        <rect class="s-sprint" x="507.2" y="108" width="12" height="12" transform="rotate(45 513.2 114)"/>
+        <text class="s-fixtext mono" x="393" y="98">132</text>
+        <!-- support: crouch 120, walk 90, threshold 132, no sprint -->
+        <rect class="s-silent" x="110" y="152" width="277.2" height="24"/>
+        <line class="s-silent-edge" x1="387.2" y1="148" x2="387.2" y2="180"/>
+        <text class="s-ink" x="12" y="168">Support</text>
+        <circle class="s-walkslow" cx="299" cy="164" r="6"/>
+        <circle class="s-walk" cx="362" cy="164" r="6"/>
+        <text class="s-muted" x="400" y="168">cannot sprint</text>
+        <text class="s-fixtext mono" x="393" y="148">132</text>
+        <!-- old threshold -->
+        <line class="s-old" x1="215" y1="24" x2="215" y2="196"/>
+        <text class="s-bugtext" x="221" y="22">old: audible above 50 unless aiming or walking</text>
+      </svg>
+      <figcaption>Green band: silent (up to crouch walk speed × 1.1). Hollow dot: crouch with +walk. Filled dot: crouch walk. Diamond: crouch sprint. Drawn with no weapon slowdown. Every crouched speed and the threshold scale by the same weapon factor, so the picture holds for every weapon.</figcaption>
+    </figure>
+    <div class="cols">
+      <div class="panel bug">
+        <span class="label">Before</span>
+        <pre><span class="cm">// neo_player_shared.cpp, IsMakingFootstepSounds</span>
+if (GetFlags() &amp; FL_DUCKING)
+{
+    if ((IsInAim() || IsWalking()) &amp;&amp;
+        speed &lt;= GetCrouchSpeed() * 0.7f)
+        return false;
+}</pre>
+      </div>
+      <div class="panel fix">
+        <span class="label">After</span>
+        <pre>if ((GetFlags() &amp; FL_DUCKING) &amp;&amp; !isOnLadder)
+{
+    float crouchSilentGrace = 1.1f;
+    <span class="cm">// plus turn headroom, see Turning below</span>
+    <span class="cm">// ground speed: other clients see vertical</span>
+    <span class="cm">// speed when a player steps up stairs</span>
+    if (groundspeed &lt;=
+        GetCrouchSpeed_WithActiveWepEncumberment()
+        * crouchSilentGrace)
+        return false;
+}</pre>
+      </div>
+    </div>
+    <div class="cols">
+      <div class="panel fix">
+        <span class="label">Weapon slowdown</span>
+        <p>Every weapon slows its holder, by 0.675× (PZ) to 1.0× (BALC). The threshold first used the class crouch speed alone, so a recon crouch sprinting with a 0.725× rifle (147 u/s) stayed under 165 and made no sound. The threshold now uses the crouch speed with the active weapon applied, which keeps the same 10% margin for every weapon.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="problem" id="held" aria-labelledby="held-h">
+    <div class="problem-head"><h3 id="held-h"><span class="secno">3.2</span>Held step when starting a crouch or walk</h3><span class="chip fixed">On branch</span></div>
+    <p><strong>Formula part 2.</strong> Side-stepping at normal speed and pressing crouch often plays one more footstep. The game only counts a player as crouched once the 0.4 s crouch animation finishes, and a running step fires every 300 ms, so one step almost always lands in between. Walking settles in about 50 ms and is rarely affected, but follows the same rule so both keys behave alike.</p>
+    <figure class="figure">
+      <svg viewBox="0 0 660 212" role="img" aria-labelledby="entry-now-t entry-now-d">
+        <title id="entry-now-t">Today: the crouch threshold starts when the crouch animation ends</title>
+        <desc id="entry-now-d">An assault player with an SRM runs at 136 units per second and presses crouch at 0 milliseconds. For 400 milliseconds the game still counts them as standing, so a step at 200 milliseconds is audible. After 400 milliseconds speed drops to 102 within about 75 milliseconds and the crouch threshold of 112 applies.</desc>
+        <rect class="s-loud" x="160.0" y="26" width="280.0" height="144"/>
+        <text class="s-bugtext" x="300.0" y="150" text-anchor="middle">counted as standing: audible</text>
+        <rect class="s-silent" x="440.0" y="80.2" width="210.0" height="89.8"/>
+        <line class="s-silent-edge" x1="440.0" y1="80.2" x2="650" y2="80.2"/>
+        <text class="s-fixtext mono" x="506.0" y="74.2">crouch threshold 112</text>
+        <text class="title s-ink" x="12" y="20">Today (this branch)</text>
+        <g class="mono">
+          <line class="s-axis" x1="90" y1="170" x2="650" y2="170"/>
+          <line class="s-grid" x1="160.0" y1="30" x2="160.0" y2="170"/><text class="s-muted" x="160.0" y="186" text-anchor="middle">0</text>
+          <line class="s-grid" x1="230.0" y1="30" x2="230.0" y2="170"/><text class="s-muted" x="230.0" y="186" text-anchor="middle">100</text>
+          <line class="s-grid" x1="300.0" y1="30" x2="300.0" y2="170"/><text class="s-muted" x="300.0" y="186" text-anchor="middle">200</text>
+          <line class="s-grid" x1="370.0" y1="30" x2="370.0" y2="170"/><text class="s-muted" x="370.0" y="186" text-anchor="middle">300</text>
+          <line class="s-grid" x1="440.0" y1="30" x2="440.0" y2="170"/><text class="s-muted" x="440.0" y="186" text-anchor="middle">400</text>
+          <line class="s-grid" x1="510.0" y1="30" x2="510.0" y2="170"/><text class="s-muted" x="510.0" y="186" text-anchor="middle">500</text>
+          <line class="s-grid" x1="580.0" y1="30" x2="580.0" y2="170"/><text class="s-muted" x="580.0" y="186" text-anchor="middle">600</text>
+          <line class="s-grid" x1="650.0" y1="30" x2="650.0" y2="170"/><text class="s-muted" x="650.0" y="186" text-anchor="middle">700</text>
+          <text class="s-muted" x="370" y="204" text-anchor="middle">milliseconds after pressing crouch</text>
+        </g>
+        <line class="s-trace" x1="160.0" y1="26" x2="160.0" y2="170"/>
+        <text class="s-muted" x="164.0" y="36">press crouch</text>
+        <line class="s-trace" x1="440.0" y1="26" x2="440.0" y2="170"/>
+        <text class="s-muted" x="444.0" y="36">crouch animation done</text>
+        <path class="s-speed" d="M 90.0 61.2 L 440.0 61.2 L 450.5 67.8 L 461.0 73.9 L 471.5 79.8 L 482.0 85.2 L 492.5 88.4 L 650.0 88.4"/>
+        <text class="s-ink mono" x="94" y="55.2">136</text>
+        <circle class="s-dot-plain" cx="90.0" cy="61.2" r="5"/>
+        <circle class="s-dot-bug" cx="300.0" cy="61.2" r="6"/><text class="s-bugtext" x="300.0" y="49.2" text-anchor="middle">last step: audible</text>
+        <circle class="s-dot-fix" cx="510.0" cy="88.4" r="5"/>
+        <text class="s-fixtext" x="518.0" y="104.4">silent</text>
+      </svg>
+      <figcaption>Today. Assault with an SRM (0.85&#215;): normal run 136, crouch walk 102. Speed only starts dropping once the animation is done, because <code>CalculateSpeed</code> checks the same crouched flag (<code>FL_DUCKING</code>, set at <code>TIME_TO_DUCK</code>, <code>gamemovement.cpp:4767</code>).</figcaption>
+    </figure>
+    <figure class="figure">
+      <svg viewBox="0 0 660 278" role="img" aria-labelledby="held-svg-t held-svg-d">
+        <title id="held-svg-t">Held step in four situations</title>
+        <desc id="held-svg-d">Crouch is pressed at 0 ms and the step timer fires at 200 ms. Holding crouch and settling drops that step at about 450 ms. Letting go at 300 ms plays it at release. Letting go at 600 ms, within one step of settling, plays it at release. Sprinting into a crouch is still loud 0.1 s after the crouch takes effect, so it plays at 500 ms.</desc>
+        <text class="title s-ink" x="12" y="20">Held step: the next step is held, then dropped or played</text>
+        <g class="mono">
+          <line class="s-grid" x1="150.0" y1="40" x2="150.0" y2="232"/><text class="s-muted" x="150.0" y="250" text-anchor="middle">0</text>
+          <line class="s-grid" x1="210.0" y1="40" x2="210.0" y2="232"/><text class="s-muted" x="210.0" y="250" text-anchor="middle">100</text>
+          <line class="s-grid" x1="270.0" y1="40" x2="270.0" y2="232"/><text class="s-muted" x="270.0" y="250" text-anchor="middle">200</text>
+          <line class="s-grid" x1="330.0" y1="40" x2="330.0" y2="232"/><text class="s-muted" x="330.0" y="250" text-anchor="middle">300</text>
+          <line class="s-grid" x1="390.0" y1="40" x2="390.0" y2="232"/><text class="s-muted" x="390.0" y="250" text-anchor="middle">400</text>
+          <line class="s-grid" x1="450.0" y1="40" x2="450.0" y2="232"/><text class="s-muted" x="450.0" y="250" text-anchor="middle">500</text>
+          <line class="s-grid" x1="510.0" y1="40" x2="510.0" y2="232"/><text class="s-muted" x="510.0" y="250" text-anchor="middle">600</text>
+          <line class="s-grid" x1="570.0" y1="40" x2="570.0" y2="232"/><text class="s-muted" x="570.0" y="250" text-anchor="middle">700</text>
+          <line class="s-grid" x1="630.0" y1="40" x2="630.0" y2="232"/><text class="s-muted" x="630.0" y="250" text-anchor="middle">800</text>
+          <text class="s-muted" x="390.0" y="270" text-anchor="middle">milliseconds after pressing crouch</text>
+        </g>
+        <line class="s-trace" x1="390.0" y1="34" x2="390.0" y2="232"/>
+        <text class="s-muted" x="394.0" y="44">crouch animation done</text>
+        <text class="s-ink" x="12" y="68">Hold and settle</text>
+        <rect class="s-keybar" x="150.0" y="60" width="480.0" height="8" rx="4"/>
+        <circle class="s-held" cx="270.0" cy="64" r="6"/><text class="s-holdtext" x="270.0" y="51" text-anchor="middle">held</text>
+        <path class="s-drop" d="M 414.0 58 L 426.0 70 M 414.0 70 L 426.0 58"/><text class="s-fixtext" x="420.0" y="51" text-anchor="middle">dropped</text>
+        <text class="s-ink" x="12" y="118">Let go at 300 ms</text>
+        <rect class="s-keybar" x="150.0" y="110" width="180.0" height="8" rx="4"/>
+        <line class="s-release" x1="330.0" y1="102" x2="330.0" y2="126"/>
+        <circle class="s-held" cx="270.0" cy="114" r="6"/><text class="s-holdtext" x="270.0" y="101" text-anchor="middle">held</text>
+        <circle class="s-dot-bug" cx="330.0" cy="114" r="6"/><text class="s-bugtext" x="330.0" y="101" text-anchor="middle">plays</text>
+        <text class="s-ink" x="12" y="168">Let go at 600 ms</text>
+        <rect class="s-keybar" x="150.0" y="160" width="360.0" height="8" rx="4"/>
+        <line class="s-release" x1="510.0" y1="152" x2="510.0" y2="176"/>
+        <circle class="s-held" cx="270.0" cy="164" r="6"/><text class="s-holdtext" x="270.0" y="151" text-anchor="middle">held</text>
+        <path class="s-drop" d="M 414.0 158 L 426.0 170 M 414.0 170 L 426.0 158"/><text class="s-fixtext" x="420.0" y="151" text-anchor="middle">dropped</text>
+        <circle class="s-dot-bug" cx="510.0" cy="164" r="6"/><text class="s-bugtext" x="510.0" y="151" text-anchor="middle">plays</text>
+        <text class="s-ink" x="12" y="218">Sprint into crouch</text>
+        <rect class="s-keybar" x="150.0" y="210" width="480.0" height="8" rx="4"/>
+        <circle class="s-held" cx="270.0" cy="214" r="6"/><text class="s-holdtext" x="270.0" y="201" text-anchor="middle">held</text>
+        <circle class="s-dot-bug" cx="450.0" cy="214" r="6"/><text class="s-bugtext" x="450.0" y="201" text-anchor="middle">still loud: plays</text>
+      </svg>
+      <figcaption>Bar: crouch held. Tick at the end of a bar: crouch released. Hollow dot: the step the timer fired, held back. Cross: held step dropped. Filled dot: a footstep that plays. Settling happens at about 450 ms here: the animation ends at 400 ms and friction brings speed under the crouch threshold within about 50 ms.</figcaption>
+    </figure>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Event</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>Press crouch or walk while moving on the ground, not already crouched</td><td>Armed: the next step the timer fires is held</td></tr>
+          <tr><td>Step timer fires while armed</td><td>Held, nothing plays yet</td></tr>
+          <tr><td>Settled: crouched or walking, and not loud</td><td class="good">Held step dropped</td></tr>
+          <tr><td>Still loud 0.1 s after crouch or walk takes effect (slide, sprint, push)</td><td class="bad">Held step plays now</td></tr>
+          <tr><td>Key released while a step is held</td><td class="bad">Held step plays now</td></tr>
+          <tr><td>Key released within one step interval of the drop</td><td class="bad">Dropped step plays now</td></tr>
+          <tr><td>Key released later than that</td><td>Nothing extra; normal rules continue</td></tr>
+          <tr><td>Another loud step while settling into the crouch</td><td>Joins the held step</td></tr>
+          <tr><td>A held step plays</td><td>The next step keeps its timing, at least 100 ms later</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="cols">
+      <div class="panel hold">
+        <span class="label">Why release within one step plays it</span>
+        <p>Without that rule, a player could repeat crouch, settle, release about every 0.7 s. They would move at full speed for most of each cycle, since the crouch animation keeps run speed, and drop one step per cycle. Giving the step back on an early release means a dropped step always costs a real step's worth of crouched movement. Tapping crouch can only delay a step, never remove it.</p>
+      </div>
+      <div class="panel fix">
+        <span class="label">Movement is unchanged</span>
+        <p>The rule only decides whether and when a step sound plays. Speeds, acceleration, the crouch animation and hull sizes stay exactly as they are. Only one step is ever held, and anything still loud after settling plays as before.</p>
+      </div>
+    </div>
+    <div class="cols">
+      <div class="panel">
+        <span class="label">Other players get the same answer</span>
+        <p>Each of the three footstep deciders runs this rule itself, so each needs to know when crouch or walk is held. Walk already is: <code>m_fIsWalking</code> is sent to every client in NEO (<code>hl2mp_player.cpp:112</code>). For crouch, the engine already defines <code>FL_ANIMDUCKING</code>, "in the process of crouching" (<code>public/const.h:150</code>), inside the <code>m_fFlags</code> every client receives. Nothing in this codebase set it before. The branch sets it while crouch is held (<code>CGameMovement::Duck</code>), which needs no new network data.</p>
+      </div>
+      <div class="panel">
+        <span class="label">Limits</span>
+        <p>Other clients see press and release about one snapshot late, so a penalty step can sound a few tens of milliseconds later for them than for the player. A second step before settling plays the earlier held one and holds the new one, so a crouch that never settles cannot skip a step either.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="problem" id="turning" aria-labelledby="turning-h">
+    <div class="problem-head"><h3 id="turning-h"><span class="secno">3.3</span>Turning and key switching while crouched</h3><span class="chip fixed">On branch</span></div>
+    <p>Holding a movement key while turning the view, or switching keys such as W+D to W+A, really raises ground speed: acceleration builds toward the new direction faster than friction removes the old one. The gain reaches about 50% of crouch walk speed, more than the 10% headroom, so looking around while crouch walking made footsteps. The <a href="#formula">turning chart</a> in section 2.1 shows the threshold against the simulated gain.</p>
+    <div class="cols">
+      <div class="panel fix">
+        <span class="label">Turn headroom</span>
+        <pre>float crouchSilentGrace = 1.1f;
+<span class="cm">// crouch sprinting stays audible while turning</span>
+if (!m_fIsSprinting)
+    crouchSilentGrace += 0.45f *
+        Min(m_flFootstepTurnRate / 180.f, 1.f);</pre>
+        <p>The turn rate comes from the view yaw, which every client receives, keeps its peak and fades over 0.25 s.</p>
+      </div>
+      <div class="panel fix">
+        <span class="label">One-step forgiveness</span>
+        <p>Switching keys does not turn the view, so turn headroom cannot see it. The first crouched step over the threshold is skipped when the player has been crouched on the ground for 0.5 s, is not sprinting and is no faster than 1.55 c. It comes back after 1 s under the threshold.</p>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Test pass</th><th>Before</th><th>After</th></tr></thead>
+        <tbody>
+          <tr><td>Crouch walking while turning (recon, c = 127.5)</td><td class="bad">13 footsteps at 140.5 to 156.5 u/s, turn rates up to 3,000°/s</td><td class="good">none from turning; crouch sprinting still audible at up to 483°/s</td></tr>
+          <tr><td>Wiggle walking crouched</td><td>about 30 footsteps at 142.8 to 165.1 u/s, turn rate under 41°/s</td><td>first step forgiven in each of 7 bursts, the rest audible</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+
+  <section class="problem" id="origin" aria-labelledby="origin-h">
+    <div class="problem-head"><h3 id="origin-h"><span class="secno">3.4</span>Server footstep origin</h3><span class="chip fixed">Fixed · PR #2230</span></div>
+    <div class="cols">
+      <div class="panel bug">
+        <span class="label">Problem</span>
+        <p>In NEO builds, the only line that set <code>feet</code> sat inside <code>#ifndef NEO</code>, after #2151 removed the unused locals around it. The server then chose recipients from an uninitialized position.</p>
+      </div>
+      <div class="panel fix">
+        <span class="label">Fix</span>
+        <p>Move <code>VectorCopy( vecOrigin, feet );</code> out of the <code>#ifndef NEO</code> block. Upstream PR #2230 makes exactly this change. The branch carries a local copy until it merges.</p>
+      </div>
+    </div>
+    <p class="muted">Behavior change: players who are out of sight but within hearing range get the server's footsteps again, as in the stock SDK.</p>
+  </section>
+
+  <section class="part" id="detail" aria-labelledby="detail-h">
+        <h2 id="detail-h"><span class="secno">4</span>Supporting detail</h2>
+    <p>Reference numbers, test data and branch state behind the parts above.</p>
+  </section>
+
+  <section class="problem" id="matrix" aria-labelledby="matrix-h">
+    <div class="problem-head"><h3 id="matrix-h"><span class="secno">4.1</span>Speed matrix</h3></div>
+    <p>Top ground speed for each class, posture and gait on flat ground, and whether a step at that speed is silent. Speeds come from <code>CalculateSpeed</code> capped by the movement code's per-gait limit. The two right-hand columns give the silent movement thresholds.</p>
+    <div class="controls">
+      <div class="field">
+        <label for="wep">Weapon slowdown</label>
+        <select id="wep">
+          <option value="1">1.0 · BALC</option>
+          <option value="0.85" selected>0.85 · SRM, MPN, Tachi, Milso, Kyla, knife, grenades, ghost</option>
+          <option value="0.8">0.8 · Jitte, ZR68-C, SMAC, PBK56S</option>
+          <option value="0.775">0.775 · ZR68-S</option>
+          <option value="0.725">0.725 · M41, MX, SRS, ZR68-L, AA13</option>
+          <option value="0.7">0.7 · Supa 7</option>
+          <option value="0.675">0.675 · PZ</option>
+        </select>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="matrix-table" aria-describedby="matrix-h">
+        <thead>
+          <tr><th></th><th class="group" colspan="3">Standing</th><th class="group" colspan="3">Crouched</th><th class="group" colspan="2">Silent movement threshold</th></tr>
+          <tr><th>Class</th><th>+walk</th><th>normal</th><th>sprint</th><th>+walk</th><th>normal</th><th>sprint</th><th>standing</th><th>crouched</th></tr>
+        </thead>
+        <tbody id="matrix-body"></tbody>
+      </table>
+    </div>
+    <ul class="plain muted">
+      <li>The standing threshold applies only while aiming or holding +walk, uses the class speed without weapon slowdown, and is unchanged by this branch.</li>
+      <li>Every posture is silent below 50 u/s.</li>
+      <li>Crouched thresholds shown without turning; turning adds up to 0.45 c, see the <a href="#formula">formula</a>.</li>
+      <li>Aiming multiplies speed by 0.6, which is silent in every posture with every weapon.</li>
+      <li>VIP and Juggernaut use the Assault numbers. Support cannot sprint.</li>
+      <li>Top speeds only. Accelerating, slowing down and the post-jump slowdown for non-recon classes pass through lower speeds.</li>
+    </ul>
+  </section>
+
+  <section class="problem" id="guns" aria-labelledby="guns-h">
+    <div class="problem-head"><h3 id="guns-h"><span class="secno">4.2</span>Speed by gun and class</h3></div>
+    <p>Top ground speed in u/s with each weapon held, from <code>CalculateSpeed</code>: class speed &times; weapon speed scale, then &times; 0.75 for crouching or for standing with +walk. Crouch and +walk come out equal for every class and gun. What differs is the silent movement threshold each one is measured against.</p>
+    <ul class="plain muted">
+      <li><strong class="own-key">Bold</strong>: in the class's loadout menu or given at spawn. Plain: only by picking it up. &ndash;: the class cannot pick it up (<code>CanBePickedUpByClass</code>).</li>
+      <li>Run is always audible. Crouch is silent for every gun here (crouch threshold is crouch speed &times; weapon &times; 1.1). Standing +walk is measured against 140 for Recon and 112 for the rest.</li>
+      <li>* PBK56S is only in builds with <code>NEO_BUILD_WEAPON_PBK56S</code>, which is off by default.</li>
+    </ul>
+    <div class="table-wrap">
+      <table id="guns-table" aria-describedby="guns-h">
+        <thead>
+          <tr><th rowspan="2" scope="col">Gun</th><th rowspan="2" scope="col">Scale</th><th class="group grp" colspan="3" scope="colgroup">Recon <span class="muted">(200)</span></th><th class="group grp" colspan="3" scope="colgroup">Assault <span class="muted">(160)</span></th><th class="group grp" colspan="3" scope="colgroup">Support <span class="muted">(160)</span></th><th class="group grp" colspan="3" scope="colgroup">VIP <span class="muted">(160)</span></th><th class="group grp" colspan="3" scope="colgroup">Juggernaut <span class="muted">(160)</span></th></tr>
+          <tr><th class="grp">Run</th><th>Crouch</th><th>+walk</th><th class="grp">Run</th><th>Crouch</th><th>+walk</th><th class="grp">Run</th><th>Crouch</th><th>+walk</th><th class="grp">Run</th><th>Crouch</th><th>+walk</th><th class="grp">Run</th><th>Crouch</th><th>+walk</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">BALC</th><td class="scale">1.0 <span class="muted">(none)</span></td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td><td class="own grp">160</td><td class="own">120</td><td class="own">120</td></tr>
+          <tr><th scope="row">Knife</th><td class="scale">0.85 <span class="muted">(&minus;15%)</span></td><td class="own grp">170</td><td class="own">127.5</td><td class="own">127.5</td><td class="own grp">136</td><td class="own">102</td><td class="own">102</td><td class="own grp">136</td><td class="own">102</td><td class="own">102</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">Milso</th><td class="scale">0.85 <span class="muted">(&minus;15%)</span></td><td class="own grp">170</td><td class="own">127.5</td><td class="own">127.5</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="own grp">136</td><td class="own">102</td><td class="own">102</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">Tachi</th><td class="scale">0.85 <span class="muted">(&minus;15%)</span></td><td class="pick grp">170</td><td class="pick">127.5</td><td class="pick">127.5</td><td class="own grp">136</td><td class="own">102</td><td class="own">102</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">Kyla</th><td class="scale">0.85 <span class="muted">(&minus;15%)</span></td><td class="pick grp">170</td><td class="pick">127.5</td><td class="pick">127.5</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="own grp">136</td><td class="own">102</td><td class="own">102</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">MPN45</th><td class="scale">0.85 <span class="muted">(&minus;15%)</span></td><td class="own grp">170</td><td class="own">127.5</td><td class="own">127.5</td><td class="own grp">136</td><td class="own">102</td><td class="own">102</td><td class="own grp">136</td><td class="own">102</td><td class="own">102</td><td class="own grp">136</td><td class="own">102</td><td class="own">102</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">SRM</th><td class="scale">0.85 <span class="muted">(&minus;15%)</span></td><td class="own grp">170</td><td class="own">127.5</td><td class="own">127.5</td><td class="own grp">136</td><td class="own">102</td><td class="own">102</td><td class="own grp">136</td><td class="own">102</td><td class="own">102</td><td class="own grp">136</td><td class="own">102</td><td class="own">102</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">SRM-S</th><td class="scale">0.85 <span class="muted">(&minus;15%)</span></td><td class="own grp">170</td><td class="own">127.5</td><td class="own">127.5</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="own grp">136</td><td class="own">102</td><td class="own">102</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">Frag grenade</th><td class="scale">0.85 <span class="muted">(&minus;15%)</span></td><td class="pick grp">170</td><td class="pick">127.5</td><td class="pick">127.5</td><td class="own grp">136</td><td class="own">102</td><td class="own">102</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">Smoke grenade</th><td class="scale">0.85 <span class="muted">(&minus;15%)</span></td><td class="pick grp">170</td><td class="pick">127.5</td><td class="pick">127.5</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="own grp">136</td><td class="own">102</td><td class="own">102</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">Detpack</th><td class="scale">0.85 <span class="muted">(&minus;15%)</span></td><td class="own grp">170</td><td class="own">127.5</td><td class="own">127.5</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">Ghost</th><td class="scale">0.85 <span class="muted">(&minus;15%)</span></td><td class="pick grp">170</td><td class="pick">127.5</td><td class="pick">127.5</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="pick grp">136</td><td class="pick">102</td><td class="pick">102</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">Jitte</th><td class="scale">0.8 <span class="muted">(&minus;20%)</span></td><td class="own grp">160</td><td class="own">120</td><td class="own">120</td><td class="own grp">128</td><td class="own">96</td><td class="own">96</td><td class="pick grp">128</td><td class="pick">96</td><td class="pick">96</td><td class="own grp">128</td><td class="own">96</td><td class="own">96</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">Jitte scoped</th><td class="scale">0.8 <span class="muted">(&minus;20%)</span></td><td class="own grp">160</td><td class="own">120</td><td class="own">120</td><td class="pick grp">128</td><td class="pick">96</td><td class="pick">96</td><td class="pick grp">128</td><td class="pick">96</td><td class="pick">96</td><td class="own grp">128</td><td class="own">96</td><td class="own">96</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">ZR68-C</th><td class="scale">0.8 <span class="muted">(&minus;20%)</span></td><td class="own grp">160</td><td class="own">120</td><td class="own">120</td><td class="own grp">128</td><td class="own">96</td><td class="own">96</td><td class="own grp">128</td><td class="own">96</td><td class="own">96</td><td class="own grp">128</td><td class="own">96</td><td class="own">96</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">SMAC</th><td class="scale">0.8 <span class="muted">(&minus;20%)</span></td><td class="pick grp">160</td><td class="pick">120</td><td class="pick">120</td><td class="pick grp">128</td><td class="pick">96</td><td class="pick">96</td><td class="pick grp">128</td><td class="pick">96</td><td class="pick">96</td><td class="own grp">128</td><td class="own">96</td><td class="own">96</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">PBK56S *</th><td class="scale">0.8 <span class="muted">(&minus;20%)</span></td><td class="pick grp">160</td><td class="pick">120</td><td class="pick">120</td><td class="pick grp">128</td><td class="pick">96</td><td class="pick">96</td><td class="own grp">128</td><td class="own">96</td><td class="own">96</td><td class="pick grp">128</td><td class="pick">96</td><td class="pick">96</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">ZR68-S</th><td class="scale">0.775 <span class="muted">(&minus;22.5%)</span></td><td class="pick grp">155</td><td class="pick">116.2</td><td class="pick">116.2</td><td class="own grp">124</td><td class="own">93</td><td class="own">93</td><td class="pick grp">124</td><td class="pick">93</td><td class="pick">93</td><td class="pick grp">124</td><td class="pick">93</td><td class="pick">93</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">Mosok (M41)</th><td class="scale">0.725 <span class="muted">(&minus;27.5%)</span></td><td class="pick grp">145</td><td class="pick">108.8</td><td class="pick">108.8</td><td class="own grp">116</td><td class="own">87</td><td class="own">87</td><td class="own grp">116</td><td class="own">87</td><td class="own">87</td><td class="pick grp">116</td><td class="pick">87</td><td class="pick">87</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">Mosok Silenced</th><td class="scale">0.725 <span class="muted">(&minus;27.5%)</span></td><td class="own grp">145</td><td class="own">108.8</td><td class="own">108.8</td><td class="own grp">116</td><td class="own">87</td><td class="own">87</td><td class="own grp">116</td><td class="own">87</td><td class="own">87</td><td class="pick grp">116</td><td class="pick">87</td><td class="pick">87</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">Mosok Scoped</th><td class="scale">0.725 <span class="muted">(&minus;27.5%)</span></td><td class="pick grp">145</td><td class="pick">108.8</td><td class="pick">108.8</td><td class="pick grp">116</td><td class="pick">87</td><td class="pick">87</td><td class="pick grp">116</td><td class="pick">87</td><td class="pick">87</td><td class="pick grp">116</td><td class="pick">87</td><td class="pick">87</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">MX</th><td class="scale">0.725 <span class="muted">(&minus;27.5%)</span></td><td class="pick grp">145</td><td class="pick">108.8</td><td class="pick">108.8</td><td class="own grp">116</td><td class="own">87</td><td class="own">87</td><td class="own grp">116</td><td class="own">87</td><td class="own">87</td><td class="pick grp">116</td><td class="pick">87</td><td class="pick">87</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">MX Silenced</th><td class="scale">0.725 <span class="muted">(&minus;27.5%)</span></td><td class="pick grp">145</td><td class="pick">108.8</td><td class="pick">108.8</td><td class="own grp">116</td><td class="own">87</td><td class="own">87</td><td class="own grp">116</td><td class="own">87</td><td class="own">87</td><td class="pick grp">116</td><td class="pick">87</td><td class="pick">87</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">ZR68-L</th><td class="scale">0.725 <span class="muted">(&minus;27.5%)</span></td><td class="own grp">145</td><td class="own">108.8</td><td class="own">108.8</td><td class="pick grp">116</td><td class="pick">87</td><td class="pick">87</td><td class="pick grp">116</td><td class="pick">87</td><td class="pick">87</td><td class="own grp">116</td><td class="own">87</td><td class="own">87</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">SRS</th><td class="scale">0.725 <span class="muted">(&minus;27.5%)</span></td><td class="pick grp">145</td><td class="pick">108.8</td><td class="pick">108.8</td><td class="own grp">116</td><td class="own">87</td><td class="own">87</td><td class="pick grp">116</td><td class="pick">87</td><td class="pick">87</td><td class="pick grp">116</td><td class="pick">87</td><td class="pick">87</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">AA13</th><td class="scale">0.725 <span class="muted">(&minus;27.5%)</span></td><td class="pick grp">145</td><td class="pick">108.8</td><td class="pick">108.8</td><td class="own grp">116</td><td class="own">87</td><td class="own">87</td><td class="pick grp">116</td><td class="pick">87</td><td class="pick">87</td><td class="pick grp">116</td><td class="pick">87</td><td class="pick">87</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">Supa-7</th><td class="scale">0.7 <span class="muted">(&minus;30%)</span></td><td class="own grp">140</td><td class="own">105</td><td class="own">105</td><td class="own grp">112</td><td class="own">84</td><td class="own">84</td><td class="own grp">112</td><td class="own">84</td><td class="own">84</td><td class="own grp">112</td><td class="own">84</td><td class="own">84</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+          <tr><th scope="row">PZ252</th><td class="scale">0.675 <span class="muted">(&minus;32.5%)</span></td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td><td class="pick grp">108</td><td class="pick">81</td><td class="pick">81</td><td class="own grp">108</td><td class="own">81</td><td class="own">81</td><td class="pick grp">108</td><td class="pick">81</td><td class="pick">81</td><td class="no grp">&ndash;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="problem" id="evidence" aria-labelledby="evidence-h">
+    <div class="problem-head"><h3 id="evidence-h"><span class="secno">4.3</span>Test evidence</h3></div>
+    <p>Four play passes on a listen server. One bot mirrored the host's inputs (<code>bot_mimic 1</code>) so every step could be compared as the stepping player, the server, and another client heard it. <code>neo_footstep_debug</code> logged each footstep decision, and chat messages marked what was heard in game.</p>
+    <h4>Server footstep origin (pass 1)</h4>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Pass 1, before</th><th class="num">Server footsteps</th><th class="num">With no recipients</th><th>Example origin</th></tr></thead>
+        <tbody><tr><td>Bots and host, one round</td><td class="num">811</td><td class="num bad">811</td><td class="mono"><code>(0.0 6.47e36 0.0)</code></td></tr></tbody>
+      </table>
+    </div>
+    <h4>Crouched threshold (before, and pass 4 after)</h4>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Scenario</th><th>Before</th><th>After (pass 4)</th></tr></thead>
+        <tbody>
+          <tr><td>Crouch walk</td><td class="bad">54 server steps at 65 to 139 u/s</td><td class="good">0 steps, yours and the bots'</td></tr>
+          <tr><td>Crouch sprint</td><td>audible</td><td class="good">30 steps at 172 to 222 u/s</td></tr>
+          <tr><td>Sprint into crouch</td><td>audible</td><td class="good">steps while above the threshold (168 to 186 u/s)</td></tr>
+          <tr><td>Other clients' estimate of a crouch walker</td><td>n/a</td><td class="good">no false steps; all 98 crouched bot steps match the server</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h4>Test setup</h4>
+    <pre>sv_cheats 1; neo_bot_quota 1
+neo_footstep_debug 1; neo_footstep_debug_bots 1
+con_logfile footsteps.log
+nb_stop 1            <span class="cm">// walk up to the bot</span>
+nb_stop 0; bot_mimic 1</pre>
+  </section>
+
+  <section class="problem" id="spin" aria-labelledby="spin-h">
+    <div class="problem-head"><h3 id="spin-h"><span class="secno">4.4</span>Footsteps while turning in place</h3><span class="chip none">Not reproduced</span></div>
+    <p>Reported as footsteps while turning quickly in place. Every movement tick was sampled while turning. Speed stayed at exactly 0 and no footstep played, locally or as other clients hear it.</p>
+    <ul class="plain">
+      <li>Pass 2, no lag: turning at up to 3,428° per second.</li>
+      <li>Pass 4, <code>net_fakelag 80</code> and 2% loss: standing, leaning, and all three classes.</li>
+      <li>Every step on a tick with no movement keys held was the player slowing down after a run, at 57 to 170 u/s. Those are real movement.</li>
+    </ul>
+  </section>
+
+  <section class="problem" id="branch" aria-labelledby="branch-h">
+    <div class="problem-head"><h3 id="branch-h"><span class="secno">4.5</span>Branch state</h3></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Commit</th><th>Change</th><th>Branch</th></tr></thead>
+        <tbody>
+          <tr><td class="commit">d070628e</td><td>Fix footstep sounds playing from an unset origin (copy of PR #2230)</td><td>base</td></tr>
+          <tr><td class="commit">6fa75f49</td><td>Silence crouched footsteps below the player's crouch walk speed</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">46a289e1</td><td>Hold the first footstep after pressing crouch or walk</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">22cf730e</td><td>Allow for speed gained by turning or switching keys while crouched</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">0c85d491</td><td>Start other players' ground surface trace clear of floors and walls</td><td class="muted">-docs only</td></tr>
+          <tr><td class="commit">08f5d6bb</td><td><code>neo_footstep_debug</code> instrumentation</td><td class="muted">-docs only</td></tr>
+          <tr><td class="commit">a455a7ea</td><td>An experimental crouched threshold setting</td><td class="muted">-docs only</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">footsteps/sound-consistency-docs sits on top of the PR branch with the ground surface trace fix, the logging, the experiment and these docs.</p>
+  </section>
+
+
+  <section class="part" id="references" aria-labelledby="references-h">
+    <h2 id="references-h"><span class="secno">5</span>References</h2>
+    <ol class="refs">
+      <li><a href="https://github.com/NeotokyoRebuild/neo/issues/275">#275</a> Crouching still has actors making footsteps sounds</li>
+      <li><a href="https://github.com/NeotokyoRebuild/neo/issues/363">#363</a> Footstep velocity thresholds at parity</li>
+      <li><a href="https://github.com/NeotokyoRebuild/neo/pull/877">#877</a> Footstep velocity thresholds at parity</li>
+      <li><a href="https://github.com/NeotokyoRebuild/neo/issues/992">#992</a> [FEATURE] UI element for walking</li>
+      <li><a href="https://github.com/NeotokyoRebuild/neo/pull/1097">#1097</a> Silent Walking</li>
+      <li><a href="https://github.com/NeotokyoRebuild/neo/pull/1431">#1431</a> Silent footsteps in aim, revert walk speeds to parity</li>
+      <li><a href="https://github.com/NeotokyoRebuild/neo/pull/1831">#1831</a> Walking Indicator (open)</li>
+      <li><a href="https://github.com/NeotokyoRebuild/neo/pull/2151">#2151</a> Fix silently entering/exiting water</li>
+      <li><a href="https://github.com/NeotokyoRebuild/neo/pull/2230">#2230</a> Fix footstep sounds playing from an unset origin (open, separate)</li>
+    </ol>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  // Class speeds from neo_player_shared.h; sprint cap from GetSprintSpeed
+  var CLASSES = [
+    { name: "Recon", norm: 200, crouch: 150, sprintMod: 1.35, sprintCap: 270 },
+    { name: "Assault", norm: 160, crouch: 120, sprintMod: 1.6, sprintCap: 256 },
+    { name: "Support", norm: 160, crouch: 120, sprintMod: null, sprintCap: null }
+  ];
+  var CROUCH = 0.75, WALK = 0.75, MIN_SPEED = 50, STAND_GRACE = 0.7;
+  var CROUCH_GRACE = 1.1;
+
+  // CalculateSpeed, capped by the per-gait m_flClientMaxSpeed
+  function topSpeed(c, w, crouched, walk, sprint) {
+    var calc = c.norm * w * (crouched ? CROUCH : 1) * (walk ? WALK : 1) * (sprint ? c.sprintMod : 1);
+    calc = Math.max(55, calc);
+    var cap = sprint ? c.sprintCap * w : (walk && !crouched ? c.crouch * w : c.norm * w);
+    return Math.min(calc, cap);
+  }
+
+  function fmt(v) { return (Math.round(v * 10) / 10).toFixed(1).replace(/\.0$/, ""); }
+
+  function cell(v, silent) {
+    var td = document.createElement("td");
+    td.className = "cell";
+    if (v === null) { td.innerHTML = '<span class="muted">cannot sprint</span>'; return td; }
+    td.innerHTML = '<span class="v">' + fmt(v) + '</span><span class="chip ' + (silent ? "silent" : "audible") + '">' + (silent ? "silent" : "audible") + "</span>";
+    return td;
+  }
+
+  function render() {
+    var w = parseFloat(document.getElementById("wep").value);
+    var grace = CROUCH_GRACE;
+    var body = document.getElementById("matrix-body");
+    body.textContent = "";
+    CLASSES.forEach(function (c) {
+      var tr = document.createElement("tr");
+      var th = document.createElement("td");
+      th.textContent = c.name;
+      th.style.fontWeight = "600";
+      tr.appendChild(th);
+      var standLimit = c.norm * STAND_GRACE;
+      var crouchLimit = c.crouch * w * grace;
+      [[false, true, false], [false, false, false], [false, false, true], [true, true, false], [true, false, false], [true, false, true]].forEach(function (g) {
+        var crouched = g[0], walk = g[1], sprint = g[2];
+        if (sprint && !c.sprintMod) { tr.appendChild(cell(null)); return; }
+        var v = topSpeed(c, w, crouched, walk, sprint);
+        var silent = v < MIN_SPEED || (crouched ? v <= crouchLimit : (walk && v <= standLimit));
+        tr.appendChild(cell(v, silent));
+      });
+      var sl = document.createElement("td"); sl.className = "limit"; sl.textContent = fmt(standLimit); tr.appendChild(sl);
+      var cl = document.createElement("td"); cl.className = "limit"; cl.textContent = fmt(crouchLimit); tr.appendChild(cl);
+      body.appendChild(tr);
+    });
+  }
+
+  document.getElementById("wep").addEventListener("change", render);
+  render();
+})();
+</script>
+</body>
+</html>
