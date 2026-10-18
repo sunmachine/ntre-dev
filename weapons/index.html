@@ -92,6 +92,11 @@ strong { font-weight: 600; }
 
 .callout { background: var(--accent-soft); border-left: 3px solid var(--accent); padding: 14px 16px; border-radius: 2px; }
 
+.skeptic { border: 1px solid var(--line); background: var(--surface); border-radius: 3px; padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.skeptic h3 { font-size: 1.05rem; }
+.skeptic ol { gap: 10px; font-size: 0.95rem; }
+.skeptic p { font-size: 0.95rem; }
+
 figure { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 figcaption { font-size: 0.9rem; color: var(--muted); max-width: 720px; }
 figcaption b { color: var(--ink); font-weight: 600; font-family: var(--font-mono); font-size: 0.85em; letter-spacing: 0.04em; margin-right: 0.4em; }
@@ -231,7 +236,19 @@ tr.hl .uqbar i { background: var(--accent); }
       <li><div><strong>Support gets the MX at Corporal, the second rank.</strong> Assault waits until Sergeant. Support has 225 HP and pays nothing extra for the gun. The MX also has the highest penetration of any automatic primary (38).</div></li>
       <li><div id="finding-uq"><strong>The MX scores 55 on the usefulness quotient, fourth of 20 and the best rifle at close and mid range, level with the PZ252 at 39 m.</strong> Above it are the SRS (100), AA13 (76) and Supa 7 (60). The SRS and AA13 are Lieutenant-only Assault guns, and both shotguns fall well behind the MX at 39 m. The next rifle is the PZ252 at 48.</div></li>
     </ol>
-    <p class="callout"><strong>Headshots do chest damage.</strong> <code>sk_player_head</code> is 1 in <code>skill.cfg</code>, and a running server reported the same value on 18 October 2026. A head or neck hit counts the same as an upper chest hit (the ×1.0 tier in 3.3), so every figure here holds for head hits too.</p>
+    <p class="callout"><strong>Headshots do chest damage.</strong> A head or neck hit does exactly what an upper chest hit does: the gun's damage times 1.485. <code>sk_player_head</code> and <code>sk_player_chest</code> are both 1 in <code>skill.cfg</code>, and a running server reported the same head value on 18 October 2026. Every figure on this page holds for head hits too.</p>
+    <div class="skeptic" id="skeptic">
+      <h3>Just in case you're skeptical</h3>
+      <p>These are all the steps a bullet's damage takes from the weapon script to the player's health. Only step 3 looks at where the bullet hit, and it treats head and chest the same.</p>
+      <ol>
+        <li><strong>Script damage enters the bullet.</strong> <code>CHL2MP_Player::FireBullets</code> copies the weapon script's <code>Damage</code> onto the bullet (<code>hl2mp_player.cpp:710</code>). A Supa 7 slug gets 2.5 times that here (<code>:716</code>). The NEO weapon base leaves the bullet's damage at zero, so this is the step that sets it.</li>
+        <li><strong>The global modifier.</strong> <code>CNEO_Player::ModifyFireBulletsDamage</code> multiplies by <code>sv_neo_wep_dmg_modifier</code>, 1.485 by default (<code>neo_player.cpp:4058</code>).</li>
+        <li><strong>The hit group, and the only place it counts.</strong> <code>CBasePlayer::TraceAttack</code> scales by <code>sk_player_head</code>, <code>_chest</code>, <code>_stomach</code>, <code>_arm</code> or <code>_leg</code> (<code>player.cpp:1004</code>). No NEO, HL2 or HL2MP player class overrides this function.</li>
+        <li><strong>Nothing after that reads the hit group.</strong> Skill-level scaling does nothing under the multiplayer rules NEO inherits (<code>gamerules.h:312</code>). Players carry no armor outside a spectator takeover (<code>neo_player.cpp:4208</code>). The received damage scale only zeroes damage during TDM and DM spawn protection (<code>neo_player.cpp:2667</code>). <code>OnTakeDamage_Alive</code> only splits damage into whole points and a carried fraction (<code>neo_player.cpp:3321</code>).</li>
+        <li><strong>The <code>headshot</code> flag changes no damage.</strong> It is set on the death event for head and neck hits, and only read for the kill notice (<code>neo_gamerules.cpp:4579</code>).</li>
+      </ol>
+      <p>To check a server yourself, run <code>sk_player_head</code> and <code>sk_player_chest</code> in its console. Both should print 1.</p>
+    </div>
   </section>
 
   <section id="breakdown">
@@ -358,12 +375,13 @@ tr.hl .uqbar i { background: var(--accent); }
       <li>Animation pose. The hitboxes are from the reference pose (an A-pose); holding a gun moves the arms in front of the chest, which turns some ×1.0 hits into ×0.75 hits.</li>
       <li>Reload time, aim-in time (0.115 s for every gun) and switch time.</li>
       <li>Movement penalty and jumping. A moving shooter from the hip gains 2.0 penalty per second.</li>
-      <li>The Supa 7 slug, the Tachi burst mode and the BALC (Juggernaut only).</li>
+      <li>The Supa 7 slug (2.5 times pellet damage), the Tachi burst mode and the BALC (Juggernaut only).</li>
     </ul>
     <h3>Sources</h3>
     <ol class="refs">
       <li><code>src/game/shared/neo/weapons/weapon_neobasecombatweapon.cpp</code>: handling table (lines 112 to 280), penalty decay (574 to 602), spread lerp (854 to 880), view kick (884 to 931), penalty step (1089).</li>
       <li><code>src/game/shared/neo/weapons/weapon_neobasecombatweapon.h:280</code>: penalty 0.8 per shot, cap 1.0.</li>
+      <li><code>src/game/server/hl2mp/hl2mp_player.cpp:710</code>: script damage copied onto each bullet; Supa 7 slug multiplier at 716.</li>
       <li><code>src/game/shared/neo/neo_gamerules.cpp:53</code>: <code>sv_neo_wep_dmg_modifier</code> 1.485.</li>
       <li><code>src/game/shared/neo/neo_player_shared.h:229</code>: class health.</li>
       <li><code>game/neo/cfg/skill.cfg:11</code> and <code>src/game/server/player.cpp:1004</code>: hit group multipliers.</li>
