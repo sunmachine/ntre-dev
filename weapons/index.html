@@ -134,8 +134,7 @@ svg .ink { fill: var(--ink); }
 .controls select { font: 500 0.88rem/1.2 var(--font-body); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 3px; padding: 6px 8px; }
 .legend b { color: var(--ink); font-family: var(--font-mono); font-weight: 600; }
 .controls .zoom { margin-left: 12px; }
-.controls input[type="range"] { width: 160px; max-width: 40vw; accent-color: var(--accent); }
-.controls output { font: 600 0.88rem/1 var(--font-mono); color: var(--ink); min-width: 2.6em; }
+.controls .seg button { padding: 8px 10px; font-family: var(--font-mono); }
 
 /* Spec tables */
 table { border-collapse: collapse; width: 100%; font-size: 0.88rem; font-variant-numeric: tabular-nums; }
@@ -235,7 +234,7 @@ tr.hl .uqbar i { background: var(--accent); }
   <header class="hero">
     <span class="eyebrow">Investigation · Draft for review</span>
     <h1>Gun Handling Audit</h1>
-    <p class="byline">Neotokyo Rebuild · branch weapons/feel-investigation · <span class="rev">Revision 9</span> · updated <time class="local" id="updated" datetime="2026-10-19T00:56:00Z">19 October 2026, 00:56 UTC</time> · <a href="#revisions">all revisions</a></p>
+    <p class="byline">Neotokyo Rebuild · branch weapons/feel-investigation · <span class="rev">Revision 10</span> · updated <time class="local" id="updated" datetime="2026-10-19T00:58:00Z">19 October 2026, 00:58 UTC</time> · <a href="#revisions">all revisions</a></p>
     <p class="lede">How every gun fires, what the numbers say about balance, and one synthetic score per gun for how useful it is. Players say the MX is very strong. The code agrees, and the main reason is a damage breakpoint, not a spread or recoil value.</p>
   </header>
 
@@ -438,9 +437,10 @@ tr.hl .uqbar i { background: var(--accent); }
     </figure>
     <figure>
       <div class="controls"><label for="track-gun">Gun</label> <select id="track-gun"></select>
-        <label for="track-zoom" class="zoom">Zoom</label> <input type="range" id="track-zoom" min="1" max="6" step="0.5" value="1"> <output id="track-zoom-out" for="track-zoom">1×</output></div>
+        <span class="zoom" id="track-zoom-label">Zoom</span>
+        <div class="seg" id="track-zoom" role="group" aria-labelledby="track-zoom-label"><button type="button" data-zoom="1" aria-pressed="true">1×</button><button type="button" data-zoom="2" aria-pressed="false">2×</button><button type="button" data-zoom="3" aria-pressed="false">3×</button><button type="button" data-zoom="4" aria-pressed="false">4×</button><button type="button" data-zoom="6" aria-pressed="false">6×</button><button type="button" data-zoom="8" aria-pressed="false">8×</button></div></div>
       <div class="tracks" id="fig-tracks"></div>
-      <figcaption><b>FIG 8</b>Forecast track for each profile, like a hurricane forecast: the line joins where each shot of an 8-shot burst lands on average, and the cone holds two out of three of that shot's hits. Assault at 19.5 m, firing at the rhythm the profile picks for that fight. The dashed line is the no-control track, for comparison. Aim error is included. Zoom closes in on the middle of the five tracks and enlarges the shot dots with it.</figcaption>
+      <figcaption><b>FIG 8</b>Forecast track for each profile, like a hurricane forecast: the line joins where each shot of an 8-shot burst lands on average, and the cone holds two out of three of that shot's hits. Assault at 19.5 m, firing at the rhythm the profile picks for that fight. The dashed line is the no-control track, for comparison. Aim error is included. Zoom closes in on the middle of the five tracks; the shot dots grow only slightly, so close shots stay apart.</figcaption>
     </figure>
     <figure>
       <div class="plate scroll">
@@ -532,7 +532,8 @@ tr.hl .uqbar i { background: var(--accent); }
     <h2>Revisions</h2>
     <p>Every published revision stays online at its own address. The latest is always at <a href="https://sunmachine.github.io/ntre-dev/weapons/">https://sunmachine.github.io/ntre-dev/weapons/</a>.</p>
     <ol class="revisions" reversed>
-      <li value="9"><strong>Revision 9</strong> (this page) <span class="when"><time class="local" datetime="2026-10-19T00:56:00Z">19 October 2026, 00:56 UTC</time></span><br>Add a zoom slider to the control forecast tracks</li>
+      <li value="10"><strong>Revision 10</strong> (this page) <span class="when"><time class="local" datetime="2026-10-19T00:58:00Z">19 October 2026, 00:58 UTC</time></span><br>Make the forecast zoom discrete up to 8x and keep shot dots small</li>
+      <li value="9"><a href="https://sunmachine.github.io/ntre-dev/weapons/rev/9/">Revision 9</a> <span class="when"><time class="local" datetime="2026-10-19T00:56:56Z">19 October 2026, 00:56 UTC</time></span><br>Add a zoom slider to the control forecast tracks</li>
       <li value="8"><a href="https://sunmachine.github.io/ntre-dev/weapons/rev/8/">Revision 8</a> <span class="when"><time class="local" datetime="2026-10-19T00:30:57Z">19 October 2026, 00:30 UTC</time></span><br>Show what the viewkick costs and what a larger kick would do</li>
       <li value="7"><a href="https://sunmachine.github.io/ntre-dev/weapons/rev/7/">Revision 7</a> <span class="when"><time class="local" datetime="2026-10-19T00:15:13Z">19 October 2026, 00:15 UTC</time></span><br>Explain viewkick and compare five control profiles; caveat the UQ as synthetic</li>
       <li value="6"><a href="https://sunmachine.github.io/ntre-dev/weapons/rev/6/">Revision 6</a> <span class="when"><time class="local" datetime="2026-10-18T23:39:15Z">18 October 2026, 23:39 UTC</time></span><br>Stamp a revision and update time, and keep every past revision online</li>
@@ -894,7 +895,9 @@ tr.hl .uqbar i { background: var(--accent); }
     var VX0 = -40, VX1 = 40, VZ0 = -62, VZ1 = 48;
     var W = 170, H = Math.round(W * (VZ1 - VZ0) / (VX1 - VX0));
     var X0 = VX0, X1 = VX1, Z0 = VZ0, Z1 = VZ1, zoom = 1;
-    var zoomIn = document.getElementById("track-zoom"), zoomOut = document.getElementById("track-zoom-out");
+    var zoomButtons = document.querySelectorAll("#track-zoom button");
+    // Dots grow far slower than the view, so shots a unit apart stay separate at 8x.
+    function dotR(base) { return base * Math.pow(zoom, 0.3); }
     function px(x) { return (x - X0) / (X1 - X0) * W; }
     function pz(z) { return (1 - (z - Z0) / (Z1 - Z0)) * H; }
     function frame(id) {
@@ -931,8 +934,6 @@ tr.hl .uqbar i { background: var(--accent); }
     function line(tr) { return tr.map(function (p, i) { return (i ? "L" : "M") + px(p[0]).toFixed(1) + "," + pz(p[1]).toFixed(1); }).join(""); }
     function draw() {
       var id = sel.value, w = byId[id];
-      zoom = Number(zoomIn.value);
-      zoomOut.textContent = zoom.toFixed(zoom % 1 ? 1 : 0) + "×";
       frame(id);
       host.textContent = "";
       var none = P[0].weapons[id].track;
@@ -962,8 +963,8 @@ tr.hl .uqbar i { background: var(--accent); }
         if (i) el("path", { d: line(none), fill: "none", stroke: "var(--ink)", "stroke-opacity": 0.55, "stroke-width": 1.2, "stroke-dasharray": "3 3" }, g);
         el("path", { d: line(tr), fill: "none", stroke: "var(--accent)", "stroke-width": 2, "stroke-linejoin": "round" }, g);
         tr.forEach(function (q, k) {
-          el("circle", { cx: px(q[0]), cy: pz(q[1]), r: (k ? 2.6 : 3.6) * zoom, fill: k ? "var(--accent)" : "var(--surface)", stroke: "var(--accent)", "stroke-width": 1.5 }, g);
-          el("circle", { cx: px(q[0]), cy: pz(q[1]), r: Math.max(7, 4 * zoom), fill: "transparent", tabindex: 0,
+          el("circle", { cx: px(q[0]), cy: pz(q[1]), r: dotR(k ? 2.2 : 3), fill: k ? "var(--accent)" : "var(--surface)", stroke: k ? "var(--surface)" : "var(--accent)", "stroke-width": k ? 0.8 : 1.5 }, g);
+          el("circle", { cx: px(q[0]), cy: pz(q[1]), r: dotR(k ? 2.2 : 3) + 2, fill: "transparent", tabindex: 0,
             "data-tip": w.name + ", " + p.name + ", shot " + (k + 1) + ": center " + Math.abs(q[1]).toFixed(1) + " units " + (q[1] >= 0 ? "above" : "below") + " the aim point, cone radius " + q[2].toFixed(1) }, g);
         });
         // Name it when the track itself (not just its cone) leaves the view.
@@ -973,7 +974,13 @@ tr.hl .uqbar i { background: var(--accent); }
       });
     }
     sel.addEventListener("change", draw);
-    zoomIn.addEventListener("input", draw);
+    Array.prototype.forEach.call(zoomButtons, function (b) {
+      b.addEventListener("click", function () {
+        zoom = Number(b.getAttribute("data-zoom"));
+        Array.prototype.forEach.call(zoomButtons, function (o) { o.setAttribute("aria-pressed", String(o === b)); });
+        draw();
+      });
+    });
     draw();
 
     // Figure 9: UQ per profile, sorted by gain
