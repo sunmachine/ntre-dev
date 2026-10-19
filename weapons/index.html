@@ -240,7 +240,7 @@ tr.hl .uqbar i { background: var(--accent); }
   <header class="hero">
     <span class="eyebrow">Investigation · Draft for review</span>
     <h1>Gun Handling Audit</h1>
-    <p class="byline">Neotokyo Rebuild · branch weapons/feel-investigation · <span class="rev">Revision 14</span> · updated <time class="local" id="updated" datetime="2026-10-19T01:27:00Z">19 October 2026, 01:27 UTC</time> · <a href="#revisions">all revisions</a></p>
+    <p class="byline">Neotokyo Rebuild · branch weapons/feel-investigation · <span class="rev">Revision 15</span> · updated <time class="local" id="updated" datetime="2026-10-19T01:30:00Z">19 October 2026, 01:30 UTC</time> · <a href="#revisions">all revisions</a></p>
     <p class="lede">How every gun fires, what the numbers say about balance, and one synthetic score per gun for how useful it is. Players say the MX is very strong. The code agrees, and the main reason is a damage breakpoint, not a spread or recoil value.</p>
   </header>
 
@@ -443,7 +443,7 @@ tr.hl .uqbar i { background: var(--accent); }
     </figure>
     <figure>
       <div class="controls"><label for="track-gun">Gun</label> <select id="track-gun"></select>
-        <div class="seg" id="track-mode" role="group" aria-label="Track view"><button type="button" data-mode="avg" aria-pressed="true">Average track</button><button type="button" data-mode="samples" aria-pressed="false">Sample bursts</button></div>
+        <div class="seg" id="track-mode" role="group" aria-label="Track view"><button type="button" data-mode="samples" aria-pressed="true">Sample bursts</button><button type="button" data-mode="avg" aria-pressed="false">Average track</button></div>
         <label for="track-zoom" class="zoom">Zoom</label> <input type="range" id="track-zoom" min="1" max="16" step="any" value="1"> <output id="track-zoom-out" for="track-zoom">1.0×</output>
         <button type="button" class="reset" id="track-reset">Reset view</button></div>
       <div class="tracks" id="fig-tracks"></div>
@@ -539,7 +539,8 @@ tr.hl .uqbar i { background: var(--accent); }
     <h2>Revisions</h2>
     <p>Every published revision stays online at its own address. The latest is always at <a href="https://sunmachine.github.io/ntre-dev/weapons/">https://sunmachine.github.io/ntre-dev/weapons/</a>.</p>
     <ol class="revisions" reversed>
-      <li value="14"><strong>Revision 14</strong> (this page) <span class="when"><time class="local" datetime="2026-10-19T01:27:00Z">19 October 2026, 01:27 UTC</time></span><br>Show sample bursts of real bullets on the control forecast tracks</li>
+      <li value="15"><strong>Revision 15</strong> (this page) <span class="when"><time class="local" datetime="2026-10-19T01:30:00Z">19 October 2026, 01:30 UTC</time></span><br>Open the control forecast tracks on sample bursts</li>
+      <li value="14"><a href="https://sunmachine.github.io/ntre-dev/weapons/rev/14/">Revision 14</a> <span class="when"><time class="local" datetime="2026-10-19T01:27:33Z">19 October 2026, 01:27 UTC</time></span><br>Show sample bursts of real bullets on the control forecast tracks</li>
       <li value="13"><a href="https://sunmachine.github.io/ntre-dev/weapons/rev/13/">Revision 13</a> <span class="when"><time class="local" datetime="2026-10-19T01:21:00Z">19 October 2026, 01:21 UTC</time></span><br>Correct how the page describes the viewkick&#x27;s share of the scatter</li>
       <li value="12"><a href="https://sunmachine.github.io/ntre-dev/weapons/rev/12/">Revision 12</a> <span class="when"><time class="local" datetime="2026-10-19T01:02:26Z">19 October 2026, 01:02 UTC</time></span><br>Pan the forecast tracks by dragging and zoom up to 16x</li>
       <li value="11"><a href="https://sunmachine.github.io/ntre-dev/weapons/rev/11/">Revision 11</a> <span class="when"><time class="local" datetime="2026-10-19T01:00:09Z">19 October 2026, 01:00 UTC</time></span><br>Make the forecast zoom a smooth slider up to 8x</li>
@@ -905,7 +906,7 @@ tr.hl .uqbar i { background: var(--accent); }
     // Full view in units around the aim point; zoom narrows it toward the middle of the tracks.
     var VX0 = -40, VX1 = 40, VZ0 = -62, VZ1 = 48;
     var W = 170, H = Math.round(W * (VZ1 - VZ0) / (VX1 - VX0));
-    var X0 = VX0, X1 = VX1, Z0 = VZ0, Z1 = VZ1, zoom = 1, panX = 0, panZ = 0, trackMode = "avg";
+    var X0 = VX0, X1 = VX1, Z0 = VZ0, Z1 = VZ1, zoom = 1, panX = 0, panZ = 0, trackMode = "samples";
     var zoomIn = document.getElementById("track-zoom"), zoomOut = document.getElementById("track-zoom-out");
     // Dots grow far slower than the view, so shots a unit apart stay separate when zoomed in.
     function dotR(base) { return base * Math.pow(zoom, 0.3); }
