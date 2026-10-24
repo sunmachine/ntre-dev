@@ -575,57 +575,61 @@ svg text, .fx svg text { font-family: var(--font-display); }
         <h2 id="proposal-h"><span class="secno">2</span>Proposal</h2>
     <p>Make every footstep follow one formula, decided the same way by the server, the stepping player and everyone listening. Movement speed and feel do not change; only whether and when a step sound plays.</p>
     <div class="rules">
-      <p class="rule"><span class="rule-n">1</span>Quiet is opt-in. While crouched, walking or aiming, you are silent unless you move more than 10% faster than your own walk speed; walk and crouch walk are the same speed. Outside those three, every step at 50 u/s or faster is heard, so a runner passing through walk speed stays audible.</p>
+      <p class="rule"><span class="rule-n">1</span>Quiet is opt-in. While crouched, walking or aiming, you are silent up to 82.5% of your own run speed with your weapon: that is your crouch walk speed, which is also your walk speed, plus 10%. Outside those three, every step at 50 u/s or faster is heard, so a runner passing through walk speed stays audible.</p>
       <p class="rule"><span class="rule-n">2</span>Pressing crouch, walk or aim holds back your next footstep. If you settle into that mode, it is dropped. If you let go too early, it plays right away. Jumping or grabbing a ladder forgets it, and landing from a jump always makes a step.</p>
       <p class="rule"><span class="rule-n">3</span>Looking around while crouch walking or walking does not count as speeding up. Turning widens the threshold, and one brief switch of movement keys is forgiven.</p>
       <p class="rule"><span class="rule-n">4</span>Footstep volume follows how you move. Sprinting is the loudest, running keeps its volume, and a crouch sprint is 65% of a run.</p>
     </div>
     <h3 id="formula"><span class="secno">2.1</span>The footstep formula</h3>
     <p>The same shared code decides a footstep in three places: the server, the stepping player's own client, and every other client that can see them. The terms come in three groups: speeds, turning and timers. Each group gets one picture, and the formulas reuse the same letters.</p>
+    <pre class="formula">sound threshold = GetNormSpeed * weapon scale * SILENT_MOVE_THRESHOLD
+actual speed    = GetNormSpeed * weapon scale * stance modifier</pre>
+    <p>Both sides carry the weapon, so the gun cancels out: a quiet mode is silent whenever its stance modifier is at or below <code>SILENT_MOVE_THRESHOLD</code>, 0.825. Crouch and walk are 0.75 and aim is 0.6, so all three qualify with every gun; sprinting multiplies by 1.35 or 1.6 and never does. On master the threshold was <code>GetNormSpeed * 0.7</code> with no weapon term, so the headroom changed with the gun.</p>
     <h4><span class="secno">2.1.1</span>Speeds</h4>
     <figure class="figure fx">
-      <svg viewBox="0 0 680 240" role="img" aria-label="Speed ruler for an assault with an SRM. Crouched, steps are silent up to 1.1 times crouch walk speed, and up to 1.55 times while turning; crouch sprint is above both. Standing, steps are silent up to the same limit only while aiming or walking.">
+      <svg viewBox="0 0 680 240" role="img" aria-label="Speed ruler for an assault with an SRM. Crouched, steps are silent up to 0.825 times run speed with the weapon, and up to 1.1625 times while turning; crouch sprint is above both. Standing, steps are silent up to the same limit only while aiming or walking.">
   <line class="f-grid" x1="60.0" y1="34" x2="60.0" y2="206"/><text class="f-tick" x="60.0" y="222" text-anchor="middle">0</text><line class="f-grid" x1="160.0" y1="34" x2="160.0" y2="206"/><text class="f-tick" x="160.0" y="222" text-anchor="middle">40</text><line class="f-grid" x1="260.0" y1="34" x2="260.0" y2="206"/><text class="f-tick" x="260.0" y="222" text-anchor="middle">80</text><line class="f-grid" x1="360.0" y1="34" x2="360.0" y2="206"/><text class="f-tick" x="360.0" y="222" text-anchor="middle">120</text><line class="f-grid" x1="460.0" y1="34" x2="460.0" y2="206"/><text class="f-tick" x="460.0" y="222" text-anchor="middle">160</text><line class="f-grid" x1="560.0" y1="34" x2="560.0" y2="206"/><text class="f-tick" x="560.0" y="222" text-anchor="middle">200</text><line class="f-grid" x1="660.0" y1="34" x2="660.0" y2="206"/><text class="f-tick" x="660.0" y="222" text-anchor="middle">240</text>
   <text class="f-tick" x="660" y="236" text-anchor="end">u/s</text>
   <text class="f-row" x="56" y="82" text-anchor="end">Crouched</text>
   <text class="f-row" x="56" y="164" text-anchor="end">Standing</text>
   <rect class="f-silent" x="60.0" y="66" width="280.5" height="24"/>
   <rect class="f-turn" x="340.5" y="66" width="114.75" height="24"/>
-  <text class="f-band" x="262.75" y="82" text-anchor="middle">silent up to 1.1 c = 112.2</text>
-  <text class="f-bandt" x="417.875" y="111" text-anchor="middle">+ turning, up to 1.55 c = 158.1</text>
+  <text class="f-band" x="262.75" y="82" text-anchor="middle">silent up to 0.825 w = 112.2</text>
+  <text class="f-bandt" x="417.875" y="111" text-anchor="middle">+ turning, up to 1.1625 w = 158.1</text>
   <line class="f-mk" x1="251.25" y1="90" x2="251.25" y2="98"/><text class="f-lbl" x="251.25" y="111" text-anchor="middle">crouch +walk 76.5</text>
-  <line class="f-mk" x1="315.0" y1="58" x2="315.0" y2="66"/><text class="f-lbl" x="315.0" y="52" text-anchor="middle">c = crouch walk 102</text>
+  <line class="f-mk" x1="315.0" y1="58" x2="315.0" y2="66"/><text class="f-lbl" x="315.0" y="52" text-anchor="middle">crouch walk 102 = 0.75 w</text>
   <line class="f-mkbad" x1="468.00000000000006" y1="58" x2="468.00000000000006" y2="66"/><text class="f-lbl" x="468.00000000000006" y="52" text-anchor="middle">crouch sprint 163.2</text>
   <rect class="f-cond" x="60.0" y="148" width="280.0" height="24"/>
   <rect class="f-turn" x="340.5" y="148" width="114.75" height="24"/>
-  <text class="f-band" x="262.5" y="164" text-anchor="middle">aiming or +walk: up to 1.1 c</text>
-  <text class="f-lbl" x="340.0" y="193" text-anchor="middle">1.1 c = 112.2</text>
+  <text class="f-band" x="262.5" y="164" text-anchor="middle">aiming or +walk: up to 0.825 w</text>
+  <text class="f-lbl" x="340.0" y="193" text-anchor="middle">0.825 w = 112.2</text>
   <line class="f-mk" x1="315.0" y1="140" x2="315.0" y2="148"/><text class="f-lbl" x="315.0" y="134" text-anchor="middle">+walk 102</text>
-  <line class="f-mkbad" x1="400.0" y1="140" x2="400.0" y2="148"/><text class="f-lbl" x="400.0" y="134" text-anchor="middle">run 136</text>
+  <line class="f-mkbad" x1="400.0" y1="140" x2="400.0" y2="148"/><text class="f-lbl" x="400.0" y="134" text-anchor="middle">w = run 136</text>
   <line class="f-mkbad" x1="604.0" y1="140" x2="604.0" y2="148"/><text class="f-lbl" x="604.0" y="134" text-anchor="middle">sprint 217.6</text>
   <rect class="f-none" x="60.0" y="66" width="125.0" height="24"/>
   <rect class="f-none" x="60.0" y="148" width="125.0" height="24"/>
   <text class="f-tick" x="122.5" y="193" text-anchor="middle">below 50: never</text>
 </svg>
-      <figcaption>Drawn for an assault holding an SRM (weapon speed 0.85). Every silent line is a multiple of c, so the picture has the same shape for every class and weapon. Red marks are speeds that make footsteps.</figcaption>
+      <figcaption>Drawn for an assault holding an SRM (weapon speed 0.85). Every silent line is a multiple of w, the run speed with the weapon, so the picture has the same shape for every class and weapon. Red marks are speeds that make footsteps.</figcaption>
     </figure>
     <dl class="fkey">
       <dt>v</dt><dd>The player's horizontal speed, because other clients guess vertical speed badly on stairs.</dd>
-      <dt>c</dt><dd>Your own crouch walk speed, which is also your walk speed: class crouch speed × your weapon's speed scale. The silent threshold is a multiple of it.</dd>
-      <dt>n</dt><dd>Class run speed with no weapon slowdown (recon 200, others 160). Master's limits are multiples of it; the new rule does not use it.</dd>
+      <dt>w</dt><dd>Your own run speed with your weapon: <code>GetNormSpeed</code> × weapon speed scale (assault with an SRM: 136). The silent threshold is <code>SILENT_MOVE_THRESHOLD</code>, 0.825, of it.</dd>
+      <dt>c</dt><dd>Your own crouch walk speed, which is also your walk speed: 0.75 w. The threshold is c plus 10%.</dd>
+      <dt>n</dt><dd>Class run speed with no weapon slowdown (recon 200, others 160), <code>GetNormSpeed</code>. Master's limits are multiples of it; the new rule multiplies it by the weapon first, which gives w.</dd>
       <dt>quiet mode</dt><dd>Crouched, walking or aiming, on the ground. The threshold below applies only inside it; it decides which speed you are measured against, never whether a fast step is silent.</dd>
       <dt>50</dt><dd>No footsteps below 50 u/s in any posture. Outside a quiet mode this is the only threshold.</dd>
     </dl>
     <h4><span class="secno">2.1.2</span>Turning</h4>
     <figure class="figure fx">
-      <svg viewBox="0 0 680 250" role="img" aria-label="The crouched threshold rises from 1.1 to 1.55 times crouch walk speed as the view turns up to 180 degrees per second, and stays above the simulated speed gained from turning at every rate.">
-  <line class="f-grid" x1="80.0" y1="30" x2="80.0" y2="210"/><text class="f-tick" x="80.0" y="226" text-anchor="middle">0</text><line class="f-grid" x1="215.0" y1="30" x2="215.0" y2="210"/><text class="f-tick" x="215.0" y="226" text-anchor="middle">90</text><line class="f-grid" x1="350.0" y1="30" x2="350.0" y2="210"/><text class="f-tick" x="350.0" y="226" text-anchor="middle">180</text><line class="f-grid" x1="485.0" y1="30" x2="485.0" y2="210"/><text class="f-tick" x="485.0" y="226" text-anchor="middle">270</text><line class="f-grid" x1="620.0" y1="30" x2="620.0" y2="210"/><text class="f-tick" x="620.0" y="226" text-anchor="middle">360</text><line class="f-grid" x1="80" y1="210.0" x2="620" y2="210.0"/><text class="f-tick" x="72" y="214.0" text-anchor="end">1.0</text><line class="f-grid" x1="80" y1="150.0" x2="620" y2="150.0"/><text class="f-tick" x="72" y="154.0" text-anchor="end">1.2</text><line class="f-grid" x1="80" y1="90.00000000000003" x2="620" y2="90.00000000000003"/><text class="f-tick" x="72" y="94.00000000000003" text-anchor="end">1.4</text><line class="f-grid" x1="80" y1="29.99999999999997" x2="620" y2="29.99999999999997"/><text class="f-tick" x="72" y="33.99999999999997" text-anchor="end">1.6</text>
+      <svg viewBox="0 0 680 250" role="img" aria-label="The crouched threshold rises from 0.825 to 1.1625 times run speed with the weapon as the view turns up to 180 degrees per second, and stays above the simulated speed gained from turning at every rate.">
+  <line class="f-grid" x1="80.0" y1="30" x2="80.0" y2="210"/><text class="f-tick" x="80.0" y="226" text-anchor="middle">0</text><line class="f-grid" x1="215.0" y1="30" x2="215.0" y2="210"/><text class="f-tick" x="215.0" y="226" text-anchor="middle">90</text><line class="f-grid" x1="350.0" y1="30" x2="350.0" y2="210"/><text class="f-tick" x="350.0" y="226" text-anchor="middle">180</text><line class="f-grid" x1="485.0" y1="30" x2="485.0" y2="210"/><text class="f-tick" x="485.0" y="226" text-anchor="middle">270</text><line class="f-grid" x1="620.0" y1="30" x2="620.0" y2="210"/><text class="f-tick" x="620.0" y="226" text-anchor="middle">360</text><line class="f-grid" x1="80" y1="210.0" x2="620" y2="210.0"/><text class="f-tick" x="72" y="214.0" text-anchor="end">0.75</text><line class="f-grid" x1="80" y1="150.0" x2="620" y2="150.0"/><text class="f-tick" x="72" y="154.0" text-anchor="end">0.9</text><line class="f-grid" x1="80" y1="90.00000000000003" x2="620" y2="90.00000000000003"/><text class="f-tick" x="72" y="94.00000000000003" text-anchor="end">1.05</text><line class="f-grid" x1="80" y1="29.99999999999997" x2="620" y2="29.99999999999997"/><text class="f-tick" x="72" y="33.99999999999997" text-anchor="end">1.2</text>
   <text class="f-tick" x="620" y="244" text-anchor="end">view turn rate r, degrees per second</text>
-  <text class="f-tick" x="80" y="20">× crouch walk speed c</text>
+  <text class="f-tick" x="80" y="20">× run speed w</text>
   <polygon class="f-margin" points="80.0,180.0 350.0,45.0 620.0,45.0 620.0,66.3 552.5,67.5 485.0,71.7 417.5,105.0 350.0,139.5 282.5,168.0 215.0,190.5 147.5,204.0 80.0,210.0"/>
   <polyline class="f-hdr" points="80.0,180.0 350.0,45.0 620.0,45.0"/>
   <polyline class="f-sim" points="80.0,210.0 147.5,204.0 215.0,190.5 282.5,168.0 350.0,139.5 417.5,105.0 485.0,71.7 552.5,67.5 620.0,66.3"/>
-  <text class="f-lblfix" x="380.0" y="35.0">threshold 1.1 + 0.45 · min(r / 180, 1)</text>
+  <text class="f-lblfix" x="380.0" y="35.0">threshold 0.825 + 0.3375 · min(r / 180, 1)</text>
   <text class="f-lbl" x="455.0" y="123.99999999999999">real speed while turning</text>
   <text class="f-lbl" x="455.0" y="138.0">(simulated peak)</text>
 </svg>
@@ -633,7 +637,7 @@ svg text, .fx svg text { font-family: var(--font-display); }
     </figure>
     <dl class="fkey">
       <dt>r</dt><dd>How fast the view is turning, in degrees per second. It keeps its peak and fades over about 0.25 s, about as long as friction takes to remove the extra speed.</dd>
-      <dt>t</dt><dd>Turn headroom: 0.45 × min(r / 180, 1). Zero while sprinting, so crouch sprinting stays loud mid-turn.</dd>
+      <dt>t</dt><dd>Turn headroom: 0.3375 × min(r / 180, 1), in units of w (0.45 of c). Zero while sprinting, so crouch sprinting stays loud mid-turn.</dd>
     </dl>
     <h4><span class="secno">2.1.3</span>Timers</h4>
     <figure class="figure fx">
@@ -700,12 +704,12 @@ volume  loud  if  v ≥ (crouched ? 80 : 220)
       <div class="panel fix">
         <span class="label">After: this PR</span>
         <pre>crouched, walking or aiming, not on a ladder:
-    silent  if  v ≤ c × (1.1 + t)
+    silent  if  v ≤ w × (0.825 + t)
 <span class="cm">otherwise loud, if v ≥ 50</span>
 volume  loud  if  standing and sprinting
         × 0.65 if crouched</pre>
         <ol class="problems solutions">
-          <li>Crouching alone is silent up to 1.1 c, your own crouch walk speed with your weapon, plus 10%. Walking and aiming use the same limit. Crouch sprinting, slides and pushes stay above it.</li>
+          <li>Crouching alone is silent up to 0.825 w, your own run speed with your weapon times <code>SILENT_MOVE_THRESHOLD</code>, which is your crouch walk speed plus 10%. Walking and aiming use the same limit. Crouch sprinting, slides and pushes stay above it.</li>
           <li>Turn headroom t widens the threshold with turn rate, and one brief key switch is forgiven.</li>
           <li>Every check measures horizontal speed, not vertical.</li>
           <li>The held step: the step during the crouch animation waits, and is dropped once you settle.</li>
@@ -744,7 +748,7 @@ volume  loud  if  standing and sprinting
       </div>
       <a class="srow" href="#crouch">
         <span><span class="chip fixed">On branch</span></span>
-        <span><span class="sname">Crouched threshold.</span> Relative to your own crouch walk speed, with weapon slowdown, plus 10%.</span>
+        <span><span class="sname">Crouched threshold.</span> 82.5% of your own run speed with weapon slowdown: crouch walk speed plus 10%.</span>
         <span>Crouch walking is silent. Crouch sprinting, slides and pushes are audible.</span>
       </a>
       <a class="srow" href="#held">
