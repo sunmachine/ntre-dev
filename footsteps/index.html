@@ -1,29 +1,8 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Footstep Consistency Audit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<style>
-/* Standalone page: base reset and the theme toggle */
-:root { color-scheme: light; box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
-*, *::before, *::after { box-sizing: inherit; }
-body { margin: 0; }
-img { max-width: 100%; }
-[hidden] { display: none !important; }
-.theme-toggle {
-  position: fixed; z-index: 20;
-  top: max(12px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px));
-  font: 500 0.78rem/1.2 "IBM Plex Sans", "Segoe UI", system-ui, sans-serif; letter-spacing: 0.02em;
-  background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 2px;
-  padding: 6px 10px; cursor: pointer;
-}
-.theme-toggle:hover { border-color: var(--ink); }
-.theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-</style>
 <style>
 /* Layout: white paper; one narrow reading column, numbered sections and figures, rule-lined tables; diagrams unchanged */
 :root {
@@ -371,37 +350,7 @@ svg text, .fx svg text { font-family: var(--font-display); }
 .refs { margin: 0; padding-left: 2.2em; display: flex; flex-direction: column; gap: 6px; font-size: 0.95rem; }
 .refs a { color: var(--accent); }
 </style>
-<script>
-(function () {
-  // Theme: system (no attribute), light or dark; remembered per browser when storage is available
-  var KEY = "footstep-audit-theme";
-  var state = null;
-  try { state = localStorage.getItem(KEY); } catch (e) {}
-  function apply() {
-    var root = document.documentElement;
-    if (state === "light" || state === "dark") root.setAttribute("data-theme", state);
-    else root.removeAttribute("data-theme");
-    var b = document.getElementById("theme-toggle");
-    if (b) {
-      var name = state === "light" ? "Light" : state === "dark" ? "Dark" : "System";
-      b.textContent = "Theme: " + name;
-      b.setAttribute("aria-label", "Color theme: " + name + ". Select to change.");
-    }
-  }
-  apply();
-  document.addEventListener("DOMContentLoaded", function () {
-    apply();
-    document.getElementById("theme-toggle").addEventListener("click", function () {
-      state = state === "light" ? "dark" : state === "dark" ? null : "light";
-      try { if (state) localStorage.setItem(KEY, state); else localStorage.removeItem(KEY); } catch (e) {}
-      apply();
-    });
-  });
-})();
-</script>
-</head>
-<body>
-<button type="button" class="theme-toggle" id="theme-toggle">Theme: System</button>
+
 <div class="page">
 
   <header class="hero">
@@ -432,7 +381,7 @@ svg text, .fx svg text { font-family: var(--font-display); }
           <li>Crouching is silent unless sprinting.</li>
           <li>Breaking a speed threshold for any reason still makes noise: a slide from a running jump, being pushed.</li>
           <li>Standing in place never makes noise.</li>
-          <li>Quieter movement sounds quieter: a crouch sprint is quieter than a run, and sprinting is the loudest.</li>
+          <li>Volume follows how you move: sprinting is the loudest, and a crouch sprint is quieter than a standing sprint but louder than a run.</li>
           <li>Walking, aiming and crouching follow the same silent rule.</li>
           <li>Movement feel stays the same.</li>
         </ul>
@@ -444,7 +393,7 @@ svg text, .fx svg text { font-family: var(--font-display); }
           <li><a href="#held">One last step played after pressing crouch.</a></li>
           <li><a href="#turning">Looking around or switching keys while crouch walking made footsteps.</a></li>
           <li><a href="#loudness">Crouched steps played louder than a standing run.</a></li>
-          <li><a href="#loudness">Sprinting as assault or support was as quiet as running.</a></li>
+          <li><a href="#loudness">Sprinting as assault, or as recon with most weapons, was as quiet as running.</a></li>
           <li><a href="#origin">Players out of sight but in earshot heard nothing from the server.</a></li>
           <li><a href="#spin">Steps while turning in place: reported, not reproduced.</a></li>
         </ul>
@@ -498,13 +447,15 @@ svg text, .fx svg text { font-family: var(--font-display); }
           <tr><td>Walk, aim with +walk</td><td>silent</td><td class="num">silent</td><td>silent movement threshold</td></tr>
           <tr><td>Crouch walk</td><td>silent</td><td class="num bad">0.325</td><td>above 80, so the loud volume, at 65%</td></tr>
           <tr><td>Run</td><td>quiet</td><td class="num">0.2</td><td>under 220, so the quiet volume</td></tr>
-          <tr><td>Crouch sprint</td><td>quieter than a run</td><td class="num bad">0.325</td><td>above 80, so the loud volume, at 65%</td></tr>
-          <tr><td>Sprint, recon</td><td>loudest</td><td class="num">0.5</td><td>229.5 with a 0.85 weapon, above 220</td></tr>
-          <tr><td>Sprint, assault and support</td><td>loudest</td><td class="num bad">0.2</td><td>217.6 and 183.6 with a 0.85 weapon, under 220</td></tr>
+          <tr><td>Crouch sprint</td><td>between a run and a sprint</td><td class="num">0.325</td><td>above 80, so the loud volume, at 65%</td></tr>
+          <tr><td>Sprint, recon with a 0.85 weapon</td><td>loudest</td><td class="num">0.5</td><td>229.5, above 220</td></tr>
+          <tr><td>Sprint, recon with a slower weapon</td><td>loudest</td><td class="num bad">0.2</td><td>216 with a 0.8 weapon, less with the rifles, under 220</td></tr>
+          <tr><td>Sprint, assault</td><td>loudest</td><td class="num bad">0.2</td><td>217.6 at most, with a 0.85 weapon, under 220</td></tr>
         </tbody>
       </table>
     </div>
-    <p>So a crouched step was about 1.6 times as loud as a running one, and whether a sprint was loud depended on class and weapon. Section <a href="#volume">3.5</a> has the fix, and <a href="#evidence">4.3</a> the test log counts.</p>
+    <p>So a crouch walk was about 1.6 times as loud as a run, and a sprint was only loud for a recon carrying a 0.85 weapon. Support cannot sprint. Section <a href="#volume">3.5</a> has the fix, and <a href="#evidence">4.3</a> the test log counts.</p>
+    <p class="muted">The BALC is the only weapon with no slowdown (1.0), and only the Juggernaut carries it. A Juggernaut sprint reaches 256 u/s and was loud on master. This paper leaves the Juggernaut mode out of the sprint figures; it will be reviewed separately.</p>
   </section>
 
   <section class="problem" id="history" aria-labelledby="history-h">
@@ -578,7 +529,7 @@ svg text, .fx svg text { font-family: var(--font-display); }
       <p class="rule"><span class="rule-n">1</span>Quiet is opt-in. While crouched, walking or aiming, you are silent up to 82.5% of your own run speed with your weapon: that is your crouch walk speed, which is also your walk speed, plus 10%. Outside those three, every step at 50 u/s or faster is heard, so a runner passing through walk speed stays audible.</p>
       <p class="rule"><span class="rule-n">2</span>Pressing crouch, walk or aim holds back your next footstep. If you settle into that mode, it is dropped. If you let go too early, it plays right away. Jumping or grabbing a ladder forgets it, and landing from a jump always makes a step.</p>
       <p class="rule"><span class="rule-n">3</span>Looking around while crouch walking or walking does not count as speeding up. Turning widens the threshold, and one brief switch of movement keys is forgiven.</p>
-      <p class="rule"><span class="rule-n">4</span>Footstep volume follows how you move. Sprinting is the loudest, running keeps its volume, and a crouch sprint is 65% of a run.</p>
+      <p class="rule"><span class="rule-n">4</span>Footstep volume follows how you move. Sprinting is the loudest, running keeps its volume, and a crouch sprint is 65% of a sprint: louder than a run, quieter than a standing sprint.</p>
     </div>
     <h3 id="formula"><span class="secno">2.1</span>The footstep formula</h3>
     <p>The same shared code decides a footstep in three places: the server, the stepping player's own client, and every other client that can see them. The terms come in three groups: speeds, turning and timers. Each group gets one picture, and the formulas reuse the same letters.</p>
@@ -697,7 +648,7 @@ volume  loud  if  v ≥ (crouched ? 80 : 220)
           <li><strong>0.7 ×</strong>: crouch with +walk and standing +walk sat only about 10% under the limit with most weapons, up to 38% with the slowest, so looking around while moving pushed them over.</li>
           <li><strong>v</strong>: full speed, including the vertical speed other clients see when a player steps up stairs.</li>
           <li><strong>crouched</strong>: only true after the 0.4 s crouch animation, so one running step leaked when dropping into a crouch.</li>
-          <li><strong>80 and 220</strong>: the SDK's volume cutoffs fit its third speed crouch. Every NEO crouch walk is above 80, so crouched steps were louder than a run, and assault and support sprints were under 220, as quiet as a run.</li>
+          <li><strong>80 and 220</strong>: the SDK's volume cutoffs fit its third speed crouch. Every NEO crouch walk is above 80, so crouched steps were louder than a run, and assault sprints, and recon sprints with most weapons, were under 220, as quiet as a run.</li>
           <li><strong>Outside the formula</strong>: server footsteps reached nobody (#2230).</li>
         </ol>
       </div>
@@ -713,7 +664,7 @@ volume  loud  if  standing and sprinting
           <li>Turn headroom t widens the threshold with turn rate, and one brief key switch is forgiven.</li>
           <li>Every check measures horizontal speed, not vertical.</li>
           <li>The held step: the step during the crouch animation waits, and is dropped once you settle.</li>
-          <li>Volume follows the movement mode: sprinting is loud, running is quiet, and crouched steps are 65% of a run.</li>
+          <li>Volume follows the movement mode: sprinting is loud, running is quiet, and crouched steps are scaled to 65%, so a crouch sprint sits between a run and a sprint.</li>
           <li>The server footstep origin is fixed in #2230, a separate PR.</li>
         </ol>
       </div>
@@ -726,8 +677,8 @@ volume  loud  if  standing and sprinting
         <tbody>
           <tr><td>Crouch walking</td><td class="bad">audible, louder than a run</td><td class="good">silent</td></tr>
           <tr><td>Crouch walking with +walk or aim</td><td class="bad">silent until a turn</td><td class="good">silent</td></tr>
-          <tr><td>Crouch sprinting</td><td class="bad">audible, louder than a run</td><td class="good">audible, 65% of a run</td></tr>
-          <tr><td>Sprinting as assault or support</td><td class="bad">as quiet as a run</td><td class="good">loudest step</td></tr>
+          <tr><td>Crouch sprinting</td><td>audible, 0.325</td><td>audible, 0.325: between a run and a sprint</td></tr>
+          <tr><td>Sprinting as assault, or as recon with most weapons</td><td class="bad">as quiet as a run</td><td class="good">loudest step</td></tr>
           <tr><td>Slide from a run</td><td>audible</td><td>audible</td></tr>
           <tr><td>Pushed while crouched</td><td>audible</td><td>audible</td></tr>
           <tr><td>Turning while crouch walking</td><td class="bad">audible</td><td class="good">silent</td></tr>
@@ -769,7 +720,7 @@ volume  loud  if  standing and sprinting
       <a class="srow" href="#volume">
         <span><span class="chip fixed">On branch</span></span>
         <span><span class="sname">Step volume.</span> Chosen by movement mode instead of the SDK's speed cutoffs.</span>
-        <span>Crouch sprinting is 65% of a run. Sprinting is the loudest step for every class.</span>
+        <span>Crouch sprinting is 65% of a sprint, between a run and a sprint. Sprinting is the loudest step for every class and weapon.</span>
       </a>
       <a class="srow" href="#origin">
         <span><span class="chip none">Separate PR #2230</span></span>
@@ -784,7 +735,7 @@ volume  loud  if  standing and sprinting
       <li>No extra step when dropping into a crouch from a run.</li>
       <li>Looking around while crouch walking stays silent; repeated wiggle walking does not.</li>
       <li>Walking and aiming follow the crouched rule: the first wiggle step is forgiven, and walking with the BALC is silent.</li>
-      <li>Crouch sprinting is quieter than running, and sprinting is the loudest step for every class.</li>
+      <li>Crouch sprinting is louder than running but quieter than a sprint, and sprinting is the loudest step for every class and weapon.</li>
       <li>Players out of sight but within hearing range hear footsteps again.</li>
     </ul>
   </section>
@@ -1063,7 +1014,7 @@ if (IsInSilentMovementMode() &amp;&amp; !isOnLadder)
 
   <section class="problem" id="volume" aria-labelledby="volume-h">
     <div class="problem-head"><h3 id="volume-h"><span class="secno">3.5</span>Step volume by movement mode</h3><span class="chip fixed">On branch</span></div>
-    <p>The SDK picks a quiet or loud step volume by comparing speed with a fixed run speed, 80 u/s crouched and 220 u/s standing, then scales crouched steps to 65%. Those numbers fit the SDK's own crouch, a third of run speed (about 63 u/s), so its crouched steps stayed under 80 and quiet. NEO crouches at 0.75 of run speed, so every crouch walk passes 80 and gets the loud volume. Standing, assault and support sprints stay under 220 and get the quiet one.</p>
+    <p>The SDK picks a quiet or loud step volume by comparing speed with a fixed run speed, 80 u/s crouched and 220 u/s standing, then scales crouched steps to 65%. Those numbers fit the SDK's own crouch, a third of run speed (about 63 u/s), so its crouched steps stayed under 80 and quiet. NEO crouches at 0.75 of run speed, so every crouch walk passes 80 and gets the loud volume. Standing, an assault sprint stays under 220 with every weapon and a recon sprint only passes it with a 0.85 weapon, so most sprints get the quiet one.</p>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Movement, concrete</th><th class="num">Master</th><th class="num">This branch</th></tr></thead>
@@ -1071,30 +1022,33 @@ if (IsInSilentMovementMode() &amp;&amp; !isOnLadder)
           <tr><td>Walk, aim with +walk</td><td class="num">silent</td><td class="num">silent</td></tr>
           <tr><td>Crouch walk</td><td class="num bad">0.325</td><td class="num good">silent</td></tr>
           <tr><td>Run</td><td class="num">0.2</td><td class="num">0.2</td></tr>
-          <tr><td>Crouch sprint</td><td class="num bad">0.325</td><td class="num good">0.13</td></tr>
-          <tr><td>Sprint, recon</td><td class="num">0.5</td><td class="num">0.5</td></tr>
-          <tr><td>Sprint, assault and support</td><td class="num bad">0.2</td><td class="num good">0.5</td></tr>
+          <tr><td>Crouch sprint</td><td class="num">0.325</td><td class="num">0.325</td></tr>
+          <tr><td>Sprint, recon with a 0.85 weapon</td><td class="num">0.5</td><td class="num">0.5</td></tr>
+          <tr><td>Sprint, recon with a slower weapon</td><td class="num bad">0.2</td><td class="num good">0.5</td></tr>
+          <tr><td>Sprint, assault</td><td class="num bad">0.2</td><td class="num good">0.5</td></tr>
         </tbody>
       </table>
     </div>
     <div class="cols">
       <div class="panel bug">
         <span class="label">Problem</span>
-        <p>A crouched step played about 1.6 times as loud as a standing run step, and a sprint was only loud for recon. With master's crouched rule restored, a crouch walk sounded louder than a run.</p>
+        <p>A crouch walk played about 1.6 times as loud as a run, and a sprint was only loud for a recon carrying a 0.85 weapon. With master's crouched rule restored, a crouch walk sounded louder than a run.</p>
       </div>
       <div class="panel fix">
         <span class="label">Fix</span>
-        <p>Choose the volume from the movement mode. Only sprinting while standing is loud. Running is quiet, and crouched steps are quiet at the SDK's 65%, so a crouch sprint is 65% of a run.</p>
+        <p>Choose the volume from the movement mode. Sprinting is loud and everything else is quiet, for every class and weapon. Crouched steps keep the SDK's 65%, so a crouch sprint is 0.325: louder than a run, quieter than a standing sprint. Crouch walking is silent, so the quiet crouched volume (0.13) only plays on landings and on steps over the threshold.</p>
       </div>
     </div>
     <pre><span class="cm">// neo_player_shared.cpp</span>
 bool CNEO_Player::IsQuietFootstep() const
 {
-    return (GetFlags() &amp; FL_DUCKING) || !m_fIsSprinting;
+    return !m_fIsSprinting;
 }
 
-<span class="cm">// baseplayer_shared.cpp, UpdateStepSound, for each surface</span>
-fvol = bQuietStep ? 0.2 : 0.5;</pre>
+<span class="cm">// baseplayer_shared.cpp, UpdateStepSound</span>
+fvol = pNeoPlayer-&gt;GetSurfaceStepVolume(psurface, bQuietStep); <span class="cm">// 0.2 or 0.5 on concrete</span>
+if (GetFlags() &amp; FL_DUCKING)
+    fvol *= NEO_FS_CROUCH_VOLUME_SCALE; <span class="cm">// 0.65</span></pre>
     <p class="muted">Other surfaces keep their own quiet and loud pair, such as dirt at 0.25 and 0.55. The step interval still follows speed, so step timing does not change. The sprint state and the crouch flag reach every client, so the server, the stepping player and everyone listening pick the same volume.</p>
   </section>
 
@@ -1394,5 +1348,5 @@ nb_stop 0; bot_mimic 1</pre>
   render();
 })();
 </script>
-</body>
-</html>
+
+
