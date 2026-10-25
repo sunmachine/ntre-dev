@@ -681,13 +681,13 @@ actual speed    = GetNormSpeed * weapon scale * stance modifier</pre>
         <pre>sound threshold = GetNormSpeed * 0.7
 actual speed    = GetNormSpeed * weapon scale * stance modifier
 quiet modes     = aim, walk
-volume          = loud by speed</pre>
+loud if           speed is over a fixed cutoff</pre>
         <ol class="problems">
           <li><strong>quiet modes</strong>: crouching was not one, so crouching alone was never silent. A plain crouch walk played at 0.325 volume, louder than a standing run (0.2).</li>
           <li><strong>GetNormSpeed * 0.7</strong>: no weapon term, so the headroom changed with the gun. While crouched, master used 0.7 × the class crouch speed instead. Crouch with +walk and standing +walk sat only about 10% under the limit with most weapons, up to 38% with the slowest, so looking around while moving pushed them over.</li>
           <li><strong>actual speed</strong>: measured as full speed, including the vertical speed other clients see when a player steps up stairs.</li>
           <li><strong>stance modifier</strong>: crouch only counted after the 0.4 s crouch animation, so one running step leaked when dropping into a crouch.</li>
-          <li><strong>loud by speed</strong>: the SDK's cutoffs, 220 u/s standing and 80 crouched, fit its third speed crouch. Every NEO crouch walk is above 80, so crouched steps were louder than a run, and assault sprints, and recon sprints with most weapons, were under 220, as quiet as a run.</li>
+          <li><strong>loud if speed is over a fixed cutoff</strong>: the SDK's cutoffs, 220 u/s standing and 80 crouched, fit its third speed crouch. Every NEO crouch walk is above 80, so crouched steps were louder than a run, and assault sprints, and recon sprints with most weapons, were under 220, as quiet as a run.</li>
           <li><strong>Outside the formula</strong>: server footsteps reached nobody (#2230).</li>
         </ol>
       </div>
@@ -696,18 +696,18 @@ volume          = loud by speed</pre>
         <pre>sound threshold = GetNormSpeed * weapon scale * SILENT_MOVE_THRESHOLD
 actual speed    = GetNormSpeed * weapon scale * stance modifier
 quiet modes     = crouch, walk, aim
-volume          = loud while sprinting</pre>
+loud if           sprinting</pre>
         <ol class="problems solutions">
           <li><strong>quiet modes</strong>: crouching alone is now a quiet mode, like walking and aiming, and all three share one limit just above their normal speed. Crouch sprinting, slides and pushes stay above it.</li>
           <li><strong>sound threshold</strong>: it carries the weapon scale like actual speed, so the gun cancels out. It widens while turning, and one brief key switch is forgiven.</li>
           <li><strong>actual speed</strong>: horizontal speed only.</li>
           <li><strong>stance modifier</strong>: the step during the crouch animation waits, and is dropped once you settle.</li>
-          <li><strong>loud while sprinting</strong>: the sprint state is networked, so every client picks the same volume. Running is quiet. Crouched steps are scaled to 65%, so a crouch sprint sits between a run and a sprint.</li>
+          <li><strong>loud if sprinting</strong>: the sprint state is networked, so every client picks the same volume. Running is quiet. Crouched steps are scaled to 65%, so a crouch sprint sits between a run and a sprint.</li>
           <li>The server footstep origin is fixed in #2230, a separate PR.</li>
         </ol>
       </div>
     </div>
-    <p class="muted">Ladders are always audible: climb speed is a fixed 200 u/s whether crouched or not, and horizontal speed is near zero while climbing. The turning speed curve comes from a movement simulation; every other number is a constant in the code.</p>
+    <p class="muted">Both use the same quiet and loud volumes, and crouched steps are 65% of either. Ladders are always audible: climb speed is a fixed 200 u/s whether crouched or not, and horizontal speed is near zero while climbing. The turning speed curve comes from a movement simulation; every other number is a constant in the code.</p>
     <h4><span class="secno">2.1.5</span>What this fixes</h4>
     <div class="table-wrap">
       <table>
