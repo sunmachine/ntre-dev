@@ -696,13 +696,13 @@ volume          = loud by speed</pre>
         <pre>sound threshold = GetNormSpeed * weapon scale * SILENT_MOVE_THRESHOLD
 actual speed    = GetNormSpeed * weapon scale * stance modifier
 quiet modes     = crouch, walk, aim
-volume          = loud by mode: sprinting</pre>
+volume          = loud while sprinting</pre>
         <ol class="problems solutions">
           <li><strong>quiet modes</strong>: crouching alone is now a quiet mode, like walking and aiming, and all three share one limit just above their normal speed. Crouch sprinting, slides and pushes stay above it.</li>
           <li><strong>sound threshold</strong>: it carries the weapon scale like actual speed, so the gun cancels out. It widens while turning, and one brief key switch is forgiven.</li>
           <li><strong>actual speed</strong>: horizontal speed only.</li>
           <li><strong>stance modifier</strong>: the step during the crouch animation waits, and is dropped once you settle.</li>
-          <li><strong>loud by mode</strong>: sprinting is loud and running is quiet. Crouched steps are scaled to 65%, so a crouch sprint sits between a run and a sprint.</li>
+          <li><strong>loud while sprinting</strong>: the sprint state is networked, so every client picks the same volume. Running is quiet. Crouched steps are scaled to 65%, so a crouch sprint sits between a run and a sprint.</li>
           <li>The server footstep origin is fixed in #2230, a separate PR.</li>
         </ol>
       </div>
