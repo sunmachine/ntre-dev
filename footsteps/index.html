@@ -684,7 +684,7 @@ quiet modes     = aim, walk
 volume          = loud by speed</pre>
         <ol class="problems">
           <li><strong>quiet modes</strong>: crouching was not one, so crouching alone was never silent. A plain crouch walk played at 0.325 volume, louder than a standing run (0.2).</li>
-          <li><strong>GetNormSpeed * 0.7</strong>: no weapon term, so the headroom changed with the gun. Crouch with +walk and standing +walk sat only about 10% under the limit with most weapons, up to 38% with the slowest, so looking around while moving pushed them over.</li>
+          <li><strong>GetNormSpeed * 0.7</strong>: no weapon term, so the headroom changed with the gun. While crouched, master used 0.7 × the class crouch speed instead. Crouch with +walk and standing +walk sat only about 10% under the limit with most weapons, up to 38% with the slowest, so looking around while moving pushed them over.</li>
           <li><strong>actual speed</strong>: measured as full speed, including the vertical speed other clients see when a player steps up stairs.</li>
           <li><strong>stance modifier</strong>: crouch only counted after the 0.4 s crouch animation, so one running step leaked when dropping into a crouch.</li>
           <li><strong>loud by speed</strong>: the SDK's cutoffs, 220 u/s standing and 80 crouched, fit its third speed crouch. Every NEO crouch walk is above 80, so crouched steps were louder than a run, and assault sprints, and recon sprints with most weapons, were under 220, as quiet as a run.</li>
