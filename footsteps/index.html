@@ -587,6 +587,20 @@ actual speed    = GetNormSpeed * weapon scale * stance modifier</pre>
 </svg>
       <figcaption>The axis is normalized: ground speed divided by class run speed (<code>GetNormSpeed</code>) times the weapon's speed scale, so 1.0 is your run speed with that weapon. The threshold and every stance carry the same two factors, so one picture is exact for every class and weapon. Green band: silent. Dashed band: extra room while turning, which sprinting never gets. Red marks make footsteps, at the volume on the right. Below 50 u/s no posture makes footsteps.</figcaption>
     </figure>
+    <div class="callout">
+      <span class="label">Reference: move speeds per class</span>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Class</th><th class="num">Run</th><th class="num">Crouch</th><th class="num">Walk</th><th class="num">Aim</th><th class="num">Silent limit</th><th class="num">Crouch sprint</th><th class="num">Sprint</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Recon</th><td class="num">200</td><td class="num">150</td><td class="num">150</td><td class="num">120</td><td class="num">165</td><td class="num">202.5</td><td class="num">270</td></tr>
+            <tr><th scope="row">Assault, VIP, Juggernaut</th><td class="num">160</td><td class="num">120</td><td class="num">120</td><td class="num">96</td><td class="num">132</td><td class="num">192</td><td class="num">256</td></tr>
+            <tr><th scope="row">Support</th><td class="num">160</td><td class="num">120</td><td class="num">120</td><td class="num">96</td><td class="num">132</td><td class="num">cannot sprint</td><td class="num">cannot sprint</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted">Units per second with no weapon slowdown. Multiply every column by your weapon's speed scale, from 0.675 (PZ) to 0.85 (SRM, knife, pistols); section <a href="#guns">4.2</a> lists every gun. Crouch sprint is faster than a run: by 1.25% for recon and 20% for the others.</p>
+    </div>
     <dl class="fkey">
       <dt>v</dt><dd>The player's horizontal speed, because other clients guess vertical speed badly on stairs.</dd>
       <dt>w</dt><dd>Your own run speed with your weapon: <code>GetNormSpeed</code> × weapon speed scale (assault with an SRM: 136). The silent threshold is <code>SILENT_MOVE_THRESHOLD</code>, 0.825, of it.</dd>
