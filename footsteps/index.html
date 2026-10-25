@@ -539,12 +539,13 @@ actual speed    = GetNormSpeed * weapon scale * stance modifier</pre>
     <p>Both sides carry the weapon, so the gun cancels out: a quiet mode is silent whenever its stance modifier is at or below <code>SILENT_MOVE_THRESHOLD</code>, 0.825. Crouch and walk are 0.75 and aim is 0.6, so all three qualify with every gun; sprinting multiplies by 1.35 or 1.6 and never does. On master the threshold was <code>GetNormSpeed * 0.7</code> with no weapon term, so the headroom changed with the gun.</p>
     <h4><span class="secno">2.1.1</span>Speeds</h4>
     <figure class="figure fx">
-      <svg viewBox="0 0 680 318" role="img" aria-label="Speed as a share of your own run speed with your weapon. Crouch at 0.75, walk at 0.75 and aim at 0.6 sit inside the silent band, which ends at 0.825 and widens to 1.1625 while turning. Crouch sprint at 1.01 or 1.2, run at 1.0 and sprint at 1.35 or 1.6 make footsteps.">
+      <svg viewBox="0 0 680 334" role="img" aria-label="Normalized speed: ground speed divided by class run speed times weapon speed scale, so 1.0 is your run speed with your weapon. Crouch at 0.75, walk at 0.75 and aim at 0.6 sit inside the silent band, which ends at 0.825 and widens to 1.1625 while turning. Crouch sprint at 1.01 or 1.2, run at 1.0 and sprint at 1.35 or 1.6 make footsteps.">
   <line class="f-grid" x1="130" y1="46" x2="130" y2="278"/><text class="f-tick" x="130" y="294" text-anchor="middle">0</text>
   <line class="f-grid" x1="256.5" y1="46" x2="256.5" y2="278"/><text class="f-tick" x="256.5" y="294" text-anchor="middle">0.5</text>
-  <line class="f-grid" x1="383.0" y1="46" x2="383.0" y2="278"/><text class="f-tick" x="383.0" y="294" text-anchor="middle">1</text>
+  <line class="f-grid" x1="383.0" y1="46" x2="383.0" y2="278"/><text class="f-tick" x="383.0" y="294" text-anchor="middle">1 = run</text>
   <line class="f-grid" x1="509.5" y1="46" x2="509.5" y2="278"/><text class="f-tick" x="509.5" y="294" text-anchor="middle">1.5</text>
-  <text class="f-tick" x="560.1" y="312" text-anchor="end">speed, as a share of your run speed with your weapon</text>
+  <text class="f-lbl" x="130" y="312">Normalized speed = ground speed ÷ (GetNormSpeed × weapon speed scale)</text>
+  <text class="f-tick" x="130" y="328">1.0 is your run speed with your current weapon, for every class</text>
   <text class="f-tick" x="590" y="40">step</text>
   <line class="f-axis" x1="130" y1="278" x2="560.1" y2="278"/>
   <line class="f-grid" x1="20" y1="192" x2="660" y2="192" stroke-dasharray="4 4"/>
@@ -584,7 +585,7 @@ actual speed    = GetNormSpeed * weapon scale * stance modifier</pre>
   <text class="f-lblfix" x="334.7" y="40" text-anchor="end">silent up to 0.825</text>
   <text class="f-bandt" x="342.7" y="40">turning: up to 1.1625</text>
 </svg>
-      <figcaption>Every speed here is a share of your own run speed with your current weapon, so one picture is exact for every class and weapon. Green band: silent. Dashed band: extra room while turning, which sprinting never gets. Red marks make footsteps, at the volume on the right. Below 50 u/s no posture makes footsteps.</figcaption>
+      <figcaption>The axis is normalized: ground speed divided by class run speed (<code>GetNormSpeed</code>) times the weapon's speed scale, so 1.0 is your run speed with that weapon. The threshold and every stance carry the same two factors, so one picture is exact for every class and weapon. Green band: silent. Dashed band: extra room while turning, which sprinting never gets. Red marks make footsteps, at the volume on the right. Below 50 u/s no posture makes footsteps.</figcaption>
     </figure>
     <dl class="fkey">
       <dt>v</dt><dd>The player's horizontal speed, because other clients guess vertical speed badly on stairs.</dd>
