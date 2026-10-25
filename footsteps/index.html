@@ -678,34 +678,31 @@ actual speed    = GetNormSpeed * weapon scale * stance modifier</pre>
     <div class="cols">
       <div class="panel bug">
         <span class="label">Before: master</span>
-        <pre>silent  if  (aiming or +walk)
-        and v ≤ 0.7 × (crouched ? C : n)
-<span class="cm">otherwise loud, if v ≥ 50</span>
-<span class="cm">C = class crouch speed, no weapon</span>
-volume  loud  if  v ≥ (crouched ? 80 : 220)
-        × 0.65 if crouched</pre>
+        <pre>sound threshold = GetNormSpeed * 0.7
+actual speed    = GetNormSpeed * weapon scale * stance modifier
+quiet modes     = aim, walk
+volume          = loud by speed</pre>
         <ol class="problems">
-          <li><strong>(aiming or +walk)</strong>: the quiet modes left crouching out, so crouching alone was never silent. A plain crouch walk played at 0.325 volume, louder than a standing run (0.2).</li>
-          <li><strong>0.7 ×</strong>: crouch with +walk and standing +walk sat only about 10% under the limit with most weapons, up to 38% with the slowest, so looking around while moving pushed them over.</li>
-          <li><strong>v</strong>: full speed, including the vertical speed other clients see when a player steps up stairs.</li>
-          <li><strong>crouched</strong>: only true after the 0.4 s crouch animation, so one running step leaked when dropping into a crouch.</li>
-          <li><strong>80 and 220</strong>: the SDK's volume cutoffs fit its third speed crouch. Every NEO crouch walk is above 80, so crouched steps were louder than a run, and assault sprints, and recon sprints with most weapons, were under 220, as quiet as a run.</li>
+          <li><strong>quiet modes</strong>: crouching was not one, so crouching alone was never silent. A plain crouch walk played at 0.325 volume, louder than a standing run (0.2).</li>
+          <li><strong>GetNormSpeed * 0.7</strong>: no weapon term, so the headroom changed with the gun. Crouch with +walk and standing +walk sat only about 10% under the limit with most weapons, up to 38% with the slowest, so looking around while moving pushed them over.</li>
+          <li><strong>actual speed</strong>: measured as full speed, including the vertical speed other clients see when a player steps up stairs.</li>
+          <li><strong>stance modifier</strong>: crouch only counted after the 0.4 s crouch animation, so one running step leaked when dropping into a crouch.</li>
+          <li><strong>loud by speed</strong>: the SDK's cutoffs, 220 u/s standing and 80 crouched, fit its third speed crouch. Every NEO crouch walk is above 80, so crouched steps were louder than a run, and assault sprints, and recon sprints with most weapons, were under 220, as quiet as a run.</li>
           <li><strong>Outside the formula</strong>: server footsteps reached nobody (#2230).</li>
         </ol>
       </div>
       <div class="panel fix">
         <span class="label">After: this PR</span>
-        <pre>crouched, walking or aiming, not on a ladder:
-    silent  if  v ≤ w × (0.825 + t)
-<span class="cm">otherwise loud, if v ≥ 50</span>
-volume  loud  if  standing and sprinting
-        × 0.65 if crouched</pre>
+        <pre>sound threshold = GetNormSpeed * weapon scale * SILENT_MOVE_THRESHOLD
+actual speed    = GetNormSpeed * weapon scale * stance modifier
+quiet modes     = crouch, walk, aim
+volume          = loud by mode: sprinting</pre>
         <ol class="problems solutions">
-          <li>Crouching alone is now a quiet mode, like walking and aiming, and all three share one limit just above their normal speed. Crouch sprinting, slides and pushes stay above it.</li>
-          <li>Turn headroom t widens the threshold with turn rate, and one brief key switch is forgiven.</li>
-          <li>Every check measures horizontal speed, not vertical.</li>
-          <li>The held step: the step during the crouch animation waits, and is dropped once you settle.</li>
-          <li>Volume follows the movement mode: sprinting is loud, running is quiet, and crouched steps are scaled to 65%, so a crouch sprint sits between a run and a sprint.</li>
+          <li><strong>quiet modes</strong>: crouching alone is now a quiet mode, like walking and aiming, and all three share one limit just above their normal speed. Crouch sprinting, slides and pushes stay above it.</li>
+          <li><strong>sound threshold</strong>: it carries the weapon scale like actual speed, so the gun cancels out. It widens while turning, and one brief key switch is forgiven.</li>
+          <li><strong>actual speed</strong>: horizontal speed only.</li>
+          <li><strong>stance modifier</strong>: the step during the crouch animation waits, and is dropped once you settle.</li>
+          <li><strong>loud by mode</strong>: sprinting is loud and running is quiet. Crouched steps are scaled to 65%, so a crouch sprint sits between a run and a sprint.</li>
           <li>The server footstep origin is fixed in #2230, a separate PR.</li>
         </ol>
       </div>
