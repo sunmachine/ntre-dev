@@ -611,18 +611,21 @@ actual speed    = GetNormSpeed * weapon scale * stance modifier</pre>
     </dl>
     <h4><span class="secno">2.1.2</span>Turning</h4>
     <figure class="figure fx">
-      <svg viewBox="0 0 680 250" role="img" aria-label="The crouched threshold rises from 0.825 to 1.1625 times run speed with the weapon as the view turns up to 180 degrees per second, and stays above the simulated speed gained from turning at every rate.">
+      <svg viewBox="0 0 680 250" role="img" aria-label="Turn headroom. Without turning the silent limit is 0.825 of run speed. While the view turns, this PR adds headroom on top, shaded green, up to 1.1625 at 180 degrees per second and above. The simulated speed gained from turning stays inside the headroom at every turn rate.">
   <line class="f-grid" x1="80.0" y1="30" x2="80.0" y2="210"/><text class="f-tick" x="80.0" y="226" text-anchor="middle">0</text><line class="f-grid" x1="215.0" y1="30" x2="215.0" y2="210"/><text class="f-tick" x="215.0" y="226" text-anchor="middle">90</text><line class="f-grid" x1="350.0" y1="30" x2="350.0" y2="210"/><text class="f-tick" x="350.0" y="226" text-anchor="middle">180</text><line class="f-grid" x1="485.0" y1="30" x2="485.0" y2="210"/><text class="f-tick" x="485.0" y="226" text-anchor="middle">270</text><line class="f-grid" x1="620.0" y1="30" x2="620.0" y2="210"/><text class="f-tick" x="620.0" y="226" text-anchor="middle">360</text><line class="f-grid" x1="80" y1="210.0" x2="620" y2="210.0"/><text class="f-tick" x="72" y="214.0" text-anchor="end">0.75</text><line class="f-grid" x1="80" y1="150.0" x2="620" y2="150.0"/><text class="f-tick" x="72" y="154.0" text-anchor="end">0.9</text><line class="f-grid" x1="80" y1="90.00000000000003" x2="620" y2="90.00000000000003"/><text class="f-tick" x="72" y="94.00000000000003" text-anchor="end">1.05</text><line class="f-grid" x1="80" y1="29.99999999999997" x2="620" y2="29.99999999999997"/><text class="f-tick" x="72" y="33.99999999999997" text-anchor="end">1.2</text>
   <text class="f-tick" x="620" y="244" text-anchor="end">view turn rate r, degrees per second</text>
   <text class="f-tick" x="80" y="20">× run speed w</text>
-  <polygon class="f-margin" points="80.0,180.0 350.0,45.0 620.0,45.0 620.0,66.3 552.5,67.5 485.0,71.7 417.5,105.0 350.0,139.5 282.5,168.0 215.0,190.5 147.5,204.0 80.0,210.0"/>
+  <polygon class="f-margin" points="80.0,180.0 350.0,45.0 620.0,45.0 620.0,180.0"/>
+  <line class="s-silent-edge" x1="80" y1="180" x2="620" y2="180"/>
   <polyline class="f-hdr" points="80.0,180.0 350.0,45.0 620.0,45.0"/>
   <polyline class="f-sim" points="80.0,210.0 147.5,204.0 215.0,190.5 282.5,168.0 350.0,139.5 417.5,105.0 485.0,71.7 552.5,67.5 620.0,66.3"/>
-  <text class="f-lblfix" x="380.0" y="35.0">threshold 0.825 + 0.3375 · min(r / 180, 1)</text>
-  <text class="f-lbl" x="455.0" y="123.99999999999999">real speed while turning</text>
-  <text class="f-lbl" x="455.0" y="138.0">(simulated peak)</text>
+  <text class="f-lblfix" x="620" y="35.0" text-anchor="end">silent limit while turning: 0.825 + 0.3375 · min(r / 180, 1)</text>
+  <text class="f-row" x="560" y="128" text-anchor="middle" style="fill:var(--fix)">turn headroom</text>
+  <text class="f-lblfix" x="560" y="144" text-anchor="middle">added by this PR</text>
+  <text class="f-lblfix" x="616" y="174" text-anchor="end">silent limit without turning, 0.825</text>
+  <text class="f-lbl" x="620" y="200" text-anchor="end">dashed: speed from turning (simulated)</text>
 </svg>
-      <figcaption>Holding a movement key while turning builds speed toward the new direction faster than friction removes the old one, so turning really makes you faster. Switching keys (W+D to W+A) does the same without turning the view. The green line is the crouched threshold; the dashed line is the speed turning can reach (simulated with sv_accelerate 10, sv_friction 4). The shaded gap is the margin.</figcaption>
+      <figcaption>Holding a movement key while turning builds speed toward the new direction faster than friction removes the old one, so turning really makes you faster. Switching keys (W+D to W+A) does the same without turning the view. The green area is the turn headroom this PR adds: while the view turns, the silent limit rises from 0.825 to as much as 1.1625 of run speed, so that speed-up does not make footsteps. The dashed line is the speed turning can really reach (simulated with sv_accelerate 10, sv_friction 4). It stays inside the green area at every turn rate.</figcaption>
     </figure>
     <dl class="fkey">
       <dt>r</dt><dd>How fast the view is turning, in degrees per second. It keeps its peak and fades over about 0.25 s, about as long as friction takes to remove the extra speed.</dd>
