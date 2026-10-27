@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Capture the Ghost · NT;RE Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;650;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="img/favicon.png">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="index.html"><img src="img/nt-logo.png" alt="" width="28" height="27">NT;RE <small>Wiki</small></a>
+  <form class="search" action="search.html" role="search"><input type="search" name="q" placeholder="Search NT;RE Wiki" aria-label="Search"></form>
+  <span class="proto-badge">Prototype</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><details open><summary>Menu</summary>
+<h3>Navigation</h3><ul><li><a href="index.html">Main page</a></li><li><a href="getting-started.html">Getting started</a></li></ul>
+<h3>Combat</h3><ul><li><a href="weapons.html">Weapons</a></li><li><a href="damage.html">Damage &amp; penetration</a></li><li><a href="loadouts.html">Loadouts &amp; ranks</a></li></ul>
+<h3>Player</h3><ul><li><a href="classes.html">Classes</a></li><li><a href="recon.html">Recon</a></li><li><a href="assault.html">Assault</a></li><li><a href="support.html">Support</a></li><li><a href="movement.html">Movement</a></li><li><a href="aux-power.html">AUX power</a></li><li><a href="thermoptic-camouflage.html">Thermoptic camo</a></li><li><a href="vision-modes.html">Vision modes</a></li></ul>
+<h3>Game</h3><ul><li><a href="game-modes.html">Overview</a></li><li><a href="capture-the-ghost.html" aria-current="page">Capture the Ghost</a></li><li><a href="ghost.html">The Ghost</a></li><li><a href="vip.html">VIP</a></li><li><a href="team-deathmatch.html">Team Deathmatch</a></li><li><a href="deathmatch.html">Deathmatch</a></li><li><a href="juggernaut.html">Juggernaut</a></li></ul>
+<h3>World</h3><ul><li><a href="factions.html">Factions</a></li><li><a href="maps.html">Maps</a></li></ul>
+<h3>Reference</h3><ul><li><a href="console-variables.html">Console variables</a></li><li><a href="about.html">About this prototype</a></li></ul>
+  </details></aside>
+  <main>
+    <div class="page-tabs"><span class="active">Article</span><span>Talk</span><span class="spacer"></span><span>Read</span><span>Edit</span><span>History</span></div>
+    <article class="page">
+<div class="breadcrumb">Game modes</div><h1>Capture the Ghost</h1><p class="subtitle">CTG, NT;RE&#x27;s core competitive mode</p>
+      <div class="article">
+
+<aside class="infobox">
+  <div class="ib-title">Capture the Ghost</div>
+  <figure class="ib-image">Ghost capture screenshot</figure>
+  <table>
+    <tr><th>Code</th><td>CTG</td></tr>
+    <tr><th>Maps</th><td><code>ntre_*_ctg</code> (24)</td></tr>
+    <tr><th>Round</th><td>3.25<sup class="ref"><a href="#ref-1" title="src/game/shared/neo/neo_gamerules.cpp:517">[1]</a></sup> min</td></tr>
+    <tr><th>Match to</th><td>7<sup class="ref"><a href="#ref-2" title="src/game/shared/neo/neo_gamerules.cpp:494">[2]</a></sup> rounds</td></tr>
+    <tr><th>Lives</th><td>One per round</td></tr>
+    <tr><th>Capture time</th><td>Instant</td></tr>
+  </table>
+</aside>
+<p class="lead"><b>Capture the Ghost</b> (CTG) is NT;RE's core mode. Each round, an AI core called the <b><a href="ghost.html">ghost</a></b> spawns somewhere on the map. A team wins the round by carrying it into its capture zone or by wiping out the enemy team. You get one life per round.</p>
+
+<nav class="toc"><div class="toc-title">Contents</div><ol><li><a href="#winning-a-round">Winning a round</a></li><li><a href="#rules">Rules</a></li><li><a href="#capture-zones">Capture zones</a></li><li><a href="#overtime">Overtime</a></li><li><a href="#xp-and-rewards">XP and rewards</a></li><li><a href="#scoring">Scoring</a></li><li><a href="#maps">Maps</a></li></ol></nav>
+<h2 id="winning-a-round">Winning a round</h2>
+<ul><li>Ghost capture: a live player carrying the ghost enters the radius of an active capture zone owned by their team (or a neutral zone) while the round is live. The round is won instantly; there is no hold timer.<sup class="ref"><a href="#ref-3" title="src/game/shared/neo/neo_ghost_cap_point.cpp:229-275">[3]</a></sup><sup class="ref"><a href="#ref-4" title="src/game/shared/neo/neo_gamerules.cpp:1515-1554">[4]</a></sup></li><li>Team elimination: the enemy team has 0 living members. If both teams reach 0 at once, the round is a stalemate.<sup class="ref"><a href="#ref-5" title="src/game/shared/neo/neo_gamerules.cpp:1691-1702">[5]</a></sup></li><li>Time runs out with no capture or elimination: stalemate ('TIE'). Neither team gets a round win and nobody gets round-end XP.<sup class="ref"><a href="#ref-6" title="src/game/shared/neo/neo_gamerules.cpp:1479-1481, 3999">[6]</a></sup></li><li>Map logic can force a winner through neo_game_config FireTeamWin / FireRoundTie inputs.<sup class="ref"><a href="#ref-7" title="src/game/server/neo/neo_game_config.cpp:39-63">[7]</a></sup></li></ul>
+<div class="callout"><strong>Time-out is always a draw</strong> When the clock runs out it's a stalemate, no matter who holds the ghost or how many players are alive. The code has a "win by numbers" outcome, but nothing triggers it.<sup class="ref"><a href="#ref-8" title="src/game/shared/neo/neo_gamerules.cpp:1479-1481,3934-3936">[8]</a></sup></div>
+
+<h2 id="rules">Rules</h2>
+<div class="table-wrap"><table class="wikitable "><thead><tr><th>Setting</th><th>Default</th><th>Console variable</th></tr></thead><tbody><tr><td>Respawns</td><td>No <sup class="ref"><a href="#ref-9" title="src/game/shared/neo/neo_gamerules.cpp:409">[9]</a></sup></td><td></td></tr><tr><td>Round time</td><td>3.25 min<sup class="ref"><a href="#ref-1" title="src/game/shared/neo/neo_gamerules.cpp:517">[1]</a></sup></td><td><code>neo_ctg_round_timelimit</code></td></tr><tr><td>Pre-round freeze</td><td>15 s<sup class="ref"><a href="#ref-10" title="src/game/shared/neo/neo_gamerules.cpp:50">[10]</a></sup></td><td><code>sv_neo_preround_freeze_time</code></td></tr><tr><td>Score limit</td><td>7 rounds won<sup class="ref"><a href="#ref-2" title="src/game/shared/neo/neo_gamerules.cpp:494">[2]</a></sup></td><td><code>sv_neo_ctg_score_limit</code></td></tr><tr><td>Round limit</td><td>0 <sup class="ref"><a href="#ref-11" title="src/game/shared/neo/neo_gamerules.cpp:505">[11]</a></sup></td><td><code>sv_neo_ctg_round_limit</code></td></tr><tr><td>Overtime</td><td>No <sup class="ref"><a href="#ref-12" title="src/game/shared/neo/neo_gamerules.cpp:535">[12]</a></sup></td><td><code>sv_neo_ctg_ghost_overtime_enabled</code></td></tr><tr><td>Max overtime</td><td>45 s<sup class="ref"><a href="#ref-13" title="src/game/shared/neo/neo_gamerules.cpp:536">[13]</a></sup></td><td><code>sv_neo_ctg_ghost_overtime</code></td></tr><tr><td>Overtime grace</td><td>10 s<sup class="ref"><a href="#ref-14" title="src/game/shared/neo/neo_gamerules.cpp:537">[14]</a></sup></td><td><code>sv_neo_ctg_ghost_overtime_grace</code></td></tr><tr><td>Competitive features</td><td>Yes <sup class="ref"><a href="#ref-9" title="src/game/shared/neo/neo_gamerules.cpp:409">[9]</a></sup></td><td></td></tr></tbody></table></div>
+
+<h2 id="capture-zones">Capture zones</h2>
+<p>Capture zones (<code>neo_ghost_retrieval_point</code>) belong to one team or are neutral. The capture registers the instant a living ghost carrier is within the zone's radius; there's no hold timer. Zones are checked 10 times a second, using 3D distance from the zone's centre.<sup class="ref"><a href="#ref-15" title="src/game/shared/neo/neo_ghost_cap_point.cpp:226-264">[15]</a></sup> Zone ownership swaps every round along with the spawns.<sup class="ref"><a href="#ref-16" title="src/game/shared/neo/neo_ghost_cap_point.cpp:132-141">[16]</a></sup></p>
+
+<h2 id="overtime">Overtime</h2>
+<p>Off by default (<code>sv_neo_ctg_ghost_overtime_enabled 0</code>). When it's on and the ghost is being carried with 10 s or less left, the round can run up to 45 s past the limit while the ghost stays in hand. If the carrier drops it, the time left shrinks back to the 10-second grace.<sup class="ref"><a href="#ref-17" title="src/game/shared/neo/neo_gamerules.cpp:1282-1294,1879-1908">[17]</a></sup></p>
+
+<h2 id="xp-and-rewards">XP and rewards</h2>
+<p>A ghost capture is the most valuable thing you can do in NT;RE. Every <b>surviving</b> player on the capturing team is raised straight to the next rank threshold (0 → 4 → 10 → 20).<sup class="ref"><a href="#ref-18" title="src/game/shared/neo/neo_gamerules.cpp:1813-1824,4002-4020">[18]</a></sup> Dead teammates get the normal +1.</p>
+<p>Winning by elimination gives +1 to the whole team, +1 more to each survivor, and +1 more to the ghost carrier. A surviving carrier therefore gets +3.<sup class="ref"><a href="#ref-19" title="src/game/shared/neo/neo_gamerules.cpp:4029-4038">[19]</a></sup> See <a href="loadouts.html">Loadouts &amp; ranks</a>.</p>
+
+<h3>Cap prevention</h3>
+<p>If the last living player on a team kills themselves, disconnects or dies to their own team's grenade while the enemy is carrying the ghost, the enemy team still gets the capture reward when it wins the round (<code>sv_neo_suicide_prevent_cap_punish 1</code>).<sup class="ref"><a href="#ref-20" title="src/game/shared/neo/neo_gamerules.cpp:4106-4163">[20]</a></sup></p>
+
+<h2 id="scoring">Scoring</h2>
+<div class="table-wrap"><table class="wikitable "><thead><tr><th>Event</th><th>Team points</th><th>XP</th><th>Notes</th></tr></thead><tbody><tr><td>Round win</td><td>+1 round won</td><td></td><td><sup class="ref"><a href="#ref-21" title="src/game/shared/neo/neo_gamerules.cpp:3844-3854">[21]</a></sup></td></tr><tr><td>Round-end XP</td><td></td><td></td><td>Ghost capture gives alive winners a rank-up; other CTG wins give survivor and carrier bonuses.<sup class="ref"><a href="#ref-22" title="src/game/shared/neo/neo_gamerules.cpp:3999-4052">[22]</a></sup></td></tr></tbody></table></div>
+
+<h2 id="maps">Maps</h2>
+<p>24 of the 32 official maps are CTG maps. See <a href="maps.html">Maps</a>.</p>
+
+<h2 id="references">References</h2>
+<ol class="references"><li id="ref-1"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L517"><code>src/game/shared/neo/neo_gamerules.cpp:517</code></a></li><li id="ref-2"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L494"><code>src/game/shared/neo/neo_gamerules.cpp:494</code></a></li><li id="ref-3"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_ghost_cap_point.cpp#L229"><code>src/game/shared/neo/neo_ghost_cap_point.cpp:229-275</code></a></li><li id="ref-4"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L1515"><code>src/game/shared/neo/neo_gamerules.cpp:1515-1554</code></a></li><li id="ref-5"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L1691"><code>src/game/shared/neo/neo_gamerules.cpp:1691-1702</code></a></li><li id="ref-6"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L1479"><code>src/game/shared/neo/neo_gamerules.cpp:1479-1481, 3999</code></a></li><li id="ref-7"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_game_config.cpp#L39"><code>src/game/server/neo/neo_game_config.cpp:39-63</code></a></li><li id="ref-8"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L1479"><code>src/game/shared/neo/neo_gamerules.cpp:1479-1481,3934-3936</code></a></li><li id="ref-9"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L409"><code>src/game/shared/neo/neo_gamerules.cpp:409</code></a></li><li id="ref-10"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L50"><code>src/game/shared/neo/neo_gamerules.cpp:50</code></a></li><li id="ref-11"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L505"><code>src/game/shared/neo/neo_gamerules.cpp:505</code></a></li><li id="ref-12"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L535"><code>src/game/shared/neo/neo_gamerules.cpp:535</code></a></li><li id="ref-13"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L536"><code>src/game/shared/neo/neo_gamerules.cpp:536</code></a></li><li id="ref-14"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L537"><code>src/game/shared/neo/neo_gamerules.cpp:537</code></a></li><li id="ref-15"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_ghost_cap_point.cpp#L226"><code>src/game/shared/neo/neo_ghost_cap_point.cpp:226-264</code></a></li><li id="ref-16"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_ghost_cap_point.cpp#L132"><code>src/game/shared/neo/neo_ghost_cap_point.cpp:132-141</code></a></li><li id="ref-17"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L1282"><code>src/game/shared/neo/neo_gamerules.cpp:1282-1294,1879-1908</code></a></li><li id="ref-18"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L1813"><code>src/game/shared/neo/neo_gamerules.cpp:1813-1824,4002-4020</code></a></li><li id="ref-19"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L4029"><code>src/game/shared/neo/neo_gamerules.cpp:4029-4038</code></a></li><li id="ref-20"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L4106"><code>src/game/shared/neo/neo_gamerules.cpp:4106-4163</code></a></li><li id="ref-21"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L3844"><code>src/game/shared/neo/neo_gamerules.cpp:3844-3854</code></a></li><li id="ref-22"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L3999"><code>src/game/shared/neo/neo_gamerules.cpp:3999-4052</code></a></li></ol>
+      </div>
+<div class="catlinks"><b>Category:</b><span>Game modes</span></div>
+    </article>
+    <footer class="site-footer">
+      <p>Game data extracted from <a href="https://github.com/NeotokyoRebuild/neo/tree/120006db"><code>NeotokyoRebuild/neo@120006db</code></a>. Numbers link to the exact source line.</p>
+      <p>Prototype. All rights reserved. Not affiliated with or endorsed by the NEOTOKYO or NT;RE teams.</p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

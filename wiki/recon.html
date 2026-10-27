@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Recon · NT;RE Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;650;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="img/favicon.png">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="index.html"><img src="img/nt-logo.png" alt="" width="28" height="27">NT;RE <small>Wiki</small></a>
+  <form class="search" action="search.html" role="search"><input type="search" name="q" placeholder="Search NT;RE Wiki" aria-label="Search"></form>
+  <span class="proto-badge">Prototype</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><details open><summary>Menu</summary>
+<h3>Navigation</h3><ul><li><a href="index.html">Main page</a></li><li><a href="getting-started.html">Getting started</a></li></ul>
+<h3>Combat</h3><ul><li><a href="weapons.html">Weapons</a></li><li><a href="damage.html">Damage &amp; penetration</a></li><li><a href="loadouts.html">Loadouts &amp; ranks</a></li></ul>
+<h3>Player</h3><ul><li><a href="classes.html">Classes</a></li><li><a href="recon.html" aria-current="page">Recon</a></li><li><a href="assault.html">Assault</a></li><li><a href="support.html">Support</a></li><li><a href="movement.html">Movement</a></li><li><a href="aux-power.html">AUX power</a></li><li><a href="thermoptic-camouflage.html">Thermoptic camo</a></li><li><a href="vision-modes.html">Vision modes</a></li></ul>
+<h3>Game</h3><ul><li><a href="game-modes.html">Overview</a></li><li><a href="capture-the-ghost.html">Capture the Ghost</a></li><li><a href="ghost.html">The Ghost</a></li><li><a href="vip.html">VIP</a></li><li><a href="team-deathmatch.html">Team Deathmatch</a></li><li><a href="deathmatch.html">Deathmatch</a></li><li><a href="juggernaut.html">Juggernaut</a></li></ul>
+<h3>World</h3><ul><li><a href="factions.html">Factions</a></li><li><a href="maps.html">Maps</a></li></ul>
+<h3>Reference</h3><ul><li><a href="console-variables.html">Console variables</a></li><li><a href="about.html">About this prototype</a></li></ul>
+  </details></aside>
+  <main>
+    <div class="page-tabs"><span class="active">Article</span><span>Talk</span><span class="spacer"></span><span>Read</span><span>Edit</span><span>History</span></div>
+    <article class="page">
+<div class="breadcrumb">Classes</div><h1>Recon</h1><p class="subtitle">Light scout class: fastest, longest cloak, most fragile</p>
+      <div class="article">
+
+<aside class="infobox "><div class="ib-title">Recon</div><figure class="ib-image">Recon player model</figure><table><tr class="ib-section"><th colspan="2">Survivability</th></tr><tr><th>Health</th><td>100 HP<sup class="ref"><a href="#ref-1" title="src/game/shared/neo/neo_player_shared.h:229-230">[1]</a></sup></td></tr><tr><th>Armor</th><td>None</td></tr><tr class="ib-section"><th colspan="2">Movement (u/s)</th></tr><tr><th>Run</th><td>200<sup class="ref"><a href="#ref-2" title="src/game/shared/neo/neo_player_shared.h:30,33,50">[2]</a></sup></td></tr><tr><th>Sprint</th><td>270<sup class="ref"><a href="#ref-3" title="src/game/shared/neo/neo_player_shared.h:38,51">[3]</a></sup><sup class="ref"><a href="#ref-4" title="src/game/server/neo/neo_player.cpp:866-867">[4]</a></sup></td></tr><tr><th>Walk / crouch</th><td>150<sup class="ref"><a href="#ref-5" title="src/game/shared/neo/neo_player_shared.h:45,52">[5]</a></sup></td></tr><tr><th>Crouch-walk</th><td>112.5<sup class="ref"><a href="#ref-6" title="src/game/server/neo/neo_player.cpp:853-861">[6]</a></sup></td></tr><tr><th>Aiming</th><td>120<sup class="ref"><a href="#ref-7" title="src/game/shared/neo/neo_player_shared.h:43">[7]</a></sup><sup class="ref"><a href="#ref-8" title="src/game/server/neo/neo_player.cpp:882-885">[8]</a></sup></td></tr><tr><th>Jump height</th><td>54 u<sup class="ref"><a href="#ref-9" title="src/game/shared/gamemovement.cpp:2632-2633,2647-2648">[9]</a></sup></td></tr><tr class="ib-section"><th colspan="2">Abilities</th></tr><tr><th>Vision mode</th><td><a href="vision-modes.html#night-vision">Night vision</a><sup class="ref"><a href="#ref-10" title="src/game/client/viewpostprocess.cpp:2352-2355">[10]</a></sup></td></tr><tr><th>Thermoptic camo</th><td>13 s<sup class="ref"><a href="#ref-11" title="src/game/server/neo/neo_player.cpp:3836-3837">[11]</a></sup></td></tr><tr><th>AUX regen</th><td>5/s<sup class="ref"><a href="#ref-12" title="src/game/server/hl2/hl2_player.cpp:416-444">[12]</a></sup></td></tr><tr class="ib-section"><th colspan="2">Spawns with</th></tr><tr><th>Items</th><td><a href="knife.html">Knife</a>, <a href="milso.html">MilSO</a>, <a href="detpack.html">Detpack</a> (4+ XP)<sup class="ref"><a href="#ref-13" title="src/game/server/neo/neo_player.cpp:3408-3417,3452-3457">[13]</a></sup><sup class="ref"><a href="#ref-14" title="src/game/shared/neo/weapons/weapon_detpack.cpp:71-72">[14]</a></sup></td></tr></table></aside>
+<p class="lead">The <b>Recon</b> is NT;RE's scout. It has the highest base speed, the longest <a href="thermoptic-camouflage.html">thermoptic camouflage</a>, a sprint that costs no <a href="aux-power.html">AUX</a>, and a super jump. In exchange it has the lowest health of the three selectable classes and the narrowest choice of primary weapons.</p>
+
+<nav class="toc"><div class="toc-title">Contents</div><ol><li><a href="#strengths-and-weaknesses">Strengths and weaknesses</a></li><li><a href="#super-jump">Super jump</a></li><li><a href="#thermoptic-camouflage">Thermoptic camouflage</a></li><li><a href="#night-vision">Night vision</a></li><li><a href="#loadout">Loadout</a></li><li><a href="#hitbox">Hitbox</a></li></ol></nav>
+<h2 id="strengths-and-weaknesses">Strengths and weaknesses</h2>
+<ul>
+  <li><b>Fastest class.</b> Runs at 200<sup class="ref"><a href="#ref-2" title="src/game/shared/neo/neo_player_shared.h:30,33,50">[2]</a></sup> u/s and sprints at 270<sup class="ref"><a href="#ref-3" title="src/game/shared/neo/neo_player_shared.h:38,51">[3]</a></sup><sup class="ref"><a href="#ref-4" title="src/game/server/neo/neo_player.cpp:866-867">[4]</a></sup> u/s, against 160/256 for Assault.</li>
+  <li><b>Free sprint.</b> Sprinting does not drain AUX, and AUX keeps recharging at 2.5/s while you sprint.<sup class="ref"><a href="#ref-15" title="src/game/server/hl2/hl2_player.cpp:424-429,2056-2062">[15]</a></sup> AUX is only spent on the super jump.</li>
+  <li><b>No landing penalty.</b> Every other class slows down for 1.15 s after a jump. Recon doesn't.<sup class="ref"><a href="#ref-16" title="src/game/server/neo/neo_player.cpp:889-898">[16]</a></sup></li>
+  <li><b>Highest jump</b>: 54 units, 1.5× the default.<sup class="ref"><a href="#ref-17" title="src/game/shared/gamemovement.cpp:2645-2656">[17]</a></sup></li>
+  <li><b>Fragile.</b> 100 HP, the joint lowest with the VIP.</li>
+</ul>
+
+<h2 id="super-jump">Super jump</h2>
+<p>Hold <kbd>Sprint</kbd> and press <kbd>Jump</kbd> while moving forward or backward. It adds a horizontal boost equal to your current maximum speed on top of a normal jump, and costs <b>45 AUX</b>.<sup class="ref"><a href="#ref-18" title="src/game/server/neo/neo_player.cpp:1144-1155">[18]</a></sup><sup class="ref"><a href="#ref-19" title="src/game/shared/neo/neo_player_shared.h:178">[19]</a></sup></p>
+<p>The jump only fires if all of these are true:<sup class="ref"><a href="#ref-20" title="src/game/shared/neo/neo_player_shared.cpp:942-974">[20]</a></sup></p>
+<ul>
+  <li>You are sprinting, on the ground, and not standing in water above your feet</li>
+  <li>You are not carrying the <a href="ghost.html">ghost</a></li>
+  <li>You have at least 45 AUX</li>
+</ul>
+<div class="callout warn"><strong>Quirk</strong> The code takes the 45 AUX whenever those conditions pass, but only applies the boost if exactly one of forward or back is held. A sprint-jump with only strafe keys held costs 45 AUX and gives no boost. Holding a strafe key alongside forward cuts the boost to ×0.707.<sup class="ref"><a href="#ref-21" title="src/game/server/neo/neo_player.cpp:1148-1154,1565-1584">[21]</a></sup> This is inferred from the code and has not been confirmed in play.</div>
+<p>The boost follows your view direction with the vertical part removed but not renormalised, so looking up or down shrinks it by the cosine of your pitch. Super jump at eye level for maximum distance.<sup class="ref"><a href="#ref-22" title="src/game/server/neo/neo_player.cpp:1568-1571">[22]</a></sup></p>
+
+<h2 id="thermoptic-camouflage">Thermoptic camouflage</h2>
+<p>Recon has a <b>13-second</b> cloak that recharges at 0.55 per second (about 23.6 s from empty to full), against Assault's 8 s at 0.25/s.<sup class="ref"><a href="#ref-23" title="src/game/server/neo/neo_player.cpp:3780-3844">[23]</a></sup> See <a href="thermoptic-camouflage.html">Thermoptic camouflage</a> for what reveals a cloaked player.</p>
+
+<h2 id="night-vision">Night vision</h2>
+<p>Recon uses <a href="vision-modes.html#night-vision">night vision</a>, a full-screen brightening filter. It doesn't highlight anything specific, unlike motion or thermal vision.</p>
+
+<h2 id="loadout">Loadout</h2>
+<p>Recon spawns with a <a href="knife.html">knife</a>, a <a href="milso.html">MilSO</a> pistol and, from Corporal (4 XP), a <a href="detpack.html">detpack</a>.<sup class="ref"><a href="#ref-13" title="src/game/server/neo/neo_player.cpp:3408-3417,3452-3457">[13]</a></sup> Primary weapons by XP:</p>
+<div class="table-wrap"><table class="wikitable "><thead><tr><th>Primary weapon</th><th class="num">Min. XP<sup class="ref"><a href="#ref-24" title="src/game/shared/neo/neo_weapon_loadout.cpp:30-36">[24]</a></sup></th></tr></thead><tbody><tr><td><a href="mpn45.html">MPN45</a></td><td class="num">Any (even negative)</td></tr><tr><td><a href="srm.html">SRM</a></td><td class="num">0</td></tr><tr><td><a href="jitte.html">Jitte</a></td><td class="num">0</td></tr><tr><td><a href="srm-s.html">SRM (silenced)</a></td><td class="num">4</td></tr><tr><td><a href="jitte-s.html">Jitte (with scope)</a></td><td class="num">4</td></tr><tr><td><a href="zr68-l.html">ZR68-L (accurized)</a></td><td class="num">4</td></tr><tr><td><a href="zr68c.html">ZR68C</a></td><td class="num">10</td></tr><tr><td><a href="supa-7.html">Murata Supa-7</a></td><td class="num">20</td></tr><tr><td><a href="mosok-s.html">Mosok Silenced</a></td><td class="num">20</td></tr></tbody></table></div>
+
+<h2 id="hitbox">Hitbox</h2>
+<p>Recon has the smallest hull: 64 units standing and 46 crouched, with eyes at 57 units (Support: 70 / 59 / 60).<sup class="ref"><a href="#ref-25" title="src/game/shared/shareddefs.h:88-90">[25]</a></sup><sup class="ref"><a href="#ref-26" title="src/game/shared/neo/neo_gamerules.cpp:388-394">[26]</a></sup></p>
+
+<div class="navbox">
+  <div class="nb-title">Classes</div>
+  <div class="nb-row"><div>Selectable</div><div><a href="recon.html">Recon</a><a href="assault.html">Assault</a><a href="support.html">Support</a></div></div>
+  <div class="nb-row"><div>Mode-assigned</div><div><a href="vip.html">VIP</a><a href="juggernaut.html">Juggernaut</a></div></div>
+  <div class="nb-row"><div>Abilities</div><div><a href="thermoptic-camouflage.html">Thermoptic camo</a><a href="vision-modes.html">Vision modes</a><a href="aux-power.html">AUX power</a><a href="movement.html">Movement</a></div></div>
+</div>
+
+<h2 id="references">References</h2>
+<ol class="references"><li id="ref-1"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.h#L229"><code>src/game/shared/neo/neo_player_shared.h:229-230</code></a></li><li id="ref-2"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.h#L30"><code>src/game/shared/neo/neo_player_shared.h:30,33,50</code></a></li><li id="ref-3"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.h#L38"><code>src/game/shared/neo/neo_player_shared.h:38,51</code></a></li><li id="ref-4"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L866"><code>src/game/server/neo/neo_player.cpp:866-867</code></a></li><li id="ref-5"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.h#L45"><code>src/game/shared/neo/neo_player_shared.h:45,52</code></a></li><li id="ref-6"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L853"><code>src/game/server/neo/neo_player.cpp:853-861</code></a></li><li id="ref-7"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.h#L43"><code>src/game/shared/neo/neo_player_shared.h:43</code></a></li><li id="ref-8"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L882"><code>src/game/server/neo/neo_player.cpp:882-885</code></a></li><li id="ref-9"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/gamemovement.cpp#L2632"><code>src/game/shared/gamemovement.cpp:2632-2633,2647-2648</code></a></li><li id="ref-10"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/client/viewpostprocess.cpp#L2352"><code>src/game/client/viewpostprocess.cpp:2352-2355</code></a></li><li id="ref-11"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L3836"><code>src/game/server/neo/neo_player.cpp:3836-3837</code></a></li><li id="ref-12"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L416"><code>src/game/server/hl2/hl2_player.cpp:416-444</code></a></li><li id="ref-13"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L3408"><code>src/game/server/neo/neo_player.cpp:3408-3417,3452-3457</code></a></li><li id="ref-14"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/weapons/weapon_detpack.cpp#L71"><code>src/game/shared/neo/weapons/weapon_detpack.cpp:71-72</code></a></li><li id="ref-15"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L424"><code>src/game/server/hl2/hl2_player.cpp:424-429,2056-2062</code></a></li><li id="ref-16"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L889"><code>src/game/server/neo/neo_player.cpp:889-898</code></a></li><li id="ref-17"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/gamemovement.cpp#L2645"><code>src/game/shared/gamemovement.cpp:2645-2656</code></a></li><li id="ref-18"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L1144"><code>src/game/server/neo/neo_player.cpp:1144-1155</code></a></li><li id="ref-19"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.h#L178"><code>src/game/shared/neo/neo_player_shared.h:178</code></a></li><li id="ref-20"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.cpp#L942"><code>src/game/shared/neo/neo_player_shared.cpp:942-974</code></a></li><li id="ref-21"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L1148"><code>src/game/server/neo/neo_player.cpp:1148-1154,1565-1584</code></a></li><li id="ref-22"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L1568"><code>src/game/server/neo/neo_player.cpp:1568-1571</code></a></li><li id="ref-23"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L3780"><code>src/game/server/neo/neo_player.cpp:3780-3844</code></a></li><li id="ref-24"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_weapon_loadout.cpp#L30"><code>src/game/shared/neo/neo_weapon_loadout.cpp:30-36</code></a></li><li id="ref-25"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/shareddefs.h#L88"><code>src/game/shared/shareddefs.h:88-90</code></a></li><li id="ref-26"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L388"><code>src/game/shared/neo/neo_gamerules.cpp:388-394</code></a></li></ol>
+      </div>
+<div class="catlinks"><b>Category:</b><span>Classes</span></div>
+    </article>
+    <footer class="site-footer">
+      <p>Game data extracted from <a href="https://github.com/NeotokyoRebuild/neo/tree/120006db"><code>NeotokyoRebuild/neo@120006db</code></a>. Numbers link to the exact source line.</p>
+      <p>Prototype. All rights reserved. Not affiliated with or endorsed by the NEOTOKYO or NT;RE teams.</p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

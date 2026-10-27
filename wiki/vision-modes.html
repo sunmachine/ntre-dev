@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Vision modes · NT;RE Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;650;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="img/favicon.png">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="index.html"><img src="img/nt-logo.png" alt="" width="28" height="27">NT;RE <small>Wiki</small></a>
+  <form class="search" action="search.html" role="search"><input type="search" name="q" placeholder="Search NT;RE Wiki" aria-label="Search"></form>
+  <span class="proto-badge">Prototype</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><details open><summary>Menu</summary>
+<h3>Navigation</h3><ul><li><a href="index.html">Main page</a></li><li><a href="getting-started.html">Getting started</a></li></ul>
+<h3>Combat</h3><ul><li><a href="weapons.html">Weapons</a></li><li><a href="damage.html">Damage &amp; penetration</a></li><li><a href="loadouts.html">Loadouts &amp; ranks</a></li></ul>
+<h3>Player</h3><ul><li><a href="classes.html">Classes</a></li><li><a href="recon.html">Recon</a></li><li><a href="assault.html">Assault</a></li><li><a href="support.html">Support</a></li><li><a href="movement.html">Movement</a></li><li><a href="aux-power.html">AUX power</a></li><li><a href="thermoptic-camouflage.html">Thermoptic camo</a></li><li><a href="vision-modes.html" aria-current="page">Vision modes</a></li></ul>
+<h3>Game</h3><ul><li><a href="game-modes.html">Overview</a></li><li><a href="capture-the-ghost.html">Capture the Ghost</a></li><li><a href="ghost.html">The Ghost</a></li><li><a href="vip.html">VIP</a></li><li><a href="team-deathmatch.html">Team Deathmatch</a></li><li><a href="deathmatch.html">Deathmatch</a></li><li><a href="juggernaut.html">Juggernaut</a></li></ul>
+<h3>World</h3><ul><li><a href="factions.html">Factions</a></li><li><a href="maps.html">Maps</a></li></ul>
+<h3>Reference</h3><ul><li><a href="console-variables.html">Console variables</a></li><li><a href="about.html">About this prototype</a></li></ul>
+  </details></aside>
+  <main>
+    <div class="page-tabs"><span class="active">Article</span><span>Talk</span><span class="spacer"></span><span>Read</span><span>Edit</span><span>History</span></div>
+    <article class="page">
+<div class="breadcrumb">Player</div><h1>Vision modes</h1><p class="subtitle">Night, motion and thermal vision</p>
+      <div class="article">
+
+<p class="lead">Every class except the <a href="vip.html">VIP</a> has a toggleable <b>vision mode</b>. Each class gets a different one. Vision modes cost no <a href="aux-power.html">AUX</a>, have no time limit, and switch off when you die or respawn.<sup class="ref"><a href="#ref-1" title="src/game/server/neo/neo_player.cpp:728,1638">[1]</a></sup> You can toggle at most once every 0.1 s.<sup class="ref"><a href="#ref-2" title="src/game/shared/neo/neo_player_shared.cpp:797-801">[2]</a></sup></p>
+
+<div class="table-wrap"><table class="wikitable">
+  <thead><tr><th>Mode</th><th>Classes</th><th>Highlights</th><th>Reveals cloak?</th></tr></thead>
+  <tbody>
+    <tr><td><a href="#night-vision">Night vision</a></td><td><a href="recon.html">Recon</a>, <a href="juggernaut.html">Juggernaut</a></td><td>Nothing specific: brightens the whole scene</td><td>No</td></tr>
+    <tr><td><a href="#motion-vision">Motion vision</a></td><td><a href="assault.html">Assault</a></td><td>Any moving model</td><td><b>Yes</b>, while the target moves</td></tr>
+    <tr><td><a href="#thermal-vision">Thermal vision</a></td><td><a href="support.html">Support</a></td><td>Uncloaked players, NPCs, bodies</td><td>No; also sees through smoke</td></tr>
+  </tbody>
+</table></div>
+
+<nav class="toc"><div class="toc-title">Contents</div><ol><li><a href="#night-vision">Night vision</a></li><li><a href="#motion-vision">Motion vision</a></li><li><a href="#thermal-vision">Thermal vision</a></li></ol></nav>
+<h2 id="night-vision">Night vision</h2>
+<figure class="infobox" style="width:260px"><div class="ib-image" style="border:0">Night vision screenshot</div></figure>
+<p>Used by the <a href="recon.html">Recon</a> and <a href="juggernaut.html">Juggernaut</a>. It is a full-screen filter only: no entity is drawn differently.<sup class="ref"><a href="#ref-3" title="src/game/client/viewpostprocess.cpp:2341-2381">[3]</a></sup></p>
+
+<h2 id="motion-vision">Motion vision</h2>
+<figure class="infobox" style="width:260px"><div class="ib-image" style="border:0">Motion vision screenshot</div></figure>
+<p>Used by the <a href="assault.html">Assault</a>. Along with the screen filter, any model whose speed is above 0.5 u/s is drawn again with a highlight material. That includes players, physics props and <b>cloaked players</b>.<sup class="ref"><a href="#ref-4" title="src/game/client/c_baseanimating.cpp:3301-3329">[4]</a></sup> A target that stands completely still isn't highlighted.</p>
+
+<h2 id="thermal-vision">Thermal vision</h2>
+<figure class="infobox" style="width:260px"><div class="ib-image" style="border:0">Thermal vision screenshot</div></figure>
+<p>Used by the <a href="support.html">Support</a>. Uncloaked players, NPCs, ragdolls and gibs are drawn as hot. The smoke screen overlay is switched off, so Support can see through <a href="smoke-grenade.html">smoke</a>.<sup class="ref"><a href="#ref-5" title="src/game/client/neo/c_neo_player.cpp:622-646">[5]</a></sup><sup class="ref"><a href="#ref-6" title="src/game/client/smoke_fog_overlay.cpp:145-156">[6]</a></sup></p>
+<p>Cloaked players are <b>not</b> drawn hot. They appear with their normal material, which makes thermal a poor counter to <a href="thermoptic-camouflage.html">thermoptic camouflage</a>.<sup class="ref"><a href="#ref-7" title="src/game/client/neo/c_neo_player.cpp:686-696">[7]</a></sup></p>
+
+<h2 id="references">References</h2>
+<ol class="references"><li id="ref-1"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L728"><code>src/game/server/neo/neo_player.cpp:728,1638</code></a></li><li id="ref-2"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.cpp#L797"><code>src/game/shared/neo/neo_player_shared.cpp:797-801</code></a></li><li id="ref-3"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/client/viewpostprocess.cpp#L2341"><code>src/game/client/viewpostprocess.cpp:2341-2381</code></a></li><li id="ref-4"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/client/c_baseanimating.cpp#L3301"><code>src/game/client/c_baseanimating.cpp:3301-3329</code></a></li><li id="ref-5"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/client/neo/c_neo_player.cpp#L622"><code>src/game/client/neo/c_neo_player.cpp:622-646</code></a></li><li id="ref-6"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/client/smoke_fog_overlay.cpp#L145"><code>src/game/client/smoke_fog_overlay.cpp:145-156</code></a></li><li id="ref-7"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/client/neo/c_neo_player.cpp#L686"><code>src/game/client/neo/c_neo_player.cpp:686-696</code></a></li></ol>
+      </div>
+<div class="catlinks"><b>Category:</b><span>Player</span></div>
+    </article>
+    <footer class="site-footer">
+      <p>Game data extracted from <a href="https://github.com/NeotokyoRebuild/neo/tree/120006db"><code>NeotokyoRebuild/neo@120006db</code></a>. Numbers link to the exact source line.</p>
+      <p>Prototype. All rights reserved. Not affiliated with or endorsed by the NEOTOKYO or NT;RE teams.</p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

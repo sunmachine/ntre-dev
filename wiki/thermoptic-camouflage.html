@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Thermoptic camouflage · NT;RE Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;650;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="img/favicon.png">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="index.html"><img src="img/nt-logo.png" alt="" width="28" height="27">NT;RE <small>Wiki</small></a>
+  <form class="search" action="search.html" role="search"><input type="search" name="q" placeholder="Search NT;RE Wiki" aria-label="Search"></form>
+  <span class="proto-badge">Prototype</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><details open><summary>Menu</summary>
+<h3>Navigation</h3><ul><li><a href="index.html">Main page</a></li><li><a href="getting-started.html">Getting started</a></li></ul>
+<h3>Combat</h3><ul><li><a href="weapons.html">Weapons</a></li><li><a href="damage.html">Damage &amp; penetration</a></li><li><a href="loadouts.html">Loadouts &amp; ranks</a></li></ul>
+<h3>Player</h3><ul><li><a href="classes.html">Classes</a></li><li><a href="recon.html">Recon</a></li><li><a href="assault.html">Assault</a></li><li><a href="support.html">Support</a></li><li><a href="movement.html">Movement</a></li><li><a href="aux-power.html">AUX power</a></li><li><a href="thermoptic-camouflage.html" aria-current="page">Thermoptic camo</a></li><li><a href="vision-modes.html">Vision modes</a></li></ul>
+<h3>Game</h3><ul><li><a href="game-modes.html">Overview</a></li><li><a href="capture-the-ghost.html">Capture the Ghost</a></li><li><a href="ghost.html">The Ghost</a></li><li><a href="vip.html">VIP</a></li><li><a href="team-deathmatch.html">Team Deathmatch</a></li><li><a href="deathmatch.html">Deathmatch</a></li><li><a href="juggernaut.html">Juggernaut</a></li></ul>
+<h3>World</h3><ul><li><a href="factions.html">Factions</a></li><li><a href="maps.html">Maps</a></li></ul>
+<h3>Reference</h3><ul><li><a href="console-variables.html">Console variables</a></li><li><a href="about.html">About this prototype</a></li></ul>
+  </details></aside>
+  <main>
+    <div class="page-tabs"><span class="active">Article</span><span>Talk</span><span class="spacer"></span><span>Read</span><span>Edit</span><span>History</span></div>
+    <article class="page">
+<div class="breadcrumb">Player</div><h1>Thermoptic camouflage</h1><p class="subtitle">The active cloak used by Recon and Assault</p>
+      <div class="article">
+
+<aside class="infobox">
+  <div class="ib-title">Thermoptic camo</div>
+  <figure class="ib-image">Cloak effect screenshot</figure>
+  <table>
+    <tr><th>Classes</th><td><a href="recon.html">Recon</a>, <a href="assault.html">Assault</a></td></tr>
+    <tr class="ib-section"><th colspan="2">Battery</th></tr>
+    <tr><th>Recon</th><td>13 s, +0.55/s</td></tr>
+    <tr><th>Assault</th><td>8 s, +0.25/s</td></tr>
+    <tr><th>Drain</th><td>1<sup class="ref"><a href="#ref-1" title="src/game/shared/neo/neo_player_shared.h:179">[1]</a></sup><sup class="ref"><a href="#ref-2" title="src/game/server/neo/neo_player.cpp:1102-1133">[2]</a></sup> /s</td></tr>
+    <tr><th>Min. to activate</th><td>0.1<sup class="ref"><a href="#ref-3" title="src/game/shared/neo/neo_player_shared.h:180">[3]</a></sup><sup class="ref"><a href="#ref-4" title="src/game/server/neo/neo_player.cpp:1268">[4]</a></sup></td></tr>
+    <tr><th>Full recharge</th><td>23.6 s / 32 s</td></tr>
+    <tr><th>Refills on spawn</th><td>True<sup class="ref"><a href="#ref-5" title="src/game/server/neo/neo_player.cpp:721">[5]</a></sup></td></tr>
+  </table>
+</aside>
+<p class="lead"><b>Thermoptic camouflage</b> (TOC) makes the wearer near-invisible. <a href="recon.html">Recon</a> and <a href="assault.html">Assault</a> have it; <a href="support.html">Support</a>, the <a href="vip.html">VIP</a> and the <a href="juggernaut.html">Juggernaut</a> don't.<sup class="ref"><a href="#ref-6" title="src/game/server/neo/neo_player.cpp:1263-1266,3832-3844">[6]</a></sup> It runs on its own battery, separate from <a href="aux-power.html">AUX</a>.</p>
+
+<nav class="toc"><div class="toc-title">Contents</div><ol><li><a href="#battery">Battery</a></li><li><a href="#what-gives-you-away">What gives you away</a></li><li><a href="#what-doesn-t-break-it">What doesn&#x27;t break it</a></li><li><a href="#console-variables">Console variables</a></li></ol></nav>
+<h2 id="battery">Battery</h2>
+<p>The cloak drains 1 unit per second, applied in whole-second steps, and switches off when the battery drops to 0.1.<sup class="ref"><a href="#ref-2" title="src/game/server/neo/neo_player.cpp:1102-1133">[2]</a></sup> It only recharges while switched off.</p>
+<div class="table-wrap"><table class="wikitable">
+  <thead><tr><th>Class</th><th class="num">Capacity</th><th class="num">Max duration</th><th class="num">Recharge /s</th><th class="num">Empty → full</th></tr></thead>
+  <tbody>
+    <tr><td><a href="recon.html">Recon</a></td><td class="num">13</td><td class="num">13 s</td><td class="num">0.55</td><td class="num">23.6 s</td></tr>
+    <tr><td><a href="assault.html">Assault</a></td><td class="num">8</td><td class="num">8 s</td><td class="num">0.25</td><td class="num">32 s</td></tr>
+  </tbody>
+  <caption>Values from <sup class="ref"><a href="#ref-7" title="src/game/server/neo/neo_player.cpp:3780-3844">[7]</a></sup>.</caption>
+</table></div>
+
+<h2 id="what-gives-you-away">What gives you away</h2>
+<p>The cloak isn't perfect. Ranked roughly from most to least revealing:</p>
+<ul>
+  <li><b>Motion vision.</b> <a href="assault.html">Assault</a> motion vision highlights any model moving faster than 0.5 u/s, cloaked or not.<sup class="ref"><a href="#ref-8" title="src/game/client/c_baseanimating.cpp:3301-3329">[8]</a></sup></li>
+  <li><b>Moving.</b> Each cloaked player has a visibility factor from 0 to 1 that controls how strong the shimmer and tint are. Standing still (≤20 u/s) lowers it by 1.1 per second; moving raises it by speed × 0.004 per second, so about +0.8/s at a full 200 u/s run.<sup class="ref"><a href="#ref-9" title="src/game/client/neo/c_neo_player.cpp:1213-1224">[9]</a></sup><sup class="ref"><a href="#ref-10" title="src/game/client/neo/material_proxies/neo_matproxy_thermoptic.cpp:47-99">[10]</a></sup></li>
+  <li><b>Switching it on.</b> Activation emits a blue light flash (radius 96 units, 0.5 s) and a sound that nearby players can hear.<sup class="ref"><a href="#ref-11" title="src/game/server/neo/neo_player.cpp:1173-1255">[11]</a></sup></li>
+  <li><b>Firing an unsuppressed weapon</b> causes a 0.1 s flash. Suppressed weapons don't.<sup class="ref"><a href="#ref-12" title="src/game/shared/neo/weapons/weapon_neobasecombatweapon.cpp:1011-1019">[12]</a></sup></li>
+</ul>
+<p><a href="game-modes.html#bots">Bots</a> get a bonus to spotting you for a moment after you activate the cloak or fire an unsuppressed weapon.<sup class="ref"><a href="#ref-13" title="src/game/server/neo/neo_player.cpp:1220,2692-2697">[13]</a></sup></p>
+<p>Cloaked players and their weapons cast <b>no shadows</b>.<sup class="ref"><a href="#ref-14" title="src/game/client/neo/c_neo_player.cpp:698-708">[14]</a></sup></p>
+
+<h3>Against thermal vision</h3>
+<p><a href="support.html">Support</a> thermal vision draws uncloaked players as hot. A cloaked player is drawn with their normal material and no thermal highlight.<sup class="ref"><a href="#ref-15" title="src/game/client/neo/c_neo_player.cpp:622-646,686-696">[15]</a></sup></p>
+
+<h2 id="what-doesn-t-break-it">What doesn't break it</h2>
+<p>Only these turn the cloak off: running out of battery, toggling it yourself, dying, or respawning.<sup class="ref"><a href="#ref-16" title="src/game/server/neo/neo_player.cpp:1121-1126,1257-1283">[16]</a></sup> No code switches it off when you fire, take damage or pick up the <a href="ghost.html">ghost</a>.</p>
+
+<h2 id="console-variables">Console variables</h2>
+<ul>
+  <li><code>sv_neo_infinite_cloak</code> (cheat) disables battery drain.<sup class="ref"><a href="#ref-17" title="src/game/server/neo/neo_player.cpp:227,3803-3806">[17]</a></sup></li>
+</ul>
+
+<h2 id="references">References</h2>
+<ol class="references"><li id="ref-1"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.h#L179"><code>src/game/shared/neo/neo_player_shared.h:179</code></a></li><li id="ref-2"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L1102"><code>src/game/server/neo/neo_player.cpp:1102-1133</code></a></li><li id="ref-3"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.h#L180"><code>src/game/shared/neo/neo_player_shared.h:180</code></a></li><li id="ref-4"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L1268"><code>src/game/server/neo/neo_player.cpp:1268</code></a></li><li id="ref-5"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L721"><code>src/game/server/neo/neo_player.cpp:721</code></a></li><li id="ref-6"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L1263"><code>src/game/server/neo/neo_player.cpp:1263-1266,3832-3844</code></a></li><li id="ref-7"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L3780"><code>src/game/server/neo/neo_player.cpp:3780-3844</code></a></li><li id="ref-8"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/client/c_baseanimating.cpp#L3301"><code>src/game/client/c_baseanimating.cpp:3301-3329</code></a></li><li id="ref-9"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/client/neo/c_neo_player.cpp#L1213"><code>src/game/client/neo/c_neo_player.cpp:1213-1224</code></a></li><li id="ref-10"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/client/neo/material_proxies/neo_matproxy_thermoptic.cpp#L47"><code>src/game/client/neo/material_proxies/neo_matproxy_thermoptic.cpp:47-99</code></a></li><li id="ref-11"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L1173"><code>src/game/server/neo/neo_player.cpp:1173-1255</code></a></li><li id="ref-12"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/weapons/weapon_neobasecombatweapon.cpp#L1011"><code>src/game/shared/neo/weapons/weapon_neobasecombatweapon.cpp:1011-1019</code></a></li><li id="ref-13"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L1220"><code>src/game/server/neo/neo_player.cpp:1220,2692-2697</code></a></li><li id="ref-14"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/client/neo/c_neo_player.cpp#L698"><code>src/game/client/neo/c_neo_player.cpp:698-708</code></a></li><li id="ref-15"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/client/neo/c_neo_player.cpp#L622"><code>src/game/client/neo/c_neo_player.cpp:622-646,686-696</code></a></li><li id="ref-16"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L1121"><code>src/game/server/neo/neo_player.cpp:1121-1126,1257-1283</code></a></li><li id="ref-17"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L227"><code>src/game/server/neo/neo_player.cpp:227,3803-3806</code></a></li></ol>
+      </div>
+<div class="catlinks"><b>Category:</b><span>Player</span></div>
+    </article>
+    <footer class="site-footer">
+      <p>Game data extracted from <a href="https://github.com/NeotokyoRebuild/neo/tree/120006db"><code>NeotokyoRebuild/neo@120006db</code></a>. Numbers link to the exact source line.</p>
+      <p>Prototype. All rights reserved. Not affiliated with or endorsed by the NEOTOKYO or NT;RE teams.</p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

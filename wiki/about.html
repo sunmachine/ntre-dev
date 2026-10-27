@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>About this prototype · NT;RE Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;650;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="img/favicon.png">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="index.html"><img src="img/nt-logo.png" alt="" width="28" height="27">NT;RE <small>Wiki</small></a>
+  <form class="search" action="search.html" role="search"><input type="search" name="q" placeholder="Search NT;RE Wiki" aria-label="Search"></form>
+  <span class="proto-badge">Prototype</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><details open><summary>Menu</summary>
+<h3>Navigation</h3><ul><li><a href="index.html">Main page</a></li><li><a href="getting-started.html">Getting started</a></li></ul>
+<h3>Combat</h3><ul><li><a href="weapons.html">Weapons</a></li><li><a href="damage.html">Damage &amp; penetration</a></li><li><a href="loadouts.html">Loadouts &amp; ranks</a></li></ul>
+<h3>Player</h3><ul><li><a href="classes.html">Classes</a></li><li><a href="recon.html">Recon</a></li><li><a href="assault.html">Assault</a></li><li><a href="support.html">Support</a></li><li><a href="movement.html">Movement</a></li><li><a href="aux-power.html">AUX power</a></li><li><a href="thermoptic-camouflage.html">Thermoptic camo</a></li><li><a href="vision-modes.html">Vision modes</a></li></ul>
+<h3>Game</h3><ul><li><a href="game-modes.html">Overview</a></li><li><a href="capture-the-ghost.html">Capture the Ghost</a></li><li><a href="ghost.html">The Ghost</a></li><li><a href="vip.html">VIP</a></li><li><a href="team-deathmatch.html">Team Deathmatch</a></li><li><a href="deathmatch.html">Deathmatch</a></li><li><a href="juggernaut.html">Juggernaut</a></li></ul>
+<h3>World</h3><ul><li><a href="factions.html">Factions</a></li><li><a href="maps.html">Maps</a></li></ul>
+<h3>Reference</h3><ul><li><a href="console-variables.html">Console variables</a></li><li><a href="about.html" aria-current="page">About this prototype</a></li></ul>
+  </details></aside>
+  <main>
+    <div class="page-tabs"><span class="active">Article</span><span>Talk</span><span class="spacer"></span><span>Read</span><span>Edit</span><span>History</span></div>
+    <article class="page">
+<div class="breadcrumb">Meta</div><h1>About this prototype</h1><p class="subtitle">What this is, how it is built, and what to critique</p>
+      <div class="article">
+
+<p class="lead">This is a static HTML prototype of a wiki for <b>NEOTOKYO Rebuild</b> (NT;RE). It exists to settle structure, page types and visual design before a real wiki engine is chosen.</p>
+
+<nav class="toc"><div class="toc-title">Contents</div><ol><li><a href="#how-the-numbers-are-sourced">How the numbers are sourced</a></li><li><a href="#page-types-demonstrated">Page types demonstrated</a></li><li><a href="#not-in-the-prototype">Not in the prototype</a></li><li><a href="#build">Build</a></li></ol></nav>
+<h2 id="how-the-numbers-are-sourced">How the numbers are sourced</h2>
+<p>Every stat on this site was extracted from the <a href="https://github.com/NeotokyoRebuild/neo">NeotokyoRebuild/neo</a> repository: weapon scripts in <code>game/neo/scripts/</code> and the C++ gameplay code in <code>src/game/</code>. Each number carries a footnote that links to the exact file and line it came from, pinned to a specific commit (see the page footer).</p>
+<p>When the game changes, the data can be re-extracted and every page regenerated. A real wiki would do the same through a bot or data pages.</p>
+
+<h2 id="page-types-demonstrated">Page types demonstrated</h2>
+<ul>
+  <li><b>Hub pages</b>: <a href="index.html">Main page</a>, <a href="weapons.html">Weapons</a>, <a href="classes.html">Classes</a>, <a href="game-modes.html">Game modes</a></li>
+  <li><b>Data-driven articles</b>: every weapon page is generated from one record, with an infobox, stat breakdown and loadout table</li>
+  <li><b>Mechanic articles</b>: hand-written explanations with citations, such as <a href="thermoptic-camouflage.html">Thermoptic camouflage</a> and <a href="damage.html">Damage &amp; penetration</a></li>
+  <li><b>Reference tables</b>: <a href="console-variables.html">Console variables</a>, <a href="maps.html">Maps</a>, <a href="loadouts.html">Loadouts &amp; ranks</a></li>
+</ul>
+
+<h2 id="not-in-the-prototype">Not in the prototype</h2>
+<ul>
+  <li>Search, editing, page history and talk pages (the tabs are visual placeholders)</li>
+  <li>Images: grey hatched boxes mark where screenshots or renders would go, pending a decision on asset licensing</li>
+  <li>Lore and story content: this pass covers gameplay mechanics and stats only</li>
+</ul>
+
+<h2 id="build">Build</h2>
+<p>Run <code>python3 build.py</code> in <code>prototype/</code>. Page bodies live in <code>content/</code>, extracted game data in <code>data/</code>, and the output is written to <code>site/</code>. No dependencies beyond the Python standard library.</p>
+
+      </div>
+<div class="catlinks"><b>Category:</b><span>Meta</span></div>
+    </article>
+    <footer class="site-footer">
+      <p>Game data extracted from <a href="https://github.com/NeotokyoRebuild/neo/tree/120006db"><code>NeotokyoRebuild/neo@120006db</code></a>. Numbers link to the exact source line.</p>
+      <p>Prototype. All rights reserved. Not affiliated with or endorsed by the NEOTOKYO or NT;RE teams.</p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

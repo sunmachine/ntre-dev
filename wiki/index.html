@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Main page · NT;RE Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;650;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="img/favicon.png">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="index.html"><img src="img/nt-logo.png" alt="" width="28" height="27">NT;RE <small>Wiki</small></a>
+  <form class="search" action="search.html" role="search"><input type="search" name="q" placeholder="Search NT;RE Wiki" aria-label="Search"></form>
+  <span class="proto-badge">Prototype</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><details open><summary>Menu</summary>
+<h3>Navigation</h3><ul><li><a href="index.html" aria-current="page">Main page</a></li><li><a href="getting-started.html">Getting started</a></li></ul>
+<h3>Combat</h3><ul><li><a href="weapons.html">Weapons</a></li><li><a href="damage.html">Damage &amp; penetration</a></li><li><a href="loadouts.html">Loadouts &amp; ranks</a></li></ul>
+<h3>Player</h3><ul><li><a href="classes.html">Classes</a></li><li><a href="recon.html">Recon</a></li><li><a href="assault.html">Assault</a></li><li><a href="support.html">Support</a></li><li><a href="movement.html">Movement</a></li><li><a href="aux-power.html">AUX power</a></li><li><a href="thermoptic-camouflage.html">Thermoptic camo</a></li><li><a href="vision-modes.html">Vision modes</a></li></ul>
+<h3>Game</h3><ul><li><a href="game-modes.html">Overview</a></li><li><a href="capture-the-ghost.html">Capture the Ghost</a></li><li><a href="ghost.html">The Ghost</a></li><li><a href="vip.html">VIP</a></li><li><a href="team-deathmatch.html">Team Deathmatch</a></li><li><a href="deathmatch.html">Deathmatch</a></li><li><a href="juggernaut.html">Juggernaut</a></li></ul>
+<h3>World</h3><ul><li><a href="factions.html">Factions</a></li><li><a href="maps.html">Maps</a></li></ul>
+<h3>Reference</h3><ul><li><a href="console-variables.html">Console variables</a></li><li><a href="about.html">About this prototype</a></li></ul>
+  </details></aside>
+  <main>
+    <div class="page-tabs"><span class="active">Article</span><span>Talk</span><span class="spacer"></span><span>Read</span><span>Edit</span><span>History</span></div>
+    <article class="page">
+
+      <div class="article">
+
+
+<div class="hero">
+  <h1 class="wordmark"><img src="img/wordmark.png" alt="NEOTOKYO;REBUILD" width="1500" height="458"><span>Wiki</span></h1>
+  <p>The reference for <b>NEOTOKYO Rebuild</b>, a tactical first-person shooter rebuilt on the 2025 Source SDK. Every stat here is extracted from the game's source code and linked to the exact line it came from.</p>
+  <div class="stats">
+    <div><b>29</b>Weapons &amp; items</div>
+    <div><b>3 + 2</b>Classes</div>
+    <div><b>7</b>Game modes</div>
+    <div><b>32</b>Official maps</div>
+  </div>
+</div>
+
+<h2 class="noclear" id="start-here">Start here</h2>
+<div class="cards">
+  <a class="card" href="getting-started.html"><h3>Getting started</h3><p>The rules every new player gets wrong: no headshot bonus, one life per round, ranks unlock guns.</p></a>
+  <a class="card" href="capture-the-ghost.html"><h3>Capture the Ghost</h3><p>The core mode. Find the ghost, carry it home, or wipe the other team.</p></a>
+  <a class="card" href="classes.html"><h3>Classes</h3><p>Recon, Assault and Support: health, speed, cloak and vision compared.</p></a>
+</div>
+
+<h2 id="combat">Combat</h2>
+<div class="cards">
+  <a class="card" href="weapons.html"><h3>Weapons</h3><p>Side-by-side comparison of damage, rate of fire, penetration and shots to kill.</p><div class="card-stat">SRM · ZR68C · MX · SRS · PZ252 …</div></a>
+  <a class="card" href="damage.html"><h3>Damage &amp; penetration</h3><p>The ×1.485 modifier, hit locations, wall penetration by material, accuracy.</p></a>
+  <a class="card" href="loadouts.html"><h3>Loadouts &amp; ranks</h3><p>What XP you need for each gun, and how to earn it.</p><div class="card-stat">Dog · Pvt · Cpl · Sgt · Lt</div></a>
+</div>
+
+<h2 id="player-mechanics">Player mechanics</h2>
+<div class="cards">
+  <a class="card" href="thermoptic-camouflage.html"><h3>Thermoptic camo</h3><p>13 s for Recon, 8 s for Assault, and what gives a cloaked player away.</p></a>
+  <a class="card" href="vision-modes.html"><h3>Vision modes</h3><p>Night, motion and thermal: which ones see through cloak and smoke.</p></a>
+  <a class="card" href="movement.html"><h3>Movement</h3><p>The full speed formula, weapon speed scales, leaning and fall damage.</p></a>
+  <a class="card" href="aux-power.html"><h3>AUX power</h3><p>Sprint drain and regen by class, and why Recon sprints for free.</p></a>
+</div>
+
+<h2 id="game-modes">Game modes</h2>
+<div class="cards">
+  <a class="card" href="ghost.html"><h3>The Ghost</h3><p>Beacons, carrier restrictions, spawns and drops.</p></a>
+  <a class="card" href="juggernaut.html"><h3>Juggernaut</h3><p>990 HP, a heat-cooled BALC, and a race to 20 points.</p></a>
+  <a class="card" href="vip.html"><h3>VIP</h3><p>Escort or eliminate the high-value target.</p></a>
+  <a class="card" href="game-modes.html"><h3>All modes</h3><p>Round flow, match length, mode selection and competitive settings.</p></a>
+</div>
+
+<div class="callout warn"><strong>Prototype</strong> This is a static design prototype. Search, editing and images are placeholders. See <a href="about.html">About this prototype</a> for what's in scope and how the data was gathered.</div>
+
+      </div>
+
+    </article>
+    <footer class="site-footer">
+      <p>Game data extracted from <a href="https://github.com/NeotokyoRebuild/neo/tree/120006db"><code>NeotokyoRebuild/neo@120006db</code></a>. Numbers link to the exact source line.</p>
+      <p>Prototype. All rights reserved. Not affiliated with or endorsed by the NEOTOKYO or NT;RE teams.</p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

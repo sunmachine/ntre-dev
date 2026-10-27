@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Factions · NT;RE Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;650;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="img/favicon.png">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="index.html"><img src="img/nt-logo.png" alt="" width="28" height="27">NT;RE <small>Wiki</small></a>
+  <form class="search" action="search.html" role="search"><input type="search" name="q" placeholder="Search NT;RE Wiki" aria-label="Search"></form>
+  <span class="proto-badge">Prototype</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><details open><summary>Menu</summary>
+<h3>Navigation</h3><ul><li><a href="index.html">Main page</a></li><li><a href="getting-started.html">Getting started</a></li></ul>
+<h3>Combat</h3><ul><li><a href="weapons.html">Weapons</a></li><li><a href="damage.html">Damage &amp; penetration</a></li><li><a href="loadouts.html">Loadouts &amp; ranks</a></li></ul>
+<h3>Player</h3><ul><li><a href="classes.html">Classes</a></li><li><a href="recon.html">Recon</a></li><li><a href="assault.html">Assault</a></li><li><a href="support.html">Support</a></li><li><a href="movement.html">Movement</a></li><li><a href="aux-power.html">AUX power</a></li><li><a href="thermoptic-camouflage.html">Thermoptic camo</a></li><li><a href="vision-modes.html">Vision modes</a></li></ul>
+<h3>Game</h3><ul><li><a href="game-modes.html">Overview</a></li><li><a href="capture-the-ghost.html">Capture the Ghost</a></li><li><a href="ghost.html">The Ghost</a></li><li><a href="vip.html">VIP</a></li><li><a href="team-deathmatch.html">Team Deathmatch</a></li><li><a href="deathmatch.html">Deathmatch</a></li><li><a href="juggernaut.html">Juggernaut</a></li></ul>
+<h3>World</h3><ul><li><a href="factions.html" aria-current="page">Factions</a></li><li><a href="maps.html">Maps</a></li></ul>
+<h3>Reference</h3><ul><li><a href="console-variables.html">Console variables</a></li><li><a href="about.html">About this prototype</a></li></ul>
+  </details></aside>
+  <main>
+    <div class="page-tabs"><span class="active">Article</span><span>Talk</span><span class="spacer"></span><span>Read</span><span>Edit</span><span>History</span></div>
+    <article class="page">
+<div class="breadcrumb">World</div><h1>Factions</h1><p class="subtitle">Jinrai and the NSF</p>
+      <div class="article">
+
+<p class="lead">NT;RE matches are fought between two teams: <b class="team-jinrai">Jinrai</b> and the <b class="team-nsf">NSF</b>. They are <b>mechanically identical</b>. No health, speed, AUX, cloak or vision value differs between them. The differences are cosmetic and positional.</p>
+
+<div class="table-wrap"><table class="wikitable">
+  <thead><tr><th></th><th><span class="team-jinrai">Jinrai</span></th><th><span class="team-nsf">NSF</span></th></tr></thead>
+  <tbody>
+    <tr><td>Team index</td><td class="num">2<sup class="ref"><a href="#ref-1" title="src/game/shared/neo/neo_player_shared.h:400-403">[1]</a></sup></td><td class="num">3</td></tr>
+    <tr><td>HUD colour</td><td><span class="team-jinrai">■</span> <code>154 255 154</code><sup class="ref"><a href="#ref-2" title="src/game/shared/neo/neo_player_shared.h:253-258">[2]</a></sup></td><td><span class="team-nsf">■</span> <code>154 205 255</code></td></tr>
+    <tr><td>Recon model</td><td><code>jinrai_msf</code></td><td><code>nsf_gsf</code><sup class="ref"><a href="#ref-3" title="src/game/server/neo/neo_model_manager.cpp:16-48">[3]</a></sup></td></tr>
+    <tr><td>Assault model</td><td><code>jinrai_mam</code></td><td><code>nsf_gam</code></td></tr>
+    <tr><td>Support model</td><td><code>jinrai_mhm</code></td><td><code>nsf_ghm</code></td></tr>
+    <tr><td>Spawn, even rounds</td><td>Attacker</td><td>Defender<sup class="ref"><a href="#ref-4" title="src/game/server/neo/neo_player.cpp:3027,3042-3057">[4]</a></sup></td></tr>
+    <tr><td>Spawn, odd rounds</td><td>Defender</td><td>Attacker</td></tr>
+  </tbody>
+</table></div>
+
+<p>Each class has <b>three skins</b> per team.<sup class="ref"><a href="#ref-5" title="src/game/shared/neo/neo_enums.h:3-9">[5]</a></sup> The <a href="vip.html">VIP</a> and <a href="juggernaut.html">Juggernaut</a> each use one model shared by both teams.<sup class="ref"><a href="#ref-6" title="src/game/server/neo/neo_model_manager.cpp:375,379">[6]</a></sup></p>
+<p>Spawn sides and <a href="capture-the-ghost.html">capture zones</a> swap every round, so neither team keeps a map-side advantage.</p>
+
+<div class="callout"><strong>Lore</strong> Faction background and story belong here. This prototype covers gameplay only.</div>
+
+<h2 id="references">References</h2>
+<ol class="references"><li id="ref-1"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.h#L400"><code>src/game/shared/neo/neo_player_shared.h:400-403</code></a></li><li id="ref-2"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.h#L253"><code>src/game/shared/neo/neo_player_shared.h:253-258</code></a></li><li id="ref-3"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_model_manager.cpp#L16"><code>src/game/server/neo/neo_model_manager.cpp:16-48</code></a></li><li id="ref-4"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L3027"><code>src/game/server/neo/neo_player.cpp:3027,3042-3057</code></a></li><li id="ref-5"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_enums.h#L3"><code>src/game/shared/neo/neo_enums.h:3-9</code></a></li><li id="ref-6"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_model_manager.cpp#L375"><code>src/game/server/neo/neo_model_manager.cpp:375,379</code></a></li></ol>
+      </div>
+<div class="catlinks"><b>Category:</b><span>World</span></div>
+    </article>
+    <footer class="site-footer">
+      <p>Game data extracted from <a href="https://github.com/NeotokyoRebuild/neo/tree/120006db"><code>NeotokyoRebuild/neo@120006db</code></a>. Numbers link to the exact source line.</p>
+      <p>Prototype. All rights reserved. Not affiliated with or endorsed by the NEOTOKYO or NT;RE teams.</p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

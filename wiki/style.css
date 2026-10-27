@@ -1,0 +1,785 @@
+/* NT;RE Wiki prototype skin */
+
+/* Dark is the default theme regardless of OS preference. Palette follows the
+   NT;RE branding (opencollective.com/neotokyorebuild): neutral black, white,
+   and the red dot, which is kept to small marks. Red is never link text,
+   because on a wiki red text means a missing page. */
+:root {
+  --bg: #111213;
+  --surface: #111213;
+  --surface-2: #17181a;
+  --surface-3: #1e1f22;
+  --border: #252629;
+  --border-strong: #35363a;
+  --text: #d4d4d6;
+  --text-strong: #f4f4f5;
+  --muted: #8a8b90;
+  --red: #ff0000;
+  --red-soft: #c62a1d;
+  --accent: var(--red);
+  --link: #f4f4f5;
+  --link-underline: color-mix(in srgb, var(--red) 55%, transparent);
+  --link-visited: #d4d4d6;
+  --jinrai: #92bd7f;
+  --nsf: #86a6d4;
+  --warn: #d8ad6a;
+  --danger: #ff8a73;
+  --bar: #9a9ba0;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+  color-scheme: dark;
+}
+
+/* Light palette, kept for a future theme switch. */
+:root[data-theme="light"] {
+  --bg: #fafafa;
+  --surface: #fafafa;
+  --surface-2: #f2f3f5;
+  --surface-3: #eaecef;
+  --border: #e2e4e8;
+  --border-strong: #cdd1d6;
+  --text: #2a2e34;
+  --text-strong: #111317;
+  --muted: #6a717a;
+  --link: #111317;
+  --link-visited: #2a2e34;
+  --jinrai: #4b7f35;
+  --nsf: #3a64a8;
+  --warn: #8a6420;
+  --danger: #a3473d;
+  --bar: #9aa2ac;
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.65 var(--font-body);
+  font-feature-settings: "cv11", "ss01";
+}
+
+a {
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-color: var(--link-underline);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+a:hover {
+  text-decoration-color: var(--red);
+}
+a.new {
+  color: var(--danger);
+  text-decoration-style: dashed;
+}
+/* Chrome links (nav, cards, headers) carry no underline. */
+.sidebar a,
+.logo,
+.card,
+.toc a,
+sup.ref a,
+.navbox .nb-title a {
+  text-decoration: none;
+}
+
+code,
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0 0.3em;
+}
+
+/* ---------- Header ---------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 56px;
+  padding: 0 28px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-strong);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.logo img {
+  display: block;
+}
+.logo:hover {
+  text-decoration: none;
+}
+.logo small {
+  margin-left: 4px;
+  font-size: inherit;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.search {
+  flex: 1;
+  max-width: 360px;
+  margin-left: auto;
+}
+.search input {
+  width: 100%;
+  padding: 6px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+}
+.search input::placeholder {
+  color: var(--muted);
+}
+.search input:focus {
+  outline: none;
+  border-color: var(--border-strong);
+}
+
+.proto-badge {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ---------- Layout ---------- */
+
+.layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.sidebar {
+  position: sticky;
+  top: 56px;
+  align-self: start;
+  max-height: calc(100vh - 56px);
+  overflow-y: auto;
+  padding: 28px 16px 48px 28px;
+  font-size: 14px;
+}
+.sidebar summary {
+  display: none;
+}
+.sidebar h3 {
+  margin: 22px 0 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.sidebar h3:first-of-type {
+  margin-top: 0;
+}
+.sidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sidebar li a {
+  display: block;
+  padding: 3px 10px;
+  margin-left: -10px;
+  border-radius: 5px;
+  color: var(--text);
+}
+.sidebar li a:hover {
+  color: var(--text-strong);
+  text-decoration: none;
+}
+.sidebar li a[aria-current="page"] {
+  position: relative;
+  color: var(--text-strong);
+  background: var(--surface-3);
+}
+/* The brand's red dot marks the current page. */
+.sidebar li a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: 50%;
+  background: var(--red);
+}
+
+main {
+  min-width: 0;
+  padding: 28px 40px 72px;
+}
+
+.page {
+  max-width: 1040px;
+}
+
+.page-tabs {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.page-tabs span.active {
+  color: var(--text-strong);
+}
+.page-tabs .spacer {
+  flex: 1;
+}
+
+/* ---------- Article ---------- */
+
+.breadcrumb {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--text-strong);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+h1 {
+  margin: 0 0 6px;
+  font-size: 32px;
+  font-weight: 650;
+}
+/* Page titles end in the brand's raised red dot, as in "neotokyo°". */
+.page > h1::after {
+  content: "";
+  display: inline-block;
+  width: 0.2em;
+  height: 0.2em;
+  margin-left: 0.12em;
+  vertical-align: 0.55em;
+  border-radius: 50%;
+  background: var(--red);
+}
+.subtitle {
+  margin: 0 0 28px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.article h2 {
+  /* Flow beside floated infoboxes; overflow keeps the rule from running under them. */
+  overflow: hidden;
+  margin: 40px 0 12px;
+  padding-bottom: 8px;
+  font-size: 21px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+.article h2#references {
+  clear: both;
+}
+.article h3 {
+  margin: 28px 0 8px;
+  font-size: 17px;
+  font-weight: 600;
+}
+.article p,
+.article ul,
+.article ol {
+  margin: 0 0 14px;
+}
+.article ul,
+.article ol {
+  padding-left: 22px;
+}
+.article li {
+  margin: 3px 0;
+}
+.article b,
+.article strong {
+  color: var(--text-strong);
+  font-weight: 600;
+}
+
+.lead {
+  font-size: 16.5px;
+}
+
+.hatnote {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.callout {
+  margin: 18px 0;
+  padding: 2px 0 2px 16px;
+  border-left: 2px solid var(--border-strong);
+  font-size: 14.5px;
+}
+.callout.warn {
+  border-left-color: var(--warn);
+}
+.callout strong:first-child {
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* ---------- Table of contents ---------- */
+
+.toc {
+  display: inline-block;
+  min-width: 200px;
+  margin: 4px 0 20px;
+  padding: 2px 0 2px 16px;
+  border-left: 1px solid var(--border-strong);
+  font-size: 14px;
+}
+.toc .toc-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.toc ol {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+}
+.toc li {
+  margin: 1px 0;
+}
+
+/* ---------- Infobox ---------- */
+
+.infobox {
+  float: right;
+  clear: right;
+  width: 300px;
+  margin: 0 0 20px 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 13.5px;
+}
+.infobox .ib-title {
+  padding: 12px 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-strong);
+  text-align: left;
+}
+.infobox .ib-image {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  margin: 0;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 12px;
+  border-top: 1px solid var(--border);
+}
+.infobox table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.infobox th,
+.infobox td {
+  padding: 5px 14px;
+  vertical-align: top;
+  border-top: 1px solid var(--border);
+}
+.infobox th {
+  width: 46%;
+  text-align: left;
+  font-weight: 400;
+  color: var(--muted);
+}
+.infobox td {
+  color: var(--text-strong);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+.infobox .ib-section th {
+  padding-top: 14px;
+  padding-bottom: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* ---------- Tables ---------- */
+
+.table-wrap {
+  overflow-x: auto;
+  margin: 0 0 18px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+table.wikitable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.wikitable th,
+.wikitable td {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+.wikitable tbody tr:last-child td {
+  border-bottom: none;
+}
+.wikitable thead th {
+  position: sticky;
+  top: 0;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.wikitable tbody tr:hover {
+  background: var(--surface-2);
+}
+.wikitable tr.group th {
+  padding-top: 14px;
+  color: var(--text-strong);
+  font-size: 13px;
+  font-weight: 600;
+}
+.wikitable td.num,
+.wikitable th.num {
+  text-align: right;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+.wikitable thead th.num {
+  font-family: var(--font-body);
+}
+.wikitable td.na {
+  color: var(--muted);
+  text-align: center;
+}
+.wikitable caption {
+  caption-side: bottom;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 12.5px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+
+/* Inline stat bar: style="--v: 0.42" (0..1) */
+.bar {
+  display: inline-block;
+  width: 48px;
+  height: 4px;
+  margin-left: 8px;
+  vertical-align: middle;
+  background: var(--surface-3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.bar::before {
+  content: "";
+  display: block;
+  height: 100%;
+  width: calc(var(--v, 0) * 100%);
+  background: var(--bar);
+}
+
+/* ---------- Tags ---------- */
+
+.tag {
+  display: inline-block;
+  padding: 0 6px;
+  margin: 0 2px 2px 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.tag.jinrai {
+  color: var(--jinrai);
+}
+.tag.nsf {
+  color: var(--nsf);
+}
+.tag.recon,
+.tag.assault,
+.tag.support {
+  color: var(--text);
+}
+
+.team-jinrai {
+  color: var(--jinrai);
+  font-weight: 600;
+}
+.team-nsf {
+  color: var(--nsf);
+  font-weight: 600;
+}
+
+/* ---------- Cards (main page / hubs) ---------- */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 14px 0 24px;
+}
+.card {
+  display: block;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+}
+.card:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-2);
+  text-decoration: none;
+}
+.card h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.card p {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.card .card-stat {
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.hero {
+  margin: 8px 0 36px;
+}
+.hero h1.wordmark {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin: 0 0 18px;
+}
+.hero h1.wordmark img {
+  display: block;
+  width: min(440px, 75%);
+  height: auto;
+}
+.hero h1.wordmark span {
+  padding-bottom: 0.3em;
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.hero p {
+  max-width: 680px;
+  margin: 10px 0 0;
+  font-size: 16.5px;
+  color: var(--text);
+}
+.hero .stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-top: 28px;
+}
+.hero .stats div {
+  font-size: 13px;
+  color: var(--muted);
+}
+.hero .stats b {
+  display: block;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+}
+
+/* ---------- References ---------- */
+
+sup.ref {
+  font-size: 0.7em;
+  line-height: 0;
+  font-family: var(--font-mono);
+}
+sup.ref a {
+  color: var(--muted);
+}
+sup.ref a:hover {
+  color: var(--link);
+}
+.infobox sup.ref {
+  margin-left: 2px;
+}
+
+ol.references {
+  font-size: 12.5px;
+  color: var(--muted);
+  padding-left: 28px;
+}
+ol.references li:target {
+  color: var(--text-strong);
+}
+ol.references code {
+  font-size: 12px;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.catlinks {
+  clear: both;
+  margin-top: 40px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--muted);
+}
+.catlinks b {
+  margin-right: 6px;
+  font-weight: 500;
+}
+
+/* ---------- Navbox ---------- */
+
+.navbox {
+  clear: both;
+  margin-top: 36px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 13.5px;
+}
+.navbox .nb-title {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+.navbox .nb-row {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  border-top: 1px solid var(--border);
+}
+.navbox .nb-row > div:first-child {
+  padding: 6px 14px;
+  color: var(--muted);
+}
+.navbox .nb-row > div:last-child {
+  padding: 6px 14px;
+}
+.navbox .nb-row a + a::before {
+  content: " · ";
+  color: var(--muted);
+}
+
+/* ---------- Footer ---------- */
+
+.site-footer {
+  max-width: 1040px;
+  margin-top: 48px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.site-footer p {
+  margin: 2px 0;
+}
+.site-footer code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* Article first on phones; the nav follows it. */
+  .sidebar {
+    order: 2;
+    position: static;
+    max-height: none;
+    padding: 0 16px;
+    border-top: 1px solid var(--border);
+  }
+  .sidebar summary {
+    display: block;
+    padding: 14px 0;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .sidebar details[open] {
+    padding-bottom: 20px;
+  }
+  main {
+    padding: 20px 16px 40px;
+  }
+  .hero h1.wordmark span {
+    font-size: 20px;
+  }
+  .infobox {
+    float: none;
+    width: 100%;
+    margin: 0 0 20px;
+  }
+  .site-header {
+    height: auto;
+    padding: 10px 16px;
+    flex-wrap: wrap;
+  }
+  .search {
+    order: 3;
+    flex-basis: 100%;
+    max-width: none;
+  }
+  .page-tabs {
+    display: none;
+  }
+  .navbox .nb-row {
+    grid-template-columns: 1fr;
+  }
+}

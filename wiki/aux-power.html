@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>AUX power · NT;RE Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;650;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="img/favicon.png">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="index.html"><img src="img/nt-logo.png" alt="" width="28" height="27">NT;RE <small>Wiki</small></a>
+  <form class="search" action="search.html" role="search"><input type="search" name="q" placeholder="Search NT;RE Wiki" aria-label="Search"></form>
+  <span class="proto-badge">Prototype</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><details open><summary>Menu</summary>
+<h3>Navigation</h3><ul><li><a href="index.html">Main page</a></li><li><a href="getting-started.html">Getting started</a></li></ul>
+<h3>Combat</h3><ul><li><a href="weapons.html">Weapons</a></li><li><a href="damage.html">Damage &amp; penetration</a></li><li><a href="loadouts.html">Loadouts &amp; ranks</a></li></ul>
+<h3>Player</h3><ul><li><a href="classes.html">Classes</a></li><li><a href="recon.html">Recon</a></li><li><a href="assault.html">Assault</a></li><li><a href="support.html">Support</a></li><li><a href="movement.html">Movement</a></li><li><a href="aux-power.html" aria-current="page">AUX power</a></li><li><a href="thermoptic-camouflage.html">Thermoptic camo</a></li><li><a href="vision-modes.html">Vision modes</a></li></ul>
+<h3>Game</h3><ul><li><a href="game-modes.html">Overview</a></li><li><a href="capture-the-ghost.html">Capture the Ghost</a></li><li><a href="ghost.html">The Ghost</a></li><li><a href="vip.html">VIP</a></li><li><a href="team-deathmatch.html">Team Deathmatch</a></li><li><a href="deathmatch.html">Deathmatch</a></li><li><a href="juggernaut.html">Juggernaut</a></li></ul>
+<h3>World</h3><ul><li><a href="factions.html">Factions</a></li><li><a href="maps.html">Maps</a></li></ul>
+<h3>Reference</h3><ul><li><a href="console-variables.html">Console variables</a></li><li><a href="about.html">About this prototype</a></li></ul>
+  </details></aside>
+  <main>
+    <div class="page-tabs"><span class="active">Article</span><span>Talk</span><span class="spacer"></span><span>Read</span><span>Edit</span><span>History</span></div>
+    <article class="page">
+<div class="breadcrumb">Player</div><h1>AUX power</h1><p class="subtitle">The energy bar behind sprinting and the Recon super jump</p>
+      <div class="article">
+
+<aside class="infobox">
+  <div class="ib-title">AUX power</div>
+  <table>
+    <tr><th>Maximum</th><td>100<sup class="ref"><a href="#ref-1" title="src/game/server/hl2/hl2_player.cpp:2136,2173-2176">[1]</a></sup></td></tr>
+    <tr><th>Sprint drain</th><td>5<sup class="ref"><a href="#ref-2" title="src/game/server/hl2/hl2_player.cpp:447-448,2040-2062">[2]</a></sup> /s</td></tr>
+    <tr><th>Min. to sprint</th><td>2<sup class="ref"><a href="#ref-3" title="src/game/shared/neo/neo_player_shared.h:181">[3]</a></sup><sup class="ref"><a href="#ref-4" title="src/game/server/hl2/hl2_player.cpp:547">[4]</a></sup></td></tr>
+    <tr><th>Sprint-stop cost</th><td>0.5<sup class="ref"><a href="#ref-5" title="src/game/server/hl2/hl2_player.cpp:2215-2228">[5]</a></sup></td></tr>
+    <tr><th>Regen delay</th><td>0.5<sup class="ref"><a href="#ref-6" title="src/game/server/hl2/hl2_player.cpp:2259,2272-2277,2302-2305">[6]</a></sup> s</td></tr>
+    <tr><th>Super jump</th><td>45<sup class="ref"><a href="#ref-7" title="src/game/shared/neo/neo_player_shared.h:178">[7]</a></sup></td></tr>
+  </table>
+</aside>
+<p class="lead"><b>AUX power</b> is the energy bar on your HUD. In NT;RE it powers only two things: <b>sprinting</b> and the <a href="recon.html#super-jump">Recon super jump</a>. <a href="thermoptic-camouflage.html">Thermoptic camouflage</a> has its own separate battery, and <a href="vision-modes.html">vision modes</a> are free.<sup class="ref"><a href="#ref-8" title="src/game/client/hl2/c_hl2_playerlocaldata.h:34">[8]</a></sup><sup class="ref"><a href="#ref-9" title="src/game/server/neo/neo_player.cpp:3775-3778">[9]</a></sup></p>
+
+<nav class="toc"><div class="toc-title">Contents</div><ol><li><a href="#regeneration-by-class">Regeneration by class</a></li><li><a href="#sprint-costs">Sprint costs</a></li><li><a href="#console-variables">Console variables</a></li></ol></nav>
+<h2 id="regeneration-by-class">Regeneration by class</h2>
+<p>AUX starts refilling 0.5 s after you stop using it.<sup class="ref"><a href="#ref-10" title="src/game/server/hl2/hl2_player.cpp:2259,2272-2277">[10]</a></sup></p>
+<div class="table-wrap"><table class="wikitable">
+  <thead><tr><th>Class</th><th class="num">Regen /s</th><th class="num">While sprinting</th><th class="num">Sprint drain /s</th><th class="num">Sprint time (full bar)</th></tr></thead>
+  <tbody>
+    <tr><td><a href="recon.html">Recon</a></td><td class="num">5</td><td class="num">2.5</td><td class="num">0</td><td class="num">Unlimited</td></tr>
+    <tr><td><a href="assault.html">Assault</a></td><td class="num">2.5</td><td class="num">0</td><td class="num">5</td><td class="num">20 s</td></tr>
+    <tr><td><a href="vip.html">VIP</a></td><td class="num">2.5</td><td class="num">—</td><td class="num">5</td><td class="num">20 s</td></tr>
+    <tr><td><a href="juggernaut.html">Juggernaut</a></td><td class="num">10</td><td class="num">—</td><td class="num">5</td><td class="num">20 s</td></tr>
+    <tr><td><a href="support.html">Support</a></td><td class="num">0</td><td class="num">—</td><td class="num">—</td><td class="na">Cannot sprint</td></tr>
+  </tbody>
+  <caption>Regen rates from <sup class="ref"><a href="#ref-11" title="src/game/server/hl2/hl2_player.cpp:416-444">[11]</a></sup>. Sprint time = 100 / drain rate.</caption>
+</table></div>
+
+<h2 id="sprint-costs">Sprint costs</h2>
+<ul>
+  <li>Sprinting drains 5 AUX per second, but only while you are actually moving horizontally. Holding sprint while standing still costs nothing.<sup class="ref"><a href="#ref-12" title="src/game/server/hl2/hl2_player.cpp:2040-2062">[12]</a></sup></li>
+  <li>Each time a sprint ends, an extra <b>0.5 AUX</b> is taken. Tapping sprint on and off is more expensive than holding it.<sup class="ref"><a href="#ref-5" title="src/game/server/hl2/hl2_player.cpp:2215-2228">[5]</a></sup></li>
+  <li><b>Recon is exempt</b> from both: its sprint drains nothing and costs nothing to stop.</li>
+</ul>
+
+<div class="callout"><strong>Unverified</strong> For Recon, ending a sprint doesn't restart the 0.5 s regen delay, because the code returns early before updating the timer.<sup class="ref"><a href="#ref-13" title="src/game/server/hl2/hl2_player.cpp:2237-2239">[13]</a></sup> Whether this makes a visible difference in play hasn't been confirmed.</div>
+
+<h2 id="console-variables">Console variables</h2>
+<ul>
+  <li><code>sv_infinite_aux_power</code> (default <code>0</code>, cheat) disables AUX drain.<sup class="ref"><a href="#ref-14" title="src/game/server/hl2/hl2_player.cpp:112-113">[14]</a></sup></li>
+</ul>
+
+<h2 id="references">References</h2>
+<ol class="references"><li id="ref-1"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2136"><code>src/game/server/hl2/hl2_player.cpp:2136,2173-2176</code></a></li><li id="ref-2"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L447"><code>src/game/server/hl2/hl2_player.cpp:447-448,2040-2062</code></a></li><li id="ref-3"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.h#L181"><code>src/game/shared/neo/neo_player_shared.h:181</code></a></li><li id="ref-4"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L547"><code>src/game/server/hl2/hl2_player.cpp:547</code></a></li><li id="ref-5"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2215"><code>src/game/server/hl2/hl2_player.cpp:2215-2228</code></a></li><li id="ref-6"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2259"><code>src/game/server/hl2/hl2_player.cpp:2259,2272-2277,2302-2305</code></a></li><li id="ref-7"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.h#L178"><code>src/game/shared/neo/neo_player_shared.h:178</code></a></li><li id="ref-8"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/client/hl2/c_hl2_playerlocaldata.h#L34"><code>src/game/client/hl2/c_hl2_playerlocaldata.h:34</code></a></li><li id="ref-9"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L3775"><code>src/game/server/neo/neo_player.cpp:3775-3778</code></a></li><li id="ref-10"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2259"><code>src/game/server/hl2/hl2_player.cpp:2259,2272-2277</code></a></li><li id="ref-11"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L416"><code>src/game/server/hl2/hl2_player.cpp:416-444</code></a></li><li id="ref-12"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2040"><code>src/game/server/hl2/hl2_player.cpp:2040-2062</code></a></li><li id="ref-13"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2237"><code>src/game/server/hl2/hl2_player.cpp:2237-2239</code></a></li><li id="ref-14"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L112"><code>src/game/server/hl2/hl2_player.cpp:112-113</code></a></li></ol>
+      </div>
+<div class="catlinks"><b>Category:</b><span>Player</span></div>
+    </article>
+    <footer class="site-footer">
+      <p>Game data extracted from <a href="https://github.com/NeotokyoRebuild/neo/tree/120006db"><code>NeotokyoRebuild/neo@120006db</code></a>. Numbers link to the exact source line.</p>
+      <p>Prototype. All rights reserved. Not affiliated with or endorsed by the NEOTOKYO or NT;RE teams.</p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

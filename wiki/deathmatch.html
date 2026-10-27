@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Deathmatch · NT;RE Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;650;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="img/favicon.png">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="index.html"><img src="img/nt-logo.png" alt="" width="28" height="27">NT;RE <small>Wiki</small></a>
+  <form class="search" action="search.html" role="search"><input type="search" name="q" placeholder="Search NT;RE Wiki" aria-label="Search"></form>
+  <span class="proto-badge">Prototype</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><details open><summary>Menu</summary>
+<h3>Navigation</h3><ul><li><a href="index.html">Main page</a></li><li><a href="getting-started.html">Getting started</a></li></ul>
+<h3>Combat</h3><ul><li><a href="weapons.html">Weapons</a></li><li><a href="damage.html">Damage &amp; penetration</a></li><li><a href="loadouts.html">Loadouts &amp; ranks</a></li></ul>
+<h3>Player</h3><ul><li><a href="classes.html">Classes</a></li><li><a href="recon.html">Recon</a></li><li><a href="assault.html">Assault</a></li><li><a href="support.html">Support</a></li><li><a href="movement.html">Movement</a></li><li><a href="aux-power.html">AUX power</a></li><li><a href="thermoptic-camouflage.html">Thermoptic camo</a></li><li><a href="vision-modes.html">Vision modes</a></li></ul>
+<h3>Game</h3><ul><li><a href="game-modes.html">Overview</a></li><li><a href="capture-the-ghost.html">Capture the Ghost</a></li><li><a href="ghost.html">The Ghost</a></li><li><a href="vip.html">VIP</a></li><li><a href="team-deathmatch.html">Team Deathmatch</a></li><li><a href="deathmatch.html" aria-current="page">Deathmatch</a></li><li><a href="juggernaut.html">Juggernaut</a></li></ul>
+<h3>World</h3><ul><li><a href="factions.html">Factions</a></li><li><a href="maps.html">Maps</a></li></ul>
+<h3>Reference</h3><ul><li><a href="console-variables.html">Console variables</a></li><li><a href="about.html">About this prototype</a></li></ul>
+  </details></aside>
+  <main>
+    <div class="page-tabs"><span class="active">Article</span><span>Talk</span><span class="spacer"></span><span>Read</span><span>Edit</span><span>History</span></div>
+    <article class="page">
+<div class="breadcrumb">Game modes</div><h1>Deathmatch</h1><p class="subtitle">DM: free-for-all, first to 50 XP</p>
+      <div class="article">
+
+<p class="lead"><b>Deathmatch</b> (DM) is free-for-all. Every other player is an enemy, there are no teamkill penalties, and the first player to <b>50 XP</b> wins the map.</p>
+
+<nav class="toc"><div class="toc-title">Contents</div><ol><li><a href="#winning">Winning</a></li><li><a href="#rules">Rules</a></li><li><a href="#spawns">Spawns</a></li><li><a href="#scoring">Scoring</a></li></ol></nav>
+<h2 id="winning">Winning</h2>
+<ul><li>A single player reaches sv_neo_dm_win_xp (50) XP or more while the round is live, and no other player is tied with them.<sup class="ref"><a href="#ref-1" title="src/game/shared/neo/neo_gamerules.cpp:1704-1715">[1]</a></sup></li><li>At time-out the single highest-XP player wins. If several players are tied, the round goes to Overtime and continues until one player leads alone.<sup class="ref"><a href="#ref-2" title="src/game/shared/neo/neo_gamerules.cpp:1422-1439">[2]</a></sup></li><li>When a winner is decided the game goes to intermission (map end).<sup class="ref"><a href="#ref-3" title="src/game/shared/neo/neo_gamerules.cpp:1721-1784">[3]</a></sup></li></ul>
+
+<h2 id="rules">Rules</h2>
+<div class="table-wrap"><table class="wikitable "><thead><tr><th>Setting</th><th>Default</th><th>Console variable</th></tr></thead><tbody><tr><td>Teams</td><td>No <sup class="ref"><a href="#ref-4" title="src/game/shared/neo/neo_gamerules.cpp:4535-4538">[4]</a></sup></td><td></td></tr><tr><td>Respawns</td><td>Yes <sup class="ref"><a href="#ref-5" title="src/game/shared/neo/neo_gamerules.cpp:411">[5]</a></sup></td><td></td></tr><tr><td>Respawn delay</td><td>10 s after death<sup class="ref"><a href="#ref-6" title="src/game/shared/baseplayer_shared.h:34">[6]</a></sup></td><td></td></tr><tr><td>Round time</td><td>10.25 min<sup class="ref"><a href="#ref-7" title="src/game/shared/neo/neo_gamerules.cpp:523">[7]</a></sup></td><td><code>neo_dm_round_timelimit</code></td></tr><tr><td>XP to win</td><td>50 XP<sup class="ref"><a href="#ref-8" title="src/game/shared/neo/neo_gamerules.cpp:532">[8]</a></sup></td><td><code>sv_neo_dm_win_xp</code></td></tr><tr><td>Score limit</td><td>7 <sup class="ref"><a href="#ref-9" title="src/game/shared/neo/neo_gamerules.cpp:498">[9]</a></sup></td><td><code>sv_neo_dm_score_limit</code></td></tr><tr><td>Round limit</td><td>0 <sup class="ref"><a href="#ref-10" title="src/game/shared/neo/neo_gamerules.cpp:509">[10]</a></sup></td><td><code>sv_neo_dm_round_limit</code></td></tr><tr><td>Class change window</td><td>10 s<sup class="ref"><a href="#ref-11" title="src/game/server/neo/neo_player.cpp:153">[11]</a></sup></td><td><code>sv_neo_dm_max_class_dur</code></td></tr><tr><td>Competitive features</td><td>No <sup class="ref"><a href="#ref-5" title="src/game/shared/neo/neo_gamerules.cpp:411">[5]</a></sup></td><td></td></tr></tbody></table></div>
+<p>Teamplay is off, so there's no reflected team damage and every kill counts as an enemy kill.<sup class="ref"><a href="#ref-4" title="src/game/shared/neo/neo_gamerules.cpp:4535-4538">[4]</a></sup> Every player's XP resets to 0 at the start of each round.<sup class="ref"><a href="#ref-12" title="src/game/shared/neo/neo_gamerules.cpp:3357-3367">[12]</a></sup></p>
+
+<h2 id="spawns">Spawns</h2>
+<p>If the map has a saved spawn file (<code>maps/dm_locs/&lt;map&gt;.loc</code>), you spawn at a random unused position from it. Otherwise spawn points are shuffled every time.<sup class="ref"><a href="#ref-13" title="src/game/shared/neo/neo_gamerules.cpp:4619-4630">[13]</a></sup><sup class="ref"><a href="#ref-14" title="src/game/server/neo/neo_spawn_manager.cpp:76-80">[14]</a></sup></p>
+
+<h2 id="scoring">Scoring</h2>
+<div class="table-wrap"><table class="wikitable "><thead><tr><th>Event</th><th>Team points</th><th>XP</th><th>Notes</th></tr></thead><tbody><tr><td>Kill</td><td></td><td>+1</td><td>With teamplay off, every kill of another player counts as an enemy kill.<sup class="ref"><a href="#ref-15" title="src/game/shared/neo/neo_gamerules.cpp:4198-4226">[15]</a></sup></td></tr><tr><td>Suicide / environmental death</td><td></td><td>-1</td><td>XP can go below 0.<sup class="ref"><a href="#ref-16" title="src/game/shared/neo/neo_gamerules.cpp:4188-4191">[16]</a></sup></td></tr><tr><td>Assist</td><td></td><td>+1</td><td><sup class="ref"><a href="#ref-17" title="src/game/shared/neo/neo_gamerules.cpp:4248-4268">[17]</a></sup></td></tr><tr><td>Round start</td><td></td><td></td><td>Every player's XP is set to 0.<sup class="ref"><a href="#ref-12" title="src/game/shared/neo/neo_gamerules.cpp:3357-3367">[12]</a></sup></td></tr></tbody></table></div>
+
+<p class="hatnote">Map file <code>ntre_apparatus_dm</code> is in the asset repository but not on the official map list. See <a href="maps.html">Maps</a>.</p>
+
+<h2 id="references">References</h2>
+<ol class="references"><li id="ref-1"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L1704"><code>src/game/shared/neo/neo_gamerules.cpp:1704-1715</code></a></li><li id="ref-2"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L1422"><code>src/game/shared/neo/neo_gamerules.cpp:1422-1439</code></a></li><li id="ref-3"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L1721"><code>src/game/shared/neo/neo_gamerules.cpp:1721-1784</code></a></li><li id="ref-4"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L4535"><code>src/game/shared/neo/neo_gamerules.cpp:4535-4538</code></a></li><li id="ref-5"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L411"><code>src/game/shared/neo/neo_gamerules.cpp:411</code></a></li><li id="ref-6"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/baseplayer_shared.h#L34"><code>src/game/shared/baseplayer_shared.h:34</code></a></li><li id="ref-7"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L523"><code>src/game/shared/neo/neo_gamerules.cpp:523</code></a></li><li id="ref-8"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L532"><code>src/game/shared/neo/neo_gamerules.cpp:532</code></a></li><li id="ref-9"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L498"><code>src/game/shared/neo/neo_gamerules.cpp:498</code></a></li><li id="ref-10"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L509"><code>src/game/shared/neo/neo_gamerules.cpp:509</code></a></li><li id="ref-11"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L153"><code>src/game/server/neo/neo_player.cpp:153</code></a></li><li id="ref-12"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L3357"><code>src/game/shared/neo/neo_gamerules.cpp:3357-3367</code></a></li><li id="ref-13"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L4619"><code>src/game/shared/neo/neo_gamerules.cpp:4619-4630</code></a></li><li id="ref-14"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_spawn_manager.cpp#L76"><code>src/game/server/neo/neo_spawn_manager.cpp:76-80</code></a></li><li id="ref-15"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L4198"><code>src/game/shared/neo/neo_gamerules.cpp:4198-4226</code></a></li><li id="ref-16"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L4188"><code>src/game/shared/neo/neo_gamerules.cpp:4188-4191</code></a></li><li id="ref-17"><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L4248"><code>src/game/shared/neo/neo_gamerules.cpp:4248-4268</code></a></li></ol>
+      </div>
+<div class="catlinks"><b>Category:</b><span>Game modes</span></div>
+    </article>
+    <footer class="site-footer">
+      <p>Game data extracted from <a href="https://github.com/NeotokyoRebuild/neo/tree/120006db"><code>NeotokyoRebuild/neo@120006db</code></a>. Numbers link to the exact source line.</p>
+      <p>Prototype. All rights reserved. Not affiliated with or endorsed by the NEOTOKYO or NT;RE teams.</p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
