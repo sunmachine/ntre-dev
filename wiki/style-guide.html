@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Style guide · NT;RE Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;650;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="img/favicon.png">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="index.html" aria-label="NT;RE Wiki"><svg xmlns="http://www.w3.org/2000/svg" viewBox="4 0 37 22" class="nt-mark" role="img" aria-label="NT;RE">
+<path fill="currentColor" opacity="0.3" d="M9 6h3v2h-3zM17 6h1v2h-1zM9 8h1v2h-1zM17 8h1v2h-1zM9 10h1v2h-1zM17 10h1v2h-1zM9 12h1v2h-1zM17 12h1v2h-1zM9 14h1v2h-1zM17 14h1v2h-1zM5 16h5v2h-5zM17 16h1v2h-1zM17 18h1v2h-1zM13 20h5v2h-5zM24 6h7v2h-7zM24 8h1v2h-1zM24 10h1v2h-1zM29 14h1v2h-1zM20 16h10v2h-10zM39 6h1v2h-1zM38 8h2v2h-2zM35 10h4v2h-4zM40 14h1v2h-1zM38 16h3v2h-3zM36 18h3v2h-3zM34 20h3v2h-3z"/>
+<path fill="currentColor" d="M7 2h8v2h-8zM5 4h12v2h-12zM4 6h5v2h-5zM12 6h5v2h-5zM4 8h5v2h-5zM12 8h5v2h-5zM4 10h5v2h-5zM12 10h5v2h-5zM4 12h5v2h-5zM12 12h5v2h-5zM4 14h5v2h-5zM12 14h5v2h-5zM12 16h5v2h-5zM12 18h5v2h-5zM20 0h4v2h-4zM19 2h10v2h-10zM19 4h11v2h-11zM19 6h5v2h-5zM19 8h5v2h-5zM19 10h5v2h-5zM19 12h10v2h-10zM19 14h10v2h-10zM35 12h5v2h-5zM35 14h5v2h-5zM34 16h4v2h-4zM33 18h3v2h-3z"/>
+<path fill="#d1482e" d="M34 2h4v2h-4zM33 4h6v2h-6zM33 6h6v2h-6zM34 8h4v2h-4z"/>
+</svg><span class="logo-label">WIKI</span></a>
+  <form class="search" action="search.html" role="search"><input type="search" name="q" placeholder="Search NT;RE Wiki" aria-label="Search"></form>
+  <span class="proto-badge">Prototype</span>
+</header>
+<div class="layout">
+  <aside class="sidebar"><details open><summary>Menu</summary>
+<h3>Navigation</h3><ul><li><a href="index.html">Main page</a></li><li><a href="getting-started.html">Getting started</a></li></ul>
+<h3>Combat</h3><ul><li><a href="weapons.html">Weapons</a></li><li><a href="damage.html">Damage &amp; penetration</a></li><li><a href="loadouts.html">Loadouts &amp; ranks</a></li></ul>
+<h3>Player</h3><ul><li><a href="classes.html">Classes</a></li><li><a href="recon.html">Recon</a></li><li><a href="assault.html">Assault</a></li><li><a href="support.html">Support</a></li><li><a href="movement.html">Movement</a></li><li><a href="aux-power.html">AUX power</a></li><li><a href="thermoptic-camouflage.html">Thermoptic camo</a></li><li><a href="vision-modes.html">Vision modes</a></li></ul>
+<h3>Game</h3><ul><li><a href="game-modes.html">Overview</a></li><li><a href="capture-the-ghost.html">Capture the Ghost</a></li><li><a href="ghost.html">The Ghost</a></li><li><a href="vip.html">VIP</a></li><li><a href="team-deathmatch.html">Team Deathmatch</a></li><li><a href="deathmatch.html">Deathmatch</a></li><li><a href="juggernaut.html">Juggernaut</a></li></ul>
+<h3>World</h3><ul><li><a href="factions.html">Factions</a></li><li><a href="maps.html">Maps</a></li></ul>
+<h3>Branding</h3><ul><li><a href="style-guide.html" aria-current="page">Style guide</a></li><li><a href="logos.html">Logos</a></li><li><a href="colours-and-type.html">Colours &amp; type</a></li></ul>
+<h3>Reference</h3><ul><li><a href="console-variables.html">Console variables</a></li><li><a href="about.html">About this prototype</a></li></ul>
+  </details></aside>
+  <main>
+    <div class="page-tabs"><span class="active">Article</span><span>Talk</span><span class="spacer"></span><span>Read</span><span>Edit</span><span>History</span></div>
+    <article class="page">
+<div class="breadcrumb">Branding</div><h1>Style guide</h1><p class="subtitle">How this wiki is written and laid out, in short form</p>
+      <div class="article">
+
+<p class="lead">The rules every page on this wiki follows. The guide is part of the prototype's source and changes in the same commit as the style it describes, so it always matches the pages around it.</p>
+
+<nav class="toc"><div class="toc-title">Contents</div><ol><li><a href="#voice">Voice</a></li><li><a href="#facts-and-sources">Facts and sources</a></li><li><a href="#numbers-and-units">Numbers and units</a></li><li><a href="#names">Names</a></li><li><a href="#page-anatomy">Page anatomy</a></li><li><a href="#visual">Visual</a></li></ol></nav>
+<h2 id="voice">Voice</h2>
+<ul>
+  <li>Plain and direct. Address the player as <i>you</i>, in the present tense.</li>
+  <li>Open with what the thing is and why it matters. Name the subject in bold in the first sentence.</li>
+  <li>One idea per sentence. Cut filler, hype and hedging that carries no information.</li>
+  <li>British spelling (<i>colour</i>, <i>armour</i>, <i>behaviour</i>). Code identifiers and quoted strings keep their own spelling.</li>
+  <li>Headings in sentence case: <i>Weapon speed scale</i>, not <i>Weapon Speed Scale</i>.</li>
+</ul>
+
+<h2 id="facts-and-sources">Facts and sources</h2>
+<ul>
+  <li>Every gameplay number cites the line it comes from: <code>&#91;&#91;src:path:line&#93;&#93;</code> becomes a footnote linked to GitHub at the pinned commit.</li>
+  <li>Never guess. If the code is ambiguous, or client and server disagree, say so in an amber callout labelled <b>Unconfirmed</b>, <b>Unverified</b> or <b>Unresolved</b>.</li>
+  <li>Say how a claim was established: "inferred from the code" is different from "tested in game".</li>
+  <li>Tables and infoboxes take their numbers from the extracted data, not from hand-typed copies.</li>
+</ul>
+
+<h2 id="numbers-and-units">Numbers and units</h2>
+<div class="table-wrap"><table class="wikitable">
+  <thead><tr><th>Quantity</th><th>Write</th><th>Example</th></tr></thead>
+  <tbody>
+    <tr><td>Speed</td><td>Hammer units per second</td><td><code>256 u/s</code></td></tr>
+    <tr><td>Distance</td><td>Hammer units; metres only where the game uses them</td><td><code>150 u</code>, <code>45.72 m</code></td></tr>
+    <tr><td>Time</td><td>Seconds, or minutes for round lengths</td><td><code>2.16 s</code>, <code>3.25 min</code></td></tr>
+    <tr><td>Multiplier</td><td>Times sign, no space</td><td><code>×0.85</code></td></tr>
+    <tr><td>Range</td><td>En dash, no spaces</td><td><code>0.675–1.0</code></td></tr>
+    <tr><td>Damage</td><td>Effective damage, with the ×1.485 modifier applied, unless labelled base</td><td><code>17.82</code> (base 12)</td></tr>
+    <tr><td>Other</td><td><code>HP</code>, <code>XP</code>, <code>RPM</code>, <code>°</code></td><td><code>225 HP</code></td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="names">Names</h2>
+<ul>
+  <li><b>Weapons</b> use their in-game display names: MPN45, SRM-S, ZR68-L, Murata Supa-7, MilSO, BALC.</li>
+  <li><b>Classes</b> are capitalised: Recon, Assault, Support, VIP, Juggernaut.</li>
+  <li><b>Game modes</b> take the full name first, then the code: Capture the Ghost (CTG).</li>
+  <li><b>Teams</b>: Jinrai and NSF. The objective is <i>the ghost</i>, lowercase in running text.</li>
+  <li><b>Console variables</b> and file names go in <code>code</code>, with their default where it matters: <code>mp_friendlyfire 1</code>.</li>
+</ul>
+
+<h2 id="page-anatomy">Page anatomy</h2>
+<ol>
+  <li>Category, title, and a one-line subtitle</li>
+  <li>An <b>infobox</b> for anything with stats: weapons, classes, modes</li>
+  <li>A <b>lead paragraph</b> that stands on its own</li>
+  <li>Sections under <code>h2</code> headings. A contents list appears automatically from three sections up.</li>
+  <li>A <b>navbox</b> linking related pages, then the generated references</li>
+</ol>
+<ul>
+  <li>Comparisons go in tables, not lists. Numbers are right-aligned in monospace.</li>
+  <li>Link a page's first mention in each section, not every mention.</li>
+  <li>Page addresses are flat and lowercase: <code>capture-the-ghost.html</code>.</li>
+  <li>Callouts have a short bold label. Neutral callouts are for notes; amber ones are for anything quirky or unverified.</li>
+</ul>
+
+<h2 id="visual">Visual</h2>
+<ul>
+  <li>Dark, minimal, neutral. Hairline borders; no shadows, gradients or emoji.</li>
+  <li>Red is for the brand dot only: after page titles, beside the current page, under links. Never for link text, because red text means a missing page.</li>
+  <li>The NT;RE mark is the primary logo. The wordmark appears only on the main page.</li>
+  <li>Image slots are grey placeholders labelled with what belongs there, until assets are licensed.</li>
+</ul>
+<p>Details: <a href="colours-and-type.html">Colours &amp; type</a> and <a href="logos.html">Logos</a>.</p>
+
+      </div>
+<div class="catlinks"><b>Category:</b><span>Branding</span></div>
+    </article>
+    <footer class="site-footer">
+      <p>Game data extracted from <a href="https://github.com/NeotokyoRebuild/neo/tree/120006db"><code>NeotokyoRebuild/neo@120006db</code></a>. Numbers link to the exact source line.</p>
+      <p>Prototype. All rights reserved. Not affiliated with or endorsed by the NEOTOKYO or NT;RE teams.</p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
