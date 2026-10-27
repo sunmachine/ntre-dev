@@ -18,7 +18,10 @@
   --red-soft: #c62a1d;
   --accent: var(--red);
   --link: #f4f4f5;
-  --link-underline: color-mix(in srgb, var(--red) 55%, transparent);
+  --underline: #a2bec3;
+  --underline-hot: #d5eef2;
+  --underline-glow: rgba(162, 190, 195, 0.55);
+  --link-underline: color-mix(in srgb, var(--underline) 30%, transparent);
   --link-visited: #d4d4d6;
   --jinrai: #92bd7f;
   --nsf: #86a6d4;
@@ -69,28 +72,141 @@ body {
   font-feature-settings: "cv11", "ss01";
 }
 
-a {
-  color: var(--link);
-  text-decoration: underline;
-  text-decoration-color: var(--link-underline);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
+/* Link underline: two background layers instead of text-decoration, so the
+   hover can animate. Layer 1 is the red fill, which grows left to right on
+   hover; layer 2 is the faint resting line. Backgrounds wrap with the text,
+   so links that break across lines animate each line together. */
+@property --ul-c {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #a2bec3;
 }
-a:hover {
-  text-decoration-color: var(--red);
+
+a {
+  --ul-rest: var(--link-underline);
+  color: var(--link);
+  text-decoration: none;
+  background-image: linear-gradient(var(--ul-c), var(--ul-c)), linear-gradient(var(--ul-rest), var(--ul-rest));
+  background-repeat: no-repeat;
+  background-position: left bottom, left bottom;
+  background-size: 0% 1px, 100% 1px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+a:hover,
+a:focus-visible {
+  animation: underline-fill 400ms forwards;
 }
 a.new {
   color: var(--danger);
-  text-decoration-style: dashed;
+  background-image: none;
+  text-decoration: underline dashed;
+  text-underline-offset: 3px;
 }
-/* Chrome links (nav, cards, headers) carry no underline. */
+
+/* Fill accelerates into the end so it lands with a snap (~170 ms), then the
+   line pulses at the apex: thicker and hotter for a beat, then settles. */
+@keyframes underline-fill {
+  0% {
+    background-size: 0% 1px, 100% 1px;
+    animation-timing-function: cubic-bezier(0.55, 0, 0.9, 0.45);
+  }
+  42% {
+    --ul-c: var(--underline);
+    background-size: 100% 1px, 100% 1px;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+  60% {
+    --ul-c: var(--underline-hot);
+    background-size: 100% 2.5px, 100% 1px;
+    animation-timing-function: ease-out;
+  }
+  100% {
+    --ul-c: var(--underline);
+    background-size: 100% 1px, 100% 1px;
+  }
+}
+
+/* The same motion as a hairline along the bottom edge of a container. */
+@keyframes hairline-fill {
+  0% {
+    transform: scaleX(0);
+    animation-timing-function: cubic-bezier(0.55, 0, 0.9, 0.45);
+  }
+  42% {
+    transform: scaleX(1);
+    background: var(--underline);
+    box-shadow: 0 0 0 0 transparent;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+  60% {
+    transform: scaleX(1) scaleY(2.5);
+    background: var(--underline-hot);
+    box-shadow: 0 0 6px 1px var(--underline-glow);
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: scaleX(1);
+    background: var(--underline);
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.sidebar li a::before,
+.card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  height: 1px;
+  background: var(--underline);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}
+.sidebar li a::before {
+  left: 10px;
+  right: 10px;
+}
+.card::after {
+  left: 8px;
+  right: 8px;
+  bottom: -1px;
+}
+.sidebar li a:hover::before,
+.sidebar li a:focus-visible::before,
+.card:hover::after,
+.card:focus-visible::after {
+  animation: hairline-fill 400ms forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a:hover,
+  a:focus-visible {
+    animation: none;
+    background-size: 100% 1px, 100% 1px;
+  }
+  .sidebar li a:hover::before,
+  .card:hover::after {
+    animation: none;
+    transform: scaleX(1);
+  }
+}
+/* Chrome links carry no resting line. Contents and navbox entries still get
+   the hover fill; nav items and cards get the container hairline instead;
+   the logo and footnote markers get neither. */
+.toc a,
+.navbox .nb-title a {
+  --ul-rest: transparent;
+}
 .sidebar a,
 .logo,
 .card,
-.toc a,
-sup.ref a,
-.navbox .nb-title a {
-  text-decoration: none;
+sup.ref a {
+  background-image: none;
+}
+.sidebar li a,
+.card {
+  position: relative;
 }
 
 code,
@@ -231,9 +347,12 @@ kbd {
   color: var(--text-strong);
   background: var(--surface-3);
 }
-/* The brand's red dot marks the current page. */
-.sidebar li a[aria-current="page"]::after {
-  content: "";
+/* The brand's red dot marks the current page. It fades in on every page
+   load; where cross-document view transitions are supported (Chromium,
+   Safari), the previous page's dot also fades out during navigation. Each
+   page names its dot uniquely (nav-dot-<slug>), so the two never pair and
+   slide: one leaves, the other arrives. Nothing else on the page animates. */
+.nav-dot {
   position: absolute;
   top: 50%;
   right: 10px;
@@ -242,6 +361,45 @@ kbd {
   margin-top: -3px;
   border-radius: 50%;
   background: var(--red);
+  view-transition-class: nav-dot;
+  animation: nav-dot-in 220ms ease-out 120ms both;
+}
+
+@view-transition {
+  navigation: auto;
+}
+:root {
+  view-transition-name: none;
+}
+::view-transition-old(.nav-dot) {
+  animation: nav-dot-out 140ms ease-in both;
+}
+/* The new snapshot is live, so the dot's own fade-in shows through it. */
+::view-transition-new(.nav-dot) {
+  animation: none;
+}
+
+@keyframes nav-dot-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+@keyframes nav-dot-out {
+  to {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-dot {
+    animation: none;
+  }
+  ::view-transition-old(.nav-dot) {
+    animation: none;
+    opacity: 0;
+  }
 }
 
 main {
@@ -528,6 +686,29 @@ table.wikitable {
   background: var(--bar);
 }
 
+/* Work-in-progress modes (VIP, Juggernaut): kept in stat lists but receded. */
+.wikitable tr.wip td,
+.wip-cell {
+  opacity: 0.5;
+}
+.wikitable tr.wip:hover td {
+  opacity: 0.8;
+}
+.tag.wip {
+  border-style: dashed;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+}
+.sidebar li a.wip {
+  color: var(--muted);
+}
+.card.wip {
+  opacity: 0.6;
+}
+.card.wip:hover {
+  opacity: 1;
+}
+
 /* ---------- Tags ---------- */
 
 .tag {
@@ -632,6 +813,11 @@ table.wikitable {
   margin-top: 28px;
 }
 .hero .stats div {
+  font-size: 13px;
+  color: var(--muted);
+}
+.hero .stats-note {
+  margin-top: 14px;
   font-size: 13px;
   color: var(--muted);
 }

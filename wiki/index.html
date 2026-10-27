@@ -23,10 +23,10 @@
 </header>
 <div class="layout">
   <aside class="sidebar"><details open><summary>Menu</summary>
-<h3>Navigation</h3><ul><li><a href="index.html" aria-current="page">Main page</a></li><li><a href="getting-started.html">Getting started</a></li></ul>
+<h3>Navigation</h3><ul><li><a href="index.html" aria-current="page">Main page<span class="nav-dot" style="view-transition-name: nav-dot-index" aria-hidden="true"></span></a></li><li><a href="getting-started.html">Getting started</a></li></ul>
 <h3>Combat</h3><ul><li><a href="weapons.html">Weapons</a></li><li><a href="damage.html">Damage &amp; penetration</a></li><li><a href="loadouts.html">Loadouts &amp; ranks</a></li></ul>
 <h3>Player</h3><ul><li><a href="classes.html">Classes</a></li><li><a href="recon.html">Recon</a></li><li><a href="assault.html">Assault</a></li><li><a href="support.html">Support</a></li><li><a href="movement.html">Movement</a></li><li><a href="aux-power.html">AUX power</a></li><li><a href="thermoptic-camouflage.html">Thermoptic camo</a></li><li><a href="vision-modes.html">Vision modes</a></li></ul>
-<h3>Game</h3><ul><li><a href="game-modes.html">Overview</a></li><li><a href="capture-the-ghost.html">Capture the Ghost</a></li><li><a href="ghost.html">The Ghost</a></li><li><a href="vip.html">VIP</a></li><li><a href="team-deathmatch.html">Team Deathmatch</a></li><li><a href="deathmatch.html">Deathmatch</a></li><li><a href="juggernaut.html">Juggernaut</a></li></ul>
+<h3>Game</h3><ul><li><a href="game-modes.html">Overview</a></li><li><a href="capture-the-ghost.html">Capture the Ghost</a></li><li><a href="ghost.html">The Ghost</a></li><li><a href="vip.html" class="wip" title="Work in progress">VIP</a></li><li><a href="team-deathmatch.html">Team Deathmatch</a></li><li><a href="deathmatch.html">Deathmatch</a></li><li><a href="juggernaut.html" class="wip" title="Work in progress">Juggernaut</a></li></ul>
 <h3>World</h3><ul><li><a href="factions.html">Factions</a></li><li><a href="maps.html">Maps</a></li></ul>
 <h3>Branding</h3><ul><li><a href="style-guide.html">Style guide</a></li><li><a href="logos.html">Logos</a></li><li><a href="colours-and-type.html">Colours &amp; type</a></li></ul>
 <h3>Reference</h3><ul><li><a href="console-variables.html">Console variables</a></li><li><a href="about.html">About this prototype</a></li></ul>
@@ -43,10 +43,11 @@
   <p>The reference for <b>NEOTOKYO Rebuild</b>, a tactical first-person shooter rebuilt on the 2025 Source SDK. Every stat here is extracted from the game's source code and linked to the exact line it came from.</p>
   <div class="stats">
     <div><b>29</b>Weapons &amp; items</div>
-    <div><b>3 + 2</b>Classes</div>
-    <div><b>7</b>Game modes</div>
+    <div><b>3</b>Classes</div>
+    <div><b>3</b>Game modes</div>
     <div><b>32</b>Official maps</div>
   </div>
+  <p class="stats-note">Plus <a href="vip.html">VIP</a> and <a href="juggernaut.html">Juggernaut</a>, two modes still in development.</p>
 </div>
 
 <h2 class="noclear" id="start-here">Start here</h2>
@@ -74,9 +75,10 @@
 <h2 id="game-modes">Game modes</h2>
 <div class="cards">
   <a class="card" href="ghost.html"><h3>The Ghost</h3><p>Beacons, carrier restrictions, spawns and drops.</p></a>
-  <a class="card" href="juggernaut.html"><h3>Juggernaut</h3><p>990 HP, a heat-cooled BALC, and a race to 20 points.</p></a>
-  <a class="card" href="vip.html"><h3>VIP</h3><p>Escort or eliminate the high-value target.</p></a>
+  <a class="card" href="team-deathmatch.html"><h3>Team Deathmatch</h3><p>Respawning team fights, scored by kills.</p></a>
   <a class="card" href="game-modes.html"><h3>All modes</h3><p>Round flow, match length, mode selection and competitive settings.</p></a>
+  <a class="card wip" href="juggernaut.html"><h3>Juggernaut <span class="tag wip">WIP</span></h3><p>In development: 990 HP, a heat-cooled BALC, and a race to 20 points.</p></a>
+  <a class="card wip" href="vip.html"><h3>VIP <span class="tag wip">WIP</span></h3><p>In development: escort or eliminate the high-value target.</p></a>
 </div>
 
 <div class="callout warn"><strong>Prototype</strong> This is a static design prototype. Search, editing and images are placeholders. See <a href="about.html">About this prototype</a> for what's in scope and how the data was gathered.</div>

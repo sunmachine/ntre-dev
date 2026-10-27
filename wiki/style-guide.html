@@ -26,9 +26,9 @@
 <h3>Navigation</h3><ul><li><a href="index.html">Main page</a></li><li><a href="getting-started.html">Getting started</a></li></ul>
 <h3>Combat</h3><ul><li><a href="weapons.html">Weapons</a></li><li><a href="damage.html">Damage &amp; penetration</a></li><li><a href="loadouts.html">Loadouts &amp; ranks</a></li></ul>
 <h3>Player</h3><ul><li><a href="classes.html">Classes</a></li><li><a href="recon.html">Recon</a></li><li><a href="assault.html">Assault</a></li><li><a href="support.html">Support</a></li><li><a href="movement.html">Movement</a></li><li><a href="aux-power.html">AUX power</a></li><li><a href="thermoptic-camouflage.html">Thermoptic camo</a></li><li><a href="vision-modes.html">Vision modes</a></li></ul>
-<h3>Game</h3><ul><li><a href="game-modes.html">Overview</a></li><li><a href="capture-the-ghost.html">Capture the Ghost</a></li><li><a href="ghost.html">The Ghost</a></li><li><a href="vip.html">VIP</a></li><li><a href="team-deathmatch.html">Team Deathmatch</a></li><li><a href="deathmatch.html">Deathmatch</a></li><li><a href="juggernaut.html">Juggernaut</a></li></ul>
+<h3>Game</h3><ul><li><a href="game-modes.html">Overview</a></li><li><a href="capture-the-ghost.html">Capture the Ghost</a></li><li><a href="ghost.html">The Ghost</a></li><li><a href="vip.html" class="wip" title="Work in progress">VIP</a></li><li><a href="team-deathmatch.html">Team Deathmatch</a></li><li><a href="deathmatch.html">Deathmatch</a></li><li><a href="juggernaut.html" class="wip" title="Work in progress">Juggernaut</a></li></ul>
 <h3>World</h3><ul><li><a href="factions.html">Factions</a></li><li><a href="maps.html">Maps</a></li></ul>
-<h3>Branding</h3><ul><li><a href="style-guide.html" aria-current="page">Style guide</a></li><li><a href="logos.html">Logos</a></li><li><a href="colours-and-type.html">Colours &amp; type</a></li></ul>
+<h3>Branding</h3><ul><li><a href="style-guide.html" aria-current="page">Style guide<span class="nav-dot" style="view-transition-name: nav-dot-style-guide" aria-hidden="true"></span></a></li><li><a href="logos.html">Logos</a></li><li><a href="colours-and-type.html">Colours &amp; type</a></li></ul>
 <h3>Reference</h3><ul><li><a href="console-variables.html">Console variables</a></li><li><a href="about.html">About this prototype</a></li></ul>
   </details></aside>
   <main>
@@ -39,7 +39,7 @@
 
 <p class="lead">The rules every page on this wiki follows. The guide is part of the prototype's source and changes in the same commit as the style it describes, so it always matches the pages around it.</p>
 
-<nav class="toc"><div class="toc-title">Contents</div><ol><li><a href="#voice">Voice</a></li><li><a href="#facts-and-sources">Facts and sources</a></li><li><a href="#numbers-and-units">Numbers and units</a></li><li><a href="#names">Names</a></li><li><a href="#page-anatomy">Page anatomy</a></li><li><a href="#visual">Visual</a></li></ol></nav>
+<nav class="toc"><div class="toc-title">Contents</div><ol><li><a href="#voice">Voice</a></li><li><a href="#facts-and-sources">Facts and sources</a></li><li><a href="#numbers-and-units">Numbers and units</a></li><li><a href="#names">Names</a></li><li><a href="#page-anatomy">Page anatomy</a></li><li><a href="#work-in-progress-modes">Work-in-progress modes</a></li><li><a href="#visual">Visual</a></li></ol></nav>
 <h2 id="voice">Voice</h2>
 <ul>
   <li>Plain and direct. Address the player as <i>you</i>, in the present tense.</li>
@@ -95,10 +95,18 @@
   <li>Callouts have a short bold label. Neutral callouts are for notes; amber ones are for anything quirky or unverified.</li>
 </ul>
 
+<h2 id="work-in-progress-modes">Work-in-progress modes</h2>
+<ul>
+  <li><b>VIP</b> and <b>Juggernaut</b> are still in development. Stat lists keep them, but last, greyed out and tagged <span class="tag wip">WIP</span>. This includes their weapons, the SMAC and BALC.</li>
+  <li>Headline counts leave them out: the main page says 3 classes and 3 game modes, with a note naming the two in development.</li>
+  <li>Their own pages, and their weapons' pages, open with an amber <b>Work in progress</b> callout.</li>
+</ul>
+
 <h2 id="visual">Visual</h2>
 <ul>
   <li>Dark, minimal, neutral. Hairline borders; no shadows, gradients or emoji.</li>
-  <li>Red is for the brand dot only: after page titles, beside the current page, under links. Never for link text, because red text means a missing page.</li>
+  <li>Red is for the brand dot only: after page titles and beside the current page. Never for link text, because red text means a missing page.</li>
+  <li>Link underlines are a cool, desaturated cyan. On hover the line fills left to right, snaps into place, pulses once and settles. Sidebar items and cards get the same motion as a hairline along their bottom edge.</li>
   <li>The NT;RE mark is the primary logo. The wordmark appears only on the main page.</li>
   <li>Image slots are grey placeholders labelled with what belongs there, until assets are licensed.</li>
 </ul>
