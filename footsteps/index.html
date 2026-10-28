@@ -360,7 +360,7 @@ svg text, .fx svg text { font-family: var(--font-display); }
   <header class="hero">
     <span class="eyebrow">Technical proposal · Draft for review</span>
     <h1>Footstep Consistency Audit</h1>
-    <p class="byline">Neotokyo Rebuild · branch footsteps/sound-consistency · 27 October 2026</p>
+    <p class="byline">Neotokyo Rebuild · <a href="https://github.com/NeotokyoRebuild/neo/pull/2264">PR #2264</a> · branch footsteps/sound-consistency · 27 October 2026</p>
     <div class="abstract">
       <span class="label">Abstract</span>
       <p>Footstep sounds in Neotokyo Rebuild were inconsistent: crouching made noise, looking around while crouching made noise, a stray step played after pressing crouch, crouched steps played louder than running, and other players heard different steps than the stepping player. This paper traces each case to its cause across ten instrumented play passes, reviews how the current rule came about, and proposes one footstep formula that every client evaluates the same way, without changing movement. Sections 1 and 2 state the problem and the proposal; sections 3 to 5 add the per-change breakdown, the supporting data and the references.</p>
@@ -1353,7 +1353,7 @@ nb_stop 0; bot_mimic 1</pre>
         </tbody>
       </table>
     </div>
-    <p class="muted">Commits in branch order, as of 27 October 2026. Hashes are omitted because the branch is being rebased onto current master. The server footstep origin fix (#2230) has merged and is no longer carried on the branch. footsteps/sound-consistency-docs sits on top of the PR branch with the ground surface trace fix, the logging, the experiment and these docs.</p>
+    <p class="muted">The branch is under review as <a href="https://github.com/NeotokyoRebuild/neo/pull/2264">PR #2264, Make footstep sounds consistent</a>. Commits in branch order, as of 27 October 2026. Hashes are omitted because the branch is being rebased onto current master. The server footstep origin fix (#2230) has merged and is no longer carried on the branch. footsteps/sound-consistency-docs sits on top of the PR branch with the ground surface trace fix, the logging, the experiment and these docs.</p>
   </section>
 
 
@@ -1368,7 +1368,8 @@ nb_stop 0; bot_mimic 1</pre>
       <li><a href="https://github.com/NeotokyoRebuild/neo/pull/1431">#1431</a> Silent footsteps in aim, revert walk speeds to parity</li>
       <li><a href="https://github.com/NeotokyoRebuild/neo/pull/1831">#1831</a> Walking Indicator (open)</li>
       <li><a href="https://github.com/NeotokyoRebuild/neo/pull/2151">#2151</a> Fix silently entering/exiting water</li>
-      <li><a href="https://github.com/NeotokyoRebuild/neo/pull/2230">#2230</a> Fix footstep sounds playing from an unset origin (open, separate)</li>
+      <li><a href="https://github.com/NeotokyoRebuild/neo/pull/2230">#2230</a> Fix footstep sounds playing from an unset origin (merged, separate)</li>
+      <li><a href="https://github.com/NeotokyoRebuild/neo/pull/2264">#2264</a> Make footstep sounds consistent (this proposal, open)</li>
     </ol>
   </section>
 
