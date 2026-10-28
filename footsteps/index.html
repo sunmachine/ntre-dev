@@ -315,6 +315,9 @@ header.hero { gap: 10px; padding-bottom: 6px; }
 .abstract { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding-block: 14px; display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
 .abstract .label, .toc-head { font-family: var(--font-display); font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
 .abstract p { font-size: 1rem; }
+.terms { border-top: 0; margin-top: 0; }
+.terms .fkey dt { font-family: inherit; font-weight: 600; }
+.terms .fkey { max-width: none; }
 .toc { display: flex; flex-direction: column; gap: 0; margin-top: 4px; }
 .toc a { background: none; border: 0; border-radius: 0; padding: 5px 0; border-bottom: 1px dotted var(--line); }
 .toc a .muted { display: inline; font-size: 0.92rem; }
@@ -370,6 +373,19 @@ svg text, .fx svg text { font-family: var(--font-display); }
       <a href="#detail"><span class="toc-n">4</span><span><strong>Supporting detail</strong> <span class="muted">· speed tables, test evidence, branch state</span></span></a>
       <a href="#references"><span class="toc-n">5</span><span><strong>References</strong> <span class="muted">· issues and pull requests</span></span></a>
     </nav>
+    <div class="abstract terms" id="terms">
+      <span class="label">Terms</span>
+      <dl class="fkey">
+        <dt>Silent</dt><dd>No step plays.</dd>
+        <dt>Soft, loud</dt><dd>The two volumes an audible step can have. Running is soft, sprinting is loud, and crouched steps are 65% of either.</dd>
+        <dt>Silent mode</dt><dd>Crouched, walking or aiming, on the ground. The only state in which a step can be silent.</dd>
+        <dt>Crouching</dt><dd>Moving while crouched, by itself. "Crouch with +walk" means both keys held. They are separate inputs and this page never merges them.</dd>
+        <dt>Silent limit</dt><dd>The speed a silent mode can reach before a step plays: the crouch and walk modifier plus headroom, times your run speed with your weapon.</dd>
+        <dt>Headroom</dt><dd>The gap between a mode's own speed and the silent limit. Turning adds more of it for as long as the speed bump lasts.</dd>
+        <dt>Held step</dt><dd>The first step after pressing crouch, walk or aim, kept back until you settle or let go.</dd>
+        <dt>Forgiveness</dt><dd>A one-time pass that skips one step slightly over the limit after a change of direction. Spent on use, earned back after a second under the limit.</dd>
+      </dl>
+    </div>
   </header>
 
   <section class="part" id="problem" aria-labelledby="problem-h">
