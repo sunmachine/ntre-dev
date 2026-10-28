@@ -357,10 +357,10 @@ svg text, .fx svg text { font-family: var(--font-display); }
   <header class="hero">
     <span class="eyebrow">Technical proposal · Draft for review</span>
     <h1>Footstep Consistency Audit</h1>
-    <p class="byline">Neotokyo Rebuild · branch footsteps/sound-consistency · 17 October 2026</p>
+    <p class="byline">Neotokyo Rebuild · branch footsteps/sound-consistency · 27 October 2026</p>
     <div class="abstract">
       <span class="label">Abstract</span>
-      <p>Footstep sounds in Neotokyo Rebuild were inconsistent: crouch walking made noise, looking around while crouch walking made noise, a stray step played when dropping into a crouch, crouched steps played louder than running, and other players heard different steps than the stepping player. This paper traces each case to its cause across ten instrumented play passes, reviews how the current rule came about, and proposes one footstep formula that every client evaluates the same way, without changing movement. Sections 1 and 2 state the problem and the proposal; sections 3 to 5 add the per-change breakdown, the supporting data and the references.</p>
+      <p>Footstep sounds in Neotokyo Rebuild were inconsistent: crouching made noise, looking around while crouching made noise, a stray step played after pressing crouch, crouched steps played louder than running, and other players heard different steps than the stepping player. This paper traces each case to its cause across ten instrumented play passes, reviews how the current rule came about, and proposes one footstep formula that every client evaluates the same way, without changing movement. Sections 1 and 2 state the problem and the proposal; sections 3 to 5 add the per-change breakdown, the supporting data and the references.</p>
     </div>
     <nav class="toc" aria-label="Contents">
       <span class="toc-head">Contents</span>
@@ -374,7 +374,7 @@ svg text, .fx svg text { font-family: var(--font-display); }
 
   <section class="part" id="problem" aria-labelledby="problem-h">
         <h2 id="problem-h"><span class="secno">1</span>Problem</h2>
-    <p>Footsteps sounded inconsistent compared with other games in the genre. What a player heard from their own feet, what the server sent, and what other players heard often disagreed. Loudness was inconsistent too: some quieter ways of moving played louder steps than running.</p>
+    <p>Footsteps sounded inconsistent compared with other games in the genre. What a player heard from their own feet, what the server sent, and what other players heard often disagreed. Loudness was inconsistent too: crouching played louder steps than running.</p>
     <div class="cols">
       <div class="panel fix">
         <span class="label">Expected</span>
@@ -390,9 +390,9 @@ svg text, .fx svg text { font-family: var(--font-display); }
       <div class="panel bug">
         <span class="label">What happened instead</span>
         <ul class="plain">
-          <li><a href="#crouch">Crouch walking was audible.</a></li>
+          <li><a href="#crouch">Crouching was audible.</a></li>
           <li><a href="#held">One last step played after pressing crouch.</a></li>
-          <li><a href="#turning">Looking around or switching keys while crouch walking made footsteps.</a></li>
+          <li><a href="#turning">Looking around or changing direction while crouching made footsteps.</a></li>
           <li><a href="#loudness">Crouched steps played louder than a standing run.</a></li>
           <li><a href="#loudness">Sprinting as assault, or as recon with most weapons, was as quiet as running.</a></li>
           <li><a href="#origin">Players out of sight but in earshot heard nothing from the server.</a></li>
@@ -440,14 +440,14 @@ svg text, .fx svg text { font-family: var(--font-display); }
 
   <section class="problem" id="loudness" aria-labelledby="loudness-h">
     <div class="problem-head"><h3 id="loudness-h"><span class="secno">1.2</span>How loud each step was</h3></div>
-    <p>Every audible step plays the surface's quiet or loud volume, picked by comparing speed with a fixed run speed: 80 u/s crouched, 220 u/s standing. Crouched steps are then scaled to 65%. Those two numbers come from the Source SDK, which crouches at a third of run speed. NEO's speeds sit on the wrong side of both.</p>
+    <p>Every audible step plays the surface's soft or loud volume, picked by comparing speed with a fixed run speed: 80 u/s crouched, 220 u/s standing. Crouched steps are then scaled to 65%. Those two numbers come from the Source SDK, which crouches at a third of run speed. NEO's speeds sit on the wrong side of both.</p>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Movement</th><th>Expected</th><th class="num">Master, concrete</th><th>Why</th></tr></thead>
         <tbody>
           <tr><td>Walk, aim with +walk</td><td>silent</td><td class="num">silent</td><td>silent movement threshold</td></tr>
-          <tr><td>Crouch walk</td><td>silent</td><td class="num bad">0.325</td><td>above 80, so the loud volume, at 65%</td></tr>
-          <tr><td>Run</td><td>quiet</td><td class="num">0.2</td><td>under 220, so the quiet volume</td></tr>
+          <tr><td>Crouching</td><td>silent</td><td class="num bad">0.325</td><td>above 80, so the loud volume, at 65%</td></tr>
+          <tr><td>Run</td><td>soft</td><td class="num">0.2</td><td>under 220, so the soft volume</td></tr>
           <tr><td>Crouch sprint</td><td>between a run and a sprint</td><td class="num">0.325</td><td>above 80, so the loud volume, at 65%</td></tr>
           <tr><td>Sprint, recon with a 0.85 weapon</td><td>loudest</td><td class="num">0.5</td><td>229.5, above 220</td></tr>
           <tr><td>Sprint, recon with a slower weapon</td><td>loudest</td><td class="num bad">0.2</td><td>216 with a 0.8 weapon, less with the rifles, under 220</td></tr>
@@ -455,7 +455,7 @@ svg text, .fx svg text { font-family: var(--font-display); }
         </tbody>
       </table>
     </div>
-    <p>So a crouch walk was about 1.6 times as loud as a run, and a sprint was only loud for a recon carrying a 0.85 weapon. Support cannot sprint. Section <a href="#volume">3.5</a> has the fix, and <a href="#evidence">4.3</a> the test log counts.</p>
+    <p>So crouching was about 1.6 times as loud as a run, and a sprint was only loud for a recon carrying a 0.85 weapon. Support cannot sprint. Section <a href="#volume">3.5</a> has the fix, and <a href="#evidence">4.3</a> the test log counts.</p>
     <p class="muted">The BALC is the only weapon with no slowdown (1.0), and only the Juggernaut carries it. A Juggernaut sprint reaches 256 u/s and was loud on master. This paper leaves the Juggernaut mode out of the sprint figures; it will be reviewed separately.</p>
   </section>
 
@@ -468,9 +468,9 @@ svg text, .fx svg text { font-family: var(--font-display); }
         <tbody>
           <tr>
             <td class="when">2019-05<br><span class="muted">SDK import, 4508d865</span></td>
-            <td>Inherit the SDK step volume rule. A step is quiet below a run speed of 80 u/s crouched or 220 u/s standing and loud above it, and crouched steps are scaled to 65% (<code>fvol *= 0.65</code>).</td>
+            <td>Inherit the SDK step volume rule. A step is soft below a run speed of 80 u/s crouched or 220 u/s standing and loud above it, and crouched steps are scaled to 65% (<code>fvol *= 0.65</code>).</td>
             <td>Stock engine behavior. The SDK crouches at a third of run speed (about 63 u/s), so its crouched steps stayed under 80 and were the quietest steps.</td>
-            <td>Never retuned. NEO crouches at 0.75 of run speed, so every crouch walk passed 80 and played at 0.325, louder than a standing run at 0.2.</td>
+            <td>Never retuned. NEO crouches at 0.75 of run speed, so every crouching speed passed 80 and played at 0.325, louder than a standing run at 0.2.</td>
           </tr>
           <tr>
             <td class="when">2024-06<br><span class="muted">#275, #363</span></td>
@@ -482,7 +482,7 @@ svg text, .fx svg text { font-family: var(--font-display); }
             <td class="when">2025-02<br><span class="muted">#877</span></td>
             <td>Implement those limits: standing above 90, crouched above 60.</td>
             <td>Parity.</td>
-            <td>Every crouch walk speed (102 to 150 u/s) is above 60, so crouch walking made footsteps, as in the original.</td>
+            <td>Every crouching speed (102 to 150 u/s) is above 60, so crouching made footsteps, as in the original.</td>
           </tr>
           <tr>
             <td class="when">2025-07<br><span class="muted">#1097, from #992</span></td>
@@ -511,13 +511,13 @@ svg text, .fx svg text { font-family: var(--font-display); }
         <ul class="plain">
           <li>The standing rule from #1431 gives way to the crouched rule, so walking, aiming and crouching share one threshold.</li>
           <li>Step volume follows the movement mode instead of the SDK's speed cutoffs. The SDK's 65% for crouched steps stays.</li>
-          <li>Crouching joins the quiet modes, with a threshold relative to the player's own crouch walk speed. Quiet is still opted into with a key, so the speed-only and analog input suggestions from #1431 remain open for standing movement.</li>
+          <li>Crouching joins the silent modes, with a limit relative to the player's own crouching speed. Silence is still opted into with a key, so the speed-only and analog input suggestions from #1431 remain open for standing movement.</li>
           <li>The turn headroom answers the 90° turn issue raised in #1431, for crouching and walking.</li>
         </ul>
       </div>
       <div class="panel hold">
         <span class="label">The open parity question</span>
-        <p>Under the original game's 60 u/s crouched limit, a crouch walk makes footsteps. Under this proposal it is silent. #1431 deferred the parity discussion; this proposal takes a position for crouching, and that choice is worth discussing on its own.</p>
+        <p>Under the original game's 60 u/s crouched limit, crouching makes footsteps. Under this proposal it is silent. #1431 deferred the parity discussion; this proposal takes a position for crouching, and that choice is worth discussing on its own.</p>
       </div>
     </div>
     <p class="muted">#1097 also links a Discord thread and a change document, which are not summarised here.</p>
@@ -526,17 +526,29 @@ svg text, .fx svg text { font-family: var(--font-display); }
   <section class="part" id="proposal" aria-labelledby="proposal-h">
         <h2 id="proposal-h"><span class="secno">2</span>Proposal</h2>
     <p>Make every footstep follow one formula, decided the same way by the server, the stepping player and everyone listening. Movement speed and feel do not change; only whether and when a step sound plays.</p>
+    <p><strong>The rule.</strong> Being silent takes intent: press crouch, walk or aim. Inside one of those modes, speed decides whether a step is heard. Sprinting decides how loud a heard step is.</p>
     <div class="rules">
-      <p class="rule"><span class="rule-n">1</span>Quiet is opt-in. Crouching, walking and aiming are silent at their normal speed, for every class and weapon. Moving faster than that still makes noise: sprinting, sliding, being pushed. Outside those three, every step at 50 u/s or faster is heard, so a runner passing through walk speed stays audible.</p>
-      <p class="rule"><span class="rule-n">2</span>Pressing crouch, walk or aim holds back your next footstep. If you settle into that mode, it is dropped. If you let go too early, it plays right away. Jumping or grabbing a ladder forgets it, and landing from a jump always makes a step.</p>
-      <p class="rule"><span class="rule-n">3</span>Looking around while crouch walking or walking does not count as speeding up. Turning widens the threshold, and one brief switch of movement keys is forgiven.</p>
+      <p class="rule"><span class="rule-n">1</span>Silence is opt-in. Crouching, walking and aiming are silent at their normal speed, for every class and weapon. Moving faster than that still makes noise: sprinting, sliding, being pushed. Outside those three, every step at 50 u/s or faster is heard, so a runner passing through walk speed stays audible.</p>
+      <p class="rule"><span class="rule-n">2</span>Pressing crouch, walk or aim holds back your next footstep. If you settle into that mode, it is dropped. If you let go too early, it plays right away. Staying loud after the press, in a slide, a push or a crouch sprint, plays it too. Jumping or grabbing a ladder forgets it, and landing from a jump always makes a step.</p>
+      <p class="rule"><span class="rule-n">3</span>Looking around while crouching or walking does not count as speeding up. Turning widens the headroom, and one brief change of direction is forgiven.</p>
       <p class="rule"><span class="rule-n">4</span>Footstep volume follows how you move. Sprinting is the loudest, running keeps its volume, and a crouch sprint is 65% of a sprint: louder than a run, quieter than a standing sprint.</p>
+    </div>
+    <div class="panel fix">
+      <span class="label">Guarantees</span>
+      <ul class="plain">
+        <li><strong>Other players hear what you hear.</strong> The crouch key press, the walk and aim state, the sprint state and the view yaw all reach every client, so an enemy's game reaches the same silent-or-not decision for your steps that yours does.</li>
+        <li><strong>Tapping crouch, walk or aim can delay a step, never skip one.</strong> The held step comes back on an early release, so no rhythm of taps moves at run speed for free.</li>
+        <li><strong>Staying loud after the press still plays the step.</strong> A slide, a push or a crouch sprint does not get the held step for free.</li>
+        <li><strong>You cannot bunny hop silently.</strong> The step on landing is always audible, in every posture.</li>
+        <li><strong>Wiggle-walking is still noisy.</strong> One change of direction is forgiven; repeating it makes footsteps.</li>
+        <li><strong>Three of these are checked at compile time.</strong> The tuning constants are derived from the crouch and walk modifier, and <code>static_assert</code>s hold that running is never silent, aiming is silent, and a full-speed sprint is never forgiven, so a later movement change cannot break them unnoticed.</li>
+      </ul>
     </div>
     <h3 id="formula"><span class="secno">2.1</span>The footstep formula</h3>
     <p>The same shared code decides a footstep in three places: the server, the stepping player's own client, and every other client that can see them. The terms come in three groups: speeds, turning and timers. Each group gets one picture, and the formulas reuse the same letters.</p>
-    <pre class="formula">sound threshold = GetNormSpeed * weapon scale * SILENT_MOVE_THRESHOLD
-actual speed    = GetNormSpeed * weapon scale * stance modifier</pre>
-    <p>Both sides carry the weapon, so the gun cancels out: a quiet mode is silent whenever its stance modifier is at or below <code>SILENT_MOVE_THRESHOLD</code>, 0.825. Crouch and walk are 0.75 and aim is 0.6, so all three qualify with every gun; sprinting multiplies by 1.35 or 1.6 and never does. On master the threshold was <code>GetNormSpeed * 0.7</code> with no weapon term, so the headroom changed with the gun.</p>
+    <pre class="formula">silent limit = GetNormSpeed * weapon scale * FS_SILENT_SPEED_FRACTION
+actual speed = GetNormSpeed * weapon scale * stance modifier</pre>
+    <p>Both sides carry the weapon, so the gun cancels out: a silent mode stays silent whenever its stance modifier is at or below <code>FS_SILENT_SPEED_FRACTION</code>, 0.825. That number is not tuned by hand. It is the crouch and walk modifier, 0.75, plus 10%, and the code derives it from <code>NEO_CROUCH_WALK_MODIFIER</code> so it follows the movement rule if that ever changes. The 10% is the <strong>headroom</strong>: the gap between a mode's own speed and the silent limit, which is how much a player can speed up, from a turn or a sidestep, before a step plays. Crouch and walk are 0.75 and aim is 0.6, so all three qualify with every gun; sprinting multiplies by 1.35 or 1.6 and never does. On master the limit was <code>GetNormSpeed * 0.7</code> with no weapon term, so the headroom changed with the gun.</p>
     <h4><span class="secno">2.1.1</span>Speeds</h4>
     <figure class="figure fx">
       <svg viewBox="0 0 680 334" role="img" aria-label="Normalized speed: ground speed divided by class run speed times weapon speed scale, so 1.0 is your run speed with your weapon. Crouch at 0.75, walk at 0.75 and aim at 0.6 sit inside the silent band, which ends at 0.825 and widens to 1.1625 while turning. Crouch sprint at 1.01 or 1.2, run at 1.0 and sprint at 1.35 or 1.6 make footsteps.">
@@ -549,7 +561,7 @@ actual speed    = GetNormSpeed * weapon scale * stance modifier</pre>
   <text class="f-tick" x="590" y="40">volume</text>
   <line class="f-axis" x1="130" y1="278" x2="560.1" y2="278"/>
   <line class="f-grid" x1="20" y1="192" x2="660" y2="192" stroke-dasharray="4 4"/>
-  <text class="f-tick" x="20" y="186">quiet modes</text><text class="f-tick" x="20" y="205">normal movement</text>
+  <text class="f-tick" x="20" y="186">silent modes</text><text class="f-tick" x="20" y="205">normal movement</text>
   <text class="f-row" x="120" y="64" text-anchor="end">Crouch</text>
   <rect class="f-silent" x="130" y="50" width="208.7" height="20"/>
   <rect class="f-turn" x="338.7" y="50" width="85.4" height="20"/>
@@ -603,11 +615,11 @@ actual speed    = GetNormSpeed * weapon scale * stance modifier</pre>
     </div>
     <dl class="fkey">
       <dt>v</dt><dd>The player's horizontal speed, because other clients guess vertical speed badly on stairs.</dd>
-      <dt>w</dt><dd>Your own run speed with your weapon: <code>GetNormSpeed</code> × weapon speed scale (assault with an SRM: 136). The silent threshold is <code>SILENT_MOVE_THRESHOLD</code>, 0.825, of it.</dd>
-      <dt>c</dt><dd>Your own crouch walk speed, which is also your walk speed: 0.75 w.</dd>
+      <dt>w</dt><dd>Your own run speed with your weapon: <code>GetNormSpeed</code> × weapon speed scale (assault with an SRM: 136). The silent limit is <code>FS_SILENT_SPEED_FRACTION</code>, 0.825, of it.</dd>
+      <dt>c</dt><dd>Your own crouching speed, which is also your walking speed: 0.75 w.</dd>
       <dt>n</dt><dd>Class run speed with no weapon slowdown (recon 200, others 160), <code>GetNormSpeed</code>. Master's limits are multiples of it; the new rule multiplies it by the weapon first, which gives w.</dd>
-      <dt>quiet mode</dt><dd>Crouched, walking or aiming, on the ground. The threshold below applies only inside it; it decides which speed you are measured against, never whether a fast step is silent.</dd>
-      <dt>50</dt><dd>No footsteps below 50 u/s in any posture. Outside a quiet mode this is the only threshold.</dd>
+      <dt>silent mode</dt><dd>Crouched, walking or aiming, on the ground. The silent limit applies only inside one: intent opens the window, speed decides whether a step is heard. A fast step is never silent.</dd>
+      <dt>50</dt><dd>No footsteps below 50 u/s in any posture, on a ladder or off. It sits just under the 55 u/s floor on max speed, so it only filters drift that is not movement. Outside a silent mode it is the only limit.</dd>
     </dl>
     <h4><span class="secno">2.1.2</span>Turning</h4>
     <figure class="figure fx">
@@ -625,11 +637,11 @@ actual speed    = GetNormSpeed * weapon scale * stance modifier</pre>
   <text class="f-lblfix" x="616" y="174" text-anchor="end">silent limit without turning, 0.825</text>
   <text class="f-lbl" x="620" y="200" text-anchor="end">dashed: speed from turning (simulated)</text>
 </svg>
-      <figcaption>Holding a movement key while turning builds speed toward the new direction faster than friction removes the old one, so turning really makes you faster. Switching keys (W+D to W+A) does the same without turning the view. The green area is the turn headroom this PR adds: while the view turns, the silent limit rises from 0.825 to as much as 1.1625 of run speed, so that speed-up does not make footsteps. The dashed line is the speed turning can really reach (simulated with sv_accelerate 10, sv_friction 4). It stays inside the green area at every turn rate.</figcaption>
+      <figcaption>Holding a movement key while turning builds speed toward the new direction faster than friction removes the old one, so turning really makes you faster. Changing direction (W+D to W+A) does the same without turning the view. The green area is the turn headroom this PR adds: while the view turns, the silent limit rises from 0.825 to as much as 1.1625 of run speed, so that speed-up does not make footsteps. The dashed line is the speed turning can really reach (simulated with sv_accelerate 10, sv_friction 4). It stays inside the green area at every turn rate.</figcaption>
     </figure>
     <dl class="fkey">
       <dt>r</dt><dd>How fast the view is turning, in degrees per second. It keeps its peak and fades over about 0.25 s, about as long as friction takes to remove the extra speed.</dd>
-      <dt>t</dt><dd>Turn headroom: 0.3375 × min(r / 180, 1), in units of w (0.45 of c). Zero while sprinting, so crouch sprinting stays loud mid-turn.</dd>
+      <dt>t</dt><dd>Turn headroom: <code>FS_TURN_HEADROOM</code> × min(r / <code>FS_TURN_RATE_FOR_FULL_HEADROOM</code>, 1), that is 0.3375 × min(r / 180, 1) in units of w, or 0.45 of c. Zero while sprinting, so crouch sprinting stays loud mid-turn.</dd>
     </dl>
     <h4><span class="secno">2.1.3</span>Timers</h4>
     <figure class="figure fx">
@@ -643,14 +655,14 @@ actual speed    = GetNormSpeed * weapon scale * stance modifier</pre>
   <line class="f-axis" x1="60" y1="120" x2="648.0" y2="120"/>
   <circle class="f-held" cx="144.0" cy="120" r="7"/><text class="f-lblhold" x="144.0" y="104" text-anchor="middle">step held</text>
   <path class="f-drop" d="M 243.0 114 L 255.0 126 M 243.0 126 L 255.0 114"/><text class="f-lblfix" x="259.0" y="104">dropped</text>
-  <circle class="f-quiet" cx="354.0" cy="120" r="5"/><text class="f-tick" x="354.0" y="104" text-anchor="middle">quiet step</text>
-  <circle class="f-quiet" cx="564.0" cy="120" r="5"/><text class="f-tick" x="564.0" y="104" text-anchor="middle">quiet step</text>
+  <circle class="f-quiet" cx="354.0" cy="120" r="5"/><text class="f-tick" x="354.0" y="104" text-anchor="middle">silent step</text>
+  <circle class="f-quiet" cx="564.0" cy="120" r="5"/><text class="f-tick" x="564.0" y="104" text-anchor="middle">silent step</text>
   <rect class="f-window" x="249.0" y="146" width="168.0" height="20"/>
   <text class="f-lblbad" x="333.0" y="160" text-anchor="middle">let go here: it plays</text>
   <text class="f-lbl" x="429.6" y="160">later: gone</text>
   <text class="f-tick" x="333.0" y="182" text-anchor="middle">one step interval T after the drop</text>
 </svg>
-      <figcaption>Held step. The game only counts you as crouched once the 0.4 s crouch animation ends, and you keep run speed until then. Now the step that lands in that window waits: once you settle into the crouch it is dropped, and it plays if you stand up again within one step interval, so tapping crouch cannot skip steps.</figcaption>
+      <figcaption>Held step. The game only counts you as crouched once the 0.4 s crouch animation ends, and you keep run speed until then. Now the step that lands in that window waits: once you settle into the crouch it is dropped, and it plays if you stand up again within one step interval, so tapping crouch can delay a step but never skip one.</figcaption>
     </figure>
     <figure class="figure fx">
       <svg viewBox="0 0 680 214" role="img" aria-label="Forgiveness timeline. After 0.5 seconds crouched on the ground, the first step that is slightly too fast is skipped. The next one plays. One second under the threshold earns the skip back.">
@@ -665,13 +677,13 @@ actual speed    = GetNormSpeed * weapon scale * stance modifier</pre>
   <text class="f-band" x="459.0" y="146" text-anchor="middle">1 s under the threshold</text>
   <path class="f-drop" d="M 586.0 104 L 598.0 116 M 586.0 116 L 598.0 104"/><text class="f-lblfix" x="592.0" y="94" text-anchor="middle">forgiven again</text>
 </svg>
-      <figcaption>One-step forgiveness, in any quiet mode. A single change of strafe direction (W+D to W+A) is normal movement, and the speed it adds is invisible to the turn headroom because the view does not move, so its first step is forgiven. Repeating it is the wiggle, and the rest are heard. A slide from a run or a landing stays audible, because it happens before the 0.5 s.</figcaption>
+      <figcaption>One-step forgiveness, in any silent mode. Forgiveness is a one-time pass: one step that is only slightly over the silent limit is skipped instead of played. A single change of direction (W+D to W+A) is normal movement, and the speed it adds is invisible to the turn headroom because the view does not move, so its first step is forgiven. Repeating it is the wiggle, and the rest are heard. A slide from a run or a landing stays audible, because it happens before the 0.5 s.</figcaption>
     </figure>
     <dl class="fkey">
       <dt>T</dt><dd>Step interval: 300 ms when fast, 400 ms when slower, plus 100 ms crouched. A footstep is checked each time it runs out.</dd>
       <dt>0.4 s</dt><dd>Crouch animation. Speed and footsteps only count you as crouched after it.</dd>
       <dt>0.1 s</dt><dd>Settle time: still loud this long after crouch, walk or aim takes effect means a slide, push or sprint, so the held step plays.</dd>
-      <dt>0.5 s, 1 s</dt><dd>Forgiveness: in a quiet mode on the ground at least 0.5 s before a step can be forgiven; 1 s under the threshold to earn it back.</dd>
+      <dt>0.5 s, 1 s</dt><dd>Forgiveness: in a silent mode on the ground at least 0.5 s before a step can be forgiven; 1 s under the limit to earn it back.</dd>
       <dt>0.1 s in the air</dt><dd>Landing: after at least this long off the ground, the next step is never silent, whatever the posture. The step timer waits in the air, so after a jump that is the landing tick.</dd>
     </dl>
     <h4><span class="secno">2.1.4</span>Before and after</h4>
@@ -680,51 +692,51 @@ actual speed    = GetNormSpeed * weapon scale * stance modifier</pre>
         <span class="label">Before: master</span>
         <pre>sound threshold = GetNormSpeed * 0.7
 actual speed    = GetNormSpeed * weapon scale * stance modifier
-quiet modes     = aim, walk
+silent modes    = aim, walk
 loud if           speed is over a fixed cutoff</pre>
         <ol class="problems">
-          <li><strong>quiet modes</strong>: crouching was not one, so crouching alone was never silent. A plain crouch walk played at 0.325 volume, louder than a standing run (0.2).</li>
+          <li><strong>silent modes</strong>: crouching was not one, so crouching alone was never silent. Plain crouching played at 0.325 volume, louder than a standing run (0.2).</li>
           <li><strong>GetNormSpeed * 0.7</strong>: no weapon term, so the headroom changed with the gun. While crouched, master used 0.7 × the class crouch speed instead. Crouch with +walk and standing +walk sat only about 10% under the limit with most weapons, up to 38% with the slowest, so looking around while moving pushed them over.</li>
           <li><strong>actual speed</strong>: measured as full speed, including the vertical speed other clients see when a player steps up stairs.</li>
           <li><strong>stance modifier</strong>: crouch only counted after the 0.4 s crouch animation, so one running step leaked when dropping into a crouch.</li>
-          <li><strong>loud if speed is over a fixed cutoff</strong>: the SDK's cutoffs, 220 u/s standing and 80 crouched, fit its third speed crouch. Every NEO crouch walk is above 80, so crouched steps were louder than a run, and assault sprints, and recon sprints with most weapons, were under 220, as quiet as a run.</li>
+          <li><strong>loud if speed is over a fixed cutoff</strong>: the SDK's cutoffs, 220 u/s standing and 80 crouched, fit its third speed crouch. Every NEO crouching speed is above 80, so crouched steps were louder than a run, and assault sprints, and recon sprints with most weapons, were under 220, as quiet as a run.</li>
           <li><strong>Outside the formula</strong>: server footsteps reached nobody (#2230).</li>
         </ol>
       </div>
       <div class="panel fix">
         <span class="label">After: this PR</span>
-        <pre>sound threshold = GetNormSpeed * weapon scale * SILENT_MOVE_THRESHOLD
+        <pre>silent limit    = GetNormSpeed * weapon scale * FS_SILENT_SPEED_FRACTION
 actual speed    = GetNormSpeed * weapon scale * stance modifier
-quiet modes     = crouch, walk, aim
+silent modes    = crouch, walk, aim
 loud if           sprinting</pre>
         <ol class="problems solutions">
-          <li><strong>quiet modes</strong>: crouching alone is now a quiet mode, like walking and aiming, and all three share one limit just above their normal speed. Crouch sprinting, slides and pushes stay above it.</li>
-          <li><strong>sound threshold</strong>: it carries the weapon scale like actual speed, so the gun cancels out. It widens while turning, and one brief key switch is forgiven.</li>
+          <li><strong>silent modes</strong>: crouching alone is now a silent mode, like walking and aiming, and all three share one limit just above their normal speed. Crouch sprinting, slides and pushes stay above it.</li>
+          <li><strong>silent limit</strong>: it carries the weapon scale like actual speed, so the gun cancels out. It widens while turning, and one brief change of direction is forgiven.</li>
           <li><strong>actual speed</strong>: horizontal speed only.</li>
           <li><strong>stance modifier</strong>: the step during the crouch animation waits, and is dropped once you settle.</li>
-          <li><strong>loud if sprinting</strong>: the sprint state is networked, so every client picks the same volume. Running is quiet. Crouched steps are scaled to 65%, so a crouch sprint sits between a run and a sprint.</li>
+          <li><strong>loud if sprinting</strong>: the sprint state is networked, so every client picks the same volume. Running is soft. Crouched steps are scaled to 65%, so a crouch sprint sits between a run and a sprint.</li>
           <li>The server footstep origin is fixed in #2230, a separate PR.</li>
         </ol>
       </div>
     </div>
-    <p class="muted">Both use the same quiet and loud volumes, and crouched steps are 65% of either. Ladders are always audible: climb speed is a fixed 200 u/s whether crouched or not, and horizontal speed is near zero while climbing. The turning speed curve comes from a movement simulation; every other number is a constant in the code.</p>
+    <p class="muted">Both use the same soft and loud volumes, and crouched steps are 65% of either. Ladders are always audible: climb speed is a fixed 200 u/s whether crouched or not, and horizontal speed is near zero while climbing. The turning speed curve comes from a movement simulation; every other number is a constant in the code.</p>
     <h4><span class="secno">2.1.5</span>What this fixes</h4>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Scenario</th><th>Before</th><th>After</th></tr></thead>
         <tbody>
-          <tr><td>Crouch walking</td><td class="bad">audible, louder than a run</td><td class="good">silent</td></tr>
-          <tr><td>Crouch walking with +walk or aim</td><td class="bad">silent until a turn</td><td class="good">silent</td></tr>
+          <tr><td>Crouching</td><td class="bad">audible, louder than a run</td><td class="good">silent</td></tr>
+          <tr><td>Crouching with +walk or aim</td><td class="bad">silent until a turn</td><td class="good">silent</td></tr>
           <tr><td>Crouch sprinting</td><td>audible, 0.325</td><td>audible, 0.325: between a run and a sprint</td></tr>
           <tr><td>Sprinting as assault, or as recon with most weapons</td><td class="bad">as quiet as a run</td><td class="good">loudest step</td></tr>
           <tr><td>Slide from a run</td><td>audible</td><td>audible</td></tr>
           <tr><td>Pushed while crouched</td><td>audible</td><td>audible</td></tr>
-          <tr><td>Turning while crouch walking</td><td class="bad">audible</td><td class="good">silent</td></tr>
+          <tr><td>Turning while crouching</td><td class="bad">audible</td><td class="good">silent</td></tr>
           <tr><td>Wiggle walking crouched</td><td>audible</td><td>first step forgiven, repeats audible</td></tr>
           <tr><td>Wiggle walking standing</td><td>audible</td><td>first step forgiven, repeats audible</td></tr>
           <tr><td>Walking with the BALC</td><td class="bad">audible</td><td class="good">silent</td></tr>
           <tr><td>Dropping into a crouch from a run</td><td class="bad">one running step leaks</td><td class="good">silent</td></tr>
-          <tr><td>Tapping crouch, walk or aim</td><td>steps unchanged</td><td>steps unchanged, at most 100 ms later</td></tr>
+          <tr><td>Tapping crouch, walk or aim</td><td>steps unchanged</td><td>a step can be delayed, never skipped</td></tr>
           <tr><td>Crouched ladder climbing</td><td>audible</td><td>audible</td></tr>
           <tr><td>Landing from a jump or a drop</td><td>audible, up to 0.5 s late</td><td class="good">audible on the landing tick, in any posture</td></tr>
         </tbody>
@@ -737,18 +749,18 @@ loud if           sprinting</pre>
       </div>
       <a class="srow" href="#crouch">
         <span><span class="chip fixed">On branch</span></span>
-        <span><span class="sname">Crouched threshold.</span> Crouching joins walking and aiming as a quiet mode, with one limit for every class and weapon.</span>
-        <span>Crouch walking is silent. Crouch sprinting, slides and pushes are audible.</span>
+        <span><span class="sname">Crouched threshold.</span> Crouching joins walking and aiming as a silent mode, with one limit for every class and weapon.</span>
+        <span>Crouching is silent. Crouch sprinting, slides and pushes are audible.</span>
       </a>
       <a class="srow" href="#held">
         <span><span class="chip fixed">On branch</span></span>
         <span><span class="sname">Held step.</span> Pressing crouch, walk or aim holds back the next step.</span>
-        <span>No last step when starting a crouch. Letting go early plays it, so tapping crouch cannot skip steps.</span>
+        <span>No last step when starting a crouch. Letting go early plays it, so tapping crouch can delay a step but never skip one.</span>
       </a>
       <a class="srow" href="#turning">
         <span><span class="chip fixed">On branch</span></span>
         <span><span class="sname">Turning and key switching.</span> Turn headroom on the crouched threshold, and one forgiven step.</span>
-        <span>Looking around while crouch walking is silent. Repeated wiggle walking still makes footsteps.</span>
+        <span>Looking around while crouching is silent. Repeated wiggle walking still makes footsteps.</span>
       </a>
       <a class="srow" href="#shared">
         <span><span class="chip fixed">On branch</span></span>
@@ -768,10 +780,11 @@ loud if           sprinting</pre>
     </div>
     <h3><span class="secno">2.3</span>What players will notice</h3>
     <ul class="plain">
-      <li>Crouch walking is silent for every class and weapon, with or without aim or walk.</li>
+      <li>Crouching is silent for every class and weapon, with or without aim or walk.</li>
       <li>Crouch sprinting, sliding from a run, and being pushed while crouched still make footsteps.</li>
       <li>No extra step when dropping into a crouch from a run.</li>
-      <li>Looking around while crouch walking stays silent; repeated wiggle walking does not.</li>
+      <li>Looking around while crouching stays silent; repeated wiggle walking does not.</li>
+      <li>Other players hear the same steps you do.</li>
       <li>Walking and aiming follow the crouched rule: the first wiggle step is forgiven, and walking with the BALC is silent.</li>
       <li>Crouch sprinting is louder than running but quieter than a sprint, and sprinting is the loudest step for every class and weapon.</li>
       <li>Players out of sight but within hearing range hear footsteps again.</li>
@@ -785,11 +798,11 @@ loud if           sprinting</pre>
 
   <section class="problem" id="crouch" aria-labelledby="crouch-h">
     <div class="problem-head"><h3 id="crouch-h"><span class="secno">3.1</span>Crouched silent movement threshold</h3><span class="chip fixed">Fixed</span></div>
-    <p><strong>Formula part 1, crouched line.</strong> Crouching used to be silent only while also aiming or holding +walk, so a plain crouch walk was audible. The threshold is now the player's own crouch walk speed plus 10%, including weapon slowdown. That is the same limit as 0.825 of run speed in the <a href="#formula">formula</a>.</p>
+    <p><strong>Formula part 1, crouched line.</strong> Crouching used to be silent only while also aiming or holding +walk, so plain crouching was audible. The limit is now the player's own crouching speed plus 10% headroom, including weapon slowdown. That is the same limit as 0.825 of run speed in the <a href="#formula">formula</a>.</p>
     <figure class="figure">
       <svg viewBox="0 0 660 250" role="img" aria-labelledby="crouch-svg-t crouch-svg-d">
         <title id="crouch-svg-t">Crouched speeds per class against the old and new silent movement thresholds</title>
-        <desc id="crouch-svg-d">The old threshold makes any crouched step above 50 units per second audible unless aiming or walking. The new threshold keeps crouched steps silent up to the class crouch speed plus 10%, so crouch walking is silent and crouch sprinting is audible.</desc>
+        <desc id="crouch-svg-d">The old threshold makes any crouched step above 50 units per second audible unless aiming or walking. The new threshold keeps crouched steps silent up to the class crouch speed plus 10%, so crouching is silent and crouch sprinting is audible.</desc>
         <!-- scale: x = 110 + speed * 2.1 -->
         <g class="mono">
           <line class="s-axis" x1="110" y1="196" x2="635" y2="196"/>
@@ -829,7 +842,7 @@ loud if           sprinting</pre>
         <line class="s-old" x1="215" y1="24" x2="215" y2="196"/>
         <text class="s-bugtext" x="221" y="22">old: audible above 50 unless aiming or walking</text>
       </svg>
-      <figcaption>Green band: silent, up to crouch walk speed plus 10%. Hollow dot: crouch with +walk. Filled dot: crouch walk. Diamond: crouch sprint. Drawn with no weapon slowdown. Every crouched speed and the threshold scale by the same weapon factor, so the picture holds for every weapon.</figcaption>
+      <figcaption>Green band: silent, up to crouching speed plus 10%. Hollow dot: crouch with +walk. Filled dot: crouching. Diamond: crouch sprint. Drawn with no weapon slowdown. Every crouched speed and the threshold scale by the same weapon factor, so the picture holds for every weapon.</figcaption>
     </figure>
     <div class="cols">
       <div class="panel bug">
@@ -844,15 +857,20 @@ if (GetFlags() &amp; FL_DUCKING)
       </div>
       <div class="panel fix">
         <span class="label">After</span>
-        <pre>if ((GetFlags() &amp; FL_DUCKING) &amp;&amp; !isOnLadder)
+        <pre><span class="cm">// 0.75 plus 10% headroom = 0.825</span>
+constexpr float FS_SILENT_HEADROOM = 0.10f;
+constexpr float FS_SILENT_SPEED_FRACTION =
+    float(NEO_CROUCH_WALK_MODIFIER) * (1.f + FS_SILENT_HEADROOM);
+
+if (IsInSilentMoveMode() &amp;&amp; !isOnLadder)
 {
-    float crouchSilentGrace = 1.1f;
+    float silentThreshold = FS_SILENT_SPEED_FRACTION;
     <span class="cm">// plus turn headroom, see Turning below</span>
     <span class="cm">// ground speed: other clients see vertical</span>
     <span class="cm">// speed when a player steps up stairs</span>
     if (groundspeed &lt;=
-        GetCrouchSpeed_WithActiveWepEncumberment()
-        * crouchSilentGrace)
+        GetNormSpeed_WithActiveWepEncumberment()
+        * silentThreshold)
         return false;
 }</pre>
       </div>
@@ -860,7 +878,7 @@ if (GetFlags() &amp; FL_DUCKING)
     <div class="cols">
       <div class="panel fix">
         <span class="label">Weapon slowdown</span>
-        <p>Every weapon slows its holder, by 0.675× (PZ) to 1.0× (BALC). The threshold first used the class crouch speed alone, so a recon crouch sprinting with a 0.725× rifle (147 u/s) stayed under 165 and made no sound. The threshold now uses the crouch speed with the active weapon applied, which keeps the same 10% margin for every weapon.</p>
+        <p>Every weapon slows its holder, by 0.675× (PZ) to 1.0× (BALC). An early draft used the class crouch speed alone, so a recon crouch sprinting with a 0.725× rifle (147 u/s) stayed under 165 and made no sound. The limit now uses run speed with the active weapon applied, which keeps the same headroom for every weapon.</p>
       </div>
     </div>
   </section>
@@ -901,7 +919,7 @@ if (GetFlags() &amp; FL_DUCKING)
         <circle class="s-dot-fix" cx="510.0" cy="88.4" r="5"/>
         <text class="s-fixtext" x="518.0" y="104.4">silent</text>
       </svg>
-      <figcaption>Today. Assault with an SRM (0.85&#215;): normal run 136, crouch walk 102. Speed only starts dropping once the animation is done, because <code>CalculateSpeed</code> checks the same crouched flag (<code>FL_DUCKING</code>, set at <code>TIME_TO_DUCK</code>, <code>gamemovement.cpp:4767</code>).</figcaption>
+      <figcaption>Today. Assault with an SRM (0.85&#215;): normal run 136, crouching 102. Speed only starts dropping once the animation is done, because <code>CalculateSpeed</code> checks the same crouched flag (<code>FL_DUCKING</code>, set at <code>TIME_TO_DUCK</code>, <code>gamemovement.cpp:4767</code>).</figcaption>
     </figure>
     <figure class="figure">
       <svg viewBox="0 0 660 278" role="img" aria-labelledby="held-svg-t held-svg-d">
@@ -953,7 +971,7 @@ if (GetFlags() &amp; FL_DUCKING)
           <tr><td>Settled: the mode that armed the step has taken effect, and not loud</td><td class="good">Held step dropped</td></tr>
           <tr><td>Still loud 0.1 s after crouch, walk or aim takes effect (slide, sprint, push)</td><td class="bad">Held step plays now</td></tr>
           <tr><td>Arming key released while a step is held</td><td class="bad">Held step plays now</td></tr>
-          <tr><td>Arming key released within one step interval of the drop, no other quiet mode held</td><td class="bad">Dropped step plays now</td></tr>
+          <tr><td>Arming key released within one step interval of the drop, no other silent mode held</td><td class="bad">Dropped step plays now</td></tr>
           <tr><td>Leaving the ground, or on a ladder</td><td>Held step forgotten: a landing makes its own step, and ladders are always audible</td></tr>
           <tr><td>Key released later than that</td><td>Nothing extra; normal rules continue</td></tr>
           <tr><td>Another loud step while settling into the crouch</td><td>Joins the held step</td></tr>
@@ -964,7 +982,7 @@ if (GetFlags() &amp; FL_DUCKING)
     <div class="cols">
       <div class="panel hold">
         <span class="label">Why release within one step plays it</span>
-        <p>Without that rule, a player could repeat crouch, settle, release about every 0.7 s. They would move at full speed for most of each cycle, since the crouch animation keeps run speed, and drop one step per cycle. Giving the step back on an early release means a dropped step always costs a real step's worth of crouched movement. Tapping crouch can only delay a step, never remove it.</p>
+        <p>This closes a speed exploit the hold would otherwise open. Without that rule, a player could repeat crouch, settle, release about every 0.7 s. They would move at full speed for most of each cycle, since the crouch animation keeps run speed, and drop one step per cycle. Giving the step back on an early release means a dropped step always costs a real step's worth of crouched movement. Tapping crouch can only delay a step, never remove it.</p>
       </div>
       <div class="panel fix">
         <span class="label">Movement is unchanged</span>
@@ -985,27 +1003,32 @@ if (GetFlags() &amp; FL_DUCKING)
 
   <section class="problem" id="turning" aria-labelledby="turning-h">
     <div class="problem-head"><h3 id="turning-h"><span class="secno">3.3</span>Turning and key switching while crouched</h3><span class="chip fixed">On branch</span></div>
-    <p>Holding a movement key while turning the view, or switching keys such as W+D to W+A, really raises ground speed: acceleration builds toward the new direction faster than friction removes the old one. The gain reaches about 50% of crouch walk speed, more than the 10% headroom, so looking around while crouch walking made footsteps. The <a href="#formula">turning chart</a> in section 2.1 shows the threshold against the simulated gain.</p>
+    <p>Holding a movement key while turning the view, or changing direction such as W+D to W+A, really raises ground speed: acceleration builds toward the new direction faster than friction removes the old one. The gain reaches about 45% of crouching speed, far more than the 10% headroom, so looking around while crouching made footsteps. The <a href="#formula">turning chart</a> in section 2.1 shows the threshold against the simulated gain.</p>
     <div class="cols">
       <div class="panel fix">
         <span class="label">Turn headroom</span>
-        <pre>float crouchSilentGrace = 1.1f;
+        <pre><span class="cm">// 0.45 of crouching speed = 0.3375 of run speed</span>
+constexpr float FS_TURN_HEADROOM =
+    float(NEO_CROUCH_WALK_MODIFIER) * 0.45f;
+constexpr float FS_TURN_RATE_FOR_FULL_HEADROOM = 180.f;
+
+float silentThreshold = FS_SILENT_SPEED_FRACTION;
 <span class="cm">// crouch sprinting stays audible while turning</span>
 if (!m_fIsSprinting)
-    crouchSilentGrace += 0.45f *
-        Min(m_flFootstepTurnRate / 180.f, 1.f);</pre>
+    silentThreshold += FS_TURN_HEADROOM *
+        Min(m_flFootstepTurnRate / FS_TURN_RATE_FOR_FULL_HEADROOM, 1.f);</pre>
         <p>The turn rate comes from the view yaw, which every client receives, keeps its peak and fades over 0.25 s.</p>
       </div>
       <div class="panel fix">
         <span class="label">One-step forgiveness</span>
-        <p>Switching keys does not turn the view, so turn headroom cannot see it. The first crouched step over the threshold is skipped when the player has been crouched on the ground for 0.5 s, is not sprinting and is no faster than 1.55 c. It comes back after 1 s under the threshold.</p>
+        <p>Forgiveness is a one-time pass: one step that is only slightly over the silent limit is skipped instead of played. It exists because a direction change does not turn the view, so the turn headroom cannot see it. It applies when the player has been crouched, walking or aiming on the ground for 0.5 s and is not sprinting, and only to a small overshoot: the cap, <code>FS_FORGIVENESS_MAX_SPEED_FRACTION</code>, is the silent limit plus the full turn headroom (1.1625 of run speed, 1.55 c), since a direction change adds at most as much speed as a fast turn. Anything faster is a sprint or a slide. The forgiveness is spent on use and earned back after 1 s under the limit.</p>
       </div>
     </div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Test pass</th><th>Before</th><th>After</th></tr></thead>
         <tbody>
-          <tr><td>Crouch walking while turning (recon, c = 127.5)</td><td class="bad">13 footsteps at 140.5 to 156.5 u/s, turn rates up to 3,000°/s</td><td class="good">none from turning; crouch sprinting still audible at up to 483°/s</td></tr>
+          <tr><td>Crouching while turning (recon, c = 127.5)</td><td class="bad">13 footsteps at 140.5 to 156.5 u/s, turn rates up to 3,000°/s</td><td class="good">none from turning; crouch sprinting still audible at up to 483°/s</td></tr>
           <tr><td>Wiggle walking crouched</td><td>about 30 footsteps at 142.8 to 165.1 u/s, turn rate under 41°/s</td><td>first step forgiven in each of 7 bursts, the rest audible</td></tr>
         </tbody>
       </table>
@@ -1016,7 +1039,7 @@ if (!m_fIsSprinting)
 
   <section class="problem" id="shared" aria-labelledby="shared-h">
     <div class="problem-head"><h3 id="shared-h"><span class="secno">3.4</span>One silent threshold for crouch, walk and aim</h3><span class="chip fixed">On branch</span></div>
-    <p>Walk speed and crouch walk speed are the same: class speed × weapon × 0.75. Master still measured standing walk and aim against 0.7 × class run speed, which ignores the weapon. The headroom swung from about 10% to 38% by gun, had no allowance for turning, and the BALC was always audible. Walking and aiming now use the crouched rule.</p>
+    <p>Walking speed and crouching speed are the same: class speed × weapon × 0.75. Master still measured standing walk and aim against 0.7 × class run speed, which ignores the weapon. The headroom swung from about 10% to 38% by gun, had no allowance for turning, and the BALC was always audible. Walking and aiming now use the crouched rule.</p>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Standing walk, assault</th><th class="num">Walk speed</th><th class="num">Master, 0.7 n</th><th class="num">This branch, 1.1 c</th></tr></thead>
@@ -1040,25 +1063,26 @@ if (!m_fIsSprinting)
       </div>
     </div>
     <pre><span class="cm">// neo_player_shared.cpp</span>
-bool CNEO_Player::IsInSilentMovementMode() const
+bool CNEO_Player::IsInSilentMoveMode() const
 {
     return (GetFlags() &amp; FL_DUCKING) || IsWalking() || IsInAim();
 }
 
-if (IsInSilentMovementMode() &amp;&amp; !isOnLadder)
+if (IsInSilentMoveMode() &amp;&amp; !isOnLadder)
     <span class="cm">// silent up to c × (1.1 + t)</span></pre>
     <p class="muted">Aiming moves at 0.6 × speed, slower than walking, so it keeps about 37% headroom under the shared limit, as on master. Ladders are always audible.</p>
   </section>
 
   <section class="problem" id="volume" aria-labelledby="volume-h">
     <div class="problem-head"><h3 id="volume-h"><span class="secno">3.5</span>Step volume by movement mode</h3><span class="chip fixed">On branch</span></div>
-    <p>The SDK picks a quiet or loud step volume by comparing speed with a fixed run speed, 80 u/s crouched and 220 u/s standing, then scales crouched steps to 65%. Those numbers fit the SDK's own crouch, a third of run speed (about 63 u/s), so its crouched steps stayed under 80 and quiet. NEO crouches at 0.75 of run speed, so every crouch walk passes 80 and gets the loud volume. Standing, an assault sprint stays under 220 with every weapon and a recon sprint only passes it with a 0.85 weapon, so most sprints get the quiet one.</p>
+    <p>The SDK picks a soft or loud step volume by comparing speed with a fixed run speed, 80 u/s crouched and 220 u/s standing, then scales crouched steps to 65%. Those numbers fit the SDK's own crouch, a third of run speed (about 63 u/s), so its crouched steps stayed under 80 and soft. NEO crouches at 0.75 of run speed, so every crouching speed passes 80 and gets the loud volume. Standing, an assault sprint stays under 220 with every weapon and a recon sprint only passes it with a 0.85 weapon, so most sprints get the soft one.</p>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Movement, concrete</th><th class="num">Master</th><th class="num">This branch</th></tr></thead>
         <tbody>
           <tr><td>Walk, aim with +walk</td><td class="num">silent</td><td class="num">silent</td></tr>
-          <tr><td>Crouch walk</td><td class="num bad">0.325</td><td class="num good">silent</td></tr>
+          <tr><td>Crouching</td><td class="num bad">0.325</td><td class="num good">silent</td></tr>
+          <tr><td>Other audible crouched step: a slide, a push, over the headroom</td><td class="num bad">0.325</td><td class="num good">0.13</td></tr>
           <tr><td>Run</td><td class="num">0.2</td><td class="num">0.2</td></tr>
           <tr><td>Crouch sprint</td><td class="num">0.325</td><td class="num">0.325</td></tr>
           <tr><td>Sprint, recon with a 0.85 weapon</td><td class="num">0.5</td><td class="num">0.5</td></tr>
@@ -1070,29 +1094,29 @@ if (IsInSilentMovementMode() &amp;&amp; !isOnLadder)
     <div class="cols">
       <div class="panel bug">
         <span class="label">Problem</span>
-        <p>A crouch walk played about 1.6 times as loud as a run, and a sprint was only loud for a recon carrying a 0.85 weapon. With master's crouched rule restored, a crouch walk sounded louder than a run.</p>
+        <p>Crouching played about 1.6 times as loud as a run, and a sprint was only loud for a recon carrying a 0.85 weapon. Even the crouched steps that still play after this proposal, slides and pushes, would have been louder than a run.</p>
       </div>
       <div class="panel fix">
         <span class="label">Fix</span>
-        <p>Choose the volume from the movement mode. Sprinting is loud and everything else is quiet, for every class and weapon. Crouched steps keep the SDK's 65%, so a crouch sprint is 0.325: louder than a run, quieter than a standing sprint. Crouch walking is silent, so the quiet crouched volume (0.13) only plays on landings and on steps over the threshold.</p>
+        <p>Choose the volume from intent. Sprinting is loud and everything else is soft, for every class and weapon. Crouched steps keep the SDK's 65%, so a crouch sprint is 0.325: louder than a run, quieter than a standing sprint. Crouching is silent, so the soft crouched volume (0.13) only plays on landings and on steps over the limit.</p>
       </div>
     </div>
     <pre><span class="cm">// neo_player_shared.cpp</span>
-bool CNEO_Player::IsQuietFootstep() const
+bool CNEO_Player::IsLoudFootstep() const
 {
-    return !m_fIsSprinting;
+    return m_fIsSprinting;
 }
 
 <span class="cm">// baseplayer_shared.cpp, UpdateStepSound</span>
-fvol = pNeoPlayer-&gt;GetSurfaceStepVolume(psurface, bQuietStep); <span class="cm">// 0.2 or 0.5 on concrete</span>
+fvol = pNeoPlayer-&gt;GetSurfaceStepVolume(psurface, bLoudStep); <span class="cm">// 0.5 or 0.2 on concrete</span>
 if (GetFlags() &amp; FL_DUCKING)
     fvol *= NEO_FS_CROUCH_VOLUME_SCALE; <span class="cm">// 0.65</span></pre>
-    <p class="muted">Other surfaces keep their own quiet and loud pair, such as dirt at 0.25 and 0.55. The step interval still follows speed, so step timing does not change. The sprint state and the crouch flag reach every client, so the server, the stepping player and everyone listening pick the same volume.</p>
+    <p class="muted">Other surfaces keep their own soft and loud pair, such as dirt at 0.25 and 0.55. The step interval still follows speed, so step timing does not change. The sprint state and the crouch flag reach every client, so the server, the stepping player and everyone listening pick the same volume.</p>
   </section>
 
   <section class="problem" id="landing" aria-labelledby="landing-h">
     <div class="problem-head"><h3 id="landing-h"><span class="secno">3.6</span>Landing step</h3><span class="chip fixed">On branch</span></div>
-    <p>A flat jump falls too slowly for the engine's landing sound, which needs 350 u/s of fall. The footstep players hear on landing is the regular step whose timer ran out in the air, firing on the first tick back on the ground. Two things had broken that. Since #2151 <code>UpdateStepSound</code> restarted the step timer even in the air, so the first step after landing came at a random phase up to half a second later. And with crouching a quiet mode, a crouched landing at walk speed made no sound at all.</p>
+    <p>A flat jump falls too slowly for the engine's landing sound, which needs 350 u/s of fall. The footstep players hear on landing is the regular step whose timer ran out in the air, firing on the first tick back on the ground. Two things had broken that. Since #2151 <code>UpdateStepSound</code> restarted the step timer even in the air, so the first step after landing came at a random phase up to half a second later. And with crouching a silent mode, a crouched landing at crouching speed made no sound at all: a silent bunny hop.</p>
     <div class="cols">
       <div class="panel bug">
         <span class="label">Problem</span>
@@ -1225,10 +1249,10 @@ if (GetFlags() &amp; FL_DUCKING)
       <table>
         <thead><tr><th>Scenario</th><th>Before</th><th>After (pass 4)</th></tr></thead>
         <tbody>
-          <tr><td>Crouch walk</td><td class="bad">54 server steps at 65 to 139 u/s</td><td class="good">0 steps, yours and the bots'</td></tr>
+          <tr><td>Crouching</td><td class="bad">54 server steps at 65 to 139 u/s</td><td class="good">0 steps, yours and the bots'</td></tr>
           <tr><td>Crouch sprint</td><td>audible</td><td class="good">30 steps at 172 to 222 u/s</td></tr>
           <tr><td>Sprint into crouch</td><td>audible</td><td class="good">steps while above the threshold (168 to 186 u/s)</td></tr>
-          <tr><td>Other clients' estimate of a crouch walker</td><td>n/a</td><td class="good">no false steps; all 98 crouched bot steps match the server</td></tr>
+          <tr><td>Other clients' estimate of a crouching player</td><td>n/a</td><td class="good">no false steps; all 98 crouched bot steps match the server</td></tr>
         </tbody>
       </table>
     </div>
@@ -1238,7 +1262,7 @@ if (GetFlags() &amp; FL_DUCKING)
         <thead><tr><th>Server steps, master's crouched rule</th><th class="num">Steps</th><th class="num">Volume</th><th class="num">Speed, u/s</th></tr></thead>
         <tbody>
           <tr><td>Standing run</td><td class="num">351</td><td class="num">0.20</td><td class="num">about 100 to 170</td></tr>
-          <tr><td>Crouch walk</td><td class="num">21</td><td class="num bad">0.32</td><td class="num">about 96 to 128</td></tr>
+          <tr><td>Crouching</td><td class="num">21</td><td class="num bad">0.32</td><td class="num">about 96 to 128</td></tr>
           <tr><td>Crouched, under 80 u/s</td><td class="num">11</td><td class="num">0.13</td><td class="num">51 to 80</td></tr>
           <tr><td>Standing sprint, over 220 u/s</td><td class="num">5</td><td class="num">0.50</td><td class="num">223 to 236</td></tr>
         </tbody>
@@ -1254,7 +1278,7 @@ if (GetFlags() &amp; FL_DUCKING)
           <tr><td>Walk wiggle, 0.85 weapon</td><td class="num">18</td><td class="num">1</td></tr>
           <tr><td>Walk wiggle, MX (0.725)</td><td class="num">29</td><td class="num">2, one per burst</td></tr>
           <tr><td>Aim wiggle, no +walk</td><td class="num good">0</td><td class="num">0</td></tr>
-          <tr><td>Crouch walk</td><td class="num good">0</td><td class="num">0</td></tr>
+          <tr><td>Crouching</td><td class="num good">0</td><td class="num">0</td></tr>
         </tbody>
       </table>
     </div>
@@ -1293,22 +1317,27 @@ nb_stop 0; bot_mimic 1</pre>
     <div class="problem-head"><h3 id="branch-h"><span class="secno">4.5</span>Branch state</h3></div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Commit</th><th>Change</th><th>Branch</th></tr></thead>
+        <thead><tr><th>#</th><th>Commit</th><th>Status</th></tr></thead>
         <tbody>
-          <tr><td class="commit">16dd7ef1</td><td>Fix footstep sounds playing from an unset origin (copy of PR #2230)</td><td>base</td></tr>
-          <tr><td class="commit">c2b93eb0</td><td>Silence crouched footsteps below the player's crouch walk speed</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit">d71c60f3</td><td>Allow for speed gained by turning or switching keys while crouched</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit">124ac092</td><td>Pick footstep volume by movement mode instead of speed</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit">6737d239</td><td>Share one silent movement threshold across crouch, walk and aim</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit">73291af2</td><td>Hold the first footstep after pressing crouch, walk or aim</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit">5e81a24c</td><td>Keep the step on landing audible in every posture</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit">068ab898</td><td>Start other players' ground surface trace clear of floors and walls</td><td class="muted">-docs only</td></tr>
-          <tr><td class="commit">4b403dc4</td><td><code>neo_footstep_debug</code> instrumentation</td><td class="muted">-docs only</td></tr>
-          <tr><td class="commit">596c994d</td><td>An experimental crouched threshold setting</td><td class="muted">-docs only</td></tr>
+          <tr><td class="commit">1</td><td>Move the SDK step volume table into GetSurfaceStepVolume</td><td class="muted">refactor, no behaviour change</td></tr>
+          <tr><td class="commit">2</td><td>Name master's walk-or-aim silent rule</td><td class="muted">refactor, no behaviour change</td></tr>
+          <tr><td class="commit">3</td><td>Name the slowest class sprint modifier</td><td class="muted">refactor, no behaviour change</td></tr>
+          <tr><td class="commit">4</td><td>Let every client see a crouch from the key press</td><td class="muted">groundwork, nothing players hear changes</td></tr>
+          <tr><td class="commit">5</td><td>Play the landing step on the tick you land</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">6</td><td>Make crouching silent</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">7</td><td>Make walking silent with every weapon</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">8</td><td>Fix rapid look and movement changes causing an accidental footstep</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">9</td><td>Stop crouched footsteps being louder than running</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">10</td><td>Hold the first footstep after pressing crouch, walk or aim</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">11</td><td>Tapping crouch, walk or aim delays a step, never skips one</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">12</td><td>Keep the step on landing audible in every posture</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit">&ndash;</td><td>Start other players' ground surface trace clear of floors and walls</td><td class="muted">-docs only</td></tr>
+          <tr><td class="commit">&ndash;</td><td><code>neo_footstep_debug</code> instrumentation</td><td class="muted">-docs only</td></tr>
+          <tr><td class="commit">&ndash;</td><td>An experimental crouched threshold setting</td><td class="muted">-docs only</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="muted">footsteps/sound-consistency-docs sits on top of the PR branch with the ground surface trace fix, the logging, the experiment and these docs.</p>
+    <p class="muted">Commits in branch order, as of 27 October 2026. Hashes are omitted because the branch is being rebased onto current master. The server footstep origin fix (#2230) has merged and is no longer carried on the branch. footsteps/sound-consistency-docs sits on top of the PR branch with the ground surface trace fix, the logging, the experiment and these docs.</p>
   </section>
 
 
