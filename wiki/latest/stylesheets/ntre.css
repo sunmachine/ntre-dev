@@ -233,7 +233,7 @@ body {
 /* ---------- Type ---------- */
 
 .md-typeset {
-  font-size: 0.74rem;
+  font-size: 0.7rem;
   line-height: 1.65;
 }
 .md-typeset h1,
@@ -376,7 +376,7 @@ body {
   color: var(--ntre-text-strong);
 }
 .md-typeset .footnote.references {
-  font-size: 0.64rem;
+  font-size: 0.6rem;
   color: var(--ntre-muted);
 }
 .md-typeset .footnote.references code {
@@ -397,7 +397,7 @@ body {
   border-radius: var(--ntre-radius);
   box-shadow: none;
   background: var(--ntre-surface-2);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
 }
 .md-typeset .admonition-title,
 .md-typeset summary {
@@ -439,7 +439,7 @@ body {
   border-spacing: 0;
   border-radius: var(--ntre-radius);
   overflow: hidden;
-  font-size: 0.62rem;
+  font-size: 0.54rem;
   background: transparent;
 }
 .md-typeset .table-wrap {
@@ -493,7 +493,7 @@ body {
   caption-side: bottom;
   padding: 0.45rem 0.1rem 0;
   text-align: left;
-  font-size: 0.6rem;
+  font-size: 0.54rem;
   line-height: 1.55;
   color: var(--ntre-muted);
 }
@@ -617,11 +617,11 @@ body {
   border: 1px solid var(--ntre-border);
   border-radius: var(--ntre-radius);
   overflow: hidden;
-  font-size: 0.62rem;
+  font-size: 0.56rem;
 }
 .md-typeset .infobox .ib-title {
   padding: 0.6rem 0.7rem;
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   font-weight: 600;
   color: var(--ntre-text-strong);
 }
@@ -663,7 +663,7 @@ body {
 .md-typeset .infobox table td {
   color: var(--ntre-text-strong);
   font-family: var(--md-code-font-family);
-  font-size: 0.6rem;
+  font-size: 0.54rem;
 }
 .md-typeset .infobox table .ib-section th {
   padding-top: 0.7rem;
@@ -706,11 +706,11 @@ body {
   color: var(--ntre-text-strong);
 }
 .md-typeset .grid.cards p {
-  font-size: 0.7rem;
+  font-size: 0.66rem;
   color: var(--ntre-muted);
 }
 .md-typeset .grid.cards p:first-child {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
 }
 .md-typeset .grid.cards .card-stat {
   font-family: var(--md-code-font-family);
