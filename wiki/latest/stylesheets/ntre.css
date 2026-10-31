@@ -464,6 +464,12 @@ body {
   overflow-x: auto;
   margin: 1em 0;
 }
+/* A table never squeezes in beside a floated infobox: its scroll container would shrink to
+   the gap and cut the table off. It starts below the infobox and gets the full width. */
+.md-typeset .table-wrap,
+.md-typeset .md-typeset__scrollwrap {
+  clear: right;
+}
 .md-typeset .table-wrap table.wikitable {
   margin: 0;
 }
