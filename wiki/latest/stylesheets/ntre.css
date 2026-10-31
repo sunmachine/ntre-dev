@@ -535,8 +535,7 @@ body {
 }
 .md-typeset .cls-letters .cls {
   display: inline-block;
-  width: 1ch;
-  text-align: center;
+  min-width: 3ch;
   cursor: help;
 }
 .md-typeset .cls-letters .cls.none {
