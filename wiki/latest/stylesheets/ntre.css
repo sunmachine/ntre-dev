@@ -224,18 +224,16 @@ body {
   color: var(--ntre-text-strong);
 }
 
-/* Work-in-progress modes and their weapons recede, as in stat tables. */
+/* Work-in-progress modes recede, as in stat tables. */
 .md-nav--primary .md-nav__link[href$="/vip/"],
-.md-nav--primary .md-nav__link[href$="/juggernaut/"],
-.md-nav--primary .md-nav__link[href$="/smac/"],
-.md-nav--primary .md-nav__link[href$="/balc/"] {
+.md-nav--primary .md-nav__link[href$="/juggernaut/"] {
   opacity: 0.55;
 }
 
 /* ---------- Type ---------- */
 
 .md-typeset {
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   line-height: 1.65;
 }
 .md-typeset h1,
@@ -441,7 +439,7 @@ body {
   border-spacing: 0;
   border-radius: var(--ntre-radius);
   overflow: hidden;
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   background: transparent;
 }
 .md-typeset .table-wrap {
@@ -453,7 +451,7 @@ body {
 }
 .md-typeset table:not([class]) :is(th, td),
 .md-typeset table.wikitable :is(th, td) {
-  padding: 0.4rem 0.65rem;
+  padding: 0.35rem 0.55rem;
   border-top: 1px solid var(--ntre-border);
   vertical-align: top;
 }
@@ -495,7 +493,7 @@ body {
   caption-side: bottom;
   padding: 0.45rem 0.1rem 0;
   text-align: left;
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   line-height: 1.55;
   color: var(--ntre-muted);
 }
@@ -518,6 +516,17 @@ body {
 .md-typeset table.wikitable.compare td:first-child {
   white-space: nowrap;
 }
+/* Column headers with a tooltip explaining them. */
+.md-typeset .col-tip {
+  text-decoration: underline dotted;
+  text-decoration-color: var(--ntre-border-strong);
+  text-underline-offset: 3px;
+  cursor: help;
+}
+.md-typeset .col-tip:hover {
+  text-decoration-color: var(--ntre-muted);
+}
+
 /* Headline stats: one row, read across. */
 .md-typeset table.stat-strip td {
   color: var(--ntre-text-strong);
@@ -593,7 +602,7 @@ body {
   border: 1px solid var(--ntre-border);
   border-radius: var(--ntre-radius);
   overflow: hidden;
-  font-size: 0.66rem;
+  font-size: 0.62rem;
 }
 .md-typeset .infobox .ib-title {
   padding: 0.6rem 0.7rem;
@@ -639,7 +648,7 @@ body {
 .md-typeset .infobox table td {
   color: var(--ntre-text-strong);
   font-family: var(--md-code-font-family);
-  font-size: 0.64rem;
+  font-size: 0.6rem;
 }
 .md-typeset .infobox table .ib-section th {
   padding-top: 0.7rem;

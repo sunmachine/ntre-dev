@@ -829,8 +829,6 @@
       
         
       
-        
-      
     
     
     
@@ -1035,34 +1033,6 @@
     
   
     Jitte-S
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../weapons/submachine-guns/smac/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SMAC
   
 
     
@@ -1641,8 +1611,6 @@
       
         
       
-        
-      
     
     
     
@@ -1735,34 +1703,6 @@
     
   
     PBK56S
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../weapons/machine-guns/balc/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    BALC
   
 
     
@@ -3211,6 +3151,7 @@
 <p><strong>Weapon pages</strong> follow one layout, in this order: Overview, General stats, Damage, Shots to kill, Time to kill, Handling, then anything weapon-specific (bolt action, heat), Availability, Suppressor and Technical notes. The prose is yours to write; the numbers come from <code>{{weapon:…}}</code> snippets, which read the weapon named in the front matter (<code>weapon: weapon_zr68s</code>).</p>
 <ul>
 <li>Comparisons go in tables, not lists. Numbers are right-aligned in monospace.</li>
+<li>Every column header in a data table has a tooltip saying what it means. Shared headers are defined once in <code>COLUMN_TIPS</code> in <code>wiki/hooks/generators.py</code>; a table where a header means something different passes its own. The build warns about any header without one.</li>
 <li>Hit locations with the same multiplier share a column: head / chest, stomach / arms, legs.</li>
 <li>Link a page's first mention in each section, not every mention.</li>
 <li>Page addresses follow the menu: <code>/weapons/rifles/zr68-s/</code>. Folders and file names are lowercase with hyphens, and every slug is unique across the wiki.</li>
@@ -3238,9 +3179,11 @@
 </ul>
 <h2 id="work-in-progress-modes">Work-in-progress modes<a class="headerlink" href="#work-in-progress-modes" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>VIP</strong> and <strong>Juggernaut</strong> are still in development. Stat lists keep them, but last, greyed out and tagged <strong>WIP</strong>. This includes their weapons, the SMAC and BALC.</li>
-<li>Headline counts leave them out: say 3 classes and 3 game modes, with a note naming the two in development.</li>
-<li>Their own pages, and their weapons' pages, open with an amber <strong>Work in progress</strong> callout.</li>
+<li><strong>VIP</strong> and <strong>Juggernaut</strong> are game modes still in development. The VIP and the Juggernaut are roles those modes assign, not classes you can pick.</li>
+<li>Everything about them lives on their game mode pages: the role, its stats and its weapon (the <strong>SMAC</strong> for VIP, the <strong>BALC</strong> for Juggernaut). Class lists, weapon lists and comparisons leave them out, and so do headline counts: say 3 classes and 3 game modes.</li>
+<li>Lists of game modes and maps keep them, but last, greyed out and tagged <strong>WIP</strong>.</li>
+<li>Their pages open with an amber <strong>Work in progress</strong> callout and a neutral <strong>Not a class you can pick</strong> callout.</li>
+<li>Link to their weapons by section: <code>[[vip#smac|SMAC]]</code>, <code>[[juggernaut#balc|BALC]]</code>.</li>
 </ul>
 <h2 id="visual">Visual<a class="headerlink" href="#visual" title="Permanent link">&para;</a></h2>
 <ul>
