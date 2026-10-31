@@ -365,7 +365,7 @@ svg text, .fx svg text { font-family: var(--font-display); }
   <header class="hero">
     <span class="eyebrow">Technical proposal · Draft for review</span>
     <h1>Footstep Consistency Audit</h1>
-    <p class="byline">Neotokyo Rebuild · <a href="https://github.com/NeotokyoRebuild/neo/pull/2264">PR #2264</a> · branch footsteps/sound-consistency · 27 October 2026</p>
+    <p class="byline">Neotokyo Rebuild · <a href="https://github.com/NeotokyoRebuild/neo/pull/2264">PR #2264</a> · branch footsteps/sound-consistency · 30 October 2026</p>
     <div class="abstract">
       <span class="label">Abstract</span>
       <p>Footstep sounds in Neotokyo Rebuild were inconsistent: crouching made noise, looking around while crouching made noise, a stray step played after pressing crouch, crouched steps played louder than running, and other players heard different steps than the stepping player. This paper traces each case to its cause across ten instrumented play passes, reviews how the current rule came about, and proposes one footstep formula that every client evaluates the same way, without changing movement. Sections 1 and 2 state the problem and the proposal; sections 3 to 5 add the per-change breakdown, the supporting data and the references.</p>
@@ -386,9 +386,9 @@ svg text, .fx svg text { font-family: var(--font-display); }
         <dt>Silent mode</dt><dd>Crouched, walking or aiming, on the ground. The only state in which a step can be silent.</dd>
         <dt>Crouching</dt><dd>Moving while crouched, by itself. "Crouch with +walk" means both keys held. They are separate inputs and this page never merges them.</dd>
         <dt>Silent limit</dt><dd>The speed a silent mode can reach before a step plays: the crouch and walk modifier plus headroom, times your run speed with your weapon.</dd>
-        <dt>Headroom</dt><dd>The gap between a mode's own speed and the silent limit. Turning adds more of it for as long as the speed bump lasts.</dd>
+        <dt>Headroom</dt><dd>The gap between a mode's own speed and the silent limit. A turn or a change of direction can go past it while the average ground velocity stays under the limit.</dd>
         <dt>Held step</dt><dd>The first step after pressing crouch, walk or aim, kept back until you settle or let go.</dd>
-        <dt>Forgiveness</dt><dd>A one-time pass that skips one step slightly over the limit after a change of direction. Spent on use, earned back after a second under the limit.</dd>
+        <dt>Average ground velocity</dt><dd>Your ground velocity averaged over about one step interval: how fast you really cover ground. A turn spends speed on the curve and leaves it low; wiggle-walking raises it.</dd>
       </dl>
     </div>
   </header>
@@ -533,7 +533,7 @@ svg text, .fx svg text { font-family: var(--font-display); }
           <li>The standing rule from #1431 gives way to the crouched rule, so walking, aiming and crouching share one threshold.</li>
           <li>Step volume follows the movement mode instead of the SDK's speed cutoffs. The SDK's 65% for crouched steps stays.</li>
           <li>Crouching joins the silent modes, with a limit relative to the player's own crouching speed. Silence is still opted into with a key, so the speed-only and analog input suggestions from #1431 remain open for standing movement.</li>
-          <li>The turn headroom answers the 90° turn issue raised in #1431, for crouching and walking.</li>
+          <li>The average ground velocity answers the 90° turn issue raised in #1431, for crouching and walking.</li>
         </ul>
       </div>
       <div class="panel hold">
@@ -551,28 +551,28 @@ svg text, .fx svg text { font-family: var(--font-display); }
     <div class="rules">
       <p class="rule"><span class="rule-n">1</span>Silence is opt-in. Crouching, walking and aiming are silent at their normal speed, for every class and weapon. Moving faster than that still makes noise: sprinting, sliding, being pushed. Outside those three, every step at 50 u/s or faster is heard, so a runner passing through walk speed stays audible.</p>
       <p class="rule"><span class="rule-n">2</span>Pressing crouch, walk or aim holds back your next footstep. If you settle into that mode, it is dropped. If you let go too early, it plays right away. Staying loud after the press, in a slide, a push or a crouch sprint, plays it too. Jumping or grabbing a ladder forgets it, and landing from a jump always makes a step.</p>
-      <p class="rule"><span class="rule-n">3</span>Looking around while crouching or walking does not count as speeding up. Turning widens the headroom, and one brief change of direction is forgiven.</p>
+      <p class="rule"><span class="rule-n">3</span>Looking around while crouching or walking does not count as speeding up. Speed spent on a turn or a change of direction does not cover ground, so it stays silent. Wiggle-walking does, and is heard.</p>
       <p class="rule"><span class="rule-n">4</span>Footstep volume follows how you move. Sprinting is the loudest, running keeps its volume, and a crouch sprint is 65% of a sprint: louder than a run, quieter than a standing sprint.</p>
     </div>
     <div class="panel fix">
       <span class="label">Guarantees</span>
       <ul class="plain">
-        <li><strong>Other players hear what you hear.</strong> The crouch key press, the walk and aim state, the sprint state and the view yaw all reach every client, so an enemy's game reaches the same silent-or-not decision for your steps that yours does.</li>
+        <li><strong>Other players hear what you hear.</strong> The crouch key press, the walk and aim state, the sprint state and your movement all reach every client, so an enemy's game reaches the same silent-or-not decision for your steps that yours does.</li>
         <li><strong>Tapping crouch, walk or aim can delay a step, never skip one.</strong> The held step comes back on an early release, so no rhythm of taps moves at run speed for free.</li>
         <li><strong>Staying loud after the press still plays the step.</strong> A slide, a push or a crouch sprint does not get the held step for free.</li>
         <li><strong>You cannot bunny hop silently.</strong> The step on landing is always audible, in every posture.</li>
-        <li><strong>Wiggle-walking is still noisy.</strong> One change of direction is forgiven; repeating it makes footsteps.</li>
-        <li><strong>Three of these are checked at compile time.</strong> The tuning constants are derived from the crouch and walk modifier, and <code>static_assert</code>s hold that running is never silent, aiming is silent, and a full-speed sprint is never forgiven, so a later movement change cannot break them unnoticed.</li>
+        <li><strong>Wiggle-walking is still noisy.</strong> Turning and changing direction stay silent because they do not cover ground any faster. Wiggling does, so it makes footsteps, mouse or not.</li>
+        <li><strong>Three of these are checked at compile time.</strong> The tuning constants are derived from the crouch and walk modifier, and <code>static_assert</code>s hold that running is never silent, aiming is silent, and a full-speed sprint is never silent, so a later movement change cannot break them unnoticed.</li>
       </ul>
     </div>
     <h3 id="formula"><span class="secno">2.1</span>The footstep formula</h3>
     <p>The same shared code decides a footstep in three places: the server, the stepping player's own client, and every other client that can see them. The terms come in three groups: speeds, turning and timers. Each group gets one picture, and the formulas reuse the same letters.</p>
     <pre class="formula">silent limit = GetNormSpeed * weapon scale * FS_SILENT_SPEED_FRACTION
 actual speed = GetNormSpeed * weapon scale * stance modifier</pre>
-    <p>Both sides carry the weapon, so the gun cancels out: a silent mode stays silent whenever its stance modifier is at or below <code>FS_SILENT_SPEED_FRACTION</code>, 0.825. That number is not tuned by hand. It is the crouch and walk modifier, 0.75, plus 10%, and the code derives it from <code>NEO_CROUCH_WALK_MODIFIER</code> so it follows the movement rule if that ever changes. The 10% is the <strong>headroom</strong>: the gap between a mode's own speed and the silent limit, which is how much a player can speed up, from a turn or a sidestep, before a step plays. Crouch and walk are 0.75 and aim is 0.6, so all three qualify with every gun; sprinting multiplies by 1.35 or 1.6 and never does. On master the limit was <code>GetNormSpeed * 0.7</code> with no weapon term, so the headroom changed with the gun.</p>
+    <p>Both sides carry the weapon, so the gun cancels out: a silent mode stays silent whenever its stance modifier is at or below <code>FS_SILENT_SPEED_FRACTION</code>, 0.825. That number is not tuned by hand. It is the crouch and walk modifier, 0.75, plus 10%, and the code derives it from <code>NEO_CROUCH_WALK_MODIFIER</code> so it follows the movement rule if that ever changes. The 10% is the <strong>headroom</strong>: the gap between a mode's own speed and the silent limit, which is how much faster than the mode a player can really cover ground before a step plays. Crouch and walk are 0.75 and aim is 0.6, so all three qualify with every gun; sprinting multiplies by 1.35 or 1.6 and never does. On master the limit was <code>GetNormSpeed * 0.7</code> with no weapon term, so the headroom changed with the gun.</p>
     <h4><span class="secno">2.1.1</span>Speeds</h4>
     <figure class="figure fx">
-      <svg viewBox="0 0 680 334" role="img" aria-label="Normalized speed: ground speed divided by class run speed times weapon speed scale, so 1.0 is your run speed with your weapon. Crouch at 0.75, walk at 0.75 and aim at 0.6 sit inside the silent band, which ends at 0.825 and widens to 1.1625 while turning. Crouch sprint at 1.01 or 1.2, run at 1.0 and sprint at 1.35 or 1.6 make footsteps.">
+      <svg viewBox="0 0 680 334" role="img" aria-label="Normalized speed: ground speed divided by class run speed times weapon speed scale, so 1.0 is your run speed with your weapon. Crouch at 0.75, walk at 0.75 and aim at 0.6 sit inside the silent band, which ends at 0.825. A turn can reach 1.1625 and stay silent while the average ground velocity is under 0.825. Crouch sprint at 1.01 or 1.2, run at 1.0 and sprint at 1.35 or 1.6 make footsteps.">
   <line class="f-grid" x1="130" y1="46" x2="130" y2="278"/><text class="f-tick" x="130" y="294" text-anchor="middle">0</text>
   <line class="f-grid" x1="256.5" y1="46" x2="256.5" y2="278"/><text class="f-tick" x="256.5" y="294" text-anchor="middle">0.5</text>
   <line class="f-grid" x1="383.0" y1="46" x2="383.0" y2="278"/><text class="f-tick" x="383.0" y="294" text-anchor="middle">1 = run</text>
@@ -618,7 +618,7 @@ actual speed = GetNormSpeed * weapon scale * stance modifier</pre>
   <text class="f-lblfix" x="334.7" y="40" text-anchor="end">silent up to 0.825</text>
   <text class="f-bandt" x="342.7" y="40">turning: up to 1.1625</text>
 </svg>
-      <figcaption>The axis is normalized: ground speed divided by class run speed (<code>GetNormSpeed</code>) times the weapon's speed scale, so 1.0 is your run speed with that weapon. The threshold and every stance carry the same two factors, so one picture is exact for every class and weapon. Green band: silent. Dashed band: extra room while turning, which sprinting never gets. Red marks make footsteps, at the volume on the right. Below 50 u/s no posture makes footsteps.</figcaption>
+      <figcaption>The axis is normalized: ground speed divided by class run speed (<code>GetNormSpeed</code>) times the weapon's speed scale, so 1.0 is your run speed with that weapon. The threshold and every stance carry the same two factors, so one picture is exact for every class and weapon. Green band: silent. Dashed band: speed a turn can reach and stay silent, while the average ground velocity is under 0.825. Sprinting never gets it. Red marks make footsteps, at the volume on the right. Below 50 u/s no posture makes footsteps.</figcaption>
     </figure>
     <div class="callout">
       <span class="label">Reference: move speeds per class</span>
@@ -643,26 +643,51 @@ actual speed = GetNormSpeed * weapon scale * stance modifier</pre>
       <dt>50</dt><dd>No footsteps below 50 u/s in any posture, on a ladder or off. It sits just under the 55 u/s floor on max speed, so it only filters drift that is not movement. Outside a silent mode it is the only limit.</dd>
     </dl>
     <h4><span class="secno">2.1.2</span>Turning</h4>
+    <pre class="formula">silent = v &lt;= 0.825 w, or v &lt;= 1.1625 w and a &lt;= 0.825 w when not sprinting</pre>
     <figure class="figure fx">
-      <svg viewBox="0 0 680 250" role="img" aria-label="Turn headroom. Without turning the silent limit is 0.825 of run speed. While the view turns, this PR adds headroom on top, shaded green, up to 1.1625 at 180 degrees per second and above. The simulated speed gained from turning stays inside the headroom at every turn rate.">
-  <line class="f-grid" x1="80.0" y1="30" x2="80.0" y2="210"/><text class="f-tick" x="80.0" y="226" text-anchor="middle">0</text><line class="f-grid" x1="215.0" y1="30" x2="215.0" y2="210"/><text class="f-tick" x="215.0" y="226" text-anchor="middle">90</text><line class="f-grid" x1="350.0" y1="30" x2="350.0" y2="210"/><text class="f-tick" x="350.0" y="226" text-anchor="middle">180</text><line class="f-grid" x1="485.0" y1="30" x2="485.0" y2="210"/><text class="f-tick" x="485.0" y="226" text-anchor="middle">270</text><line class="f-grid" x1="620.0" y1="30" x2="620.0" y2="210"/><text class="f-tick" x="620.0" y="226" text-anchor="middle">360</text><line class="f-grid" x1="80" y1="210.0" x2="620" y2="210.0"/><text class="f-tick" x="72" y="214.0" text-anchor="end">0.75</text><line class="f-grid" x1="80" y1="150.0" x2="620" y2="150.0"/><text class="f-tick" x="72" y="154.0" text-anchor="end">0.9</text><line class="f-grid" x1="80" y1="90.00000000000003" x2="620" y2="90.00000000000003"/><text class="f-tick" x="72" y="94.00000000000003" text-anchor="end">1.05</text><line class="f-grid" x1="80" y1="29.99999999999997" x2="620" y2="29.99999999999997"/><text class="f-tick" x="72" y="33.99999999999997" text-anchor="end">1.2</text>
-  <text class="f-tick" x="620" y="244" text-anchor="end">view turn rate r, degrees per second</text>
+      <svg viewBox="0 0 680 330" role="img" aria-label="Ground speed and average ground velocity over time, as fractions of run speed. Turning at 300 degrees per second raises ground speed to 1.16 while the average stays under the 0.825 silent limit, so every step is silent. Strafe-turning, pressing A while turning left and D while turning right with 45 degree swings, keeps ground speed near 1.1 and raises the average to 0.99, over the limit, so steps play.">
+  <line class="f-grid" x1="80.0" y1="40" x2="80.0" y2="290"/><text class="f-tick" x="80.0" y="306" text-anchor="middle">0.0</text>
+  <line class="f-grid" x1="188.0" y1="40" x2="188.0" y2="290"/><text class="f-tick" x="188.0" y="306" text-anchor="middle">0.5</text>
+  <line class="f-grid" x1="296.0" y1="40" x2="296.0" y2="290"/><text class="f-tick" x="296.0" y="306" text-anchor="middle">1.0</text>
+  <line class="f-grid" x1="404.0" y1="40" x2="404.0" y2="290"/><text class="f-tick" x="404.0" y="306" text-anchor="middle">1.5</text>
+  <line class="f-grid" x1="512.0" y1="40" x2="512.0" y2="290"/><text class="f-tick" x="512.0" y="306" text-anchor="middle">2.0</text>
+  <line class="f-grid" x1="620.0" y1="40" x2="620.0" y2="290"/><text class="f-tick" x="620.0" y="306" text-anchor="middle">2.5</text>
+  <text class="f-tick" x="620" y="324" text-anchor="end">seconds; the turn starts at 0.5</text>
   <text class="f-tick" x="80" y="20">× run speed w</text>
-  <polygon class="f-margin" points="80.0,180.0 350.0,45.0 620.0,45.0 620.0,180.0"/>
-  <line class="s-silent-edge" x1="80" y1="180" x2="620" y2="180"/>
-  <polyline class="f-hdr" points="80.0,180.0 350.0,45.0 620.0,45.0"/>
-  <polyline class="f-sim" points="80.0,210.0 147.5,204.0 215.0,190.5 282.5,168.0 350.0,139.5 417.5,105.0 485.0,71.7 552.5,67.5 620.0,66.3"/>
-  <text class="f-lblfix" x="620" y="35.0" text-anchor="end">silent limit while turning: 0.825 + 0.3375 · min(r / 180, 1)</text>
-  <text class="f-row" x="560" y="128" text-anchor="middle" style="fill:var(--fix)">turn headroom</text>
-  <text class="f-lblfix" x="560" y="144" text-anchor="middle">added by this PR</text>
-  <text class="f-lblfix" x="616" y="174" text-anchor="end">silent limit without turning, 0.825</text>
-  <text class="f-lbl" x="620" y="200" text-anchor="end">dashed: speed from turning (simulated)</text>
+  <line class="f-grid" x1="80.0" y1="150.0" x2="620.0" y2="150.0"/><text class="f-tick" x="72" y="154.0" text-anchor="end">0.5</text>
+  <line class="f-grid" x1="80.0" y1="114.3" x2="620.0" y2="114.3"/><text class="f-tick" x="72" y="118.3" text-anchor="end">0.75</text>
+  <line class="f-grid" x1="80.0" y1="78.6" x2="620.0" y2="78.6"/><text class="f-tick" x="72" y="82.6" text-anchor="end">1</text>
+  <text class="f-row" x="80.0" y="42.0">Turning at 300° per second</text>
+  <line class="s-silent-edge" x1="80.0" y1="103.6" x2="620.0" y2="103.6"/>
+  <polyline class="f-sim" points="80.0,114.3 86.5,114.3 93.0,114.3 99.4,114.3 105.9,114.3 112.4,114.3 118.9,114.3 125.4,114.3 131.8,114.3 138.3,114.3 144.8,114.3 151.3,114.3 157.8,114.3 164.2,114.3 170.7,114.3 177.2,114.3 183.7,114.3 190.2,114.0 196.6,112.0 203.1,108.8 209.6,104.9 216.1,100.7 222.6,96.6 229.0,92.5 235.5,88.8 242.0,85.3 248.5,82.1 255.0,79.2 261.4,76.6 267.9,74.3 274.4,72.2 280.9,70.3 287.4,68.7 293.8,67.2 300.3,65.9 306.8,64.8 313.3,63.8 319.8,62.9 326.2,62.1 332.7,61.4 339.2,60.8 345.7,60.2 352.2,59.8 358.6,59.3 365.1,59.0 371.6,58.7 378.1,58.4 384.6,58.1 391.0,57.9 397.5,57.7 404.0,57.5 410.5,57.4 417.0,57.3 423.4,57.1 429.9,57.0 436.4,57.0 442.9,56.9 449.4,56.8 455.8,56.7 462.3,56.7 468.8,56.6 475.3,56.6 481.8,56.6 488.2,56.5 494.7,56.5 501.2,56.5 507.7,56.5 514.2,56.4 520.6,56.4 527.1,56.4 533.6,56.4 540.1,56.4 546.6,56.4 553.0,56.4 559.5,56.4 566.0,56.4 572.5,56.4 579.0,56.4 585.4,56.3 591.9,56.3 598.4,56.3 604.9,56.3 611.4,56.3 617.8,56.3"/>
+  <polyline class="f-hdr" points="80.0,114.3 86.5,114.3 93.0,114.3 99.4,114.3 105.9,114.3 112.4,114.3 118.9,114.3 125.4,114.3 131.8,114.3 138.3,114.3 144.8,114.3 151.3,114.3 157.8,114.3 164.2,114.3 170.7,114.3 177.2,114.3 183.7,114.3 190.2,114.3 196.6,114.2 203.1,113.8 209.6,113.3 216.1,112.6 222.6,111.8 229.0,111.0 235.5,110.3 242.0,109.7 248.5,109.4 255.0,109.3 261.4,109.7 267.9,110.4 274.4,111.4 280.9,112.9 287.4,114.7 293.8,116.8 300.3,119.2 306.8,121.9 313.3,124.8 319.8,127.8 326.2,130.9 332.7,134.0 339.2,137.1 345.7,140.2 352.2,143.0 358.6,145.7 365.1,148.2 371.6,150.4 378.1,152.2 384.6,153.7 391.0,154.9 397.5,155.7 404.0,156.3 410.5,156.5 417.0,156.4 423.4,156.2 429.9,155.8 436.4,155.2 442.9,154.5 449.4,153.8 455.8,153.0 462.3,152.3 468.8,151.5 475.3,150.8 481.8,150.2 488.2,149.6 494.7,149.1 501.2,148.7 507.7,148.3 514.2,148.0 520.6,147.8 527.1,147.7 533.6,147.6 540.1,147.6 546.6,147.6 553.0,147.6 559.5,147.7 566.0,147.9 572.5,148.0 579.0,148.2 585.4,148.3 591.9,148.5 598.4,148.6 604.9,148.8 611.4,148.9 617.8,149.0"/>
+  <circle class="f-quiet" cx="188.0" cy="160.0" r="5"/>
+  <circle class="f-quiet" cx="274.4" cy="160.0" r="5"/>
+  <circle class="f-quiet" cx="360.8" cy="160.0" r="5"/>
+  <circle class="f-quiet" cx="447.2" cy="160.0" r="5"/>
+  <circle class="f-quiet" cx="533.6" cy="160.0" r="5"/>
+  <line class="f-grid" x1="80.0" y1="280.0" x2="620.0" y2="280.0"/><text class="f-tick" x="72" y="284.0" text-anchor="end">0.5</text>
+  <line class="f-grid" x1="80.0" y1="244.3" x2="620.0" y2="244.3"/><text class="f-tick" x="72" y="248.3" text-anchor="end">0.75</text>
+  <line class="f-grid" x1="80.0" y1="208.6" x2="620.0" y2="208.6"/><text class="f-tick" x="72" y="212.6" text-anchor="end">1</text>
+  <text class="f-row" x="80.0" y="172.0">Strafe-turning: A and D with ±45° swings, 0.25 s each</text>
+  <line class="s-silent-edge" x1="80.0" y1="233.6" x2="620.0" y2="233.6"/>
+  <polyline class="f-sim" points="80.0,244.3 86.5,244.3 93.0,244.3 99.4,244.3 105.9,244.3 112.4,244.3 118.9,244.3 125.4,244.3 131.8,244.3 138.3,244.3 144.8,244.3 151.3,244.3 157.8,244.3 164.2,244.3 170.7,244.3 177.2,244.3 183.7,244.3 190.2,239.8 196.6,231.1 203.1,223.3 209.6,216.5 216.1,211.2 222.6,207.3 229.0,204.1 235.5,201.6 242.0,199.8 248.5,198.6 255.0,197.9 261.4,197.6 267.9,197.7 274.4,204.1 280.9,200.1 287.4,197.0 293.8,194.9 300.3,193.6 306.8,193.0 313.3,193.0 319.8,193.5 326.2,202.2 332.7,198.5 339.2,195.9 345.7,194.2 352.2,193.2 358.6,193.0 365.1,193.2 371.6,193.9 378.1,203.8 384.6,201.4 391.0,198.0 397.5,195.5 404.0,194.0 410.5,193.2 417.0,193.0 423.4,193.3 429.9,194.1 436.4,203.0 442.9,199.2 449.4,196.4 455.8,194.5 462.3,193.4 468.8,193.0 475.3,193.1 481.8,193.7 488.2,202.5 494.7,198.8 501.2,196.1 507.7,194.3 514.2,193.3 520.6,193.0 527.1,193.2 533.6,193.8 540.1,203.7 546.6,201.3 553.0,197.9 559.5,195.5 566.0,193.9 572.5,193.2 579.0,193.0 585.4,193.3 591.9,194.1 598.4,203.1 604.9,199.2 611.4,196.4 617.8,194.5"/>
+  <polyline class="f-hdr" style="stroke:var(--bug)" points="80.0,244.3 86.5,244.3 93.0,244.3 99.4,244.3 105.9,244.3 112.4,244.3 118.9,244.3 125.4,244.3 131.8,244.3 138.3,244.3 144.8,244.3 151.3,244.3 157.8,244.3 164.2,244.3 170.7,244.3 177.2,244.3 183.7,244.3 190.2,244.1 196.6,243.6 203.1,243.1 209.6,242.7 216.1,242.2 222.6,240.5 229.0,238.0 235.5,235.4 242.0,233.0 248.5,231.1 255.0,229.8 261.4,229.4 267.9,229.8 274.4,230.2 280.9,229.1 287.4,227.1 293.8,224.8 300.3,222.6 306.8,220.8 313.3,219.6 319.8,219.2 326.2,219.2 332.7,218.2 339.2,216.7 345.7,215.1 352.2,213.7 358.6,212.9 365.1,212.8 371.6,213.5 378.1,215.1 384.6,215.7 391.0,215.1 397.5,213.8 404.0,212.4 410.5,211.2 417.0,210.4 423.4,210.3 429.9,211.1 436.4,212.1 442.9,211.9 449.4,211.0 455.8,209.9 462.3,208.8 468.8,208.2 475.3,208.2 481.8,208.9 488.2,210.0 494.7,209.9 501.2,209.1 507.7,208.1 514.2,207.2 520.6,206.7 527.1,206.9 533.6,207.8 540.1,209.5 546.6,210.4 553.0,210.1 559.5,209.2 566.0,208.1 572.5,207.2 579.0,206.8 585.4,207.1 591.9,208.2 598.4,209.5 604.9,209.6 611.4,208.9 617.8,207.9"/>
+  <circle class="f-quiet" cx="188.0" cy="290.0" r="5"/>
+  <circle class="f-loud" cx="274.4" cy="290.0" r="5"/>
+  <circle class="f-loud" cx="360.8" cy="290.0" r="5"/>
+  <circle class="f-loud" cx="447.2" cy="290.0" r="5"/>
+  <circle class="f-loud" cx="533.6" cy="290.0" r="5"/>
+  <text class="f-lblfix" x="620" y="97.6" text-anchor="end">silent limit, 0.825</text>
+  <text class="f-lblfix" x="90" y="142.9">solid: average, under the limit, silent</text>
+  <text class="f-lbl" x="90" y="64.3">dashed: ground speed</text>
+  <text class="f-lblbad" x="620" y="272.9" text-anchor="end">average over the limit: steps play</text>
 </svg>
-      <figcaption>Holding a movement key while turning builds speed toward the new direction faster than friction removes the old one, so turning really makes you faster. Changing direction (W+D to W+A) does the same without turning the view. The green area is the turn headroom this PR adds: while the view turns, the silent limit rises from 0.825 to as much as 1.1625 of run speed, so that speed-up does not make footsteps. The dashed line is the speed turning can really reach (simulated with sv_accelerate 10, sv_friction 4). It stays inside the green area at every turn rate.</figcaption>
+      <figcaption>Holding a movement key while turning builds speed toward the new direction faster than friction removes the old one, so turning really makes you faster, by up to about 54% of crouching speed at 300° per second. Changing direction (W+D to W+A) does the same without turning the view. That speed goes into the curve: the velocity keeps rotating, so its average over a step interval stays under the silent limit through a turn of any rate or length (top). Strafe-turning, pressing A while turning left and D while turning right, really covers ground faster, and its average passes the limit within one step interval (bottom). Circles are step checks: hollow is silent, red plays. Simulated with sv_accelerate 10 and sv_friction 4; the in-game logs reach the same peak speeds to within 1%.</figcaption>
     </figure>
     <dl class="fkey">
-      <dt>r</dt><dd>How fast the view is turning, in degrees per second. It keeps its peak and fades over about 0.25 s, about as long as friction takes to remove the extra speed.</dd>
-      <dt>t</dt><dd>Turn headroom: <code>FS_TURN_HEADROOM</code> × min(r / <code>FS_TURN_RATE_FOR_FULL_HEADROOM</code>, 1), that is 0.3375 × min(r / 180, 1) in units of w, or 0.45 of c. Zero while sprinting, so crouch sprinting stays loud mid-turn.</dd>
+      <dt>a</dt><dd>Average ground velocity: horizontal velocity averaged over <code>FS_AVG_VELOCITY_TIME</code>, 0.4 s, about one step interval. Its length is how fast you really cover ground.</dd>
+      <dt>1.1625</dt><dd>Turn cap: <code>FS_TURN_MAX_SPEED_FRACTION</code>, 1.1625 of w or 1.55 c, just above the 1.54 c a turn can reach. Anything faster is a sprint, a slide or a push. Sprinting never gets this allowance, so crouch sprinting stays loud mid-turn.</dd>
     </dl>
     <h4><span class="secno">2.1.3</span>Timers</h4>
     <figure class="figure fx">
@@ -685,26 +710,10 @@ actual speed = GetNormSpeed * weapon scale * stance modifier</pre>
 </svg>
       <figcaption>Held step. The game only counts you as crouched once the 0.4 s crouch animation ends, and you keep run speed until then. Now the step that lands in that window waits: once you settle into the crouch it is dropped, and it plays if you stand up again within one step interval, so tapping crouch can delay a step but never skip one.</figcaption>
     </figure>
-    <figure class="figure fx">
-      <svg viewBox="0 0 680 214" role="img" aria-label="Forgiveness timeline. After 0.5 seconds crouched on the ground, the first step that is slightly too fast is skipped. The next one plays. One second under the threshold earns the skip back.">
-  <line class="f-grid" x1="60.0" y1="40" x2="60.0" y2="170"/><text class="f-tick" x="60.0" y="186" text-anchor="middle">0.0</text><line class="f-grid" x1="155.0" y1="40" x2="155.0" y2="170"/><text class="f-tick" x="155.0" y="186" text-anchor="middle">0.5</text><line class="f-grid" x1="250.0" y1="40" x2="250.0" y2="170"/><text class="f-tick" x="250.0" y="186" text-anchor="middle">1.0</text><line class="f-grid" x1="345.0" y1="40" x2="345.0" y2="170"/><text class="f-tick" x="345.0" y="186" text-anchor="middle">1.5</text><line class="f-grid" x1="440.0" y1="40" x2="440.0" y2="170"/><text class="f-tick" x="440.0" y="186" text-anchor="middle">2.0</text><line class="f-grid" x1="535.0" y1="40" x2="535.0" y2="170"/><text class="f-tick" x="535.0" y="186" text-anchor="middle">2.5</text><line class="f-grid" x1="630.0" y1="40" x2="630.0" y2="170"/><text class="f-tick" x="630.0" y="186" text-anchor="middle">3.0</text>
-  <text class="f-tick" x="630" y="204" text-anchor="end">seconds crouched on the ground</text>
-  <rect class="f-anim" x="60" y="52" width="95.0" height="20"/>
-  <text class="f-band" x="107.5" y="66" text-anchor="middle">0.5 s first</text>
-  <line class="f-axis" x1="60" y1="110" x2="630.0" y2="110"/>
-  <path class="f-drop" d="M 244.0 104 L 256.0 116 M 244.0 116 L 256.0 104"/><text class="f-lblfix" x="250.0" y="94" text-anchor="middle">wiggle: forgiven</text>
-  <circle class="f-loud" cx="345.0" cy="110" r="6"/><text class="f-lblbad" x="345.0" y="94" text-anchor="middle">again: plays</text>
-  <rect class="f-settle" x="364.0" y="132" width="190.0" height="20"/>
-  <text class="f-band" x="459.0" y="146" text-anchor="middle">1 s under the threshold</text>
-  <path class="f-drop" d="M 586.0 104 L 598.0 116 M 586.0 116 L 598.0 104"/><text class="f-lblfix" x="592.0" y="94" text-anchor="middle">forgiven again</text>
-</svg>
-      <figcaption>One-step forgiveness, in any silent mode. Forgiveness is a one-time pass: one step that is only slightly over the silent limit is skipped instead of played. A single change of direction (W+D to W+A) is normal movement, and the speed it adds is invisible to the turn headroom because the view does not move, so its first step is forgiven. Repeating it is the wiggle, and the rest are heard. A slide from a run or a landing stays audible, because it happens before the 0.5 s.</figcaption>
-    </figure>
     <dl class="fkey">
       <dt>T</dt><dd>Step interval: 300 ms when fast, 400 ms when slower, plus 100 ms crouched. A footstep is checked each time it runs out.</dd>
       <dt>0.4 s</dt><dd>Crouch animation. Speed and footsteps only count you as crouched after it.</dd>
       <dt>0.1 s</dt><dd>Settle time: still loud this long after crouch, walk or aim takes effect means a slide, push or sprint, so the held step plays.</dd>
-      <dt>0.5 s, 1 s</dt><dd>Forgiveness: in a silent mode on the ground at least 0.5 s before a step can be forgiven; 1 s under the limit to earn it back.</dd>
       <dt>0.1 s in the air</dt><dd>Landing: after at least this long off the ground, the next step is never silent, whatever the posture. The step timer waits in the air, so after a jump that is the landing tick.</dd>
     </dl>
     <h4><span class="secno">2.1.4</span>Before and after</h4>
@@ -732,7 +741,7 @@ silent modes    = crouch, walk, aim
 loud if           sprinting</pre>
         <ol class="problems solutions">
           <li><strong>silent modes</strong>: crouching alone is now a silent mode, like walking and aiming, and all three share one limit just above their normal speed. Crouch sprinting, slides and pushes stay above it.</li>
-          <li><strong>silent limit</strong>: it carries the weapon scale like actual speed, so the gun cancels out. It widens while turning, and one brief change of direction is forgiven.</li>
+          <li><strong>silent limit</strong>: it carries the weapon scale like actual speed, so the gun cancels out. Over it, a turn or a change of direction stays silent while the average ground velocity is under it.</li>
           <li><strong>actual speed</strong>: horizontal speed only.</li>
           <li><strong>stance modifier</strong>: the step during the crouch animation waits, and is dropped once you settle.</li>
           <li><strong>loud if sprinting</strong>: the sprint state is networked, so every client picks the same volume. Running is soft. Crouched steps are scaled to 65%, so a crouch sprint sits between a run and a sprint.</li>
@@ -753,8 +762,8 @@ loud if           sprinting</pre>
           <tr><td>Slide from a run</td><td>audible</td><td>audible</td></tr>
           <tr><td>Pushed while crouched</td><td>audible</td><td>audible</td></tr>
           <tr><td>Turning while crouching</td><td class="bad">audible</td><td class="good">silent</td></tr>
-          <tr><td>Wiggle walking crouched</td><td>audible</td><td>first step forgiven, repeats audible</td></tr>
-          <tr><td>Wiggle walking standing</td><td>audible</td><td>first step forgiven, repeats audible</td></tr>
+          <tr><td>Wiggle walking crouched</td><td>audible</td><td>audible after the first step interval, mouse or not</td></tr>
+          <tr><td>Wiggle walking standing</td><td>audible</td><td>audible after the first step interval, mouse or not</td></tr>
           <tr><td>Walking with the BALC</td><td class="bad">audible</td><td class="good">silent</td></tr>
           <tr><td>Dropping into a crouch from a run</td><td class="bad">one running step leaks</td><td class="good">silent</td></tr>
           <tr><td>Tapping crouch, walk or aim</td><td>steps unchanged</td><td>a step can be delayed, never skipped</td></tr>
@@ -780,13 +789,13 @@ loud if           sprinting</pre>
       </a>
       <a class="srow" href="#turning">
         <span><span class="chip fixed">On branch</span></span>
-        <span><span class="sname">Turning and key switching.</span> Turn headroom on the crouched threshold, and one forgiven step.</span>
-        <span>Looking around while crouching is silent. Repeated wiggle walking still makes footsteps.</span>
+        <span><span class="sname">Turning and key switching.</span> Speed spent on a turn or a change of direction does not count, judged by the average ground velocity.</span>
+        <span>Looking around while crouching is silent. Wiggle walking still makes footsteps, mouse or not.</span>
       </a>
       <a class="srow" href="#shared">
         <span><span class="chip fixed">On branch</span></span>
         <span><span class="sname">One silent threshold.</span> Walking and aiming use the crouched rule.</span>
-        <span>Walk, aim and crouch behave the same, with the same turn headroom and forgiveness, for every weapon.</span>
+        <span>Walk, aim and crouch behave the same, with the same allowance for turning, for every weapon.</span>
       </a>
       <a class="srow" href="#volume">
         <span><span class="chip fixed">On branch</span></span>
@@ -806,7 +815,7 @@ loud if           sprinting</pre>
       <li>No extra step when dropping into a crouch from a run.</li>
       <li>Looking around while crouching stays silent; repeated wiggle walking does not.</li>
       <li>Other players hear the same steps you do.</li>
-      <li>Walking and aiming follow the crouched rule: the first wiggle step is forgiven, and walking with the BALC is silent.</li>
+      <li>Walking and aiming follow the crouched rule, and walking with the BALC is silent.</li>
       <li>Crouch sprinting is louder than running but quieter than a sprint, and sprinting is the loudest step for every class and weapon.</li>
       <li>Players out of sight but within hearing range hear footsteps again.</li>
     </ul>
@@ -818,7 +827,7 @@ loud if           sprinting</pre>
   </section>
 
   <section class="problem" id="crouch" aria-labelledby="crouch-h">
-    <div class="problem-head"><h3 id="crouch-h"><span class="secno">3.1</span>Crouched silent movement threshold</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/a56f891f">commit a56f891f</a></div>
+    <div class="problem-head"><h3 id="crouch-h"><span class="secno">3.1</span>Crouched silent movement threshold</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/6c425b41">commit 6c425b41</a></div>
     <p><strong>Formula part 1, crouched line.</strong> Crouching used to be silent only while also aiming or holding +walk, so plain crouching was audible. The limit is now the player's own crouching speed plus 10% headroom, including weapon slowdown. That is the same limit as 0.825 of run speed in the <a href="#formula">formula</a>.</p>
     <figure class="figure">
       <svg viewBox="0 0 660 250" role="img" aria-labelledby="crouch-svg-t crouch-svg-d">
@@ -885,16 +894,15 @@ constexpr float FS_SILENT_SPEED_FRACTION =
 
 if (IsInSilentMoveMode() &amp;&amp; !isOnLadder)
 {
-    float silentThreshold = FS_SILENT_SPEED_FRACTION;
-    <span class="cm">// plus turn headroom, see Turning below</span>
     <span class="cm">// ground speed: other clients see vertical</span>
     <span class="cm">// speed when a player steps up stairs</span>
     if (groundspeed &lt;=
         GetNormSpeed_WithActiveWepEncumberment()
-        * silentThreshold)
+        * FS_SILENT_SPEED_FRACTION)
         return false;
+    <span class="cm">// turning and switching keys, see Turning below</span>
 }</pre>
-    <p class="srcline"><span class="lbl">Source at 2699d6fb</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/2699d6fb/src/game/shared/neo/neo_player_shared.cpp#L366-L379">neo_player_shared.cpp:366-379</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/2699d6fb/src/game/shared/neo/neo_player_shared.cpp#L382-L446">neo_player_shared.cpp:382-446</a></p>
+    <p class="srcline"><span class="lbl">Source at 72aa4afc</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/neo/neo_player_shared.cpp#L366-L375">neo_player_shared.cpp:366-375</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/neo/neo_player_shared.cpp#L378-L442">neo_player_shared.cpp:378-442</a></p>
       </div>
     </div>
     <div class="cols">
@@ -906,7 +914,7 @@ if (IsInSilentMoveMode() &amp;&amp; !isOnLadder)
   </section>
 
   <section class="problem" id="held" aria-labelledby="held-h">
-    <div class="problem-head"><h3 id="held-h"><span class="secno">3.2</span>Held step when starting a crouch, walk or aim</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/d7b44f47">commit d7b44f47</a><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/1c150702">commit 1c150702</a></div>
+    <div class="problem-head"><h3 id="held-h"><span class="secno">3.2</span>Held step when starting a crouch, walk or aim</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/2c9ae614">commit 2c9ae614</a><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/8dea2aa2">commit 8dea2aa2</a></div>
     <p><strong>Formula part 2.</strong> Side-stepping at normal speed and pressing crouch often plays one more footstep. The game only counts a player as crouched once the 0.4 s crouch animation finishes, and a running step fires every 300 ms, so one step almost always lands in between. Walking settles in about 50 ms and is rarely affected, but follows the same rule so both keys behave alike.</p>
     <figure class="figure">
       <svg viewBox="0 0 660 212" role="img" aria-labelledby="entry-now-t entry-now-d">
@@ -1015,47 +1023,54 @@ if (IsInSilentMoveMode() &amp;&amp; !isOnLadder)
       <div class="panel">
         <span class="label">Other players get the same answer</span>
         <p>Each of the three footstep deciders runs this rule itself, so each needs to know when crouch, walk or aim is held. Walk and aim already are: <code>m_fIsWalking</code> and <code>m_bInAim</code> are sent to every client in NEO (<code>hl2mp_player.cpp:112</code>, <code>neo_player.cpp</code>). For crouch, the engine already defines <code>FL_ANIMDUCKING</code>, "in the process of crouching" (<code>public/const.h:150</code>), inside the <code>m_fFlags</code> every client receives. Nothing in this codebase set it before. The branch sets it while crouch is held (<code>CGameMovement::Duck</code>), which needs no new network data.</p>
-    <p class="srcline"><span class="lbl">Source at 2699d6fb</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/2699d6fb/src/game/shared/gamemovement.cpp#L4721-L4729">gamemovement.cpp:4721-4729</a></p>
+    <p class="srcline"><span class="lbl">Source at 72aa4afc</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/gamemovement.cpp#L4721-L4729">gamemovement.cpp:4721-4729</a></p>
       </div>
       <div class="panel">
         <span class="label">Limits</span>
         <p>Other clients see press and release about one snapshot late, so a penalty step can sound a few tens of milliseconds later for them than for the player. A second step before settling plays the earlier held one and holds the new one, so a crouch that never settles cannot skip a step either.</p>
       </div>
     </div>
-    <p class="srcline"><span class="lbl">Source at 2699d6fb</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/2699d6fb/src/game/shared/neo/neo_player_shared.cpp#L597-L735">neo_player_shared.cpp:597-735</a></p>
+    <p class="srcline"><span class="lbl">Source at 72aa4afc</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/neo/neo_player_shared.cpp#L545-L683">neo_player_shared.cpp:545-683</a></p>
   </section>
 
   <section class="problem" id="turning" aria-labelledby="turning-h">
-    <div class="problem-head"><h3 id="turning-h"><span class="secno">3.3</span>Turning and key switching while crouched</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/b07b0863">commit b07b0863</a></div>
-    <p>Holding a movement key while turning the view, or changing direction such as W+D to W+A, really raises ground speed: acceleration builds toward the new direction faster than friction removes the old one. The gain reaches about 45% of crouching speed, far more than the 10% headroom, so looking around while crouching made footsteps. The <a href="#formula">turning chart</a> in section 2.1 shows the threshold against the simulated gain.</p>
+    <div class="problem-head"><h3 id="turning-h"><span class="secno">3.3</span>Turning and key switching while crouched</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/a2d1107e">commit a2d1107e</a></div>
+    <p>Holding a movement key while turning the view, or changing direction such as W+D to W+A, really raises ground speed: acceleration builds toward the new direction faster than friction removes the old one. The gain reaches about 54% of crouching speed at 300° per second, far more than the 10% headroom, so looking around while crouching made footsteps. On master, one play pass logged 13 footsteps from turning, at 140.5 to 156.5 u/s. The <a href="#formula">turning chart</a> in section 2.1 shows a turn against wiggling.</p>
     <div class="cols">
       <div class="panel fix">
-        <span class="label">Turn headroom</span>
-        <pre><span class="cm">// 0.45 of crouching speed = 0.3375 of run speed</span>
-constexpr float FS_TURN_HEADROOM =
-    float(NEO_CROUCH_WALK_MODIFIER) * 0.45f;
-constexpr float FS_TURN_RATE_FOR_FULL_HEADROOM = 180.f;
+        <span class="label">Average ground velocity</span>
+        <pre><span class="cm">// 1.55 of crouching speed = 1.1625 of run speed</span>
+constexpr float FS_TURN_MAX_SPEED_FRACTION =
+    float(NEO_CROUCH_WALK_MODIFIER) * 1.55f;
 
-float silentThreshold = FS_SILENT_SPEED_FRACTION;
-<span class="cm">// crouch sprinting stays audible while turning</span>
-if (!m_fIsSprinting)
-    silentThreshold += FS_TURN_HEADROOM *
-        Min(m_flFootstepTurnRate / FS_TURN_RATE_FOR_FULL_HEADROOM, 1.f);</pre>
-    <p class="srcline"><span class="lbl">Source at 2699d6fb</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/2699d6fb/src/game/shared/neo/neo_player_shared.cpp#L428-L433">neo_player_shared.cpp:428-433</a></p>
-        <p>The turn rate comes from the view yaw, which every client receives, keeps its peak and fades over 0.25 s.</p>
+<span class="cm">// over the silent limit: silent while the</span>
+<span class="cm">// average is still under it</span>
+if (!m_fIsSprinting &amp;&amp;
+    groundspeed &lt;= flNormSpeed * FS_TURN_MAX_SPEED_FRACTION &amp;&amp;
+    m_vecFootstepAvgVelocity.Length2D() &lt;=
+        flNormSpeed * FS_SILENT_SPEED_FRACTION)
+    return false;</pre>
+    <p class="srcline"><span class="lbl">Source at 72aa4afc</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/neo/neo_player_shared.cpp#L427-L438">neo_player_shared.cpp:427-438</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/neo/neo_player_shared.cpp#L517-L529">neo_player_shared.cpp:517-529</a></p>
+        <p>The average is the ground velocity blended over 0.4 s, about one step interval. A turn keeps rotating the velocity, so the average stays under the limit however long the turn lasts. Wiggle-walking, a slide or a push really covers ground faster, and the average follows it over the limit.</p>
       </div>
-      <div class="panel fix">
-        <span class="label">One-step forgiveness</span>
-        <p>Forgiveness is a one-time pass: one step that is only slightly over the silent limit is skipped instead of played. It exists because a direction change does not turn the view, so the turn headroom cannot see it. It applies when the player has been crouched, walking or aiming on the ground for 0.5 s and is not sprinting, and only to a small overshoot: the cap, <code>FS_FORGIVENESS_MAX_SPEED_FRACTION</code>, is the silent limit plus the full turn headroom (1.1625 of run speed, 1.55 c), since a direction change adds at most as much speed as a fast turn. Anything faster is a sprint or a slide. The forgiveness is spent on use and earned back after 1 s under the limit.</p>
-    <p class="srcline"><span class="lbl">Source at 2699d6fb</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/2699d6fb/src/game/shared/neo/neo_player_shared.cpp#L517-L537">neo_player_shared.cpp:517-537</a></p>
+      <div class="panel">
+        <span class="label">Earlier version</span>
+        <p>An earlier version of this branch widened the limit with the view turn rate and forgave one step after a change of direction. Any speed that came with a moving mouse got the extra room, so strafe-turning, pressing A and D in time with the mouse, covered ground at about 1.33 × crouching speed without a sound. The average judges where you actually go, so it needs neither the turn rate nor the forgiveness.</p>
       </div>
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Test pass</th><th>Before</th><th>After</th></tr></thead>
+        <thead><tr><th>Scripted pass, crouched</th><th>Earlier version</th><th>This branch</th></tr></thead>
         <tbody>
-          <tr><td>Crouching while turning (recon, c = 127.5)</td><td class="bad">13 footsteps at 140.5 to 156.5 u/s, turn rates up to 3,000°/s</td><td class="good">none from turning; crouch sprinting still audible at up to 483°/s</td></tr>
-          <tr><td>Wiggle walking crouched</td><td>about 30 footsteps at 142.8 to 165.1 u/s, turn rate under 41°/s</td><td>first step forgiven in each of 7 bursts, the rest audible</td></tr>
+          <tr><td>Turning at 120 to 450° per second</td><td>silent</td><td class="good">silent</td></tr>
+          <tr><td>Orbiting with W+D while turning at 150° per second</td><td>silent</td><td class="good">silent</td></tr>
+          <tr><td>Key changes W, W+D, W+A, W, W+D</td><td class="bad">1 step</td><td class="good">silent</td></tr>
+          <tr><td>Wiggle walking, W+D and W+A every 5 ticks</td><td>6 steps, 1 forgiven</td><td>4 steps, the first 0.4 s silent</td></tr>
+          <tr><td>Strafe-turning, ±45° swings every 0.15 to 0.4 s</td><td class="bad">silent, at about 1.33 × crouching speed</td><td class="good">7 to 9 steps, the first 0.4 s silent</td></tr>
+          <tr><td>Strafe-turning while walking</td><td class="bad">silent</td><td class="good">8 steps</td></tr>
+          <tr><td>Mouse swings only, or A and D against the mouse</td><td>silent</td><td>silent, no faster over ground</td></tr>
+          <tr><td>Slow wiggle, every 20 ticks</td><td>3 steps</td><td>silent, at 1.07 × crouching speed, inside the headroom</td></tr>
+          <tr><td>Run or sprint into a crouch</td><td>5 and 9 steps</td><td>5 and 9 steps</td></tr>
         </tbody>
       </table>
     </div>
@@ -1064,7 +1079,7 @@ if (!m_fIsSprinting)
 
 
   <section class="problem" id="shared" aria-labelledby="shared-h">
-    <div class="problem-head"><h3 id="shared-h"><span class="secno">3.4</span>One silent threshold for crouch, walk and aim</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/d7f8e336">commit d7f8e336</a></div>
+    <div class="problem-head"><h3 id="shared-h"><span class="secno">3.4</span>One silent threshold for crouch, walk and aim</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/5f9a5889">commit 5f9a5889</a></div>
     <p>Walking speed and crouching speed are the same: class speed × weapon × 0.75. Master still measured standing walk and aim against 0.7 × class run speed, which ignores the weapon. The headroom swung from about 10% to 38% by gun, had no allowance for turning, and the BALC was always audible. Walking and aiming now use the crouched rule.</p>
     <div class="table-wrap">
       <table>
@@ -1081,11 +1096,11 @@ if (!m_fIsSprinting)
     <div class="cols">
       <div class="panel bug">
         <span class="label">Problem</span>
-        <p>Two rules for one speed. A heavy weapon gave walking extra headroom that crouching did not get, while a light one left 10% with no allowance for turning, and wiggle walking had no forgiven step.</p>
+        <p>Two rules for one speed. A heavy weapon gave walking extra headroom that crouching did not get, while a light one left 10% with no allowance for turning.</p>
       </div>
       <div class="panel fix">
         <span class="label">Fix</span>
-        <p>Crouched, walking or aiming on the ground: silent up to c × (1.1 + t), with the same one-step forgiveness. With a 0.85 weapon the standing limit is unchanged; slower weapons get the same margin as crouching.</p>
+        <p>Crouched, walking or aiming on the ground: silent up to 1.1 c, with the same allowance for turning. With a 0.85 weapon the standing limit is unchanged; slower weapons get the same margin as crouching.</p>
       </div>
     </div>
     <pre><span class="cm">// neo_player_shared.cpp</span>
@@ -1095,13 +1110,13 @@ bool CNEO_Player::IsInSilentMoveMode() const
 }
 
 if (IsInSilentMoveMode() &amp;&amp; !isOnLadder)
-    <span class="cm">// silent up to c × (1.1 + t)</span></pre>
-    <p class="srcline"><span class="lbl">Source at 2699d6fb</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/2699d6fb/src/game/shared/neo/neo_player_shared.cpp#L446-L452">neo_player_shared.cpp:446-452</a></p>
+    <span class="cm">// silent up to 1.1 c, turning as in 3.3</span></pre>
+    <p class="srcline"><span class="lbl">Source at 72aa4afc</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/neo/neo_player_shared.cpp#L444-L450">neo_player_shared.cpp:444-450</a></p>
     <p class="muted">Aiming moves at 0.6 × speed, slower than walking, so it keeps about 37% headroom under the shared limit, as on master. Ladders are always audible.</p>
   </section>
 
   <section class="problem" id="volume" aria-labelledby="volume-h">
-    <div class="problem-head"><h3 id="volume-h"><span class="secno">3.5</span>Step volume by movement mode</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/aebd574e">commit aebd574e</a></div>
+    <div class="problem-head"><h3 id="volume-h"><span class="secno">3.5</span>Step volume by movement mode</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/0869a624">commit 0869a624</a></div>
     <p>The SDK picks a soft or loud step volume by comparing speed with a fixed run speed, 80 u/s crouched and 220 u/s standing, then scales crouched steps to 65%. Those numbers fit the SDK's own crouch, a third of run speed (about 63 u/s), so its crouched steps stayed under 80 and soft. NEO crouches at 0.75 of run speed, so every crouching speed passes 80 and gets the loud volume. Standing, an assault sprint stays under 220 with every weapon and a recon sprint only passes it with a 0.85 weapon, so most sprints get the soft one.</p>
     <div class="table-wrap">
       <table>
@@ -1138,12 +1153,12 @@ bool CNEO_Player::IsLoudFootstep() const
 fvol = pNeoPlayer-&gt;GetSurfaceStepVolume(psurface, bLoudStep); <span class="cm">// 0.5 or 0.2 on concrete</span>
 if (GetFlags() &amp; FL_DUCKING)
     fvol *= NEO_FS_CROUCH_VOLUME_SCALE; <span class="cm">// 0.65</span></pre>
-    <p class="srcline"><span class="lbl">Source at 2699d6fb</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/2699d6fb/src/game/shared/neo/neo_player_shared.cpp#L475-L481">neo_player_shared.cpp:475-481</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/2699d6fb/src/game/shared/baseplayer_shared.cpp#L621">baseplayer_shared.cpp:621</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/2699d6fb/src/game/shared/baseplayer_shared.cpp#L728">baseplayer_shared.cpp:728</a></p>
+    <p class="srcline"><span class="lbl">Source at 72aa4afc</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/neo/neo_player_shared.cpp#L473-L479">neo_player_shared.cpp:473-479</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/baseplayer_shared.cpp#L621">baseplayer_shared.cpp:621</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/baseplayer_shared.cpp#L728">baseplayer_shared.cpp:728</a></p>
     <p class="muted">Other surfaces keep their own soft and loud pair, such as dirt at 0.25 and 0.55. The step interval still follows speed, so step timing does not change. The sprint state and the crouch flag reach every client, so the server, the stepping player and everyone listening pick the same volume.</p>
   </section>
 
   <section class="problem" id="landing" aria-labelledby="landing-h">
-    <div class="problem-head"><h3 id="landing-h"><span class="secno">3.6</span>Landing step</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/a403c7b4">commit a403c7b4</a><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/2699d6fb">commit 2699d6fb</a></div>
+    <div class="problem-head"><h3 id="landing-h"><span class="secno">3.6</span>Landing step</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/2768f2d7">commit 2768f2d7</a><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/72aa4afc">commit 72aa4afc</a></div>
     <p>A flat jump falls too slowly for the engine's landing sound, which needs 350 u/s of fall. The footstep players hear on landing is the regular step whose timer ran out in the air, firing on the first tick back on the ground. Two things had broken that. Since #2151 <code>UpdateStepSound</code> restarted the step timer even in the air, so the first step after landing came at a random phase up to half a second later. And with crouching a silent mode, a crouched landing at crouching speed made no sound at all: a silent bunny hop.</p>
     <div class="cols">
       <div class="panel bug">
@@ -1155,7 +1170,7 @@ if (GetFlags() &amp; FL_DUCKING)
         <p>The step timer waits at zero while off the ground, as in the SDK, so after a jump the step lands on the landing tick. A landing after at least 0.1 s in the air marks the next step decision as never silent, which also covers short drops whose timer has not run out.</p>
       </div>
     </div>
-    <p class="srcline"><span class="lbl">Source at 2699d6fb</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/2699d6fb/src/game/shared/baseplayer_shared.cpp#L576">baseplayer_shared.cpp:576</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/2699d6fb/src/game/shared/neo/neo_player_shared.cpp#L539-L556">neo_player_shared.cpp:539-556</a></p>
+    <p class="srcline"><span class="lbl">Source at 72aa4afc</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/baseplayer_shared.cpp#L576">baseplayer_shared.cpp:576</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/neo/neo_player_shared.cpp#L496-L513">neo_player_shared.cpp:496-513</a></p>
     <p class="muted">A standing jump in place still makes nothing, since speed is under 50 u/s on landing, as before. The engine's hard-landing sound is unchanged.</p>
   </section>
 
@@ -1208,7 +1223,7 @@ if (GetFlags() &amp; FL_DUCKING)
     <ul class="plain muted">
       <li>Standing, the threshold applies only while aiming or holding +walk. It is the same number as the crouched one.</li>
       <li>Every posture is silent below 50 u/s.</li>
-      <li>Thresholds shown without turning; turning adds up to 0.45 c, see the <a href="#formula">formula</a>.</li>
+      <li>Thresholds shown without turning; a turn can reach 1.55 c while the average stays under the limit, see the <a href="#formula">formula</a>.</li>
       <li>Aiming multiplies speed by 0.6, which is silent in every posture with every weapon.</li>
       <li>VIP and Juggernaut use the Assault numbers. Support cannot sprint.</li>
       <li>Top speeds only. Accelerating, slowing down and the post-jump slowdown for non-recon classes pass through lower speeds.</li>
@@ -1300,17 +1315,18 @@ if (GetFlags() &amp; FL_DUCKING)
     <h4>Shared threshold</h4>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Pass, assault</th><th class="num">Audible steps</th><th class="num">Forgiven</th></tr></thead>
+        <thead><tr><th>Pass, assault</th><th class="num">Audible steps</th></tr></thead>
         <tbody>
-          <tr><td>Walk straight</td><td class="num good">0</td><td class="num">0</td></tr>
-          <tr><td>Walk in a circle</td><td class="num good">0</td><td class="num">0</td></tr>
-          <tr><td>Walk wiggle, 0.85 weapon</td><td class="num">18</td><td class="num">1</td></tr>
-          <tr><td>Walk wiggle, MX (0.725)</td><td class="num">29</td><td class="num">2, one per burst</td></tr>
-          <tr><td>Aim wiggle, no +walk</td><td class="num good">0</td><td class="num">0</td></tr>
-          <tr><td>Crouching</td><td class="num good">0</td><td class="num">0</td></tr>
+          <tr><td>Walk straight</td><td class="num good">0</td></tr>
+          <tr><td>Walk in a circle</td><td class="num good">0</td></tr>
+          <tr><td>Walk wiggle, 0.85 weapon</td><td class="num">18</td></tr>
+          <tr><td>Walk wiggle, MX (0.725)</td><td class="num">29</td></tr>
+          <tr><td>Aim wiggle, no +walk</td><td class="num good">0</td></tr>
+          <tr><td>Crouching</td><td class="num good">0</td></tr>
         </tbody>
       </table>
     </div>
+    <p class="muted">Measured on the earlier version of the turning rule, which forgave one step per wiggle burst. Wiggling is audible under either rule.</p>
     <h4>Held step and landing, review passes</h4>
     <div class="table-wrap">
       <table>
@@ -1330,6 +1346,7 @@ neo_footstep_debug 1; neo_footstep_debug_bots 1
 con_logfile footsteps.log
 nb_stop 1            <span class="cm">// walk up to the bot</span>
 nb_stop 0; bot_mimic 1</pre>
+    <p>The turning and key switching passes in <a href="#turning">3.3</a> were scripted on <code>devbox</code>: fixed <code>cl_yawspeed</code> turns and key presses timed in ticks, run from a chain of cfg aliases, with the same inputs on the earlier version and on this branch. Counts are server step decisions.</p>
   </section>
 
   <section class="problem" id="spin" aria-labelledby="spin-h">
@@ -1348,25 +1365,25 @@ nb_stop 0; bot_mimic 1</pre>
       <table>
         <thead><tr><th>Commit</th><th>Change</th><th>Status</th></tr></thead>
         <tbody>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/2381943f">2381943f</a></td><td>Move the SDK step volume table into GetSurfaceStepVolume</td><td class="muted">refactor, no behaviour change</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/531d733d">531d733d</a></td><td>Name master's walk-or-aim silent rule</td><td class="muted">refactor, no behaviour change</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/d07bb5a7">d07bb5a7</a></td><td>Name the slowest class sprint modifier</td><td class="muted">refactor, no behaviour change</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/4ca09599">4ca09599</a></td><td>Let every client see a crouch from the key press</td><td class="muted">groundwork, nothing players hear changes</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/a403c7b4">a403c7b4</a></td><td>Play the landing step on the tick you land</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/a56f891f">a56f891f</a></td><td>Make crouching silent</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/d7f8e336">d7f8e336</a></td><td>Make walking silent with every weapon</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/b07b0863">b07b0863</a></td><td>Fix rapid look and movement changes causing an accidental footstep</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/aebd574e">aebd574e</a></td><td>Stop crouched footsteps being louder than running</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/d7b44f47">d7b44f47</a></td><td>Hold the first footstep after pressing crouch, walk or aim</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/1c150702">1c150702</a></td><td>Tapping crouch, walk or aim delays a step, never skips one</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/2699d6fb">2699d6fb</a></td><td>Keep the step on landing audible in every posture</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/8c1dea91">8c1dea91</a></td><td>Move the SDK step volume table into GetSurfaceStepVolume</td><td class="muted">refactor, no behaviour change</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/0c267fac">0c267fac</a></td><td>Name master's walk-or-aim silent rule</td><td class="muted">refactor, no behaviour change</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/a32a9e56">a32a9e56</a></td><td>Name the slowest class sprint modifier</td><td class="muted">refactor, no behaviour change</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/6f50c665">6f50c665</a></td><td>Let every client see a crouch from the key press</td><td class="muted">groundwork, nothing players hear changes</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/2768f2d7">2768f2d7</a></td><td>Play the landing step on the tick you land</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/6c425b41">6c425b41</a></td><td>Make crouching silent</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/5f9a5889">5f9a5889</a></td><td>Make walking silent with every weapon</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/a2d1107e">a2d1107e</a></td><td>Fix rapid look and movement changes causing an accidental footstep</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/0869a624">0869a624</a></td><td>Stop crouched footsteps being louder than running</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/2c9ae614">2c9ae614</a></td><td>Hold the first footstep after pressing crouch, walk or aim</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/8dea2aa2">8dea2aa2</a></td><td>Tapping crouch, walk or aim delays a step, never skips one</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/72aa4afc">72aa4afc</a></td><td>Keep the step on landing audible in every posture</td><td class="good">footsteps/sound-consistency</td></tr>
           <tr><td class="commit">&ndash;</td><td>Start other players' ground surface trace clear of floors and walls</td><td class="muted">-docs only</td></tr>
           <tr><td class="commit">&ndash;</td><td><code>neo_footstep_debug</code> instrumentation</td><td class="muted">-docs only</td></tr>
           <tr><td class="commit">&ndash;</td><td>An experimental crouched threshold setting</td><td class="muted">-docs only</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="muted">The branch is under review as <a href="https://github.com/NeotokyoRebuild/neo/pull/2264">PR #2264, Make footstep sounds consistent</a>. Commits in branch order, as of 27 October 2026. Hashes and source line links point at branch head 2699d6fb on the PR fork, and will be refreshed after the branch is rebased onto current master. The server footstep origin fix (#2230) has merged and is no longer carried on the branch. footsteps/sound-consistency-docs sits on top of the PR branch with the ground surface trace fix, the logging, the experiment and these docs.</p>
+    <p class="muted">The branch is under review as <a href="https://github.com/NeotokyoRebuild/neo/pull/2264">PR #2264, Make footstep sounds consistent</a>. Commits in branch order, as of 30 October 2026, after the branch was rebased onto current master. Hashes and source line links point at branch head 72aa4afc on the PR fork. The server footstep origin fix (#2230) has merged and is no longer carried on the branch. footsteps/sound-consistency-docs sits on top of the PR branch with the ground surface trace fix, the logging, the experiment and these docs.</p>
   </section>
 
 
