@@ -2447,10 +2447,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#console-variables" class="md-nav__link">
+  <a href="#for-server-admins" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Console variables
+        For server admins
       
     </span>
   </a>
@@ -2891,10 +2891,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#console-variables" class="md-nav__link">
+  <a href="#for-server-admins" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Console variables
+        For server admins
       
     </span>
   </a>
@@ -2942,9 +2942,10 @@
   </table>
 </aside>
 
-<p><strong>AUX power</strong> is the energy bar on your HUD. In NT;RE it powers only two things: <strong>sprinting</strong> and the <a href="../../classes/recon/#super-jump">Recon super jump</a>. <a href="../thermoptic-camouflage/">Thermoptic camouflage</a> has its own separate battery, and <a href="../vision-modes/">vision modes</a> are free.<sup id="fnref:8"><a class="footnote-ref" href="#fn:8">8</a></sup><sup id="fnref:9"><a class="footnote-ref" href="#fn:9">9</a></sup></p>
+<p><strong>AUX power</strong> is the energy bar on your HUD. In NT;RE it powers only two things: <strong>sprinting</strong> and the <a href="../../classes/recon/#super-jump">Recon super jump</a>.</p>
+<p><a href="../thermoptic-camouflage/">Thermoptic camouflage</a> has its own separate battery, and <a href="../vision-modes/">vision modes</a> are free.<sup id="fnref:8"><a class="footnote-ref" href="#fn:8">8</a></sup><sup id="fnref:9"><a class="footnote-ref" href="#fn:9">9</a></sup></p>
 <h2 id="regeneration-by-class">Regeneration by class<a class="headerlink" href="#regeneration-by-class" title="Permanent link">&para;</a></h2>
-<p>AUX starts refilling 0.5 seconds after you stop using it.<sup id="fnref:10"><a class="footnote-ref" href="#fn:10">10</a></sup></p>
+<p>AUX starts refilling half a second after you stop using it.<sup id="fnref:10"><a class="footnote-ref" href="#fn:10">10</a></sup> Recon keeps refilling even while it sprints. Support never refills, and can't sprint.</p>
 <table>
 <thead>
 <tr>
@@ -2993,23 +2994,27 @@
 </tr>
 </tbody>
 </table>
-<p class="table-caption">Regen rates from <sup id="fnref:11"><a class="footnote-ref" href="#fn:11">11</a></sup>. Sprint time = 100 / drain rate.</p>
+<p class="table-caption">Regeneration rates from <sup id="fnref:11"><a class="footnote-ref" href="#fn:11">11</a></sup>. Sprint time is a full bar of 100 divided by the drain rate.</p>
 <h2 id="sprint-costs">Sprint costs<a class="headerlink" href="#sprint-costs" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Sprinting drains 5 AUX per second, but only while you are actually moving horizontally. Holding sprint while standing still costs nothing.<sup id="fnref:12"><a class="footnote-ref" href="#fn:12">12</a></sup></li>
-<li>Each time a sprint ends, an extra <strong>0.5 AUX</strong> is taken. Tapping sprint on and off is more expensive than holding it.<sup id="fnref2:5"><a class="footnote-ref" href="#fn:5">5</a></sup></li>
-<li><strong>Recon is exempt</strong> from both: its sprint drains nothing and costs nothing to stop.</li>
+<li>Sprinting drains 5 AUX per second, but only while you're moving. Holding sprint while standing still costs nothing.<sup id="fnref:12"><a class="footnote-ref" href="#fn:12">12</a></sup></li>
+<li>Each time a sprint ends, you lose an extra <strong>0.5 AUX</strong>. Tapping sprint on and off costs more than holding it.<sup id="fnref2:5"><a class="footnote-ref" href="#fn:5">5</a></sup></li>
+<li><strong>Recon is exempt</strong> from both. Its sprint drains nothing and costs nothing to stop.</li>
 </ul>
-<div class="admonition info">
-<p class="admonition-title">Unverified</p>
-<p>For Recon, ending a sprint doesn't restart the half-second regen delay, because the code returns early before updating the timer.<sup id="fnref:13"><a class="footnote-ref" href="#fn:13">13</a></sup> Whether this makes a visible difference in play hasn't been confirmed.</p>
+<div class="admonition warning">
+<p class="admonition-title">Unverified: Recon's refill delay</p>
+<p>For Recon, ending a sprint doesn't restart the half-second delay before AUX refills. The code returns early, before it updates the timer.<sup id="fnref:13"><a class="footnote-ref" href="#fn:13">13</a></sup> Whether it makes a visible difference in play hasn't been confirmed.</p>
 </div>
-<h2 id="console-variables">Console variables<a class="headerlink" href="#console-variables" title="Permanent link">&para;</a></h2>
+<details class="note">
+<summary>Technical details</summary>
+<p>Only horizontal movement counts towards the sprint drain.<sup id="fnref2:12"><a class="footnote-ref" href="#fn:12">12</a></sup></p>
+</details>
+<h2 id="for-server-admins">For server admins<a class="headerlink" href="#for-server-admins" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>sv_infinite_aux_power</code> (default <code>0</code>, cheat) disables AUX drain.<sup id="fnref:14"><a class="footnote-ref" href="#fn:14">14</a></sup></li>
 </ul>
 <h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
-<div class="footnote references"><ol><li id="fn:1"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2136"><code>src/game/server/hl2/hl2_player.cpp:2136,2173-2176</code></a>&nbsp;<a class="footnote-backref" href="#fnref:1" title="Jump back to citation 1">&#8617;</a></p></li><li id="fn:2"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L447"><code>src/game/server/hl2/hl2_player.cpp:447-448,2040-2062</code></a>&nbsp;<a class="footnote-backref" href="#fnref:2" title="Jump back to citation 2">&#8617;</a></p></li><li id="fn:3"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.h#L181"><code>src/game/shared/neo/neo_player_shared.h:181</code></a>&nbsp;<a class="footnote-backref" href="#fnref:3" title="Jump back to citation 3">&#8617;</a></p></li><li id="fn:4"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L547"><code>src/game/server/hl2/hl2_player.cpp:547</code></a>&nbsp;<a class="footnote-backref" href="#fnref:4" title="Jump back to citation 4">&#8617;</a></p></li><li id="fn:5"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2215"><code>src/game/server/hl2/hl2_player.cpp:2215-2228</code></a>&nbsp;<a class="footnote-backref" href="#fnref:5" title="Jump back to citation 5">&#8617;</a>&nbsp;<a class="footnote-backref" href="#fnref2:5" title="Jump back to citation 5">&#8617;</a></p></li><li id="fn:6"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2259"><code>src/game/server/hl2/hl2_player.cpp:2259,2272-2277,2302-2305</code></a>&nbsp;<a class="footnote-backref" href="#fnref:6" title="Jump back to citation 6">&#8617;</a></p></li><li id="fn:7"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.h#L178"><code>src/game/shared/neo/neo_player_shared.h:178</code></a>&nbsp;<a class="footnote-backref" href="#fnref:7" title="Jump back to citation 7">&#8617;</a></p></li><li id="fn:8"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/client/hl2/c_hl2_playerlocaldata.h#L34"><code>src/game/client/hl2/c_hl2_playerlocaldata.h:34</code></a>&nbsp;<a class="footnote-backref" href="#fnref:8" title="Jump back to citation 8">&#8617;</a></p></li><li id="fn:9"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L3775"><code>src/game/server/neo/neo_player.cpp:3775-3778</code></a>&nbsp;<a class="footnote-backref" href="#fnref:9" title="Jump back to citation 9">&#8617;</a></p></li><li id="fn:10"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2259"><code>src/game/server/hl2/hl2_player.cpp:2259,2272-2277</code></a>&nbsp;<a class="footnote-backref" href="#fnref:10" title="Jump back to citation 10">&#8617;</a></p></li><li id="fn:11"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L416"><code>src/game/server/hl2/hl2_player.cpp:416-444</code></a>&nbsp;<a class="footnote-backref" href="#fnref:11" title="Jump back to citation 11">&#8617;</a></p></li><li id="fn:12"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2040"><code>src/game/server/hl2/hl2_player.cpp:2040-2062</code></a>&nbsp;<a class="footnote-backref" href="#fnref:12" title="Jump back to citation 12">&#8617;</a></p></li><li id="fn:13"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2237"><code>src/game/server/hl2/hl2_player.cpp:2237-2239</code></a>&nbsp;<a class="footnote-backref" href="#fnref:13" title="Jump back to citation 13">&#8617;</a></p></li><li id="fn:14"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L112"><code>src/game/server/hl2/hl2_player.cpp:112-113</code></a>&nbsp;<a class="footnote-backref" href="#fnref:14" title="Jump back to citation 14">&#8617;</a></p></li></ol></div>
+<div class="footnote references"><ol><li id="fn:1"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2136"><code>src/game/server/hl2/hl2_player.cpp:2136,2173-2176</code></a>&nbsp;<a class="footnote-backref" href="#fnref:1" title="Jump back to citation 1">&#8617;</a></p></li><li id="fn:2"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L447"><code>src/game/server/hl2/hl2_player.cpp:447-448,2040-2062</code></a>&nbsp;<a class="footnote-backref" href="#fnref:2" title="Jump back to citation 2">&#8617;</a></p></li><li id="fn:3"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.h#L181"><code>src/game/shared/neo/neo_player_shared.h:181</code></a>&nbsp;<a class="footnote-backref" href="#fnref:3" title="Jump back to citation 3">&#8617;</a></p></li><li id="fn:4"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L547"><code>src/game/server/hl2/hl2_player.cpp:547</code></a>&nbsp;<a class="footnote-backref" href="#fnref:4" title="Jump back to citation 4">&#8617;</a></p></li><li id="fn:5"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2215"><code>src/game/server/hl2/hl2_player.cpp:2215-2228</code></a>&nbsp;<a class="footnote-backref" href="#fnref:5" title="Jump back to citation 5">&#8617;</a>&nbsp;<a class="footnote-backref" href="#fnref2:5" title="Jump back to citation 5">&#8617;</a></p></li><li id="fn:6"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2259"><code>src/game/server/hl2/hl2_player.cpp:2259,2272-2277,2302-2305</code></a>&nbsp;<a class="footnote-backref" href="#fnref:6" title="Jump back to citation 6">&#8617;</a></p></li><li id="fn:7"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_player_shared.h#L178"><code>src/game/shared/neo/neo_player_shared.h:178</code></a>&nbsp;<a class="footnote-backref" href="#fnref:7" title="Jump back to citation 7">&#8617;</a></p></li><li id="fn:8"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/client/hl2/c_hl2_playerlocaldata.h#L34"><code>src/game/client/hl2/c_hl2_playerlocaldata.h:34</code></a>&nbsp;<a class="footnote-backref" href="#fnref:8" title="Jump back to citation 8">&#8617;</a></p></li><li id="fn:9"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/neo/neo_player.cpp#L3775"><code>src/game/server/neo/neo_player.cpp:3775-3778</code></a>&nbsp;<a class="footnote-backref" href="#fnref:9" title="Jump back to citation 9">&#8617;</a></p></li><li id="fn:10"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2259"><code>src/game/server/hl2/hl2_player.cpp:2259,2272-2277</code></a>&nbsp;<a class="footnote-backref" href="#fnref:10" title="Jump back to citation 10">&#8617;</a></p></li><li id="fn:11"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L416"><code>src/game/server/hl2/hl2_player.cpp:416-444</code></a>&nbsp;<a class="footnote-backref" href="#fnref:11" title="Jump back to citation 11">&#8617;</a></p></li><li id="fn:12"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2040"><code>src/game/server/hl2/hl2_player.cpp:2040-2062</code></a>&nbsp;<a class="footnote-backref" href="#fnref:12" title="Jump back to citation 12">&#8617;</a>&nbsp;<a class="footnote-backref" href="#fnref2:12" title="Jump back to citation 12">&#8617;</a></p></li><li id="fn:13"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L2237"><code>src/game/server/hl2/hl2_player.cpp:2237-2239</code></a>&nbsp;<a class="footnote-backref" href="#fnref:13" title="Jump back to citation 13">&#8617;</a></p></li><li id="fn:14"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/hl2/hl2_player.cpp#L112"><code>src/game/server/hl2/hl2_player.cpp:112-113</code></a>&nbsp;<a class="footnote-backref" href="#fnref:14" title="Jump back to citation 14">&#8617;</a></p></li></ol></div>
 
 
 

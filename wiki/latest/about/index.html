@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="What this is, how it is built, and what to critique">
+        <meta name="description" content="What this prototype is, where its numbers come from, and what it leaves out">
       
       
       
@@ -2839,26 +2839,34 @@
 
 
 <h1 id="about-this-wiki">About this wiki<a class="headerlink" href="#about-this-wiki" title="Permanent link">&para;</a></h1>
-<p>This is a prototype of a wiki for <strong>NEOTOKYO Rebuild</strong> (NT;RE), built with <a href="https://www.mkdocs.org/">MkDocs</a> and the <a href="https://squidfunk.github.io/mkdocs-material/">Material</a> theme. It exists to settle structure, page types and visual design. An earlier static HTML prototype lives alongside it in <code>prototype/</code> for comparison.</p>
+<p>This is a prototype wiki for <strong>NEOTOKYO Rebuild</strong> (NT;RE). It's built with <a href="https://www.mkdocs.org/">MkDocs</a> and the <a href="https://squidfunk.github.io/mkdocs-material/">Material</a> theme.</p>
+<p>Its job is to settle the structure, page types and visual design. An earlier static HTML prototype sits alongside it in <code>prototype/</code>, for comparison.</p>
 <h2 id="how-the-numbers-are-sourced">How the numbers are sourced<a class="headerlink" href="#how-the-numbers-are-sourced" title="Permanent link">&para;</a></h2>
-<p>Every stat on this site was extracted from the <a href="https://github.com/NeotokyoRebuild/neo">NeotokyoRebuild/neo</a> repository: weapon scripts in <code>game/neo/scripts/</code> and the C++ gameplay code in <code>src/game/</code>. Each number carries a footnote that links to the exact file and line it came from, pinned to a specific commit (see the page footer).</p>
-<p>When the game changes, the data can be re-extracted and every page rebuilt. Tables and stat blocks are generated from the data at build time, so no number is typed by hand twice.</p>
+<p>Every stat on this site was extracted from the <a href="https://github.com/NeotokyoRebuild/neo">NeotokyoRebuild/neo</a> repository. It comes from one of two places: the weapon scripts in <code>game/neo/scripts/</code>, or the C++ gameplay code in <code>src/game/</code>.</p>
+<p>Each number has a footnote that links to the exact file and line it came from. The links are pinned to a specific commit (see the page footer).</p>
+<p>Tables and stat blocks are generated from the data when the site is built, so no number is typed by hand twice. When the game changes, the data can be re-extracted and every page rebuilt.</p>
 <h2 id="page-types-demonstrated">Page types demonstrated<a class="headerlink" href="#page-types-demonstrated" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Hub pages</strong>: <a href="../">Main page</a>, <a href="../weapons/">Weapons</a>, <a href="../classes/">Classes</a>, <a href="../game-modes/">Game modes</a></li>
-<li><strong>Weapon pages</strong>: one Markdown file per weapon, in a fixed layout (overview, general stats, damage, shots to kill, time to kill, handling, availability). The prose is hand-editable; every number comes from a <code>{{weapon:…}}</code> snippet.</li>
+<li><strong>Weapon pages</strong>: one Markdown file per weapon, in a fixed layout (overview, general stats, damage, shots to kill, time to kill, handling, availability). You can edit the prose by hand. Every number comes from a <code>{{weapon:…}}</code> snippet.</li>
 <li><strong>Mechanic articles</strong>: hand-written explanations with citations, such as <a href="../mechanics/thermoptic-camouflage/">Thermoptic camouflage</a> and <a href="../mechanics/damage/">Damage &amp; penetration</a></li>
 <li><strong>Reference tables</strong>: <a href="../console-variables/">Console variables</a>, <a href="../world/maps/">Maps</a>, <a href="../mechanics/loadouts/">Loadouts &amp; ranks</a></li>
 </ul>
 <h2 id="not-in-the-prototype">Not in the prototype<a class="headerlink" href="#not-in-the-prototype" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Editing and page history: pages are Markdown files in the repository</li>
-<li>Images: grey boxes mark where screenshots or renders would go, pending a decision on asset licensing</li>
-<li>Lore and story content: this pass covers gameplay mechanics and stats only</li>
-<li>Terminology and external resources pages</li>
+<li><strong>Editing and page history.</strong> Pages are Markdown files in the repository.</li>
+<li><strong>Images.</strong> Grey boxes mark where screenshots or renders would go, until asset licensing is decided.</li>
+<li><strong>Lore and story.</strong> This pass covers gameplay mechanics and stats only.</li>
+<li><strong>Terminology and external resources pages.</strong></li>
 </ul>
 <h2 id="build">Build<a class="headerlink" href="#build" title="Permanent link">&para;</a></h2>
-<p>In <code>wiki/</code>, install the requirements (<code>pip install -r requirements.txt</code>) and run <code>mkdocs serve</code>. Pages live in <code>docs/</code>, extracted game data in <code>data/</code>, and the snippets, wiki links and citations are handled by <code>hooks/ntre.py</code> and <code>hooks/generators.py</code>. See <a href="style-guide/">Style guide</a> for the markup.</p>
+<p>In <code>wiki/</code>, install the requirements with <code>pip install -r requirements.txt</code>, then run <code>mkdocs serve</code>.</p>
+<ul>
+<li><strong>Pages</strong> live in <code>docs/</code>.</li>
+<li><strong>Extracted game data</strong> lives in <code>data/</code>.</li>
+<li><strong>Snippets, wiki links and citations</strong> are handled by <code>hooks/ntre.py</code> and <code>hooks/generators.py</code>.</li>
+</ul>
+<p>See <a href="style-guide/">Style guide</a> for the markup.</p>
 
 
 

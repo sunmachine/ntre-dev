@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="How this wiki is written and laid out, in short form">
+        <meta name="description" content="How this wiki is written and laid out">
       
       
       
@@ -2727,10 +2727,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#who-we-write-for" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Who we write for
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#voice" class="md-nav__link">
     <span class="md-ellipsis">
       
         Voice
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keep-the-load-light" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keep the load light
       
     </span>
   </a>
@@ -2775,6 +2797,34 @@
     <span class="md-ellipsis">
       
         Page anatomy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Page anatomy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#markup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Markup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rewriting-a-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rewriting a page
       
     </span>
   </a>
@@ -2902,10 +2952,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#who-we-write-for" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Who we write for
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#voice" class="md-nav__link">
     <span class="md-ellipsis">
       
         Voice
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keep-the-load-light" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keep the load light
       
     </span>
   </a>
@@ -2954,6 +3026,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Page anatomy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#markup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Markup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rewriting-a-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rewriting a page
+      
+    </span>
+  </a>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2996,25 +3096,45 @@
 
 
 <h1 id="style-guide">Style guide<a class="headerlink" href="#style-guide" title="Permanent link">&para;</a></h1>
-<p>The rules every page on this wiki follows. The guide is part of the prototype's source and changes in the same commit as the style it describes, so it always matches the pages around it.</p>
+<p>The rules every page on this wiki follows. The writing rules live in <code>WRITING-STYLE.md</code> at the top of the repository and are included here, so this page always matches them.</p>
+<h2 id="who-we-write-for">Who we write for<a class="headerlink" href="#who-we-write-for" title="Permanent link">&para;</a></h2>
+<p>Players. Someone between rounds who wants an answer, or someone new who wants to understand a mechanic. They know shooters and the game's own terms (HP, XP, AUX, sprint, loadout). They don't know Source engine internals or C++, and they shouldn't need to.</p>
+<p>Their attention is limited, so every sentence has to earn its place.</p>
 <h2 id="voice">Voice<a class="headerlink" href="#voice" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Plain and direct. Address the player as <em>you</em>, in the present tense.</li>
 <li>Open with what the thing is and why it matters. Name the subject in bold in the first sentence.</li>
-<li>One idea per sentence. Cut filler, hype and hedging that carries no information.</li>
 <li>Lead with what it means for the player: what to do, what to expect, what to avoid. How the code does it comes second, if at all.</li>
-<li>Keep sentences short, with no more than two numbers each. Round in prose ("about 24 seconds") and give exact figures in tables and infoboxes.</li>
-<li>Put formulas, code behaviour and other mechanics most readers can skip in a collapsed <strong>Technical details</strong> box (<code>??? note "Technical details"</code>) at the end of the section. It keeps its citations.</li>
-<li>Put settings only server admins can change under a <strong>For server admins</strong> heading at the end of the page.</li>
+<li>One idea per sentence. Keep sentences short, and paragraphs to one to three sentences.</li>
+<li>Use everyday words. Say <em>hitbox</em>, not <em>hull</em>. Leave out function names, file names and engine terms like <em>tick</em> and <em>renormalised</em> unless the reader needs them; if they do, explain the term once.</li>
+<li>Cut filler, hype and hedging that carries no information.</li>
 <li>British spelling (<em>colour</em>, <em>armour</em>, <em>behaviour</em>). Code identifiers and quoted strings keep their own spelling.</li>
 <li>Headings in sentence case: <em>Weapon speed scale</em>, not <em>Weapon Speed Scale</em>.</li>
 </ul>
+<h2 id="keep-the-load-light">Keep the load light<a class="headerlink" href="#keep-the-load-light" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>No more than two numbers in a sentence.</strong> Round in prose ("about 24 seconds") and give exact figures in tables and infoboxes.</li>
+<li><strong>Move the mechanics out of the way.</strong> Formulas, code behaviour and edge cases most readers can skip go in a collapsed <strong>Technical details</strong> box at the end of the section. The box keeps its citations, so nothing is lost.</li>
+<li><strong>Put server settings last.</strong> Console variables only server admins can change go under a <strong>For server admins</strong> heading at the end of the page.</li>
+<li><strong>Use lists for sets of conditions, and tables for comparisons.</strong> A sentence that lists four conditions is a list.</li>
+<li><strong>One caveat, once.</strong> If something is unconfirmed, say so in one callout, not in every sentence that touches it.</li>
+</ul>
+<p>For example, instead of:</p>
+<blockquote>
+<p>Each cloaked player has a visibility factor from 0 to 1 that controls how strong the shimmer and tint are. Standing still (≤20 u/s) lowers it by 1.1 per second; moving raises it by speed × 0.004 per second.</p>
+</blockquote>
+<p>write:</p>
+<blockquote>
+<p>The faster you move, the more you shimmer. Stand still and the shimmer fades in about a second.</p>
+</blockquote>
+<p>and put the first version in the Technical details box.</p>
 <h2 id="facts-and-sources">Facts and sources<a class="headerlink" href="#facts-and-sources" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Every gameplay number cites the line it comes from: <code>[[src:path:line]]</code> becomes a footnote linked to GitHub at the pinned commit.</li>
+<li>Every gameplay number cites the line it comes from. <code>[[src:path:line]]</code> becomes a footnote linked to the game's source at the pinned commit.</li>
 <li>Never guess. If the code is ambiguous, or client and server disagree, say so in an amber callout labelled <strong>Unconfirmed</strong>, <strong>Unverified</strong> or <strong>Unresolved</strong>.</li>
 <li>Say how a claim was established: "inferred from the code" is different from "tested in game".</li>
 <li>Tables and infoboxes take their numbers from the extracted data, not from hand-typed copies.</li>
+<li>Rewording must not change a fact. Rounding in prose is fine when the exact figure is in a table, infobox or Technical details box on the same page.</li>
 </ul>
 <h2 id="numbers-and-units">Numbers and units<a class="headerlink" href="#numbers-and-units" title="Permanent link">&para;</a></h2>
 <p>Spell units out in prose and abbreviate them in data. <strong>Prose</strong> is anything written as a sentence: paragraphs, list items, callouts and table captions. <strong>Data</strong> is table cells, infobox values and stat strips.</p>
@@ -3076,27 +3196,49 @@
 <li><strong>Classes</strong> are capitalised: Recon, Assault, Support, VIP, Juggernaut.</li>
 <li><strong>Game modes</strong> take the full name first, then the code: Capture the Ghost (CTG).</li>
 <li><strong>Teams</strong>: Jinrai and NSF. The objective is <em>the ghost</em>, lowercase in running text.</li>
+<li><strong>Thermoptic camouflage</strong> is <em>the cloak</em> after its first mention.</li>
 <li><strong>Console variables</strong> and file names go in <code>code</code>, with their default where it matters: <code>mp_friendlyfire 1</code>.</li>
 </ul>
 <h2 id="page-anatomy">Page anatomy<a class="headerlink" href="#page-anatomy" title="Permanent link">&para;</a></h2>
 <ol>
 <li>A <code># Title</code>, and a one-line <code>description</code> in the front matter</li>
-<li>A lead paragraph that stands on its own</li>
+<li>A lead of one or two short paragraphs that stands on its own</li>
 <li>An <strong>infobox</strong> for classes, modes and mechanics with stats</li>
 <li>Sections under <code>##</code> headings. The contents list on the right is automatic.</li>
+<li><strong>For server admins</strong>, if the page has any</li>
 <li>The generated references, last</li>
 </ol>
 <p><strong>Weapon pages</strong> follow one layout, in this order: Overview, General stats, Damage, Shots to kill, Time to kill, Handling, then anything weapon-specific (bolt action, heat), Availability, Suppressor and Technical notes. The prose is yours to write; the numbers come from <code>{{weapon:…}}</code> snippets, which read the weapon named in the front matter (<code>weapon: weapon_zr68s</code>).</p>
 <ul>
 <li>Comparisons go in tables, not lists. Numbers are right-aligned in monospace.</li>
 <li>Hit locations with the same multiplier share a column: head / chest, stomach / arms, legs.</li>
-<li>Link a page's first mention in each section, not every mention. Write <code>[[slug|Label]]</code>; a slug is the file name without <code>.md</code>, or the folder name for an <code>index.md</code>.</li>
+<li>Link a page's first mention in each section, not every mention.</li>
 <li>Page addresses follow the menu: <code>/weapons/rifles/zr68-s/</code>. Folders and file names are lowercase with hyphens, and every slug is unique across the wiki.</li>
-<li>Callouts (<code>!!! info "Label"</code>) have a short label. Neutral callouts are for notes; amber <code>warning</code> ones are for anything quirky, unverified or in progress.</li>
+</ul>
+<h3 id="markup">Markup<a class="headerlink" href="#markup" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>[[slug|Label]]</code> links to another page. A slug is the file name without <code>.md</code>, or the folder name for an <code>index.md</code>.</li>
+<li><code>[[slug#heading|Label]]</code> links to a section of another page.</li>
+<li><code>[[src:path:line]]</code> is a citation. Separate several with <code>;</code>.</li>
+<li><code>{{table:…}}</code>, <code>{{stat:…}}</code> and <code>{{weapon:…}}</code> insert tables and numbers generated from the data.</li>
+<li><code>!!! info "Label"</code> is a neutral callout, for notes.</li>
+<li><code>!!! warning "Label"</code> is an amber callout, for anything quirky, unverified or in progress.</li>
+<li><code>??? note "Technical details"</code> is the collapsed box for mechanics most readers can skip.</li>
+</ul>
+<p>Indent a callout's or box's body by four spaces.</p>
+<h2 id="rewriting-a-page">Rewriting a page<a class="headerlink" href="#rewriting-a-page" title="Permanent link">&para;</a></h2>
+<p>When you reword an existing page, for clarity or to bring it up to this guide:</p>
+<ul>
+<li><strong>Keep every citation</strong>, word for word. Move it with the fact it supports, for example into a Technical details box, but never drop or edit it.</li>
+<li><strong>Don't lose a number.</strong> If one leaves the main text, it goes into the Technical details box. Rounding in prose is fine when the exact figure stays on the page.</li>
+<li><strong>Don't change a fact or add one.</strong> If you can't say something more simply without changing what it means, leave it as it is.</li>
+<li><strong>Leave generated parts alone:</strong> <code>{{…}}</code> snippets, infobox data and table cells. Table captions are prose, so reword those.</li>
+<li><strong>Check links before renaming a heading.</strong> Other pages link to sections with <code>[[page#heading|…]]</code>; search for the heading's anchor first.</li>
+<li><strong>Build with <code>mkdocs build --strict</code></strong> (from <code>wiki/</code>). It fails on broken links and unknown snippets.</li>
 </ul>
 <h2 id="work-in-progress-modes">Work-in-progress modes<a class="headerlink" href="#work-in-progress-modes" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>VIP</strong> and <strong>Juggernaut</strong> are still in development. Stat lists keep them, but last, greyed out and tagged <span class="tag wip">WIP</span>. This includes their weapons, the SMAC and BALC.</li>
+<li><strong>VIP</strong> and <strong>Juggernaut</strong> are still in development. Stat lists keep them, but last, greyed out and tagged <strong>WIP</strong>. This includes their weapons, the SMAC and BALC.</li>
 <li>Headline counts leave them out: say 3 classes and 3 game modes, with a note naming the two in development.</li>
 <li>Their own pages, and their weapons' pages, open with an amber <strong>Work in progress</strong> callout.</li>
 </ul>

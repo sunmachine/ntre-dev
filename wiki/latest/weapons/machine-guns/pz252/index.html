@@ -1840,17 +1840,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#technical-notes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Technical notes
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#references" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3003,17 +2992,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#technical-notes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Technical notes
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#references" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3045,7 +3023,7 @@
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
 <p>The <strong>PZ252</strong> is a fully automatic machine gun. It's in the loadout of <a href="../../../classes/support/">Support</a> (from Lieutenant).</p>
 <h2 id="general-stats">General stats<a class="headerlink" href="#general-stats" title="Permanent link">&para;</a></h2>
-<div class="table-wrap"><table class="wikitable stat-strip"><thead><tr><th class="num">Damage</th><th class="num">Cycle time</th><th class="num">RPM</th><th class="num">DPS</th><th class="num">Magazine</th><th class="num">Penetration</th><th class="num">Move speed</th></tr></thead><tbody><tr><td class="num">29.7<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td><td class="num">0.0909 s<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td><td class="num">660<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td><td class="num">327</td><td class="num">100<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td><td class="num">28<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup></td><td class="num">×0.675<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup></td></tr></tbody><caption>Damage is per bullet to the head or chest, with the ×1.485 modifier applied. DPS = damage ÷ cycle time, a theoretical ceiling.</caption></table></div>
+<div class="table-wrap"><table class="wikitable stat-strip"><thead><tr><th class="num">Damage</th><th class="num">Cycle time</th><th class="num">RPM</th><th class="num">DPS</th><th class="num">Magazine</th><th class="num">Penetration</th><th class="num">Move speed</th></tr></thead><tbody><tr><td class="num">29.7<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td><td class="num">0.0909 s<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td><td class="num">660<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td><td class="num">327</td><td class="num">100<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td><td class="num">28<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup></td><td class="num">×0.675<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup></td></tr></tbody><caption>Damage is per bullet to the head or chest, with the ×1.485 modifier applied. DPS is damage ÷ cycle time: the most it can do, with every shot landing.</caption></table></div>
 
 <h2 id="damage">Damage<a class="headerlink" href="#damage" title="Permanent link">&para;</a></h2>
 <div class="admonition info">
@@ -3061,7 +3039,7 @@
 <div class="table-wrap"><table class="wikitable "><thead><tr><th>Class</th><th class="num">Head / chest ×1</th><th class="num">Stomach / arms ×0.75</th><th class="num">Legs ×0.6</th></tr></thead><tbody><tr><td><a href="../../../classes/recon/">Recon</a> (100 HP)</td><td class="num">4</td><td class="num">5</td><td class="num">6</td></tr><tr><td><a href="../../../classes/assault/">Assault</a> (120 HP)</td><td class="num">5</td><td class="num">6</td><td class="num">7</td></tr><tr><td><a href="../../../classes/support/">Support</a> (225 HP)</td><td class="num">8</td><td class="num">11</td><td class="num">13</td></tr></tbody><caption>Hits needed from full health.</caption></table></div>
 
 <h2 id="time-to-kill">Time to kill<a class="headerlink" href="#time-to-kill" title="Permanent link">&para;</a></h2>
-<div class="table-wrap"><table class="wikitable "><caption>Time to kill = (shots to kill − 1) × cycle time: from the first hit to the last, with every shot landing and no reload.</caption><thead><tr><th>Class</th><th class="num">Head / chest ×1</th><th class="num">Stomach / arms ×0.75</th><th class="num">Legs ×0.6</th></tr></thead><tbody><tr><td><a href="../../../classes/recon/">Recon</a> (100 HP)</td><td class="num">0.27 s</td><td class="num">0.36 s</td><td class="num">0.45 s</td></tr><tr><td><a href="../../../classes/assault/">Assault</a> (120 HP)</td><td class="num">0.36 s</td><td class="num">0.45 s</td><td class="num">0.55 s</td></tr><tr><td><a href="../../../classes/support/">Support</a> (225 HP)</td><td class="num">0.64 s</td><td class="num">0.91 s</td><td class="num">1.09 s</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="wikitable "><caption>Time from your first hit to your last, with every shot landing and no reload: (shots to kill − 1) × cycle time.</caption><thead><tr><th>Class</th><th class="num">Head / chest ×1</th><th class="num">Stomach / arms ×0.75</th><th class="num">Legs ×0.6</th></tr></thead><tbody><tr><td><a href="../../../classes/recon/">Recon</a> (100 HP)</td><td class="num">0.27 s</td><td class="num">0.36 s</td><td class="num">0.45 s</td></tr><tr><td><a href="../../../classes/assault/">Assault</a> (120 HP)</td><td class="num">0.36 s</td><td class="num">0.45 s</td><td class="num">0.55 s</td></tr><tr><td><a href="../../../classes/support/">Support</a> (225 HP)</td><td class="num">0.64 s</td><td class="num">0.91 s</td><td class="num">1.09 s</td></tr></tbody></table></div>
 
 <h2 id="handling">Handling<a class="headerlink" href="#handling" title="Permanent link">&para;</a></h2>
 <p>Your shots spread out as you keep firing, move or jump, and tighten again when you stop. Aiming keeps them tighter.<sup id="fnref:12"><a class="footnote-ref" href="#fn:12">12</a></sup> See <a href="../../../mechanics/damage/#accuracy">accuracy</a> for how fast it changes.</p>
@@ -3072,8 +3050,7 @@
 <div class="table-wrap"><table class="wikitable "><thead><tr><th>Class</th><th>Rank</th><th class="num">Min. XP</th></tr></thead><tbody><tr><td><a href="../../../classes/support/">Support</a></td><td>Lieutenant</td><td class="num">20<sup id="fnref:14"><a class="footnote-ref" href="#fn:14">14</a></sup></td></tr></tbody></table></div>
 <p>Can be picked up by: All classes except Recon and Juggernaut<sup id="fnref:15"><a class="footnote-ref" href="#fn:15">15</a></sup>.</p>
 
-<h2 id="technical-notes">Technical notes<a class="headerlink" href="#technical-notes" title="Permanent link">&para;</a></h2>
-<ul><li>Slowest movement scale of any loadout gun (0.675).</li><li>Draws tracers <sup id="fnref:16"><a class="footnote-ref" href="#fn:16">16</a></sup>.</li></ul>
+<details class="note"><summary>Technical notes</summary><ul><li>Slowest movement scale of any loadout gun (0.675).</li><li>Draws tracers <sup id="fnref:16"><a class="footnote-ref" href="#fn:16">16</a></sup>.</li></ul></details>
 
 <h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
 <div class="footnote references"><ol><li id="fn:1"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/game/neo/scripts/weapon_pz.txt#L15"><code>game/neo/scripts/weapon_pz.txt:15</code></a>&nbsp;<a class="footnote-backref" href="#fnref:1" title="Jump back to citation 1">&#8617;</a></p></li><li id="fn:2"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_gamerules.cpp#L53"><code>src/game/shared/neo/neo_gamerules.cpp:53</code></a>&nbsp;<a class="footnote-backref" href="#fnref:2" title="Jump back to citation 2">&#8617;</a>&nbsp;<a class="footnote-backref" href="#fnref2:2" title="Jump back to citation 2">&#8617;</a></p></li><li id="fn:3"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/game/neo/scripts/weapon_pz.txt#L17"><code>game/neo/scripts/weapon_pz.txt:17</code></a>&nbsp;<a class="footnote-backref" href="#fnref:3" title="Jump back to citation 3">&#8617;</a>&nbsp;<a class="footnote-backref" href="#fnref2:3" title="Jump back to citation 3">&#8617;</a></p></li><li id="fn:4"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/game/neo/scripts/weapon_pz.txt#L21"><code>game/neo/scripts/weapon_pz.txt:21</code></a>&nbsp;<a class="footnote-backref" href="#fnref:4" title="Jump back to citation 4">&#8617;</a></p></li><li id="fn:5"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/game/neo/scripts/weapon_pz.txt#L16"><code>game/neo/scripts/weapon_pz.txt:16</code></a>&nbsp;<a class="footnote-backref" href="#fnref:5" title="Jump back to citation 5">&#8617;</a>&nbsp;<a class="footnote-backref" href="#fnref2:5" title="Jump back to citation 5">&#8617;</a></p></li><li id="fn:6"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/weapons/weapon_pz.h#L40"><code>src/game/shared/neo/weapons/weapon_pz.h:40</code></a>&nbsp;<a class="footnote-backref" href="#fnref:6" title="Jump back to citation 6">&#8617;</a></p></li><li id="fn:7"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/player.cpp#L197"><code>src/game/server/player.cpp:197</code></a>&nbsp;<a class="footnote-backref" href="#fnref:7" title="Jump back to citation 7">&#8617;</a></p></li><li id="fn:8"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/player.cpp#L198"><code>src/game/server/player.cpp:198</code></a>&nbsp;<a class="footnote-backref" href="#fnref:8" title="Jump back to citation 8">&#8617;</a></p></li><li id="fn:9"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/player.cpp#L199"><code>src/game/server/player.cpp:199</code></a>&nbsp;<a class="footnote-backref" href="#fnref:9" title="Jump back to citation 9">&#8617;</a></p></li><li id="fn:10"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/player.cpp#L200"><code>src/game/server/player.cpp:200</code></a>&nbsp;<a class="footnote-backref" href="#fnref:10" title="Jump back to citation 10">&#8617;</a></p></li><li id="fn:11"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/server/player.cpp#L201"><code>src/game/server/player.cpp:201</code></a>&nbsp;<a class="footnote-backref" href="#fnref:11" title="Jump back to citation 11">&#8617;</a></p></li><li id="fn:12"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/weapons/weapon_neobasecombatweapon.cpp#L174"><code>src/game/shared/neo/weapons/weapon_neobasecombatweapon.cpp:174-178</code></a>&nbsp;<a class="footnote-backref" href="#fnref:12" title="Jump back to citation 12">&#8617;</a></p></li><li id="fn:13"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/game/neo/scripts/weapon_pz.txt#L48"><code>game/neo/scripts/weapon_pz.txt:48</code></a>&nbsp;<a class="footnote-backref" href="#fnref:13" title="Jump back to citation 13">&#8617;</a></p></li><li id="fn:14"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/neo_weapon_loadout.cpp#L48"><code>src/game/shared/neo/neo_weapon_loadout.cpp:48</code></a>&nbsp;<a class="footnote-backref" href="#fnref:14" title="Jump back to citation 14">&#8617;</a></p></li><li id="fn:15"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/weapons/weapon_pz.cpp#L40"><code>src/game/shared/neo/weapons/weapon_pz.cpp:40-43</code></a>&nbsp;<a class="footnote-backref" href="#fnref:15" title="Jump back to citation 15">&#8617;</a></p></li><li id="fn:16"><p><a href="https://github.com/NeotokyoRebuild/neo/blob/120006db/src/game/shared/neo/weapons/weapon_pz.h#L43"><code>src/game/shared/neo/weapons/weapon_pz.h:43</code></a>&nbsp;<a class="footnote-backref" href="#fnref:16" title="Jump back to citation 16">&#8617;</a></p></li></ol></div>
