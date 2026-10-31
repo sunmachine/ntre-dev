@@ -616,7 +616,8 @@ actual speed = GetNormSpeed * weapon scale * stance modifier</pre>
   <text class="f-lbl" x="590" y="252">0.5</text>
   <line class="s-silent-edge" x1="338.7" y1="46" x2="338.7" y2="174"/>
   <text class="f-lblfix" x="334.7" y="40" text-anchor="end">silent up to 0.825</text>
-  <text class="f-bandt" x="342.7" y="40">turning: up to 1.1625</text>
+  <text class="f-bandt" x="342.7" y="26">turning: up to 1.1625</text>
+  <text class="f-bandt" x="342.7" y="40">if the average stays under 0.825</text>
 </svg>
       <figcaption>The axis is normalized: ground speed divided by class run speed (<code>GetNormSpeed</code>) times the weapon's speed scale, so 1.0 is your run speed with that weapon. The threshold and every stance carry the same two factors, so one picture is exact for every class and weapon. Green band: silent. Dashed band: speed a turn can reach and stay silent, while the average ground velocity is under 0.825. Sprinting never gets it. Red marks make footsteps, at the volume on the right. Below 50 u/s no posture makes footsteps.</figcaption>
     </figure>
