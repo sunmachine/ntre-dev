@@ -715,15 +715,6 @@ body {
   width: min(100%, 26rem);
   height: auto;
 }
-.md-typeset .home-facts {
-  font-family: var(--md-code-font-family);
-  font-size: 0.66rem;
-  color: var(--ntre-muted);
-}
-.md-typeset .home-facts b {
-  color: var(--ntre-text-strong);
-  font-weight: 500;
-}
 /* The wordmark is white on transparent; give it a dark plate in light mode. */
 [data-md-color-scheme="default"] .md-typeset .home-wordmark img {
   padding: 0.8rem 1rem;
