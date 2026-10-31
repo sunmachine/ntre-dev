@@ -828,7 +828,7 @@ loud if           sprinting</pre>
   </section>
 
   <section class="problem" id="crouch" aria-labelledby="crouch-h">
-    <div class="problem-head"><h3 id="crouch-h"><span class="secno">3.1</span>Crouched silent movement threshold</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/6c425b41">commit 6c425b41</a></div>
+    <div class="problem-head"><h3 id="crouch-h"><span class="secno">3.1</span>Crouched silent movement threshold</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/fc3f5880">commit fc3f5880</a></div>
     <p><strong>Formula part 1, crouched line.</strong> Crouching used to be silent only while also aiming or holding +walk, so plain crouching was audible. The limit is now the player's own crouching speed plus 10% headroom, including weapon slowdown. That is the same limit as 0.825 of run speed in the <a href="#formula">formula</a>.</p>
     <figure class="figure">
       <svg viewBox="0 0 660 250" role="img" aria-labelledby="crouch-svg-t crouch-svg-d">
@@ -903,7 +903,7 @@ if (IsInSilentMoveMode() &amp;&amp; !isOnLadder)
         return false;
     <span class="cm">// turning and switching keys, see Turning below</span>
 }</pre>
-    <p class="srcline"><span class="lbl">Source at 72aa4afc</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/neo/neo_player_shared.cpp#L366-L375">neo_player_shared.cpp:366-375</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/neo/neo_player_shared.cpp#L378-L442">neo_player_shared.cpp:378-442</a></p>
+    <p class="srcline"><span class="lbl">Source at 7077a8e3</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/7077a8e3/src/game/shared/neo/neo_player_shared.cpp#L366-L375">neo_player_shared.cpp:366-375</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/7077a8e3/src/game/shared/neo/neo_player_shared.cpp#L378-L442">neo_player_shared.cpp:378-442</a></p>
       </div>
     </div>
     <div class="cols">
@@ -915,7 +915,7 @@ if (IsInSilentMoveMode() &amp;&amp; !isOnLadder)
   </section>
 
   <section class="problem" id="held" aria-labelledby="held-h">
-    <div class="problem-head"><h3 id="held-h"><span class="secno">3.2</span>Held step when starting a crouch, walk or aim</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/2c9ae614">commit 2c9ae614</a><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/8dea2aa2">commit 8dea2aa2</a></div>
+    <div class="problem-head"><h3 id="held-h"><span class="secno">3.2</span>Held step when starting a crouch, walk or aim</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/17214792">commit 17214792</a><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/217510f8">commit 217510f8</a></div>
     <p><strong>Formula part 2.</strong> Side-stepping at normal speed and pressing crouch often plays one more footstep. The game only counts a player as crouched once the 0.4 s crouch animation finishes, and a running step fires every 300 ms, so one step almost always lands in between. Walking settles in about 50 ms and is rarely affected, but follows the same rule so both keys behave alike.</p>
     <figure class="figure">
       <svg viewBox="0 0 660 212" role="img" aria-labelledby="entry-now-t entry-now-d">
@@ -1024,18 +1024,18 @@ if (IsInSilentMoveMode() &amp;&amp; !isOnLadder)
       <div class="panel">
         <span class="label">Other players get the same answer</span>
         <p>Each of the three footstep deciders runs this rule itself, so each needs to know when crouch, walk or aim is held. Walk and aim already are: <code>m_fIsWalking</code> and <code>m_bInAim</code> are sent to every client in NEO (<code>hl2mp_player.cpp:112</code>, <code>neo_player.cpp</code>). For crouch, the engine already defines <code>FL_ANIMDUCKING</code>, "in the process of crouching" (<code>public/const.h:150</code>), inside the <code>m_fFlags</code> every client receives. Nothing in this codebase set it before. The branch sets it while crouch is held (<code>CGameMovement::Duck</code>), which needs no new network data.</p>
-    <p class="srcline"><span class="lbl">Source at 72aa4afc</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/gamemovement.cpp#L4721-L4729">gamemovement.cpp:4721-4729</a></p>
+    <p class="srcline"><span class="lbl">Source at 7077a8e3</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/7077a8e3/src/game/shared/gamemovement.cpp#L4721-L4729">gamemovement.cpp:4721-4729</a></p>
       </div>
       <div class="panel">
         <span class="label">Limits</span>
         <p>Other clients see press and release about one snapshot late, so a penalty step can sound a few tens of milliseconds later for them than for the player. A second step before settling plays the earlier held one and holds the new one, so a crouch that never settles cannot skip a step either.</p>
       </div>
     </div>
-    <p class="srcline"><span class="lbl">Source at 72aa4afc</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/neo/neo_player_shared.cpp#L545-L683">neo_player_shared.cpp:545-683</a></p>
+    <p class="srcline"><span class="lbl">Source at 7077a8e3</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/7077a8e3/src/game/shared/neo/neo_player_shared.cpp#L545-L683">neo_player_shared.cpp:545-683</a></p>
   </section>
 
   <section class="problem" id="turning" aria-labelledby="turning-h">
-    <div class="problem-head"><h3 id="turning-h"><span class="secno">3.3</span>Turning and key switching while crouched</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/a2d1107e">commit a2d1107e</a></div>
+    <div class="problem-head"><h3 id="turning-h"><span class="secno">3.3</span>Turning and key switching while crouched</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/e8ad4c2a">commit e8ad4c2a</a></div>
     <p>Holding a movement key while turning the view, or changing direction such as W+D to W+A, really raises ground speed: acceleration builds toward the new direction faster than friction removes the old one. The gain reaches about 54% of crouching speed at 300° per second, far more than the 10% headroom, so looking around while crouching made footsteps. On master, one play pass logged 13 footsteps from turning, at 140.5 to 156.5 u/s. The <a href="#formula">turning chart</a> in section 2.1 shows a turn against wiggling.</p>
     <div class="cols">
       <div class="panel fix">
@@ -1051,7 +1051,7 @@ if (!m_fIsSprinting &amp;&amp;
     m_vecFootstepAvgVelocity.Length2D() &lt;=
         flNormSpeed * FS_SILENT_SPEED_FRACTION)
     return false;</pre>
-    <p class="srcline"><span class="lbl">Source at 72aa4afc</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/neo/neo_player_shared.cpp#L427-L438">neo_player_shared.cpp:427-438</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/neo/neo_player_shared.cpp#L517-L529">neo_player_shared.cpp:517-529</a></p>
+    <p class="srcline"><span class="lbl">Source at 7077a8e3</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/7077a8e3/src/game/shared/neo/neo_player_shared.cpp#L427-L438">neo_player_shared.cpp:427-438</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/7077a8e3/src/game/shared/neo/neo_player_shared.cpp#L517-L529">neo_player_shared.cpp:517-529</a></p>
         <p>The average is the ground velocity blended over 0.4 s, about one step interval. A turn keeps rotating the velocity, so the average stays under the limit however long the turn lasts. Wiggle-walking, a slide or a push really covers ground faster, and the average follows it over the limit.</p>
       </div>
       <div class="panel">
@@ -1080,7 +1080,7 @@ if (!m_fIsSprinting &amp;&amp;
 
 
   <section class="problem" id="shared" aria-labelledby="shared-h">
-    <div class="problem-head"><h3 id="shared-h"><span class="secno">3.4</span>One silent threshold for crouch, walk and aim</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/5f9a5889">commit 5f9a5889</a></div>
+    <div class="problem-head"><h3 id="shared-h"><span class="secno">3.4</span>One silent threshold for crouch, walk and aim</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/b1f46c30">commit b1f46c30</a></div>
     <p>Walking speed and crouching speed are the same: class speed × weapon × 0.75. Master still measured standing walk and aim against 0.7 × class run speed, which ignores the weapon. The headroom swung from about 10% to 38% by gun, had no allowance for turning, and the BALC was always audible. Walking and aiming now use the crouched rule.</p>
     <div class="table-wrap">
       <table>
@@ -1112,12 +1112,12 @@ bool CNEO_Player::IsInSilentMoveMode() const
 
 if (IsInSilentMoveMode() &amp;&amp; !isOnLadder)
     <span class="cm">// silent up to 1.1 c, turning as in 3.3</span></pre>
-    <p class="srcline"><span class="lbl">Source at 72aa4afc</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/neo/neo_player_shared.cpp#L444-L450">neo_player_shared.cpp:444-450</a></p>
+    <p class="srcline"><span class="lbl">Source at 7077a8e3</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/7077a8e3/src/game/shared/neo/neo_player_shared.cpp#L444-L450">neo_player_shared.cpp:444-450</a></p>
     <p class="muted">Aiming moves at 0.6 × speed, slower than walking, so it keeps about 37% headroom under the shared limit, as on master. Ladders are always audible.</p>
   </section>
 
   <section class="problem" id="volume" aria-labelledby="volume-h">
-    <div class="problem-head"><h3 id="volume-h"><span class="secno">3.5</span>Step volume by movement mode</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/0869a624">commit 0869a624</a></div>
+    <div class="problem-head"><h3 id="volume-h"><span class="secno">3.5</span>Step volume by movement mode</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/efe6748b">commit efe6748b</a></div>
     <p>The SDK picks a soft or loud step volume by comparing speed with a fixed run speed, 80 u/s crouched and 220 u/s standing, then scales crouched steps to 65%. Those numbers fit the SDK's own crouch, a third of run speed (about 63 u/s), so its crouched steps stayed under 80 and soft. NEO crouches at 0.75 of run speed, so every crouching speed passes 80 and gets the loud volume. Standing, an assault sprint stays under 220 with every weapon and a recon sprint only passes it with a 0.85 weapon, so most sprints get the soft one.</p>
     <div class="table-wrap">
       <table>
@@ -1154,12 +1154,12 @@ bool CNEO_Player::IsLoudFootstep() const
 fvol = pNeoPlayer-&gt;GetSurfaceStepVolume(psurface, bLoudStep); <span class="cm">// 0.5 or 0.2 on concrete</span>
 if (GetFlags() &amp; FL_DUCKING)
     fvol *= NEO_FS_CROUCH_VOLUME_SCALE; <span class="cm">// 0.65</span></pre>
-    <p class="srcline"><span class="lbl">Source at 72aa4afc</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/neo/neo_player_shared.cpp#L473-L479">neo_player_shared.cpp:473-479</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/baseplayer_shared.cpp#L621">baseplayer_shared.cpp:621</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/baseplayer_shared.cpp#L728">baseplayer_shared.cpp:728</a></p>
+    <p class="srcline"><span class="lbl">Source at 7077a8e3</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/7077a8e3/src/game/shared/neo/neo_player_shared.cpp#L473-L479">neo_player_shared.cpp:473-479</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/7077a8e3/src/game/shared/baseplayer_shared.cpp#L621">baseplayer_shared.cpp:621</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/7077a8e3/src/game/shared/baseplayer_shared.cpp#L728">baseplayer_shared.cpp:728</a></p>
     <p class="muted">Other surfaces keep their own soft and loud pair, such as dirt at 0.25 and 0.55. The step interval still follows speed, so step timing does not change. The sprint state and the crouch flag reach every client, so the server, the stepping player and everyone listening pick the same volume.</p>
   </section>
 
   <section class="problem" id="landing" aria-labelledby="landing-h">
-    <div class="problem-head"><h3 id="landing-h"><span class="secno">3.6</span>Landing step</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/2768f2d7">commit 2768f2d7</a><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/72aa4afc">commit 72aa4afc</a></div>
+    <div class="problem-head"><h3 id="landing-h"><span class="secno">3.6</span>Landing step</h3><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/2c46a035">commit 2c46a035</a><a class="chip fixed" href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/7077a8e3">commit 7077a8e3</a></div>
     <p>A flat jump falls too slowly for the engine's landing sound, which needs 350 u/s of fall. The footstep players hear on landing is the regular step whose timer ran out in the air, firing on the first tick back on the ground. Two things had broken that. Since #2151 <code>UpdateStepSound</code> restarted the step timer even in the air, so the first step after landing came at a random phase up to half a second later. And with crouching a silent mode, a crouched landing at crouching speed made no sound at all: a silent bunny hop.</p>
     <div class="cols">
       <div class="panel bug">
@@ -1171,7 +1171,7 @@ if (GetFlags() &amp; FL_DUCKING)
         <p>The step timer waits at zero while off the ground, as in the SDK, so after a jump the step lands on the landing tick. A landing after at least 0.1 s in the air marks the next step decision as never silent, which also covers short drops whose timer has not run out.</p>
       </div>
     </div>
-    <p class="srcline"><span class="lbl">Source at 72aa4afc</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/baseplayer_shared.cpp#L576">baseplayer_shared.cpp:576</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/72aa4afc/src/game/shared/neo/neo_player_shared.cpp#L496-L513">neo_player_shared.cpp:496-513</a></p>
+    <p class="srcline"><span class="lbl">Source at 7077a8e3</span><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/7077a8e3/src/game/shared/baseplayer_shared.cpp#L576">baseplayer_shared.cpp:576</a><a class="chip src" href="https://github.com/sunmachine/ntre-dev/blob/7077a8e3/src/game/shared/neo/neo_player_shared.cpp#L496-L513">neo_player_shared.cpp:496-513</a></p>
     <p class="muted">A standing jump in place still makes nothing, since speed is under 50 u/s on landing, as before. The engine's hard-landing sound is unchanged.</p>
   </section>
 
@@ -1368,23 +1368,23 @@ nb_stop 0; bot_mimic 1</pre>
         <tbody>
           <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/8c1dea91">8c1dea91</a></td><td>Move the SDK step volume table into GetSurfaceStepVolume</td><td class="muted">refactor, no behaviour change</td></tr>
           <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/0c267fac">0c267fac</a></td><td>Name master's walk-or-aim silent rule</td><td class="muted">refactor, no behaviour change</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/a32a9e56">a32a9e56</a></td><td>Name the slowest class sprint modifier</td><td class="muted">refactor, no behaviour change</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/6f50c665">6f50c665</a></td><td>Let every client see a crouch from the key press</td><td class="muted">groundwork, nothing players hear changes</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/2768f2d7">2768f2d7</a></td><td>Play the landing step on the tick you land</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/6c425b41">6c425b41</a></td><td>Make crouching silent</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/5f9a5889">5f9a5889</a></td><td>Make walking silent with every weapon</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/a2d1107e">a2d1107e</a></td><td>Fix rapid look and movement changes causing an accidental footstep</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/0869a624">0869a624</a></td><td>Stop crouched footsteps being louder than running</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/2c9ae614">2c9ae614</a></td><td>Hold the first footstep after pressing crouch, walk or aim</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/8dea2aa2">8dea2aa2</a></td><td>Tapping crouch, walk or aim delays a step, never skips one</td><td class="good">footsteps/sound-consistency</td></tr>
-          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/72aa4afc">72aa4afc</a></td><td>Keep the step on landing audible in every posture</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/d6fee0a0">d6fee0a0</a></td><td>Name the slowest class sprint modifier</td><td class="muted">refactor, no behaviour change</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/e8d429c7">e8d429c7</a></td><td>Let every client see a crouch from the key press</td><td class="muted">groundwork, nothing players hear changes</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/2c46a035">2c46a035</a></td><td>Play the landing step on the tick you land</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/fc3f5880">fc3f5880</a></td><td>Make crouching silent</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/b1f46c30">b1f46c30</a></td><td>Make walking silent with every weapon</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/e8ad4c2a">e8ad4c2a</a></td><td>Fix rapid look and movement changes causing an accidental footstep</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/efe6748b">efe6748b</a></td><td>Stop crouched footsteps being louder than running</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/17214792">17214792</a></td><td>Hold the first footstep after pressing crouch, walk or aim</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/217510f8">217510f8</a></td><td>Tapping crouch, walk or aim delays a step, never skips one</td><td class="good">footsteps/sound-consistency</td></tr>
+          <tr><td class="commit"><a href="https://github.com/NeotokyoRebuild/neo/pull/2264/commits/7077a8e3">7077a8e3</a></td><td>Keep the step on landing audible in every posture</td><td class="good">footsteps/sound-consistency</td></tr>
           <tr><td class="commit">&ndash;</td><td>Start other players' ground surface trace clear of floors and walls</td><td class="muted">-docs only</td></tr>
           <tr><td class="commit">&ndash;</td><td><code>neo_footstep_debug</code> instrumentation</td><td class="muted">-docs only</td></tr>
           <tr><td class="commit">&ndash;</td><td>An experimental crouched threshold setting</td><td class="muted">-docs only</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="muted">The branch is under review as <a href="https://github.com/NeotokyoRebuild/neo/pull/2264">PR #2264, Make footstep sounds consistent</a>. Commits in branch order, as of 30 October 2026, after the branch was rebased onto current master. Hashes and source line links point at branch head 72aa4afc on the PR fork. The server footstep origin fix (#2230) has merged and is no longer carried on the branch. footsteps/sound-consistency-docs sits on top of the PR branch with the ground surface trace fix, the logging, the experiment and these docs.</p>
+    <p class="muted">The branch is under review as <a href="https://github.com/NeotokyoRebuild/neo/pull/2264">PR #2264, Make footstep sounds consistent</a>. Commits in branch order, as of 30 October 2026, after the branch was rebased onto current master. Hashes and source line links point at branch head 7077a8e3 on the PR fork. The server footstep origin fix (#2230) has merged and is no longer carried on the branch. footsteps/sound-consistency-docs sits on top of the PR branch with the ground surface trace fix, the logging, the experiment and these docs.</p>
   </section>
 
 
