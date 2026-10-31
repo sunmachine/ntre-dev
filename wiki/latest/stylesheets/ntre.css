@@ -1,0 +1,760 @@
+/* NT;RE Wiki skin for Material for MkDocs.
+
+   Colours follow the original prototype (prototype/static/style.css): neutral
+   greys, white text, a cool desaturated-cyan underline, and the brand's red
+   kept to small dots. Red is never link text, because on a wiki red text
+   means a missing page. The dark background is softened from the
+   prototype's #111213. Hairlines, no shadows or gradients; blocks get an
+   8px radius.
+
+   --ntre-* tokens are the palette. The palette table on the Colours & type
+   page is read from the dark block below, so keep one token per line. */
+
+[data-md-color-scheme="slate"] {
+  --ntre-bg: #1b1c1f;
+  --ntre-surface-2: #222327;
+  --ntre-surface-3: #2a2b30;
+  --ntre-border: #2d2e33;
+  --ntre-border-strong: #3c3d43;
+  --ntre-text: #d4d4d6;
+  --ntre-text-strong: #f4f4f5;
+  --ntre-muted: #8f9096;
+  --ntre-red: #ff0000;
+  --ntre-red-soft: #c62a1d;
+  --ntre-underline: #a2bec3;
+  --ntre-underline-hot: #d5eef2;
+  --ntre-jinrai: #92bd7f;
+  --ntre-nsf: #86a6d4;
+  --ntre-warn: #d8ad6a;
+  --ntre-danger: #ff8a73;
+  --ntre-bar: #9a9ba0;
+  --ntre-underline-rest: rgba(162, 190, 195, 0.3);
+
+  --md-hue: 225;
+  --md-default-bg-color: var(--ntre-bg);
+  --md-default-fg-color: var(--ntre-text);
+  --md-default-fg-color--light: var(--ntre-muted);
+  --md-default-fg-color--lighter: rgba(212, 212, 214, 0.32);
+  --md-default-fg-color--lightest: rgba(212, 212, 214, 0.12);
+  --md-typeset-color: var(--ntre-text);
+  --md-code-bg-color: var(--ntre-surface-2);
+  --md-code-fg-color: #e2e2e4;
+  --md-footer-bg-color: var(--ntre-bg);
+  --md-footer-bg-color--dark: var(--ntre-bg);
+  --md-footer-fg-color--light: var(--ntre-muted);
+  --md-footer-fg-color--lighter: var(--ntre-muted);
+}
+
+[data-md-color-scheme="default"] {
+  --ntre-bg: #fafafa;
+  --ntre-surface-2: #f1f2f4;
+  --ntre-surface-3: #e8eaed;
+  --ntre-border: #e0e2e6;
+  --ntre-border-strong: #cbcfd5;
+  --ntre-text: #2a2e34;
+  --ntre-text-strong: #111317;
+  --ntre-muted: #646b74;
+  --ntre-red: #e00000;
+  --ntre-red-soft: #c62a1d;
+  --ntre-underline: #5d8c94;
+  --ntre-underline-hot: #2f6a74;
+  --ntre-jinrai: #4b7f35;
+  --ntre-nsf: #3a64a8;
+  --ntre-warn: #8a6420;
+  --ntre-danger: #a3473d;
+  --ntre-bar: #9aa2ac;
+  --ntre-underline-rest: rgba(93, 140, 148, 0.35);
+
+  --md-default-bg-color: var(--ntre-bg);
+  --md-default-fg-color: var(--ntre-text);
+  --md-default-fg-color--light: var(--ntre-muted);
+  --md-default-fg-color--lighter: rgba(42, 46, 52, 0.32);
+  --md-default-fg-color--lightest: rgba(42, 46, 52, 0.1);
+  --md-typeset-color: var(--ntre-text);
+  --md-code-bg-color: var(--ntre-surface-2);
+  --md-code-fg-color: #24272c;
+  --md-footer-bg-color: var(--ntre-bg);
+  --md-footer-bg-color--dark: var(--ntre-bg);
+  --md-footer-fg-color: var(--ntre-text);
+  --md-footer-fg-color--light: var(--ntre-muted);
+  --md-footer-fg-color--lighter: var(--ntre-muted);
+}
+
+/* The header sits on the page colour, not a coloured bar. */
+[data-md-color-primary="custom"] {
+  --md-primary-fg-color: var(--ntre-bg);
+  --md-primary-fg-color--light: var(--ntre-surface-2);
+  --md-primary-fg-color--dark: var(--ntre-bg);
+  --md-primary-bg-color: var(--ntre-text-strong);
+  --md-primary-bg-color--light: var(--ntre-muted);
+  --md-typeset-a-color: var(--ntre-text-strong);
+}
+[data-md-color-accent="custom"] {
+  --md-accent-fg-color: var(--ntre-underline);
+  --md-accent-fg-color--transparent: rgba(162, 190, 195, 0.1);
+  --md-accent-bg-color: var(--ntre-bg);
+  --md-accent-bg-color--light: var(--ntre-surface-2);
+}
+
+:root {
+  --ntre-radius: 8px;
+  --ntre-radius-sm: 6px;
+  --md-text-font-features: "cv11", "ss01";
+}
+
+body {
+  font-feature-settings: "cv11", "ss01";
+}
+
+/* ---------- Header and footer ---------- */
+
+.md-header,
+.md-header--shadow {
+  box-shadow: none;
+  border-bottom: 1px solid var(--ntre-border);
+}
+.md-header__button.md-logo {
+  padding: 0.3rem 0.2rem 0.3rem 0.4rem;
+}
+.md-header__button.md-logo .nt-mark {
+  display: block;
+  width: auto;
+  height: 1.3rem;
+  color: var(--ntre-text-strong);
+}
+.md-header__topic:first-child {
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+.md-search__form {
+  border-radius: var(--ntre-radius);
+  background: var(--ntre-surface-2);
+  box-shadow: none;
+}
+.md-search__form:hover {
+  background: var(--ntre-surface-3);
+}
+[data-md-toggle="search"]:checked ~ .md-header .md-search__form {
+  border-radius: var(--ntre-radius) var(--ntre-radius) 0 0;
+}
+.md-search__output {
+  border-radius: 0 0 var(--ntre-radius) var(--ntre-radius);
+}
+.md-version__current {
+  border: 1px solid var(--ntre-border-strong);
+  border-radius: var(--ntre-radius-sm);
+  padding: 0.05rem 0.45rem;
+}
+.md-version__list {
+  border-radius: var(--ntre-radius);
+  border: 1px solid var(--ntre-border);
+  box-shadow: none;
+  background: var(--ntre-surface-2);
+}
+
+.md-footer {
+  border-top: 1px solid var(--ntre-border);
+}
+.md-footer-meta {
+  border-top: 1px solid var(--ntre-border);
+}
+.md-copyright {
+  font-size: 0.6rem;
+  line-height: 1.6;
+}
+
+/* ---------- Navigation ---------- */
+
+.md-nav {
+  font-size: 0.7rem;
+}
+.md-nav__link {
+  border-radius: var(--ntre-radius-sm);
+}
+/* The site title already sits in the header; the drawer keeps it on small screens. */
+@media screen and (min-width: 76.25em) {
+  .md-nav--primary > .md-nav__title {
+    display: none;
+  }
+}
+.md-nav--primary .md-nav__link--active,
+.md-nav--primary .md-nav__link--active:hover {
+  color: var(--ntre-text-strong);
+  font-weight: 600;
+}
+/* The brand's red dot beside the current page. */
+.md-nav--primary a.md-nav__link--active:not(.md-nav--secondary .md-nav__link)::after {
+  content: "";
+  flex-shrink: 0;
+  align-self: center;
+  width: 6px;
+  height: 6px;
+  margin-left: 0.4rem;
+  border-radius: 50%;
+  background: var(--ntre-red);
+  animation: ntre-dot-in 220ms ease-out 120ms both;
+}
+@keyframes ntre-dot-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+.md-nav--secondary .md-nav__title {
+  font-weight: 600;
+  color: var(--ntre-muted);
+}
+.md-nav--secondary .md-nav__link--active {
+  color: var(--ntre-text-strong);
+}
+
+/* Work-in-progress modes and their weapons recede, as in stat tables. */
+.md-nav--primary .md-nav__link[href$="/vip/"],
+.md-nav--primary .md-nav__link[href$="/juggernaut/"],
+.md-nav--primary .md-nav__link[href$="/smac/"],
+.md-nav--primary .md-nav__link[href$="/balc/"] {
+  opacity: 0.55;
+}
+
+/* ---------- Type ---------- */
+
+.md-typeset {
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4 {
+  color: var(--ntre-text-strong);
+  letter-spacing: -0.015em;
+}
+.md-typeset h1 {
+  margin: 0 0 1rem;
+  font-size: 1.9em;
+  font-weight: 650;
+  line-height: 1.2;
+}
+/* Page titles end in the brand's raised red dot, as in "neotokyo°". The
+   title's permalink would sit between text and dot, so titles go without. */
+.md-typeset h1 .headerlink {
+  display: none;
+}
+.md-typeset h1::after {
+  content: "";
+  display: inline-block;
+  width: 0.2em;
+  height: 0.2em;
+  margin-left: 0.12em;
+  vertical-align: 0.55em;
+  border-radius: 50%;
+  background: var(--ntre-red);
+}
+.md-typeset h2 {
+  /* Flow beside floated infoboxes; overflow keeps the rule from running under them. */
+  overflow: hidden;
+  margin: 2em 0 0.7em;
+  padding-bottom: 0.35em;
+  border-bottom: 1px solid var(--ntre-border);
+  font-size: 1.3em;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.md-typeset h3 {
+  margin: 1.6em 0 0.5em;
+  font-size: 1.05em;
+  font-weight: 600;
+}
+.md-typeset hr {
+  border-bottom-color: var(--ntre-border);
+}
+.md-typeset code {
+  border-radius: 4px;
+  padding: 0.05em 0.35em;
+  font-size: 0.86em;
+}
+.md-typeset pre > code {
+  border-radius: var(--ntre-radius);
+}
+.md-typeset kbd {
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px var(--ntre-border-strong) inset;
+  background: var(--ntre-surface-2);
+  color: var(--ntre-text-strong);
+}
+
+/* ---------- Links ----------
+   Two background layers instead of text-decoration, so the hover can
+   animate: the fill grows left to right, snaps, pulses once and settles. */
+
+@property --ntre-ul-c {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #a2bec3;
+}
+
+.md-typeset a:not(.footnote-ref):not(.footnote-backref):not(.headerlink):not(.md-button):not(.new) {
+  color: var(--ntre-text-strong);
+  --ntre-ul-c: var(--ntre-underline);
+  background-image: linear-gradient(var(--ntre-ul-c), var(--ntre-ul-c)),
+    linear-gradient(var(--ntre-underline-rest), var(--ntre-underline-rest));
+  background-repeat: no-repeat;
+  background-position: left bottom, left bottom;
+  background-size: 0% 1px, 100% 1px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.md-typeset a:not(.footnote-ref):not(.footnote-backref):not(.headerlink):not(.md-button):not(.new):is(:hover, :focus-visible) {
+  color: var(--ntre-text-strong);
+  animation: ntre-underline-fill 400ms forwards;
+}
+@keyframes ntre-underline-fill {
+  0% {
+    background-size: 0% 1px, 100% 1px;
+    animation-timing-function: cubic-bezier(0.55, 0, 0.9, 0.45);
+  }
+  42% {
+    --ntre-ul-c: var(--ntre-underline);
+    background-size: 100% 1px, 100% 1px;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+  60% {
+    --ntre-ul-c: var(--ntre-underline-hot);
+    background-size: 100% 2.5px, 100% 1px;
+    animation-timing-function: ease-out;
+  }
+  100% {
+    --ntre-ul-c: var(--ntre-underline);
+    background-size: 100% 1px, 100% 1px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .md-typeset a:is(:hover, :focus-visible) {
+    animation: none !important;
+    background-size: 100% 1px, 100% 1px;
+  }
+  .md-nav--primary .md-nav__link--active::after {
+    animation: none;
+  }
+}
+/* A link to a page that doesn't exist yet. */
+.md-typeset a.new {
+  color: var(--ntre-danger);
+  text-decoration: underline dashed;
+  text-underline-offset: 3px;
+  cursor: help;
+}
+
+/* ---------- Citations ---------- */
+
+.md-typeset .footnote-ref {
+  font-family: var(--md-code-font-family);
+  font-weight: 400;
+  color: var(--ntre-muted);
+}
+.md-typeset .footnote-ref::before {
+  content: "[";
+}
+.md-typeset .footnote-ref::after {
+  content: "]";
+}
+.md-typeset .footnote-ref:hover {
+  color: var(--ntre-text-strong);
+}
+.md-typeset .footnote.references {
+  font-size: 0.64rem;
+  color: var(--ntre-muted);
+}
+.md-typeset .footnote.references code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+.md-typeset .footnote.references li {
+  margin-bottom: 0.15em;
+}
+
+/* ---------- Admonitions ----------
+   Neutral for notes; amber for anything quirky, unverified or in progress. */
+
+.md-typeset .admonition,
+.md-typeset details {
+  border: 1px solid var(--ntre-border-strong);
+  border-radius: var(--ntre-radius);
+  box-shadow: none;
+  background: var(--ntre-surface-2);
+  font-size: 0.72rem;
+}
+.md-typeset .admonition-title,
+.md-typeset summary {
+  border-radius: calc(var(--ntre-radius) - 1px) calc(var(--ntre-radius) - 1px) 0 0;
+  font-weight: 600;
+}
+.md-typeset :is(.note, .info, .abstract, .tip) > :is(.admonition-title, summary) {
+  background: var(--ntre-surface-3);
+}
+.md-typeset :is(.note, .info, .abstract, .tip) > :is(.admonition-title, summary)::before {
+  background-color: var(--ntre-underline);
+}
+.md-typeset :is(.admonition, details):is(.note, .info, .abstract, .tip) {
+  border-color: var(--ntre-border-strong);
+}
+.md-typeset :is(.admonition, details).warning {
+  border-color: color-mix(in srgb, var(--ntre-warn) 55%, transparent);
+}
+.md-typeset .warning > :is(.admonition-title, summary) {
+  background: color-mix(in srgb, var(--ntre-warn) 12%, transparent);
+}
+.md-typeset .warning > :is(.admonition-title, summary)::before {
+  background-color: var(--ntre-warn);
+}
+/* Untitled notes ("hatnotes"): a quiet aside. */
+.md-typeset .admonition:not(:has(> .admonition-title)) {
+  background: transparent;
+  color: var(--ntre-muted);
+}
+
+/* ---------- Tables ----------
+   Markdown tables and generated .wikitable tables share one look. */
+
+.md-typeset table:not([class]),
+.md-typeset table.wikitable {
+  display: table;
+  border: 1px solid var(--ntre-border);
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: var(--ntre-radius);
+  overflow: hidden;
+  font-size: 0.68rem;
+  background: transparent;
+}
+.md-typeset .table-wrap {
+  overflow-x: auto;
+  margin: 1em 0;
+}
+.md-typeset .table-wrap table.wikitable {
+  margin: 0;
+}
+.md-typeset table:not([class]) :is(th, td),
+.md-typeset table.wikitable :is(th, td) {
+  padding: 0.4rem 0.65rem;
+  border-top: 1px solid var(--ntre-border);
+  vertical-align: top;
+}
+.md-typeset table:not([class]) thead th,
+.md-typeset table.wikitable thead th {
+  border-top: none;
+  background: var(--ntre-surface-2);
+  color: var(--ntre-muted);
+  font-weight: 500;
+  white-space: nowrap;
+  text-align: left;
+}
+.md-typeset table:not([class]) tbody tr:hover,
+.md-typeset table.wikitable tbody tr:hover {
+  background: var(--ntre-surface-2);
+  box-shadow: none;
+}
+.md-typeset table.wikitable :is(td.num, th.num),
+.md-typeset table:not([class]) td[style*="right"] {
+  text-align: right;
+  font-family: var(--md-code-font-family);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.md-typeset table.wikitable thead th.num,
+.md-typeset table:not([class]) th[style*="right"] {
+  text-align: right;
+  font-family: var(--md-text-font-family);
+}
+.md-typeset table.wikitable tr.group th {
+  padding-top: 0.75rem;
+  background: transparent;
+  color: var(--ntre-text-strong);
+  font-weight: 600;
+  text-align: left;
+}
+.md-typeset table.wikitable caption,
+.md-typeset .table-caption {
+  caption-side: bottom;
+  padding: 0.45rem 0.1rem 0;
+  text-align: left;
+  font-size: 0.62rem;
+  line-height: 1.55;
+  color: var(--ntre-muted);
+}
+.md-typeset .table-caption {
+  margin-top: -0.6em;
+}
+.md-typeset .na,
+.md-typeset td.na {
+  color: var(--ntre-muted);
+}
+/* Key/value tables (no header row). */
+.md-typeset table.wikitable.kv td:first-child {
+  width: 7rem;
+  color: var(--ntre-muted);
+}
+.md-typeset table.wikitable.kv tr:first-child td {
+  border-top: none;
+}
+/* Comparison tables: keep weapon names on one line. */
+.md-typeset table.wikitable.compare td:first-child {
+  white-space: nowrap;
+}
+/* Headline stats: one row, read across. */
+.md-typeset table.stat-strip td {
+  color: var(--ntre-text-strong);
+  font-size: 1.05em;
+}
+
+/* Work-in-progress rows. */
+.md-typeset table.wikitable tr.wip td,
+.md-typeset .wip-cell {
+  opacity: 0.5;
+}
+.md-typeset table.wikitable tr.wip:hover td {
+  opacity: 0.8;
+}
+
+/* Inline stat bar: style="--v: 0.42" (0..1) */
+.md-typeset .bar {
+  display: inline-block;
+  width: 48px;
+  height: 4px;
+  margin-left: 8px;
+  vertical-align: middle;
+  background: var(--ntre-surface-3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.md-typeset .bar::before {
+  content: "";
+  display: block;
+  height: 100%;
+  width: calc(var(--v, 0) * 100%);
+  background: var(--ntre-bar);
+}
+
+/* ---------- Tags ---------- */
+
+.md-typeset .tag {
+  display: inline-block;
+  padding: 0 6px;
+  margin: 0 2px 2px 0;
+  border: 1px solid var(--ntre-border-strong);
+  border-radius: 5px;
+  font-family: var(--md-text-font-family);
+  font-size: 0.56rem;
+  line-height: 1.6;
+  color: var(--ntre-muted);
+  white-space: nowrap;
+  vertical-align: 0.1em;
+}
+.md-typeset .tag.wip {
+  border-style: dashed;
+  letter-spacing: 0.04em;
+}
+.md-typeset .tag:is(.recon, .assault, .support) {
+  color: var(--ntre-text);
+}
+.md-typeset .team-jinrai {
+  color: var(--ntre-jinrai);
+  font-weight: 600;
+}
+.md-typeset .team-nsf {
+  color: var(--ntre-nsf);
+  font-weight: 600;
+}
+
+/* ---------- Infobox ---------- */
+
+.md-typeset .infobox {
+  float: right;
+  clear: right;
+  width: 15rem;
+  margin: 0 0 1rem 1.6rem;
+  border: 1px solid var(--ntre-border);
+  border-radius: var(--ntre-radius);
+  overflow: hidden;
+  font-size: 0.66rem;
+}
+.md-typeset .infobox .ib-title {
+  padding: 0.6rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ntre-text-strong);
+}
+.md-typeset .infobox .ib-image,
+.md-typeset .infobox figure.ib-image {
+  width: auto;
+  max-width: none;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  margin: 0;
+  background: var(--ntre-surface-2);
+  color: var(--ntre-muted);
+  font-size: 0.6rem;
+  border-top: 1px solid var(--ntre-border);
+}
+.md-typeset .infobox table,
+.md-typeset .infobox table:not([class]) {
+  display: table;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  border-collapse: collapse;
+  font-size: inherit;
+}
+.md-typeset .infobox table :is(th, td) {
+  padding: 0.25rem 0.7rem;
+  vertical-align: top;
+  border-top: 1px solid var(--ntre-border);
+  background: transparent;
+}
+.md-typeset .infobox table th {
+  width: 46%;
+  text-align: left;
+  font-weight: 400;
+  color: var(--ntre-muted);
+}
+.md-typeset .infobox table td {
+  color: var(--ntre-text-strong);
+  font-family: var(--md-code-font-family);
+  font-size: 0.64rem;
+}
+.md-typeset .infobox table .ib-section th {
+  padding-top: 0.7rem;
+  padding-bottom: 0.2rem;
+  font-size: 0.6rem;
+  font-weight: 500;
+  color: var(--ntre-text);
+}
+.md-typeset figure.infobox {
+  padding: 0;
+}
+@media screen and (max-width: 44.984375em) {
+  .md-typeset .infobox {
+    float: none;
+    width: auto;
+    margin: 0 0 1rem;
+  }
+}
+
+/* ---------- Cards ---------- */
+
+.md-typeset .grid.cards > ul > li,
+.md-typeset .grid > .card {
+  border: 1px solid var(--ntre-border);
+  border-radius: var(--ntre-radius);
+  background: transparent;
+  box-shadow: none;
+  transition: border-color 200ms, background-color 200ms;
+}
+.md-typeset .grid.cards > ul > li:hover,
+.md-typeset .grid > .card:hover {
+  border-color: var(--ntre-border-strong);
+  background: var(--ntre-surface-2);
+  box-shadow: none;
+}
+.md-typeset .grid.cards > ul > li > :first-child {
+  margin-top: 0;
+}
+.md-typeset .grid.cards > ul > li > p:first-child strong {
+  color: var(--ntre-text-strong);
+}
+.md-typeset .grid.cards p {
+  font-size: 0.7rem;
+  color: var(--ntre-muted);
+}
+.md-typeset .grid.cards p:first-child {
+  font-size: 0.78rem;
+}
+.md-typeset .grid.cards .card-stat {
+  font-family: var(--md-code-font-family);
+  font-size: 0.6rem;
+  color: var(--ntre-muted);
+}
+.md-typeset .grid.cards > ul > li.wip,
+.md-typeset .grid.cards > ul > li:has(.tag.wip) {
+  opacity: 0.6;
+}
+.md-typeset .grid.cards > ul > li:has(.tag.wip):hover {
+  opacity: 1;
+}
+
+/* ---------- Main page ---------- */
+
+.md-typeset .home-wordmark {
+  margin: 0.4rem 0 1rem;
+}
+/* The wordmark carries its own red dots. */
+.md-typeset h1.home-wordmark::after {
+  display: none;
+}
+.md-typeset .home-wordmark img {
+  display: block;
+  width: min(100%, 26rem);
+  height: auto;
+}
+.md-typeset .home-facts {
+  font-family: var(--md-code-font-family);
+  font-size: 0.66rem;
+  color: var(--ntre-muted);
+}
+.md-typeset .home-facts b {
+  color: var(--ntre-text-strong);
+  font-weight: 500;
+}
+/* The wordmark is white on transparent; give it a dark plate in light mode. */
+[data-md-color-scheme="default"] .md-typeset .home-wordmark img {
+  padding: 0.8rem 1rem;
+  border-radius: var(--ntre-radius);
+  background: #1b1c1f;
+}
+
+/* ---------- Branding pages ---------- */
+
+.md-typeset .brand-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin: 0 0 1rem;
+}
+.md-typeset .brand-tile {
+  display: grid;
+  place-items: center;
+  min-height: 9rem;
+  padding: 1.4rem;
+  border: 1px solid var(--ntre-border);
+  border-radius: var(--ntre-radius);
+  background: #0a0a0b;
+  color: #f4f4f5;
+}
+.md-typeset .brand-tile.light {
+  background: #f4f4f5;
+  color: #111213;
+}
+.md-typeset .brand-tile :is(img, .nt-mark) {
+  display: block;
+  max-width: 100%;
+  max-height: 6rem;
+  height: auto;
+}
+.md-typeset .brand-tile .nt-mark {
+  width: 11rem;
+}
+.md-typeset .brand-tile.small img {
+  max-height: 3.2rem;
+}
+.md-typeset .swatch {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-right: 0.4rem;
+  vertical-align: -0.1rem;
+  border: 1px solid var(--ntre-border-strong);
+  border-radius: 3px;
+}
