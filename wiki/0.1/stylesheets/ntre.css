@@ -140,16 +140,32 @@ body {
 .md-search__output {
   border-radius: 0 0 var(--ntre-radius) var(--ntre-radius);
 }
+/* Version menu: secondary to the site title, at the size of the repo stats. */
+.md-version {
+  font-size: 0.6rem;
+}
 .md-version__current {
+  top: 0;
+  padding: 0.1rem 0.45rem;
   border: 1px solid var(--ntre-border-strong);
   border-radius: var(--ntre-radius-sm);
-  padding: 0.05rem 0.45rem;
+  color: var(--ntre-muted);
+}
+.md-version__current:hover {
+  color: var(--ntre-text-strong);
+}
+.md-version__alias {
+  margin-left: 0.25rem;
 }
 .md-version__list {
+  font-size: 0.64rem;
   border-radius: var(--ntre-radius);
   border: 1px solid var(--ntre-border);
   box-shadow: none;
   background: var(--ntre-surface-2);
+}
+.md-version__item {
+  line-height: 1.6rem;
 }
 
 .md-footer {
