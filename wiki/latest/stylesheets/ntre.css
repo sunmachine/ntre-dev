@@ -527,6 +527,22 @@ body {
   text-decoration-color: var(--ntre-muted);
 }
 
+/* Loadout letters (R A S) in comparison tables; each has its own tooltip. */
+.md-typeset .cls-letters {
+  display: inline-flex;
+  gap: 0.35em;
+  font-family: var(--md-code-font-family);
+}
+.md-typeset .cls-letters .cls {
+  display: inline-block;
+  width: 1ch;
+  text-align: center;
+  cursor: help;
+}
+.md-typeset .cls-letters .cls.none {
+  color: var(--ntre-border-strong);
+}
+
 /* Headline stats: one row, read across. */
 .md-typeset table.stat-strip td {
   color: var(--ntre-text-strong);
