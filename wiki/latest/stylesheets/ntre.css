@@ -98,8 +98,8 @@
 
 :root {
   /* Type scale: every text type uses one of these four steps (headings scale from prose).
-     At the default root size: 14px, 12px, 10.8px, 9px. */
-  --ntre-text-prose: 0.7rem;
+     At the default root size: 13px, 12px, 10.8px, 9px. */
+  --ntre-text-prose: 0.65rem;
   --ntre-text-secondary: 0.6rem;
   --ntre-text-data: 0.54rem;
   --ntre-text-mark: 0.45rem;
