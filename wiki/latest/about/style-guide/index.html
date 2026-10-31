@@ -3188,10 +3188,20 @@
 <ul>
 <li>Dark by default, minimal, neutral, with a light theme one click away. Hairline borders; no shadows, gradients or emoji.</li>
 <li>Blocks are rounded: 8px on tables, callouts, cards, infoboxes, code and the search box; 6px on navigation items.</li>
-<li>Red is for the brand dot only: after page titles and beside the current page. Never for link text, because red text means a missing page.</li>
-<li>Link underlines are a cool, desaturated cyan. On hover the line fills left to right, snaps into place, pulses once and settles. Cards lift to a lighter surface on hover instead.</li>
-<li>The NT;RE mark is the primary logo. The wordmark appears only on the main page.</li>
-<li>Image slots are grey placeholders labelled with what belongs there, until assets are licensed.</li>
+<li>
+<p>Text uses four sizes, set as tokens in <code>ntre.css</code> (in rem, so they follow Material's scaling and the reader's browser settings). At the default size:</p>
+<ul>
+<li><strong>Prose</strong>, 14px: body text, lists, card titles</li>
+<li><strong>Secondary</strong>, 12px: callouts and Technical details, card text, the menu and contents, search, references, footer, infobox titles</li>
+<li><strong>Data</strong>, 10.8px: tables and their captions, stat strips, infobox rows, tags, keys</li>
+<li><strong>Marks</strong>, 9px at least: citation markers, so they stay clickable in tables</li>
+</ul>
+<p>Headings scale from the prose size.
+- Red is for the brand dot only: after page titles and beside the current page. Never for link text, because red text means a missing page.
+- Link underlines are a cool, desaturated cyan. On hover the line fills left to right, snaps into place, pulses once and settles. Cards lift to a lighter surface on hover instead.
+- The NT;RE mark is the primary logo. The wordmark appears only on the main page.
+- Image slots are grey placeholders labelled with what belongs there, until assets are licensed.</p>
+</li>
 </ul>
 <p>Details: <a href="../colours-and-type/">Colours &amp; type</a> and <a href="../logos/">Logos</a>.</p>
 

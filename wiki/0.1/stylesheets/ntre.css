@@ -97,6 +97,12 @@
 }
 
 :root {
+  /* Type scale: every text type uses one of these four steps (headings scale from prose).
+     At the default root size: 14px, 12px, 10.8px, 9px. */
+  --ntre-text-prose: 0.7rem;
+  --ntre-text-secondary: 0.6rem;
+  --ntre-text-data: 0.54rem;
+  --ntre-text-mark: 0.45rem;
   --ntre-radius: 8px;
   --ntre-radius-sm: 6px;
   --md-text-font-features: "cv11", "ss01";
@@ -126,6 +132,9 @@ body {
   font-weight: 650;
   letter-spacing: -0.01em;
 }
+.md-search__input {
+  font-size: var(--ntre-text-secondary);
+}
 .md-search__form {
   border-radius: var(--ntre-radius);
   background: var(--ntre-surface-2);
@@ -142,7 +151,7 @@ body {
 }
 /* Version menu: secondary to the site title, at the size of the repo stats. */
 .md-version {
-  font-size: 0.6rem;
+  font-size: var(--ntre-text-secondary);
 }
 .md-version__current {
   top: 0;
@@ -158,7 +167,7 @@ body {
   margin-left: 0.25rem;
 }
 .md-version__list {
-  font-size: 0.64rem;
+  font-size: var(--ntre-text-secondary);
   border-radius: var(--ntre-radius);
   border: 1px solid var(--ntre-border);
   box-shadow: none;
@@ -175,14 +184,14 @@ body {
   border-top: 1px solid var(--ntre-border);
 }
 .md-copyright {
-  font-size: 0.6rem;
+  font-size: var(--ntre-text-secondary);
   line-height: 1.6;
 }
 
 /* ---------- Navigation ---------- */
 
 .md-nav {
-  font-size: 0.7rem;
+  font-size: var(--ntre-text-secondary);
 }
 .md-nav__link {
   border-radius: var(--ntre-radius-sm);
@@ -233,7 +242,7 @@ body {
 /* ---------- Type ---------- */
 
 .md-typeset {
-  font-size: 0.7rem;
+  font-size: var(--ntre-text-prose);
   line-height: 1.65;
 }
 .md-typeset h1,
@@ -291,6 +300,7 @@ body {
   border-radius: var(--ntre-radius);
 }
 .md-typeset kbd {
+  font-size: var(--ntre-text-data);
   border-radius: 4px;
   box-shadow: 0 0 0 1px var(--ntre-border-strong) inset;
   background: var(--ntre-surface-2);
@@ -361,6 +371,10 @@ body {
 
 /* ---------- Citations ---------- */
 
+/* Citation markers never drop below the marks step, so they stay clickable in tables. */
+.md-typeset sup[id^="fnref"] {
+  font-size: max(0.75em, var(--ntre-text-mark));
+}
 .md-typeset .footnote-ref {
   font-family: var(--md-code-font-family);
   font-weight: 400;
@@ -376,7 +390,7 @@ body {
   color: var(--ntre-text-strong);
 }
 .md-typeset .footnote.references {
-  font-size: 0.6rem;
+  font-size: var(--ntre-text-secondary);
   color: var(--ntre-muted);
 }
 .md-typeset .footnote.references code {
@@ -397,7 +411,7 @@ body {
   border-radius: var(--ntre-radius);
   box-shadow: none;
   background: var(--ntre-surface-2);
-  font-size: 0.68rem;
+  font-size: var(--ntre-text-secondary);
 }
 .md-typeset .admonition-title,
 .md-typeset summary {
@@ -439,7 +453,7 @@ body {
   border-spacing: 0;
   border-radius: var(--ntre-radius);
   overflow: hidden;
-  font-size: 0.54rem;
+  font-size: var(--ntre-text-data);
   background: transparent;
 }
 .md-typeset .table-wrap {
@@ -493,7 +507,7 @@ body {
   caption-side: bottom;
   padding: 0.45rem 0.1rem 0;
   text-align: left;
-  font-size: 0.54rem;
+  font-size: var(--ntre-text-data);
   line-height: 1.55;
   color: var(--ntre-muted);
 }
@@ -545,7 +559,6 @@ body {
 /* Headline stats: one row, read across. */
 .md-typeset table.stat-strip td {
   color: var(--ntre-text-strong);
-  font-size: 1.05em;
 }
 
 /* Work-in-progress rows. */
@@ -585,7 +598,7 @@ body {
   border: 1px solid var(--ntre-border-strong);
   border-radius: 5px;
   font-family: var(--md-text-font-family);
-  font-size: 0.56rem;
+  font-size: var(--ntre-text-data);
   line-height: 1.6;
   color: var(--ntre-muted);
   white-space: nowrap;
@@ -617,11 +630,11 @@ body {
   border: 1px solid var(--ntre-border);
   border-radius: var(--ntre-radius);
   overflow: hidden;
-  font-size: 0.56rem;
+  font-size: var(--ntre-text-data);
 }
 .md-typeset .infobox .ib-title {
   padding: 0.6rem 0.7rem;
-  font-size: 0.7rem;
+  font-size: var(--ntre-text-secondary);
   font-weight: 600;
   color: var(--ntre-text-strong);
 }
@@ -635,7 +648,7 @@ body {
   margin: 0;
   background: var(--ntre-surface-2);
   color: var(--ntre-muted);
-  font-size: 0.6rem;
+  font-size: var(--ntre-text-data);
   border-top: 1px solid var(--ntre-border);
 }
 .md-typeset .infobox table,
@@ -663,12 +676,12 @@ body {
 .md-typeset .infobox table td {
   color: var(--ntre-text-strong);
   font-family: var(--md-code-font-family);
-  font-size: 0.54rem;
+  font-size: var(--ntre-text-data);
 }
 .md-typeset .infobox table .ib-section th {
   padding-top: 0.7rem;
   padding-bottom: 0.2rem;
-  font-size: 0.6rem;
+  font-size: var(--ntre-text-data);
   font-weight: 500;
   color: var(--ntre-text);
 }
@@ -706,15 +719,15 @@ body {
   color: var(--ntre-text-strong);
 }
 .md-typeset .grid.cards p {
-  font-size: 0.66rem;
+  font-size: var(--ntre-text-secondary);
   color: var(--ntre-muted);
 }
 .md-typeset .grid.cards p:first-child {
-  font-size: 0.72rem;
+  font-size: var(--ntre-text-prose);
 }
 .md-typeset .grid.cards .card-stat {
   font-family: var(--md-code-font-family);
-  font-size: 0.6rem;
+  font-size: var(--ntre-text-secondary);
   color: var(--ntre-muted);
 }
 .md-typeset .grid.cards > ul > li.wip,
