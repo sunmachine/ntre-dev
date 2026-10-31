@@ -375,6 +375,10 @@ body {
 .md-typeset sup[id^="fnref"] {
   font-size: max(0.75em, var(--ntre-text-mark));
 }
+/* In numeric table cells the markers come first, so the numbers stay aligned. */
+.md-typeset sup.cite-lead:last-of-type {
+  margin-right: 0.3em;
+}
 .md-typeset .footnote-ref {
   font-family: var(--md-code-font-family);
   font-weight: 400;
