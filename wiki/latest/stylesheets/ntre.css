@@ -695,6 +695,17 @@ body {
   font-weight: 500;
   color: var(--ntre-text);
 }
+/* Material wraps every plain table in a shrink-to-fit scroller with side padding. Inside an
+   infobox that left the rows filling about 60% of the box, so undo it there. */
+.md-typeset .infobox .md-typeset__scrollwrap {
+  margin: 0;
+  overflow: visible;
+  clear: none;
+}
+.md-typeset .infobox .md-typeset__table {
+  display: block;
+  padding: 0;
+}
 .md-typeset figure.infobox {
   padding: 0;
 }
