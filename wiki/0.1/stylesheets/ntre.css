@@ -1,10 +1,10 @@
 /* NT;RE Wiki skin for Material for MkDocs.
 
-   Colours follow the original prototype (prototype/static/style.css): neutral
+   Colours follow the wiki's first, static HTML build: neutral
    greys, white text, a cool desaturated-cyan underline, and the brand's red
    kept to small dots. Red is never link text, because on a wiki red text
-   means a missing page. The dark background is softened from the
-   prototype's #111213. Hairlines, no shadows or gradients; blocks get an
+   means a missing page. The dark background is softened from that
+   build's #111213. Hairlines, no shadows or gradients; blocks get an
    8px radius.
 
    --ntre-* tokens are the palette. The palette table on the Colours & type
