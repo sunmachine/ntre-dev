@@ -3196,7 +3196,7 @@
 <p><strong>Weapon pages</strong> follow one layout, in this order: Overview, General stats, Damage, Shots to kill, Time to kill, Handling, then anything weapon-specific (bolt action, heat), Availability, Suppressor and Technical notes. The prose is yours to write; the numbers come from <code>{{weapon:…}}</code> snippets, which read the weapon named in the front matter (<code>weapon: weapon_zr68s</code>).</p>
 <ul>
 <li>Comparisons go in tables, not lists. Numbers are right-aligned in monospace.</li>
-<li>Every column header in a data table has a tooltip saying what it means. Shared headers are defined once in <code>COLUMN_TIPS</code> in <code>wiki/hooks/generators.py</code>; a table where a header means something different passes its own. The build warns about any header without one.</li>
+<li>Every column header in a data table has a tooltip saying what it means. Tips live in <code>wiki/column-tips.yml</code>: once per header under <code>columns</code>, or under <code>pages</code> for a header that means something different on one page. A generated table can also pass its own. The build warns about any header without one.</li>
 <li>Hit locations with the same multiplier share a column: head / chest, stomach / arms, legs.</li>
 <li>Link a page's first mention in each section, not every mention.</li>
 <li>Page addresses follow the menu: <code>/weapons/rifles/zr68-s/</code>. Folders and file names are lowercase with hyphens, and every slug is unique across the wiki.</li>
