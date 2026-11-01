@@ -3114,7 +3114,7 @@
 <h2 id="facts-and-sources">Facts and sources<a class="headerlink" href="#facts-and-sources" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Every gameplay number cites the line it comes from. <code>[[src:path:line]]</code> becomes a footnote linked to the game's source at the pinned commit.</li>
-<li>A citation never comes between a number and its unit. Put it after the unit (<code>5/s[1]</code>, <code>200 units per second[1]</code>), or, in a numeric table column, before the number. The build fixes it if you write a unit after <code>{{stat:…}}</code>, whose citation follows the number.</li>
+<li>A citation never comes between a number and its unit. Write it after the unit (<code>5/s[1]</code>, <code>200 units per second[1]</code>). In a numeric table column the build moves it in front of the number, so the numbers in the column stay aligned; you still write it after the value. The build also fixes it if you write a unit after <code>{{stat:…}}</code>, whose citation follows the number.</li>
 <li>Never guess. If the code is ambiguous, or client and server disagree, say so in an amber callout labelled <strong>Unconfirmed</strong>, <strong>Unverified</strong> or <strong>Unresolved</strong>.</li>
 <li>Say how a claim was established: "inferred from the code" is different from "tested in game".</li>
 <li>Tables and infoboxes take their numbers from the extracted data, not from hand-typed copies.</li>
@@ -3197,7 +3197,7 @@
 <p><strong>Weapon pages</strong> follow one layout, in this order: Overview, General stats, Damage, Shots to kill, Time to kill, Handling, then anything weapon-specific (bolt action, heat), Availability, Suppressor and Technical notes. The prose is yours to write; the numbers come from <code>{{weapon:…}}</code> snippets, which read the weapon named in the front matter (<code>weapon: weapon_zr68s</code>).</p>
 <ul>
 <li>Comparisons go in tables, not lists. Numbers are right-aligned in monospace.</li>
-<li>Every column header in a data table has a tooltip saying what it means. Tips live in <code>wiki/column-tips.yml</code>: once per header under <code>columns</code>, or under <code>pages</code> for a header that means something different on one page. A generated table can also pass its own. The build warns about any header without one.</li>
+<li>Every column header in a data table has a tooltip saying what it means. Tips live in <code>wiki/column-tips.yml</code>: once per header under <code>columns</code>, or under <code>pages</code> for a header that means something different on one page. A generated table can also pass its own. Write a tip's header the way the table shows it, with data units closed up (<code>Pen. to cross 12u</code>, not <code>12 u</code>): the build closes up units before it looks the tip up. The build warns about any header without one.</li>
 <li>Hit locations with the same multiplier share a column: head / chest, stomach / arms, legs.</li>
 <li>Link a page's first mention in each section, not every mention.</li>
 <li>Page addresses follow the menu: <code>/weapons/rifles/zr68-s/</code>. Folders and file names are lowercase with hyphens, and every slug is unique across the wiki.</li>
