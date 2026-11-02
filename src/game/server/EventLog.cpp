@@ -134,6 +134,7 @@ bool CEventLog::PrintPlayerEvent( IGameEvent *event )
 		{
 			const int newTeam = event->GetInt( "team" );
 			const int oldTeam = event->GetInt( "oldteam" );
+#ifdef NEO
 
 			// This is a new joinee auto-joining spectators.
 			// We shouldn't announce this globally.
@@ -141,7 +142,7 @@ bool CEventLog::PrintPlayerEvent( IGameEvent *event )
 			{
 				return true;
 			}
-
+#endif // NEO
 			CTeam *team = GetGlobalTeam( newTeam );
 			CTeam *oldteam = GetGlobalTeam( oldTeam );
 			
