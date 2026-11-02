@@ -882,7 +882,7 @@ float CServerGameDLL::GetTickInterval( void ) const
 		Warning("WARNING: Setting -tickrate is not recommended. Server is only recommended to run at the default ~66.67 tickrate. Current tickrate: %d\n", tickrateAsInt);
 		const float tickrate = static_cast<float>(tickrateAsInt);
 #else
-		float tickrate = CommandLine()->ParmValue("-tickrate", 0);
+		float tickrate = CommandLine()->ParmValue( "-tickrate", 0 );
 #endif
 		if ( tickrate > 10 )
 			tickinterval = 1.0f / tickrate;
@@ -3508,7 +3508,7 @@ class CServerDLLSharedAppSystems : public IServerDLLSharedAppSystems
 public:
 	CServerDLLSharedAppSystems()
 	{
-		#define DLL_EXT_STRING DLLExtTokenPaste2( _DLL_EXT )
+		#define DLL_EXT_STRING DLLExtTokenPaste2( _DLL_EXT ) // NEO
 		
 		AddAppSystem( "soundemittersystem" DLL_EXT_STRING, SOUNDEMITTERSYSTEM_INTERFACE_VERSION );
 		AddAppSystem( "scenefilecache" DLL_EXT_STRING, SCENE_FILE_CACHE_INTERFACE_VERSION );

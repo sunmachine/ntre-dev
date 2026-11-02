@@ -359,7 +359,7 @@ int CTeam::GetAliveMembers( void ) const
 			++iAlive;
 		}
 #else
-		if (GetPlayer(i) && GetPlayer(i)->IsAlive())
+		if ( GetPlayer(i) && GetPlayer(i)->IsAlive() )
 		{
 			iAlive++;
 		}

@@ -545,7 +545,7 @@ void SendProxy_FuncRotatingAngle( const SendProp *pProp, const void *pStruct, co
 	Assert( entity );
 
 	vec_t const *qa = (vec_t *)pData;
-	[[maybe_unused]] vec_t const *ea = entity->GetLocalAngles().Base();
+	[[maybe_unused]] vec_t const *ea = entity->GetLocalAngles().Base(); // NEO
 	// Assert its actually an index into m_angRotation if not this won't work
 
 	Assert( (uintp)qa >= (uintp)ea && (uintp)qa < (uintp)ea + sizeof( QAngle ));

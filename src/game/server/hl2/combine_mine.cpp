@@ -39,7 +39,7 @@ enum
 #define MINE_CITIZEN_SKIN_MIN 1
 #define MINE_CITIZEN_SKIN_MAX 2
 
-const char *pszMineStateNames[] =
+const char *pszMineStateNames[] = // NEO
 {
 	"Dormant",
 	"Deploy",
