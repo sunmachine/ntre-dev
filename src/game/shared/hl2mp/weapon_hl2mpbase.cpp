@@ -104,6 +104,7 @@ CWeaponHL2MPBase::CWeaponHL2MPBase()
 bool CWeaponHL2MPBase::IsPredicted() const
 { 
 	return true;
+#ifdef NEO
 }
 //Tony; override for animation purposes.
 bool CWeaponHL2MPBase::Reload( void )
@@ -115,6 +116,7 @@ bool CWeaponHL2MPBase::Reload( void )
 		ToHL2MPPlayer(GetOwner())->DoAnimationEvent( PLAYERANIMEVENT_RELOAD );
 	}
 	return fRet;
+#endif // NEO
 }
 void CWeaponHL2MPBase::WeaponSound( WeaponSound_t sound_type, float soundtime /* = 0.0f */ )
 {
