@@ -13,6 +13,7 @@
 #pragma once
 #endif
 
+#ifdef NEO
 // https://stackoverflow.com/questions/5256313/c-c-macro-string-concatenation
 /*
 * Concatenate preprocessor tokens A and B without expanding macro definitions
@@ -35,7 +36,7 @@
 * Turn A into a string literal after macro-expanding it.
 */
 #define STRINGIZE(A) STRINGIZE_NX(A)
-
+#endif // NEO
 #include "shaderlib/cshader.h"
 #include "shaderlib/BaseShader.h"
 #include "convar.h"
