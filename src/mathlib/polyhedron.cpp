@@ -975,7 +975,7 @@ CPolyhedron *ClipLinkedGeometry( GeneratePolyhedronFromPlanes_UnorderedPolygonLL
 #ifdef NEO
 		BasicVector vNormal = *((BasicVector *)&pOutwardFacingPlanes[(iCurrentPlane * 4) + 0]);
 #else
-		float fPointDist = vNormal.Dot( pPoint->ptPosition ) - fPlaneDist;
+		float fPointDist = vNormal.Dot( pPoint->ptPosition ) - fPlaneDist; // NEO
 #endif
 		/*double vNormalAsDouble[3];
 		vNormalAsDouble[0] = vNormal.x;

@@ -16,9 +16,9 @@
 #include "fgdlib/fgdlib.h"
 #include "manifest.h"
 
-#ifdef _WIN32
-#define snprintf _snprintf
-#endif
+#ifdef _WIN32 // NEO
+#define snprintf _snprintf // NEO
+#endif // NEO
 
 #ifdef VSVMFIO
 #include "VmfImport.h"
@@ -1275,7 +1275,7 @@ void ConvertSideList( entity_t *mapent, char *key )
 					}
 
 					char szIndex[15];
-					snprintf(szIndex, 15, "%d", nIndex);
+					snprintf(szIndex, 15, "%d", nIndex); // NEO
 					strcat( szNewValue, szIndex );
 				}
 			}
