@@ -66,14 +66,14 @@ DECLARE_HUD_MESSAGE( CHudHealth, Damage );
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
+#ifdef NEO
 CHudHealth::CHudHealth( const char *pElementName )
 	: CHudElement( pElementName ), CHudNumericDisplay(NULL,
-#ifdef NEO
 	"NHudHealth"
-#else
-	"HudHealth"
-#endif
 	)
+#else
+CHudHealth::CHudHealth( const char *pElementName ) : CHudElement( pElementName ), CHudNumericDisplay(NULL, "HudHealth")
+#endif // NEO
 {
 #ifdef NEO
 	Assert(false); // Use CNEOHud_HTA

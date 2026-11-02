@@ -15,12 +15,13 @@
 
 using namespace vgui;
 
+#ifdef NEO
 #ifndef CIconPanel
 #define CIconPanel IconPanel
 #else
 #error Already defined
 #endif
-
+#endif // NEO
 class CIconPanel : public vgui::Panel
 {
 	DECLARE_CLASS_SIMPLE( CIconPanel, vgui::Panel );
