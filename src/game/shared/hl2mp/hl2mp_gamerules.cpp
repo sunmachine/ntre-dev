@@ -998,35 +998,6 @@ CAmmoDef *GetAmmoDef()
 
 #else
 
-#ifndef NEO
-#ifdef GAME_DLL
-	void Bot_f(); // Handler for the "bot" command.
-	ConCommand cc_Bot("bot", Bot_f, "Add a bot.", FCVAR_CHEAT);
-#if defined(DEBUG)
-	void Bot_f()
-	{
-		// Look at -count.
-		int count = 1;
-		count = clamp( count, 1, 16 );
-
-		int iTeam = TEAM_COMBINE;
-				
-		// Look at -frozen.
-		bool bFrozen = false;
-			
-		// Ok, spawn all the bots.
-		while ( --count >= 0 )
-		{
-			BotPutInServer( bFrozen, iTeam );
-		}
-	}
-#endif
-
-#endif
-
-	ConCommand cc_Bot_Alias_BotAdd("bot_add", Bot_f, "Add a bot. Alias for \"bot\".", FCVAR_CHEAT);
-#endif //NEO
-
 	bool CHL2MPRules::FShouldSwitchWeapon( CBasePlayer *pPlayer, CBaseCombatWeapon *pWeapon )
 	{		
 		if ( pPlayer->GetActiveWeapon() && pPlayer->IsNetClient() )
