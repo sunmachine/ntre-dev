@@ -1,0 +1,61 @@
+name: Valve tree guard
+
+# Answers one question per pull request: did it change Valve code outside a
+# NEO guard? Files that already differ from Valve's tree are listed with their
+# residual line count in tools/valve-tree-baseline.txt, and that count may only
+# shrink.
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'tools/valve_roundtrip.py'
+      - 'tools/valve-tree-baseline.txt'
+      - 'tools/sdk-base.txt'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  guard:
+    name: Valve tree guard
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install unifdef
+        run: sudo apt-get install -y --no-install-recommends unifdef
+
+      - name: Export the Valve base tree
+        run: |
+          BASE=$(cat tools/sdk-base.txt)
+          git cat-file -e "$BASE^{commit}" 2>/dev/null || git fetch --depth=1 https://github.com/ValveSoftware/source-sdk-2013 "$BASE"
+          mkdir -p /tmp/valve-base
+          git archive "$BASE" src | tar -x -C /tmp/valve-base
+
+      - name: List changed files under src
+        run: git diff --name-only "origin/${{ github.base_ref }}...HEAD" -- 'src/**' > /tmp/changed.txt
+
+      - name: Round-trip check
+        run: |
+          if [ ! -s /tmp/changed.txt ]; then echo "No files under src changed."; exit 0; fi
+          python3 -I tools/valve_roundtrip.py /tmp/valve-base . \
+            --files $(cat /tmp/changed.txt) \
+            --baseline tools/valve-tree-baseline.txt --tagged-ok --verbose
+
+      - name: Label the pull request when Valve files changed
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          n=0
+          while IFS= read -r f; do
+            [ -e "/tmp/valve-base/$f" ] && n=$((n + 1))
+          done < /tmp/changed.txt
+          echo "Changed files that exist in Valve's tree: $n"
+          if [ "$n" -gt 0 ]; then
+            gh pr edit "${{ github.event.pull_request.number }}" --add-label touches-valve-tree || true
+          fi
