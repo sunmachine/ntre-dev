@@ -379,8 +379,8 @@ int CParticleEffectBinding::DrawModel( int flags )
 			bBucketSort,
 			pMaterial, 
 			flFrameTime,
-			bWireframe,
-			bInThermalVision);
+			bWireframe, // NEO
+			bInThermalVision); // NEO
 	}
 
 	if ( ShouldDrawInWireFrameMode() )
@@ -394,8 +394,8 @@ int CParticleEffectBinding::DrawModel( int flags )
 				bBucketSort,
 				pMaterial, 
 				flFrameTime,
-				bWireframe,
-				bInThermalVision);
+				bWireframe, // NEO
+				bInThermalVision); // NEO
 		}
 	}
 
@@ -790,8 +790,8 @@ int CParticleEffectBinding::DrawMaterialParticles(
 	bool bBucketSort,
 	CEffectMaterial *pMaterial, 
 	float flTimeDelta,
-	bool bWireframe,
-	bool bInThermalVision
+	bool bWireframe, // NEO
+	bool bInThermalVision // NEO
 	 )
 {
 	// Setup everything.
@@ -803,7 +803,7 @@ int CParticleEffectBinding::DrawMaterialParticles(
 	if ( m_nActiveParticles > MAX_TOTAL_PARTICLES )
 		Error( "CParticleEffectBinding::DrawMaterialParticles: too many particles (%d should be less than %d)", m_nActiveParticles, MAX_TOTAL_PARTICLES );
 
-	// Simulate and render all the particles.
+	// Simulate and render all the particles. // NEO
 	CParticleRenderIterator renderIterator;
 
 	renderIterator.m_pEffectBinding = this;
@@ -1647,7 +1647,7 @@ int CParticleMgr::ComputeParticleDefScreenArea( int nInfoCount, RetireInfo_t *pI
 
 		// Don't count parents
 		Assert( !pCollection->m_pParent );
-		Assert( nCollection < nInfoCount && pDef == pCollection->m_pDef() );
+		Assert( nCollection < nInfoCount && pDef == pCollection->m_pDef() ); // NEO
 
 		pInfo[nCollection].m_flScreenArea = 0.0f;
 		pInfo[nCollection].m_pCollection = pCollection;

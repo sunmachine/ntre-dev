@@ -26,7 +26,7 @@ static ConVar cam_command( "cam_command", "0", FCVAR_CHEAT | FCVAR_CHEAT);	 // t
 static ConVar cam_snapto( "cam_snapto", "0", FCVAR_ARCHIVE | FCVAR_CHEAT);	 // snap to thirdperson view
 static ConVar cam_ideallag( "cam_ideallag", "4.0", FCVAR_ARCHIVE| FCVAR_CHEAT, "Amount of lag used when matching offset to ideal angles in thirdperson view" );
 static ConVar cam_idealdelta( "cam_idealdelta", "4.0", FCVAR_ARCHIVE| FCVAR_CHEAT, "Controls the speed when matching offset to ideal angles in thirdperson view" );
-ConVar cam_idealyaw( "cam_idealyaw", "1", FCVAR_ARCHIVE| FCVAR_CHEAT );	 // thirdperson yaw
+ConVar cam_idealyaw( "cam_idealyaw", "1", FCVAR_ARCHIVE| FCVAR_CHEAT );	 // thirdperson yaw // NEO
 ConVar cam_idealpitch( "cam_idealpitch", "0", FCVAR_ARCHIVE | FCVAR_CHEAT  );	 // thirperson pitch
 #ifdef NEO
 extern ConVar cam_idealdist;
@@ -39,8 +39,8 @@ ConVar cam_idealdist( "cam_idealdist", "40", FCVAR_ARCHIVE | FCVAR_CHEAT, "", th
 ConVar cam_idealdistright( "cam_idealdistright", "15", FCVAR_ARCHIVE | FCVAR_CHEAT, "", thirdPersonDistChange);	 // thirdperson distance
 ConVar cam_idealdistup( "cam_idealdistup", "0", FCVAR_ARCHIVE | FCVAR_CHEAT, "", thirdPersonDistChange);	 // thirdperson distance
 #else
-ConVar cam_idealdist( "cam_idealdist", "40", FCVAR_ARCHIVE | FCVAR_CHEAT );	 // thirdperson distance
-ConVar cam_idealdistright( "cam_idealdistright", "15", FCVAR_ARCHIVE | FCVAR_CHEAT );	 // thirdperson distance
+ConVar cam_idealdist( "cam_idealdist", "40", FCVAR_ARCHIVE | FCVAR_CHEAT );	 // thirdperson distance // NEO
+ConVar cam_idealdistright( "cam_idealdistright", "15", FCVAR_ARCHIVE | FCVAR_CHEAT );	 // thirdperson distance // NEO
 ConVar cam_idealdistup( "cam_idealdistup", "0", FCVAR_ARCHIVE | FCVAR_CHEAT );	 // thirdperson distance
 #endif // NEO
 static ConVar cam_collision( "cam_collision", "1", FCVAR_ARCHIVE | FCVAR_CHEAT, "When in thirdperson and cam_collision is set to 1, an attempt is made to keep the camera from passing though walls." );

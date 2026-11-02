@@ -1996,7 +1996,7 @@ static bool CaptionTrace( const char *token )
 	static CUtlSymbolTable s_MissingCloseCaptions;
 
 	// Make sure we only show the message once
-	if ( !s_MissingCloseCaptions.Find( token ).IsValid() )
+	if ( !s_MissingCloseCaptions.Find( token ).IsValid() ) // NEO
 	{
 		s_MissingCloseCaptions.AddString( token );
 		return true;

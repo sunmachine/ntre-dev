@@ -37,7 +37,7 @@ ConVar cl_disablehtmlmotd("cl_disablehtmlmotd", "1", FCVAR_ARCHIVE,
 	"0: Show full HTML MOTD. 1: Disable HTML but show text MOTD. 2: Hide all MOTDs.",
 	true, 0.f, true, static_cast<float>(MotdPreference::EnumCount - 1));
 #else
-ConVar cl_disablehtmlmotd("cl_disablehtmlmotd", "0", FCVAR_ARCHIVE, "Disable HTML motds.");
+ConVar cl_disablehtmlmotd( "cl_disablehtmlmotd", "0", FCVAR_ARCHIVE, "Disable HTML motds." );
 #endif
 
 #ifdef NEO
@@ -412,11 +412,11 @@ bool CTextWindow::UnloadOnDismissal() const
 
 void CTextWindow::SetData(KeyValues *data)
 {
-#ifdef SDK2013CE
-	SetData( data->GetInt( "type" ), data->GetString( "title" ), data->GetString( "message" ), data->GetString( "msg_fallback" ), data->GetInt( "command" ), data->GetBool( "unload" ) );
-#else
+#ifdef SDK2013CE // NEO
+	SetData( data->GetInt( "type" ), data->GetString( "title" ), data->GetString( "message" ), data->GetString( "msg_fallback" ), data->GetInt( "command" ), data->GetBool( "unload" ) ); // NEO
+#else // NEO
 	SetData( data->GetInt( "type" ), data->GetString( "title" ), data->GetString( "msg" ), data->GetString( "msg_fallback" ), data->GetInt( "cmd" ), data->GetBool( "unload" ) );
-#endif
+#endif // NEO
 }
 
 void CTextWindow::SetData( int type, const char *title, const char *message, const char *message_fallback, int command, bool bUnload )
@@ -450,13 +450,13 @@ void CTextWindow::ShowPanel( bool bShow )
 		SetVisible( false );
 		SetMouseInputEnabled( false );
 
-		if ((
+		if (( // NEO
 #ifdef NEO
 				UnloadOnDismissal()
 #else
-				m_bUnloadOnDismissal
+				m_bUnloadOnDismissal // NEO
 #endif
-			) && m_bShownURL && m_pHTMLMessage)
+			) && m_bShownURL && m_pHTMLMessage) // NEO
 		{
 			m_pHTMLMessage->OpenURL( "about:blank", NULL );
 			m_bShownURL = false;

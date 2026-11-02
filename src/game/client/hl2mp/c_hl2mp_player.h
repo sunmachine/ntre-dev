@@ -9,7 +9,7 @@
 #define HL2MP_PLAYER_H
 #pragma once
 
-#include "hl2mp_playeranimstate.h"
+#include "hl2mp_playeranimstate.h" // NEO
 #include "c_basehlplayer.h"
 #include "hl2mp_player_shared.h"
 #include "beamdraw.h"
@@ -113,8 +113,8 @@ public:
 	void	StartSprinting( void );
 	void	StopSprinting( void );
 #endif
-	virtual void	 HandleSpeedChanges( CMoveData *mv ) OVERRIDE;
-	virtual void	 ReduceTimers( CMoveData* mv ) OVERRIDE;
+	virtual void	HandleSpeedChanges( CMoveData *mv ) OVERRIDE;
+	virtual void	ReduceTimers( CMoveData* mv ) OVERRIDE;
 	void	UpdateLookAt( void );
 	void	Initialize( void );
 	int		GetIDTarget() const;
@@ -137,9 +137,9 @@ public:
 
 	virtual void PostThink( void );
 
-	virtual void					UpdateClientSideAnimation();
-	void DoAnimationEvent( PlayerAnimEvent_t event, int nData = 0 );
-	virtual void CalculateIKLocks( float currentTime );
+	virtual void					UpdateClientSideAnimation(); // NEO
+	void DoAnimationEvent( PlayerAnimEvent_t event, int nData = 0 ); // NEO
+	virtual void CalculateIKLocks( float currentTime ); // NEO
 
 private:
 	

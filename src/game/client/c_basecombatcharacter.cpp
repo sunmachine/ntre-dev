@@ -13,11 +13,11 @@
 #include "cbase.h"
 #include "c_basecombatcharacter.h"
 
-#ifdef GLOWS_ENABLE
+#ifdef GLOWS_ENABLE // NEO
 #ifdef NEO
 #include "neo_gamerules.h"
 #endif // NEO
-#endif // GLOWS_ENABLE
+#endif // GLOWS_ENABLE // NEO
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -40,9 +40,9 @@ C_BaseCombatCharacter::C_BaseCombatCharacter()
 	m_bGlowEnabled = false;
 	m_bOldGlowEnabled = false;
 	m_bClientSideGlowEnabled = false;
-	m_flGlowR = 0.76f;
-	m_flGlowG = 0.76f;
-	m_flGlowB = 0.76f;
+	m_flGlowR = 0.76f; // NEO
+	m_flGlowG = 0.76f; // NEO
+	m_flGlowB = 0.76f; // NEO
 #endif // GLOWS_ENABLE
 }
 

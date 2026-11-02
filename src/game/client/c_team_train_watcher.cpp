@@ -12,13 +12,13 @@
 #ifdef TF_CLIENT_DLL
 #include "tf_shareddefs.h"
 #include "teamplayroundbased_gamerules.h"
-#endif
+#endif // NEO
 
 #ifdef NEO
 #include "neo_gamerules.h"
 #else
-#ifdef GLOW_ENABLED
-#include "teamplayroundbased_gamerules.h" // if GLOW_ENABLED this needs to be included regardless of TF_CLIENT_DLL
+#ifdef GLOW_ENABLED // NEO
+#include "teamplayroundbased_gamerules.h" // if GLOW_ENABLED this needs to be included regardless of TF_CLIENT_DLL // NEO
 #endif
 #endif
 

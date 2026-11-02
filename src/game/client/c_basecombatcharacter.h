@@ -97,7 +97,7 @@ public:
 #ifdef GLOWS_ENABLE
 	CGlowObject			*GetGlowObject( void ){ return m_pGlowEffect; }
 	virtual void		GetGlowEffectColor( float *r, float *g, float *b );
-	void				SetGlowEffectColor(float r, float g, float b);
+	void				SetGlowEffectColor(float r, float g, float b); // NEO
 //	void				EnableGlowEffect( float r, float g, float b );
 
 	void				SetClientSideGlowEnabled( bool bEnabled ){ m_bClientSideGlowEnabled = bEnabled; UpdateGlowEffect(); }
@@ -129,9 +129,9 @@ private:
 	bool				m_bClientSideGlowEnabled;	// client-side only value used for spectator
 	bool				m_bGlowEnabled;				// networked value
 	bool				m_bOldGlowEnabled;
-	CNetworkVar(float, m_flGlowR);
-	CNetworkVar(float, m_flGlowG);
-	CNetworkVar(float, m_flGlowB);
+	CNetworkVar(float, m_flGlowR); // NEO
+	CNetworkVar(float, m_flGlowG); // NEO
+	CNetworkVar(float, m_flGlowB); // NEO
 	CGlowObject			*m_pGlowEffect;
 #endif // GLOWS_ENABLE
 
