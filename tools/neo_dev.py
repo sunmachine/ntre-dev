@@ -15,6 +15,11 @@ Before pushing
 After fixing a problem a check already allowed
   update-valve-baseline   Lower the counts in tools/valve-edits-baseline.txt.
                           Script: check_valve_edits.py.
+
+Taking a newer Valve SDK
+  merge-valve-sdk         Start merging a newer Valve SDK and resolve the conflicts NEO always
+                          resolves the same way. Needs bash; on Windows, run it from Git Bash.
+                          Script: merge_valve_sdk.sh.
 """
 import os
 import runpy
@@ -26,6 +31,7 @@ TOOLS = os.path.dirname(os.path.realpath(__file__))
 COMMANDS = {
     'check-valve-edits': ('check_valve_edits.py', ['--check']),
     'update-valve-baseline': ('check_valve_edits.py', ['--update-baseline']),
+    'merge-valve-sdk': ('merge_valve_sdk.sh', []),
 }
 
 
