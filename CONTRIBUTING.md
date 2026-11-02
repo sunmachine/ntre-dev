@@ -128,6 +128,22 @@ This project uses the [CMake](https://cmake.org/) build system to generate ninja
 ### Preprocessor definitions
 In shared code, clientside code can be differentiated with CLIENT_DLL, vs. serverside's GAME_DLL. In more general engine files, Neotokyo specific code can be marked with a NEO ifdef.
 
+### Updating to a newer Source SDK 2013
+
+NEO tracks `ValveSoftware/source-sdk-2013` as a vendor branch. Valve's commit that NEO's tree was last synchronised with is tagged `sdk-base-<date>` and written to `tools/sdk-base.txt`. The tag is also a parent of a merge commit on `master`, so git can find a merge base and merge Valve's later commits as a normal three-way merge.
+
+Valve lands SDK changes in batches a few times a year. NEO takes them on demand, when a Valve change is wanted or the backlog of unmerged commits has grown. Do an update on a branch cut from `master`:
+
+1. Run `tools/sdk-merge.sh`. It adds the fetch-only `valve` remote on first use, fetches, starts `git merge --no-commit valve/master`, resolves modify/delete conflicts as "keep deleted" for the paths NEO removed on purpose (`tools/sdk-merge-deleted-paths.txt`), and lists what is left.
+2. Resolve the remaining conflicts. A hunk where Valve fixed a line NEO had guarded is usually "take Valve's, drop the guard". Rename detection sometimes pairs a Valve file with a NEO port of it, such as `tf_bot_squad.cpp` with `neo_bot_squad.cpp`; look before accepting.
+3. Build Linux and Windows, run the tests, and play a round. Valve's changes touch shared gameplay code such as `gamemovement.cpp` and `player.cpp`, so a green build is not enough.
+4. Commit the merge, update `tools/sdk-base.txt` and tag the new base `sdk-base-<date>`.
+5. Open the pull request. It must land as a merge commit, not a squash, or the merge base is lost again. Ask a maintainer to allow merge commits for that pull request.
+
+`rerere.enabled` is switched on by the script, so a conflict you resolved once is replayed if the merge is redone. The cache stays in your clone.
+
+Never reformat, re-indent or sort includes in a file that came from Valve. Every such line conflicts with the next update. NEO additions in Valve files go inside `#ifdef NEO`; see Code style below.
+
 ## Supported compilers
 
 Only the x86-64 architecture is supported.
