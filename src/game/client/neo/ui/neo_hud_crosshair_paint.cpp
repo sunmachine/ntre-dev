@@ -33,14 +33,8 @@ void CHudCrosshair::PaintNeo()
 	if ( !IsCurrentViewAccessAllowed() )
 		return;
 
-#ifdef NEO
 	if (!ShouldDraw())
 		return;
-#else
-	C_BasePlayer* pPlayer = C_BasePlayer::GetLocalPlayer();
-	if ( !pPlayer )
-		return;
-#endif // NEO
 
 	float x, y;
 	bool bBehindCamera;
@@ -49,12 +43,8 @@ void CHudCrosshair::PaintNeo()
 	if( bBehindCamera )
 		return;
 
-#ifdef TF_CLIENT_DLL // NEO
-	float flWeaponScale = 1.f;
-#else
 	float flWeaponScale_X = 1.0f;
 	float flWeaponScale_Y = 1.0f;
-#endif
 	int iTextureW = m_pCrosshair->Width();
 	int iTextureH = m_pCrosshair->Height();
 
@@ -111,21 +101,8 @@ void CHudCrosshair::PaintNeo()
 		}
 	}
 
-#ifdef TF_CLIENT_DLL
-	float flPlayerScale = 1.0f;
-	Color clr( cl_crosshair_red.GetInt(), cl_crosshair_green.GetInt(), cl_crosshair_blue.GetInt(), 255 );
-	flPlayerScale = cl_crosshair_scale.GetFloat() / 32.0f;  // the player can change the scale in the options/multiplayer tab
-	float flWidth = flWeaponScale * flPlayerScale * (float)iTextureW;
-	float flHeight = flWeaponScale * flPlayerScale * (float)iTextureH;
-	int iWidth = (int)(flWidth + 0.5f);
-	int iHeight = (int)(flHeight + 0.5f);
-	int iX = (int)(x + 0.5f);
-	int iY = (int)(y + 0.5f);
-	Color clr = m_clrCrosshair;
-#endif
-
-	float flWidth = flWeaponScale_X * (float)iTextureW; // NEO
-	float flHeight = flWeaponScale_Y * (float)iTextureH; // NEO
+	float flWidth = flWeaponScale_X * (float)iTextureW;
+	float flHeight = flWeaponScale_Y * (float)iTextureH;
 
 	int iWidth = (int)( flWidth + 0.5f );
 	int iHeight = (int)( flHeight + 0.5f );
@@ -224,11 +201,7 @@ void CHudCrosshair::PaintNeo()
 			0, 0,
 			iTextureW, iTextureH,
 			iWidth, iHeight,
-#ifdef TF_CLIENT_DLL
-			clr
-#else
 			COLOR_WHITE
-#endif
 		);
 
 		// NEO NOTE (Rain): If we "need" to bolt the gun, don't show the xhair inaccuracy.
