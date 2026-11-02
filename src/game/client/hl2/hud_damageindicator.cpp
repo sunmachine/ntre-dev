@@ -174,7 +174,7 @@ void CHudDamageIndicator::DrawDamageIndicator(int side)
 	CMeshBuilder meshBuilder;
 	meshBuilder.Begin( pMesh, MATERIAL_QUADS, 1 );
 
-	int insetY = static_cast<int>((m_flDmgTall1 - m_flDmgTall2) / 2);
+	int insetY = static_cast<int>((m_flDmgTall1 - m_flDmgTall2) / 2); // NEO
 
 	int x1 = m_flDmgX;
 	int x2 = m_flDmgX + m_flDmgWide;

@@ -14,9 +14,9 @@
 #include "iviewrender_beams.h"			// flashlight beam
 #include "r_efx.h"
 #include "dlight.h"
-#include "c_basetempentity.h"
-#include "prediction.h"
-#include "bone_setup.h"
+#include "c_basetempentity.h" // NEO
+#include "prediction.h" // NEO
+#include "bone_setup.h" // NEO
 
 #ifdef NEO
 #include "c_neo_player.h"
@@ -160,7 +160,7 @@ static inline float GetAuxChargeRate(C_BaseCombatCharacter *player)
 
 #if defined(NEO)
 	CSuitPowerDevice SuitDeviceSprint( bits_SUIT_DEVICE_SPRINT, 5.0f );					// 100 units in 20 seconds
-#elif defined(HL2MP)
+#elif defined(HL2MP) // NEO
 	CSuitPowerDevice SuitDeviceSprint( bits_SUIT_DEVICE_SPRINT, 25.0f );				// 100 units in 4 seconds
 #else
 	CSuitPowerDevice SuitDeviceSprint( bits_SUIT_DEVICE_SPRINT, 12.5f );				// 100 units in 8 seconds
@@ -600,7 +600,7 @@ bool C_HL2MP_Player::SuitPower_ShouldRecharge( void )
 {
 	// Make sure all devices are off.
 	if( m_HL2Local.m_bitsActiveDevices != 0x00000000 )
-	{
+	{ // NEO
 #ifdef NEO
 		// Is the system fully charged?
 		if (m_HL2Local.m_flSuitPower >= 100.0f)
@@ -632,7 +632,7 @@ bool C_HL2MP_Player::SuitPower_ShouldRecharge( void )
 		}
 #endif
 		return false;
-	}
+	} // NEO
 
 	// Is the system fully charged?
 	if( m_HL2Local.m_flSuitPower >= 100.0f )
@@ -928,9 +928,7 @@ Vector C_HL2MP_Player::GetAutoaimVector( float flDelta )
 //-----------------------------------------------------------------------------
 bool C_HL2MP_Player::CanSprint( void )
 {
-	return (
-		(!m_Local.m_bDucked && !m_Local.m_bDucking) &&
-		(GetWaterLevel() != 3) );
+	return ( (!m_Local.m_bDucked && !m_Local.m_bDucking) && (GetWaterLevel() != 3) );
 }
 
 extern ConVar sv_maxspeed;

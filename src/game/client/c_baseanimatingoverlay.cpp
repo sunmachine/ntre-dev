@@ -20,7 +20,7 @@
 
 extern ConVar r_sequence_debug;
 
-const char* s_m_iv_AnimOverlayNames[C_BaseAnimatingOverlay::MAX_OVERLAYS] =
+const char* s_m_iv_AnimOverlayNames[C_BaseAnimatingOverlay::MAX_OVERLAYS] = // NEO
 {
 	"C_BaseAnimatingOverlay::m_iv_AnimOverlay00",
 	"C_BaseAnimatingOverlay::m_iv_AnimOverlay01",
