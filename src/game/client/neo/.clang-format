@@ -1,0 +1,22 @@
+# Style for NEO-owned code. clang-format 19 syntax.
+Language: Cpp
+BasedOnStyle: LLVM
+Standard: c++20
+# Wrapped lines continue one tab deeper instead of aligning with spaces.
+UseTab: ForContinuationAndIndentation
+AlignAfterOpenBracket: DontAlign
+AlignOperands: DontAlign
+ContinuationIndentWidth: 4
+PenaltyBreakBeforeFirstCallParameter: 100
+IndentWidth: 4
+TabWidth: 4
+# tier0/memdbgon.h must stay the last include in every .cpp.
+SortIncludes: Never
+BreakBeforeBraces: Allman
+ColumnLimit: 120
+SpacesInParens: Never
+PointerAlignment: Right
+AccessModifierOffset: -4
+IndentCaseLabels: false
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: Inline
