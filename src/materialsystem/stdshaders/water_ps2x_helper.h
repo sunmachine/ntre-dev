@@ -15,9 +15,9 @@ struct DrawWater_params_t
 	float4 vRefractTint;
 	half3 vTangentEyeVect;
 	float4 waterFogColor;
-#if BASETEXTURE || LIGHTMAPWATERFOG
+#if BASETEXTURE || LIGHTMAPWATERFOG // NEO
 	HALF4 lightmapTexCoord1And2;
-	HALF2 lightmapTexCoord3;
+	HALF2 lightmapTexCoord3; // NEO
 #endif
 	float4 vProjPos;
 	float4 pixelFogParams;
@@ -30,8 +30,8 @@ struct DrawWater_params_t
 void DrawWater( in DrawWater_params_t i, 
 #if BASETEXTURE
 				in sampler BaseTextureSampler,
-#endif
-#if BASETEXTURE || LIGHTMAPWATERFOG
+#endif // NEO
+#if BASETEXTURE || LIGHTMAPWATERFOG // NEO
 			    in sampler LightmapSampler,
 #endif
 				in sampler NormalSampler,
@@ -178,10 +178,10 @@ void DrawWater( in DrawWater_params_t i,
 	fFresnel *= saturate( ( waterFogDepthValue - 0.05f ) * 20.0f );
 #endif
 
-#if BASETEXTURE || LIGHTMAPWATERFOG
+#if BASETEXTURE || LIGHTMAPWATERFOG // NEO
 #if BASETEXTURE
 	float4 baseSample = tex2D( BaseTextureSampler, i.vBumpTexCoord.xy );
-#endif
+#endif // NEO
 	HALF2 bumpCoord1;
 	HALF2 bumpCoord2;
 	HALF2 bumpCoord3;
@@ -204,7 +204,7 @@ void DrawWater( in DrawWater_params_t i,
 		dp.z * lightmapColor3;
 	float sum = dot( dp, float3( 1.0f, 1.0f, 1.0f ) );
 	diffuseLighting *= LIGHT_MAP_SCALE / sum;
-#if BASETEXTURE
+#if BASETEXTURE // NEO
 	HALF3 diffuseComponent = baseSample.rgb * diffuseLighting;
 #endif
 #endif

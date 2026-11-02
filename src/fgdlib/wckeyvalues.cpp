@@ -6,9 +6,9 @@
 
 #include "fgdlib/WCKeyValues.h"
 
-#ifdef _WIN32
-#define snprintf _snprintf
-#endif
+#ifdef _WIN32 // NEO
+#define snprintf _snprintf // NEO
+#endif // NEO
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include <tier0/memdbgon.h>
@@ -173,7 +173,7 @@ template<class Base>
 void WCKeyValuesT<Base>::SetValue(const char *pszKey, int iValue)
 {
 	char szValue[100];
-	snprintf(szValue, 100, "%d", iValue);
+	snprintf(szValue, 100, "%d", iValue); // NEO
 
 	SetValue(pszKey, szValue);
 }
