@@ -15,6 +15,7 @@
 #include "simtimer.h"
 #include "soundenvelope.h"
 
+#ifdef NEO
 // In HL2MP we need to inherit from  BaseMultiplayerPlayer!
 #if defined ( HL2MP )
 #include "basemultiplayerplayer.h"
@@ -22,7 +23,7 @@
 #else
 #define BASEPLAYERCLASS CBasePlayer
 #endif
-
+#endif // NEO
 class CAI_Squad;
 class CPropCombineBall;
 
@@ -190,6 +191,9 @@ public:
 	void StartSprinting( void );
 	void StopSprinting( void );
 	void InitSprinting( void );
+#ifndef NEO
+	bool IsSprinting( void ) { return m_fIsSprinting; }
+#endif // NEO
 	bool CanSprint( void );
 	void EnableSprint( bool bEnable);
 	bool IsSprinting(void) { return m_fIsSprinting; } // NEO

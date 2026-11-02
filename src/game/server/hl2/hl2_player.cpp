@@ -541,21 +541,9 @@ void CHL2_Player::RemoveSuit( void )
 
 void CHL2_Player::StartSprinting( void )
 {
-#ifndef NEO
-	if ( m_HL2Local.m_flSuitPower < 10 )
-#else
+#ifdef NEO
 	if (m_HL2Local.m_flSuitPower < SPRINT_START_MIN)
-#endif
 	{
-#ifndef NEO
-		// debounce the button for sound playing
-		if ( m_afButtonPressed & IN_SPEED )
-		{
-			CPASAttenuationFilter filter( this );
-			filter.UsePredictionRules();
-			EmitSound( filter, entindex(), "HL2Player.SprintNoPower" );
-		}
-#endif
 		// Don't sprint unless there's a reasonable
 		// amount of suit power.
 		return;
@@ -564,37 +552,17 @@ void CHL2_Player::StartSprinting( void )
 	if( !SuitPower_AddDevice( SuitDeviceSprint ) )
 		return;
 
-
-#ifndef NEO
-	CPASAttenuationFilter filter( this );
-	filter.UsePredictionRules();
-	EmitSound( filter, entindex(), "HL2Player.SprintStart" );
-#endif
-
-#ifndef NEO
-	SetMaxSpeed( HL2_SPRINT_SPEED );
-#endif
-
 	m_fIsSprinting = true;
+#endif // NEO
 }
 
 void CHL2_Player::StopSprinting( void )
 {
+#ifdef NEO
 	if ( m_HL2Local.m_bitsActiveDevices & SuitDeviceSprint.GetDeviceID() )
 	{
 		SuitPower_RemoveDevice( SuitDeviceSprint );
 	}
-
-#ifndef NEO
-	if( IsSuitEquipped() )
-	{
-		SetMaxSpeed( HL2_NORM_SPEED );
-	}
-	else
-	{
-		SetMaxSpeed( HL2_WALK_SPEED );
-	}
-#endif
 
 	m_fIsSprinting = false;
 
@@ -603,6 +571,7 @@ void CHL2_Player::StopSprinting( void )
 		m_bIsAutoSprinting = false;
 		m_fAutoSprintMinTime = 0.0f;
 	}
+#endif // NEO
 }
 
 extern ConVar sv_maxspeed;
@@ -1403,26 +1372,14 @@ void CHL2_Player::StartAutoSprint()
 	}
 }
 
+#ifdef NEO
 #if 0 // TODO (nullsystem): 2025-02-18 SOURCE SDK 2013 CHECK
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CHL2_Player::StartSprinting( void )
 {
-#ifndef NEO
-	if ( m_HL2Local.m_flSuitPower < 10 )
-#else
 	if (m_HL2Local.m_flSuitPower < SPRINT_START_MIN)
-#endif
 	{
-#ifndef NEO
-		// debounce the button for sound playing
-		if ( m_afButtonPressed & IN_SPEED )
-		{
-			CPASAttenuationFilter filter( this );
-			filter.UsePredictionRules();
-			EmitSound( filter, entindex(), "HL2Player.SprintNoPower" );
-		}
-#endif
 		// Don't sprint unless there's a reasonable
 		// amount of suit power.
 		return;
@@ -1431,20 +1388,8 @@ void CHL2_Player::StartSprinting( void )
 	if( !SuitPower_AddDevice( SuitDeviceSprint ) )
 		return;
 
-
-#ifndef NEO
-	CPASAttenuationFilter filter( this );
-	filter.UsePredictionRules();
-	EmitSound( filter, entindex(), "HL2Player.SprintStart" );
-#endif
-
-#ifndef NEO
-	SetMaxSpeed( HL2_SPRINT_SPEED );
-#endif
-
 	m_fIsSprinting = true;
 }
-
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -1455,17 +1400,6 @@ void CHL2_Player::StopSprinting( void )
 		SuitPower_RemoveDevice( SuitDeviceSprint );
 	}
 
-#ifndef NEO
-	if( IsSuitEquipped() )
-	{
-		SetMaxSpeed( HL2_NORM_SPEED );
-	}
-	else
-	{
-		SetMaxSpeed( HL2_WALK_SPEED );
-	}
-#endif
-
 	m_fIsSprinting = false;
 
 	if ( sv_stickysprint.GetBool() )
@@ -1475,7 +1409,7 @@ void CHL2_Player::StopSprinting( void )
 	}
 }
 #endif
-
+#endif // NEO
 //-----------------------------------------------------------------------------
 // Purpose: Called to disable and enable sprint due to temporary circumstances:
 //			- Carrying a heavy object with the physcannon
@@ -1951,10 +1885,12 @@ void CHL2_Player::CheatImpulseCommands( int iImpulse )
 	{	
 	case 51:
 	{
+#ifdef NEO
 	#ifdef SDK2013CE
 		if ( sv_cheats->GetBool() )
 		{
 	#endif
+#endif // NEO
 			// Cheat to create a dynamic resupply item
 			Vector vecForward;
 			AngleVectors( EyeAngles(), &vecForward );
@@ -2245,11 +2181,13 @@ bool CHL2_Player::SuitPower_RemoveDevice( const CSuitPowerDevice &device )
 		// suit power system entered a no-load state.
 		m_HL2Local.m_flTimeAllSuitDevicesOff = gpGlobals->curtime;
 	}
+#ifdef NEO
 	// Take a little bit of suit power when you disable a device. If the device is shutting off
 	// because the battery is drained, no harm done, the battery charge cannot go below 0. 
 	// This code in combination with the delay before the suit can start recharging are a defense
 	// against exploits where the player could rapidly tap sprint and never run out of power.
 	SuitPower_Drain( device.GetDeviceDrainRate() * 0.1f );
+#endif // NEO
 
 	return true;
 }
@@ -3534,10 +3472,12 @@ float CHL2_Player::GetHeldObjectMass( IPhysicsObject *pHeldObject )
 	return mass;
 }
 
+#ifdef NEO
 CBaseEntity	*CHL2_Player::GetHeldObject( void )
 {
 	return PhysCannonGetHeldEntity( GetActiveWeapon() );
 }
+#endif // NEO
 //-----------------------------------------------------------------------------
 // Purpose: Force the player to drop any physics objects he's carrying
 //-----------------------------------------------------------------------------
