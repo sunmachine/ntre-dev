@@ -136,27 +136,29 @@ public:
 	virtual void	DisplayReplayMessage( const char *pLocalizeName, float flDuration, bool bUrgent,
 										  const char *pSound, bool bDlg );
 
+#ifdef NEO
 	virtual bool	IsInfoPanelAllowed() OVERRIDE
 	{
-#ifdef NEO
 		if (cl_disablehtmlmotd.GetInt() == MotdPreference::ShowNothing)
 		{
 			return false;
 		}
-#endif
 		return true;
 	}
+#else
+	virtual bool	IsInfoPanelAllowed() OVERRIDE { return true; }
+#endif // NEO
 
 	virtual void	InfoPanelDisplayed() OVERRIDE { }
 
+#ifdef NEO
 	virtual bool	IsHTMLInfoPanelAllowed() OVERRIDE
 	{
-#ifdef NEO
 		return (cl_disablehtmlmotd.GetInt() == MotdPreference::ShowFullHtml);
-#else
-		return true;
-#endif
 	}
+#else
+	virtual bool	IsHTMLInfoPanelAllowed() OVERRIDE { return true; }
+#endif // NEO
 
 	bool	IsAnyPanelVisibleExceptScores() { return m_pViewport->IsAnyPanelVisibleExceptScores(); }
 	bool	IsPanelVisible( const char* panel ) { return m_pViewport->IsPanelVisible( panel ); }
