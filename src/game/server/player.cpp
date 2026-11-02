@@ -1740,13 +1740,21 @@ int CBasePlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 
 #ifdef NEO
 	if (sv_neo_bullet_physforce_scale.GetFloat() != 0)
-#endif
+#else
+	if ( info.GetInflictor() && (GetMoveType() == MOVETYPE_WALK) && 
+		( !attacker->IsSolidFlagSet(FSOLID_TRIGGER)) )
+#endif // NEO
 	{
+#ifdef NEO
 		if (info.GetInflictor() && (GetMoveType() == MOVETYPE_WALK) &&
 			(!attacker->IsSolidFlagSet(FSOLID_TRIGGER)))
 		{
 			Vector force = vecDir * -DamageForce(WorldAlignSize(), info.GetBaseDamage());
 			if (force.z > 250.0f)
+#else
+		Vector force = vecDir * -DamageForce( WorldAlignSize(), info.GetBaseDamage() );
+		if ( force.z > 250.0f )
+#endif // NEO
 			{
 				force.z = 250.0f;
 			}
@@ -3067,10 +3075,12 @@ float CBasePlayer::GetHeldObjectMass( IPhysicsObject *pHeldObject )
 	return 0;
 }
 
+#ifdef NEO
 CBaseEntity	*CBasePlayer::GetHeldObject( void )
 {
 	return NULL;
 }
+#endif // NEO
 
 //-----------------------------------------------------------------------------
 // Purpose:	Server side of jumping rules.  Most jumping logic is already
