@@ -408,6 +408,10 @@ void CHL2MP_Player::Spawn(void)
 		GiveDefaultItems();
 	}
 
+#ifndef NEO
+	SetNumAnimOverlays( 3 );
+	ResetAnimation();
+#endif // NEO
 
 	m_nRenderFX = kRenderNormal;
 
@@ -642,16 +646,40 @@ bool CHL2MP_Player::Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmodelinde
 {
 	bool bRet = BaseClass::Weapon_Switch( pWeapon, viewmodelindex );
 
+#ifndef NEO
+	if ( bRet == true )
+	{
+		ResetAnimation();
+	}
+
+#endif // NEO
 	return bRet;
 }
 
 void CHL2MP_Player::PreThink( void )
 {
+#ifndef NEO
+	QAngle vOldAngles = GetLocalAngles();
+	QAngle vTempAngles = GetLocalAngles();
+
+	vTempAngles = EyeAngles();
+
+	if ( vTempAngles[PITCH] > 180.0f )
+	{
+		vTempAngles[PITCH] -= 360.0f;
+	}
+
+	SetLocalAngles( vTempAngles );
+
+#endif // NEO
 	BaseClass::PreThink();
 	State_PreThink();
 
 	//Reset bullet force accumulator, only lasts one frame
 	m_vecTotalBulletForce = vec3_origin;
+#ifndef NEO
+	SetLocalAngles( vOldAngles );
+#endif // NEO
 }
 
 void CHL2MP_Player::PostThink( void )
@@ -1003,6 +1031,9 @@ bool CHL2MP_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 	if( !pWeapon->FVisible( this, MASK_SOLID ) && !(GetFlags() & FL_NOTARGET) ) // NEO
 #endif // NEO
 	// Don't let the player fetch weapons through walls (use MASK_SOLID so that you can't pickup through windows)
+#ifndef NEO
+	if( !pWeapon->FVisible( this, MASK_SOLID ) && !(GetFlags() & FL_NOTARGET) )
+#endif // NEO
 	{
 		return false;
 	}
@@ -1381,6 +1412,8 @@ void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 	subinfo.SetDamageForce( m_vecTotalBulletForce );
 
 #ifndef NEO
+	SetNumAnimOverlays( 0 );
+
 	// Note: since we're dead, it won't draw us on the client, but we don't set EF_NODRAW
 	// because we still want to transmit to the clients in our PVS.
 	CreateRagdollEntity();
@@ -1785,6 +1818,7 @@ bool CHL2MP_Player::CanHearAndReadChatFrom( CBasePlayer *pPlayer )
 	return true;
 }
 
+#ifdef NEO
 //-----------------------------------------------------------------------------
 // Purpose: multiplayer does not do autoaiming.
 //-----------------------------------------------------------------------------
@@ -1844,16 +1878,12 @@ void TE_PlayerAnimEvent( CBasePlayer *pPlayer, PlayerAnimEvent_t event, int nDat
 	g_TEPlayerAnimEvent.Create( filter, 0 );
 }
 
-
 void CHL2MP_Player::DoAnimationEvent( PlayerAnimEvent_t event, int nData )
 {
-#ifdef NEO
 	m_PlayerAnimState->DoAnimationEvent( event, nData );
-#endif
 	TE_PlayerAnimEvent( this, event, nData );	// Send to any clients who can see this guy.
 }
 
-#ifdef NEO
 //-----------------------------------------------------------------------------
 // Purpose: Server-side mirror of C_HL2MP_Player::OnNewModel. The animation state
 //			caches per-model data (pose parameters, gesture slots, the aim-layer
@@ -1874,7 +1904,6 @@ CStudioHdr *CHL2MP_Player::OnNewModel( void )
 
 	return hdr;
 }
-#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: Override setup bones so that is uses the render angles from
@@ -1922,11 +1951,7 @@ void CHL2MP_Player::SetupBones( matrix3x4_t *pBoneToWorld, int boneMask )
 		{
 			BuildMatricesWithBoneMerge( 
 				pStudioHdr, 
-#ifdef NEO
 				m_PlayerAnimState->GetRenderAngles(),
-#else
-				m_PlayerAnimState.GetRenderAngles(),
-#endif
 				adjOrigin, 
 				pos, 
 				q, 
@@ -1940,11 +1965,7 @@ void CHL2MP_Player::SetupBones( matrix3x4_t *pBoneToWorld, int boneMask )
 
 	Studio_BuildMatrices( 
 		pStudioHdr, 
-#ifdef NEO
 		m_PlayerAnimState->GetRenderAngles(),
-#else
-		m_PlayerAnimState.GetRenderAngles(),
-#endif
 		adjOrigin, 
 		pos, 
 		q, 
@@ -1953,7 +1974,7 @@ void CHL2MP_Player::SetupBones( matrix3x4_t *pBoneToWorld, int boneMask )
 		pBoneToWorld,
 		boneMask );
 }
-
+#endif // NEO
 //-----------------------------------------------------------------------------------------------------
 // Return true if the given threat is aiming in our direction
 bool CHL2MP_Player::IsThreatAimingTowardMe( CBaseEntity* threat, float cosTolerance ) const
