@@ -127,7 +127,7 @@ bool CWeaponShotgun::StartReload( void )
 	if ( m_bNeedPump )
 		return false;
 
-	CHL2MP_Player *pOwner = ToHL2MPPlayer( GetOwner() );
+	CHL2MP_Player *pOwner = ToHL2MPPlayer( GetOwner() ); // NEO
 	
 	if ( pOwner == NULL )
 		return false;
@@ -146,8 +146,8 @@ bool CWeaponShotgun::StartReload( void )
 
 	SendWeaponAnim( ACT_SHOTGUN_RELOAD_START );
 
-	//Tony; BUG BUG BUG!!! shotgun does one shell at a time!!! -- player model only has a single reload!!! so I'm just going to dispatch the singular for now.
-	pOwner->DoAnimationEvent( PLAYERANIMEVENT_RELOAD );
+	//Tony; BUG BUG BUG!!! shotgun does one shell at a time!!! -- player model only has a single reload!!! so I'm just going to dispatch the singular for now. // NEO
+	pOwner->DoAnimationEvent( PLAYERANIMEVENT_RELOAD ); // NEO
 
 	// Make shotgun shell visible
 	SetBodygroup(1,0);
@@ -296,7 +296,7 @@ void CWeaponShotgun::DryFire( void )
 void CWeaponShotgun::PrimaryAttack( void )
 {
 	// Only the player fires this way so we can cast
-	CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() );
+	CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() ); // NEO
 
 	if (!pPlayer)
 	{
@@ -315,7 +315,7 @@ void CWeaponShotgun::PrimaryAttack( void )
 	m_iClip1 -= 1;
 
 	// player "shoot" animation
-	pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
+	pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY ); // NEO
 
 
 	Vector	vecSrc		= pPlayer->Weapon_ShootPosition( );
@@ -348,7 +348,7 @@ void CWeaponShotgun::PrimaryAttack( void )
 void CWeaponShotgun::SecondaryAttack( void )
 {
 	// Only the player fires this way so we can cast
-	CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() );
+	CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() ); // NEO
 
 	if (!pPlayer)
 	{
@@ -368,11 +368,11 @@ void CWeaponShotgun::SecondaryAttack( void )
 	m_iClip1 -= 2;	// Shotgun uses same clip for primary and secondary attacks
 
 	// player "shoot" animation
-	pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );	//Tony; shotgun doesn't have a secondary anim, use primary.
+	pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );	//Tony; shotgun doesn't have a secondary anim, use primary. // NEO
 
 
-	Vector vecSrc		= pPlayer->Weapon_ShootPosition();
-	Vector vecAiming	= pPlayer->GetAutoaimVector( AUTOAIM_10DEGREES );
+	Vector vecSrc		= pPlayer->Weapon_ShootPosition(); // NEO
+	Vector vecAiming	= pPlayer->GetAutoaimVector( AUTOAIM_10DEGREES ); // NEO
 
 	FireBulletsInfo_t info( 12, vecSrc, vecAiming, GetBulletSpread(), MAX_TRACE_LENGTH, m_iPrimaryAmmoType );
 	info.m_pAttacker = pPlayer;

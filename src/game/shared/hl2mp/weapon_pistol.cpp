@@ -15,7 +15,7 @@
 #endif
 
 #include "weapon_hl2mpbasehlmpcombatweapon.h"
-#include "weapon_hl2mpbase_machinegun.h"
+#include "weapon_hl2mpbase_machinegun.h" // NEO
 
 #define	PISTOL_FASTEST_REFIRE_TIME		0.1f
 #define	PISTOL_FASTEST_DRY_REFIRE_TIME	0.2f
@@ -31,10 +31,10 @@
 // CWeaponPistol
 //-----------------------------------------------------------------------------
 
-class CWeaponPistol : public CHL2MPMachineGun
+class CWeaponPistol : public CHL2MPMachineGun // NEO
 {
 public:
-	DECLARE_CLASS( CWeaponPistol, CHL2MPMachineGun );
+	DECLARE_CLASS( CWeaponPistol, CHL2MPMachineGun ); // NEO
 
 	CWeaponPistol(void);
 
@@ -312,7 +312,7 @@ bool CWeaponPistol::Reload( void )
 	if ( fRet )
 	{
 		WeaponSound( RELOAD );
-		ToHL2MPPlayer(GetOwner())->DoAnimationEvent( PLAYERANIMEVENT_RELOAD );
+		ToHL2MPPlayer(GetOwner())->DoAnimationEvent( PLAYERANIMEVENT_RELOAD ); // NEO
 		m_flAccuracyPenalty = 0.0f;
 	}
 	return fRet;
