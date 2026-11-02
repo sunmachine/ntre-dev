@@ -67,6 +67,7 @@ public:
 	// sit still until it had gotten a few updates from the server.
 	void SetupInitialTransmittedGrenadeVelocity( const Vector &velocity );
 
+#ifdef NEO
 	int ShouldTransmit(const CCheckTransmitInfo* pInfo) override
 	{
 		CBaseEntity *pRecipientEntity = CBaseEntity::Instance( pInfo->m_pClientEnt );
@@ -81,7 +82,7 @@ public:
 		}
 		return FL_EDICT_PVSCHECK;
 	}
-
+#endif // NEO
 protected:
 
 #ifdef NEO
