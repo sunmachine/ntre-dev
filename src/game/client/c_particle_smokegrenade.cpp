@@ -403,26 +403,26 @@ void C_ParticleSmokeGrenade::Start(CParticleMgr *pParticleMgr, IPrototypeArgAcce
 
 void C_ParticleSmokeGrenade::ClientThink()
 {
-	if (m_CurrentStage == 1)
+	if ( m_CurrentStage == 1 )
 	{
 		// Add our influence to the global smoke fog alpha.
 
-		float testDist = (MainViewOrigin() - m_SmokeBasePos).Length();
+		float testDist = (MainViewOrigin() - m_SmokeBasePos ).Length();
 
 		float fadeEnd = m_ExpandRadius;
 
 		// The center of the smoke cloud that always gives full fog overlay
 		float flCoreDistance = fadeEnd * 0.3;
 
-		if (testDist < fadeEnd)
+		if(testDist < fadeEnd)
 		{
-			if (testDist < flCoreDistance)
+			if( testDist < flCoreDistance )
 			{
 				EngineGetSmokeFogOverlayAlpha() += m_FadeAlpha;
 			}
 			else
 			{
-				EngineGetSmokeFogOverlayAlpha() += (1 - (testDist - flCoreDistance) / (fadeEnd - flCoreDistance)) * m_FadeAlpha;
+				EngineGetSmokeFogOverlayAlpha() += (1 - ( testDist - flCoreDistance ) / ( fadeEnd - flCoreDistance ) ) * m_FadeAlpha;
 			}
 		}
 	}
@@ -684,11 +684,11 @@ inline void C_ParticleSmokeGrenade::ApplyDynamicLight( const Vector &vParticlePo
 	}
 }
 
-ConVar r_neo_thermal_smoke_alpha("r_neo_thermal_smoke_alpha", "0.03", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY, "Smoke grenade transparency in thermal vision",true, 0.0f, true, 1.0f);
+ConVar r_neo_thermal_smoke_alpha("r_neo_thermal_smoke_alpha", "0.03", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY, "Smoke grenade transparency in thermal vision",true, 0.0f, true, 1.0f); // NEO
 void C_ParticleSmokeGrenade::RenderParticles( CParticleRenderIterator *pIterator )
 {
-	const SmokeGrenadeParticle* pParticle = (const SmokeGrenadeParticle*)pIterator->GetFirst();
-	while (pParticle)
+	const SmokeGrenadeParticle *pParticle = (const SmokeGrenadeParticle*)pIterator->GetFirst();
+	while ( pParticle )
 	{
 		Vector vWorldSpacePos = m_SmokeBasePos + pParticle->m_Pos;
 
@@ -696,7 +696,7 @@ void C_ParticleSmokeGrenade::RenderParticles( CParticleRenderIterator *pIterator
 
 		// Draw.
 		float len = pParticle->m_Pos.Length();
-		if (len > m_ExpandRadius)
+		if ( len > m_ExpandRadius )
 		{
 			Vector vTemp;
 			TransformParticle(ParticleMgr()->GetModelView(), vWorldSpacePos, vTemp);
@@ -707,7 +707,7 @@ void C_ParticleSmokeGrenade::RenderParticles( CParticleRenderIterator *pIterator
 			// This smooths out the growing sphere. Rather than having particles appear in one spot as the sphere
 			// expands, they stay at the borders.
 			Vector renderPos;
-			if (len > m_ExpandRadius * 0.5f)
+			if(len > m_ExpandRadius * 0.5f)
 			{
 				renderPos = m_SmokeBasePos + (pParticle->m_Pos * (m_ExpandRadius * 0.5f)) / len;
 			}
@@ -720,8 +720,8 @@ void C_ParticleSmokeGrenade::RenderParticles( CParticleRenderIterator *pIterator
 			float alpha = 1 - len / m_ExpandRadius;
 
 			// This changes the ramp to be very solid in the core, then taper off.
-			static float testCutoff = 0.3;
-			if (alpha > testCutoff)
+			static float testCutoff=0.3;
+			if(alpha > testCutoff)
 			{
 				alpha = 1;
 			}
@@ -749,9 +749,9 @@ void C_ParticleSmokeGrenade::RenderParticles( CParticleRenderIterator *pIterator
 			color.z *= pParticle->m_Color[2] / 255.0f;
 
 			// Lighting.
-			ApplyDynamicLight(renderPos, color);
+			ApplyDynamicLight( renderPos, color );
 
-			color = (color + Vector(0.5, 0.5, 0.5)) / 2;   //Desaturate
+			color = (color + Vector( 0.5, 0.5, 0.5 )) / 2;   //Desaturate
 
 			Vector tRenderPos;
 			TransformParticle(ParticleMgr()->GetModelView(), renderPos, tRenderPos);
@@ -769,7 +769,7 @@ void C_ParticleSmokeGrenade::RenderParticles( CParticleRenderIterator *pIterator
 			);
 		}
 
-		pParticle = (SmokeGrenadeParticle*)pIterator->GetNext(sortKey);
+		pParticle = (SmokeGrenadeParticle*)pIterator->GetNext( sortKey );
 	}
 }
 

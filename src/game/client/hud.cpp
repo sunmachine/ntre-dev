@@ -754,8 +754,8 @@ void CHud::SetupNewHudTexture( CHudTexture *t )
 			t->rc.bottom = tall;
 		}
 #endif
-		Assert((float)wide != 0);
-		Assert((float)tall != 0);
+		Assert((float)wide != 0); // NEO
+		Assert((float)tall != 0); // NEO
 		t->texCoords[ 0 ] = (float)(t->rc.left + 0.5f) / (float)wide;
 		t->texCoords[ 1 ] = (float)(t->rc.top + 0.5f) / (float)tall;
 		t->texCoords[ 2 ] = (float)(t->rc.right - 0.5f) / (float)wide;

@@ -954,8 +954,8 @@ void C_BaseAnimating::RemoveBaseAnimatingInterpolatedVars()
 }
 
 /*
- From Ken: Lock() and Unlock() are render frame only, it's just so the mdlcache
- doesn't toss the memory when it reshuffles the data, or at least used to. I
+ From Ken: Lock() and Unlock() are render frame only, it's just so the mdlcache // NEO
+ doesn't toss the memory when it reshuffles the data, or at least used to. I // NEO
  don't have any idea if mdlcache even does that anymore, but at one point it would
  happily throw away the animation data if you ran out of memory on the
  consoles. Jay adds: Ken is correct and the pointer should be valid until the end
@@ -3751,7 +3751,7 @@ void C_BaseAnimating::DoAnimationEvents( CStudioHdr *pStudioHdr )
 	int nSeqNum = GetSequence();
 	if ( nSeqNum >= nStudioNumSeq )
 	{
-#if 0 // TODO (nullsystem): 2025-02-18 SOURCE SDK 2013 CHECK
+#if 0 // TODO (nullsystem): 2025-02-18 SOURCE SDK 2013 CHECK // NEO
 #ifdef NEO
 		if (!GetOwnerEntity())
 		{
@@ -3765,7 +3765,7 @@ void C_BaseAnimating::DoAnimationEvents( CStudioHdr *pStudioHdr )
 			return;
 		}
 #endif
-#endif // SRCSDK2013CHECK
+#endif // SRCSDK2013CHECK // NEO
 		// This can happen e.g. while reloading Heavy's shotgun, switch to the minigun.
 		Warning( "%s[%d]: Playing sequence %d but there's only %d in total?\n", GetDebugName(), entindex(), nSeqNum, nStudioNumSeq );
 		return;

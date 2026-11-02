@@ -5,7 +5,7 @@
 // $NoKeywords: $
 //=============================================================================//
 #include "cbase.h"
-#include "hl2mp_hud_target_id.h"
+#include "hl2mp_hud_target_id.h" // NEO
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -13,7 +13,7 @@
 using namespace vgui;
 
 #ifndef NEO
-DECLARE_NAMED_HUDELEMENT(CTargetID, TargetID);
+DECLARE_NAMED_HUDELEMENT(CTargetID, TargetID); // NEO
 #endif
 
 //-----------------------------------------------------------------------------
@@ -160,7 +160,7 @@ void CTargetID::Paint()
 		{
 			if ( bShowPlayerName && bShowHealth )
 			{
-				g_pVGuiLocalize->ConstructString( sIDString, sizeof(sIDString), formatString, 2, wszPlayerName, wszHealthText );
+				g_pVGuiLocalize->ConstructString( sIDString, sizeof(sIDString), formatString, 2, wszPlayerName, wszHealthText ); // NEO
 			}
 		}
 
@@ -184,7 +184,7 @@ void CTargetID::Paint()
 			vgui::surface()->DrawSetTextFont( m_hFont );
 			vgui::surface()->DrawSetTextPos( xpos, ypos );
 			vgui::surface()->DrawSetTextColor( c );
-			vgui::surface()->DrawPrintText( sIDString, (int)wcslen(sIDString), FONT_DRAW_DEFAULT);
+			vgui::surface()->DrawPrintText( sIDString, (int)wcslen(sIDString), FONT_DRAW_DEFAULT); // NEO
 		}
 	}
 }

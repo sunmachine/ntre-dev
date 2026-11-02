@@ -49,7 +49,7 @@ ConVar cl_neo_hud_context_hint_highlight_player("cl_neo_hud_context_hint_highlig
 		return;
 	});
 #else
-ConVar glow_outline_effect_enable( "glow_outline_effect_enable", "0", 0, "Enable entity outline glow effects.");
+ConVar glow_outline_effect_enable( "glow_outline_effect_enable", "0", 0, "Enable entity outline glow effects."); // NEO
 ConVar glow_outline_effect_width( "glow_outline_width", "10.0f", FCVAR_CHEAT, "Width of glow outline effect in screen space." );
 #endif // NEO
 
@@ -484,7 +484,7 @@ void CGlowObjectManager::ApplyEntityGlowEffects( const CViewSetup *pSetup, int n
 				pRtQuarterSize1->GetActualHeight());
 		}
 #else
-		pRenderContext->DrawScreenSpaceRectangle(pMatHaloAddToScreen, 0, 0, nViewportWidth, nViewportHeight,
+		pRenderContext->DrawScreenSpaceRectangle( pMatHaloAddToScreen, 0, 0, nViewportWidth, nViewportHeight,
 			0.0f, -0.5f, nSrcWidth / 4 - 1, nSrcHeight / 4 - 1,
 			pRtQuarterSize1->GetActualWidth(),
 			pRtQuarterSize1->GetActualHeight() );

@@ -17,8 +17,8 @@
 #include "VGuiMatSurface/IMatSystemSurface.h"
 #include "client_virtualreality.h"
 #include "sourcevr/isourcevirtualreality.h"
-#include "neo_crosshair.h"
-#include "c_playerresource.h"
+#include "neo_crosshair.h" // NEO
+#include "c_playerresource.h" // NEO
 
 #ifdef SIXENSE
 #include "sixense/in_sixense.h"
@@ -47,7 +47,7 @@ int ScreenTransform( const Vector& point, Vector& screen );
 #ifdef TF_CLIENT_DLL
 // If running TF, we use CHudTFCrosshair instead (which is derived from CHudCrosshair)
 #else
-DECLARE_HUDELEMENT_DEPTH(CHudCrosshair, 9999);
+DECLARE_HUDELEMENT_DEPTH(CHudCrosshair, 9999); // NEO
 #endif
 
 #ifdef NEO
@@ -365,8 +365,8 @@ void CHudCrosshair::GetDrawPosition ( float *pX, float *pY, bool *pbBehindCamera
 }
 
 // NEO TODO (Rain): move to server game rules for server op toggling
-ConVar cl_neo_scope_restrict_to_rectangle("cl_neo_scope_restrict_to_rectangle", "1", FCVAR_CHEAT,
-	"Whether to enforce rectangular sniper scope shape regardless of screen ratio.", true, 0.0, true, 1.0);
+ConVar cl_neo_scope_restrict_to_rectangle("cl_neo_scope_restrict_to_rectangle", "1", FCVAR_CHEAT, // NEO
+	"Whether to enforce rectangular sniper scope shape regardless of screen ratio.", true, 0.0, true, 1.0); // NEO
 
 #ifdef NEO
 
@@ -403,7 +403,7 @@ void CHudCrosshair::Paint( void )
 	if( bBehindCamera )
 		return;
 
-#ifdef TF_CLIENT_DLL
+#ifdef TF_CLIENT_DLL // NEO
 	float flWeaponScale = 1.f;
 #else
 	float flWeaponScale_X = 1.0f;
@@ -478,8 +478,8 @@ void CHudCrosshair::Paint( void )
 	Color clr = m_clrCrosshair;
 #endif
 
-	float flWidth = flWeaponScale_X * (float)iTextureW;
-	float flHeight = flWeaponScale_Y * (float)iTextureH;
+	float flWidth = flWeaponScale_X * (float)iTextureW; // NEO
+	float flHeight = flWeaponScale_Y * (float)iTextureH; // NEO
 
 	int iWidth = (int)( flWidth + 0.5f );
 	int iHeight = (int)( flHeight + 0.5f );
