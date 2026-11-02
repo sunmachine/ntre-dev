@@ -1,0 +1,7 @@
+# Valve SDK code is never formatted. NEO-owned directories carry their own
+# .clang-format, which overrides this one for files beneath them. The few
+# NEO-owned files inside Valve directories (src/materialsystem/stdshaders/
+# [Nn]eo_* and src/launcher_main/neo_case_heal.h) are formatted with the NEO
+# style by the clang-format workflow through an explicit path list.
+DisableFormat: true
+SortIncludes: Never
