@@ -83,10 +83,10 @@ public:
 //=============================================================================
 // >> HL2_PLAYER
 //=============================================================================
-class CHL2_Player : public BASEPLAYERCLASS
+class CHL2_Player : public BASEPLAYERCLASS // NEO
 {
 public:
-	DECLARE_CLASS( CHL2_Player, BASEPLAYERCLASS );
+	DECLARE_CLASS( CHL2_Player, BASEPLAYERCLASS ); // NEO
 
 	CHL2_Player();
 	~CHL2_Player( void );
@@ -192,7 +192,7 @@ public:
 	void InitSprinting( void );
 	bool CanSprint( void );
 	void EnableSprint( bool bEnable);
-	bool IsSprinting(void) { return m_fIsSprinting; }
+	bool IsSprinting(void) { return m_fIsSprinting; } // NEO
 #endif
 
 
@@ -272,7 +272,7 @@ public:
 	virtual	bool		IsHoldingEntity( CBaseEntity *pEnt );
 	virtual void		ForceDropOfCarriedPhysObjects( CBaseEntity *pOnlyIfHoldindThis );
 	virtual float		GetHeldObjectMass( IPhysicsObject *pHeldObject );
-	virtual CBaseEntity	*GetHeldObject( void );
+	virtual CBaseEntity	*GetHeldObject( void ); // NEO
 
 	virtual bool		IsFollowingPhysics( void ) { return (m_afPhysicsFlags & PFLAG_ONBARNACLE) > 0; }
 	void				InputForceDropPhysObjects( inputdata_t &data );

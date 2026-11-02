@@ -1788,7 +1788,7 @@ void CNPC_Strider::RunTask( const Task_t *pTask )
    		break;
 
 	case TASK_PLAY_SEQUENCE:
-		if( m_bFastCrouch && static_cast<int>(pTask->flTaskData) == ACT_CROUCH )
+		if( m_bFastCrouch && static_cast<int>(pTask->flTaskData) == ACT_CROUCH ) // NEO
 		{
 			SetPlaybackRate( 10.0f );
 			if( IsSequenceFinished() )

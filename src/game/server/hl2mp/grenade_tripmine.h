@@ -15,8 +15,8 @@
 
 class CBeam;
 
-// for constraints
-#include "vphysics/constraints.h"
+// for constraints // NEO
+#include "vphysics/constraints.h" // NEO
 
 class CTripmineGrenade : public CBaseGrenade
 {
@@ -24,12 +24,12 @@ public:
 	DECLARE_CLASS( CTripmineGrenade, CBaseGrenade );
 
 	CTripmineGrenade();
-	~CTripmineGrenade();
+	~CTripmineGrenade(); // NEO
 
 	void Spawn( void );
 	void Precache( void );
 
-	virtual int OnTakeDamage( const CTakeDamageInfo &info );
+	virtual int OnTakeDamage( const CTakeDamageInfo &info ); // NEO
 	void WarningThink( void );
 	void PowerupThink( void );
 	void BeamBreakThink( void );
@@ -39,14 +39,14 @@ public:
 	void MakeBeam( void );
 	void KillBeam( void );
 
-	// Added to create a constraint
-	void AttachToEntity( CBaseEntity *pOther );
-	bool MakeConstraint( CBaseEntity *pOther );
+	// Added to create a constraint // NEO
+	void AttachToEntity( CBaseEntity *pOther ); // NEO
+	bool MakeConstraint( CBaseEntity *pOther ); // NEO
 
 public:
 	EHANDLE		m_hOwner;
-	// Added for following
-	EHANDLE		m_hAttachEntity;
+	// Added for following // NEO
+	EHANDLE		m_hAttachEntity; // NEO
 
 private:
 	float		m_flPowerUp;

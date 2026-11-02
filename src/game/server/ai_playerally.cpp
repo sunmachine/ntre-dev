@@ -143,7 +143,7 @@ public:
 	{
 		for ( int i = 0; i < ARRAYSIZE(g_ConceptInfos); i++ )
 		{
-			Insert( g_ConceptInfos[i].aiconcept, &g_ConceptInfos[i] );
+			Insert( g_ConceptInfos[i].aiconcept, &g_ConceptInfos[i] ); // NEO
 		}
 	}
 };
@@ -166,7 +166,7 @@ void CAI_AllySpeechManager::Spawn()
 {
 	Assert( g_ConceptInfoMap.Count() != 0 );
 	for ( int i = 0; i < ARRAYSIZE(g_ConceptInfos); i++ )
-		m_ConceptTimers.Insert( AllocPooledString( g_ConceptInfos[i].aiconcept ), CSimpleSimTimer() );
+		m_ConceptTimers.Insert( AllocPooledString( g_ConceptInfos[i].aiconcept ), CSimpleSimTimer() ); // NEO
 }
 
 void CAI_AllySpeechManager::AddCustomConcept( const ConceptInfo_t &conceptInfo )
@@ -174,14 +174,14 @@ void CAI_AllySpeechManager::AddCustomConcept( const ConceptInfo_t &conceptInfo )
 	Assert( g_ConceptInfoMap.Count() != 0 );
 	Assert( m_ConceptTimers.Count() != 0 );
 
-	if ( g_ConceptInfoMap.Find( conceptInfo.aiconcept ) == g_ConceptInfoMap.InvalidIndex() )
+	if ( g_ConceptInfoMap.Find( conceptInfo.aiconcept ) == g_ConceptInfoMap.InvalidIndex() ) // NEO
 	{
-		g_ConceptInfoMap.Insert( conceptInfo.aiconcept, new ConceptInfo_t( conceptInfo ) );
+		g_ConceptInfoMap.Insert( conceptInfo.aiconcept, new ConceptInfo_t( conceptInfo ) ); // NEO
 	}
 
-	if ( m_ConceptTimers.Find( AllocPooledString(conceptInfo.aiconcept) ) == m_ConceptTimers.InvalidIndex() )
+	if ( m_ConceptTimers.Find( AllocPooledString(conceptInfo.aiconcept) ) == m_ConceptTimers.InvalidIndex() ) // NEO
 	{
-		m_ConceptTimers.Insert( AllocPooledString( conceptInfo.aiconcept ), CSimpleSimTimer() );
+		m_ConceptTimers.Insert( AllocPooledString( conceptInfo.aiconcept ), CSimpleSimTimer() ); // NEO
 	}
 }
 
@@ -190,16 +190,16 @@ ConceptCategoryInfo_t *CAI_AllySpeechManager::GetConceptCategoryInfo( ConceptCat
 	return &g_ConceptCategoryInfos[category];
 }
 
-ConceptInfo_t *CAI_AllySpeechManager::GetConceptInfo( AIConcept_t aiconcept )
+ConceptInfo_t *CAI_AllySpeechManager::GetConceptInfo( AIConcept_t aiconcept ) // NEO
 {
-	int iResult = g_ConceptInfoMap.Find( aiconcept );
+	int iResult = g_ConceptInfoMap.Find( aiconcept ); // NEO
 
 	return ( iResult != g_ConceptInfoMap.InvalidIndex() ) ? g_ConceptInfoMap[iResult] : NULL;
 }
 
-void CAI_AllySpeechManager::OnSpokeConcept( CAI_PlayerAlly *pPlayerAlly, AIConcept_t aiconcept, AI_Response *response )
+void CAI_AllySpeechManager::OnSpokeConcept( CAI_PlayerAlly *pPlayerAlly, AIConcept_t aiconcept, AI_Response *response ) // NEO
 {
-	ConceptInfo_t *			pConceptInfo	= GetConceptInfo( aiconcept );
+	ConceptInfo_t *			pConceptInfo	= GetConceptInfo( aiconcept ); // NEO
 	ConceptCategory_t		category		= ( pConceptInfo ) ? pConceptInfo->category : SPEECH_IDLE;
 	ConceptCategoryInfo_t *	pCategoryInfo	= GetConceptCategoryInfo( category );
 
@@ -218,7 +218,7 @@ void CAI_AllySpeechManager::OnSpokeConcept( CAI_PlayerAlly *pPlayerAlly, AIConce
 					 pPlayerAlly->FVisible( pTalker ) )
 				{
 					// Tell this guy he's already said the concept to the player, too.
-					pTalker->GetExpresser()->SetSpokeConcept( aiconcept, NULL, false );
+					pTalker->GetExpresser()->SetSpokeConcept( aiconcept, NULL, false ); // NEO
 				}
 			}
 		}
@@ -249,7 +249,7 @@ void CAI_AllySpeechManager::OnSpokeConcept( CAI_PlayerAlly *pPlayerAlly, AIConce
 		if ( pConceptInfo && pConceptInfo->minConceptDelay != -1 )
 		{
 			Assert( pConceptInfo->maxConceptDelay != -1 );
-			char iConceptTimer = m_ConceptTimers.Find( MAKE_STRING(aiconcept) );
+			char iConceptTimer = m_ConceptTimers.Find( MAKE_STRING(aiconcept) ); // NEO
 			if ( iConceptTimer != m_ConceptTimers.InvalidIndex() )
 				m_ConceptTimers[iConceptTimer].Set( pConceptInfo->minConceptDelay, pConceptInfo->minConceptDelay );
 		}
@@ -269,9 +269,9 @@ bool CAI_AllySpeechManager::CategoryDelayExpired( ConceptCategory_t category )
 	return m_ConceptCategoryTimers[category].Expired(); 
 }
 
-bool CAI_AllySpeechManager::ConceptDelayExpired( AIConcept_t aiconcept )
+bool CAI_AllySpeechManager::ConceptDelayExpired( AIConcept_t aiconcept ) // NEO
 {
-	char iConceptTimer = m_ConceptTimers.Find( MAKE_STRING(aiconcept) );
+	char iConceptTimer = m_ConceptTimers.Find( MAKE_STRING(aiconcept) ); // NEO
 	if ( iConceptTimer != m_ConceptTimers.InvalidIndex() )
 		return m_ConceptTimers[iConceptTimer].Expired();
 	return true;
@@ -552,7 +552,7 @@ void CAI_PlayerAlly::PrescheduleThink( void )
 			if ( SelectNonCombatSpeech( &selection ) )
 			{
 				SetSpeechTarget( selection.hSpeechTarget );
-				SpeakDispatchResponse( selection.aiconcept.c_str(), selection.Response );
+				SpeakDispatchResponse( selection.aiconcept.c_str(), selection.Response ); // NEO
 				m_flNextIdleSpeechTime = gpGlobals->curtime + RandomFloat( 20,30 );
 			}
 			else
@@ -590,14 +590,14 @@ int CAI_PlayerAlly::SelectSchedule( void )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CAI_PlayerAlly::SelectSpeechResponse( AIConcept_t aiconcept, const char *pszModifiers, CBaseEntity *pTarget, AISpeechSelection_t *pSelection )
+bool CAI_PlayerAlly::SelectSpeechResponse( AIConcept_t aiconcept, const char *pszModifiers, CBaseEntity *pTarget, AISpeechSelection_t *pSelection ) // NEO
 {
-	if ( IsAllowedToSpeak( aiconcept ) )
+	if ( IsAllowedToSpeak( aiconcept ) ) // NEO
 	{
-		bool result = SpeakFindResponse( pSelection->Response, aiconcept, pszModifiers );
+		bool result = SpeakFindResponse( pSelection->Response, aiconcept, pszModifiers ); // NEO
 		if ( result )
 		{
-			pSelection->aiconcept = aiconcept;
+			pSelection->aiconcept = aiconcept; // NEO
 			pSelection->hSpeechTarget = pTarget;
 			return true;
 		}
@@ -608,10 +608,10 @@ bool CAI_PlayerAlly::SelectSpeechResponse( AIConcept_t aiconcept, const char *ps
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CAI_PlayerAlly::SetPendingSpeech( AIConcept_t aiconcept, AI_Response &Response )
+void CAI_PlayerAlly::SetPendingSpeech( AIConcept_t aiconcept, AI_Response &Response ) // NEO
 {
 	m_PendingResponse = Response;
-	m_PendingConcept = aiconcept;
+	m_PendingConcept = aiconcept; // NEO
 	m_TimePendingSet = gpGlobals->curtime;
 }
 
@@ -692,7 +692,7 @@ bool CAI_PlayerAlly::SelectInterjection()
 		if ( SelectIdleSpeech( &selection ) )
 		{
 			SetSpeechTarget( selection.hSpeechTarget );
-			SpeakDispatchResponse( selection.aiconcept.c_str(), selection.Response );
+			SpeakDispatchResponse( selection.aiconcept.c_str(), selection.Response ); // NEO
 			return true;
 		}
 	}
@@ -737,7 +737,7 @@ bool CAI_PlayerAlly::SelectQuestionAndAnswerSpeech( AISpeechSelection_t *pSelect
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CAI_PlayerAlly::PostSpeakDispatchResponse( AIConcept_t aiconcept, AI_Response *response )
+void CAI_PlayerAlly::PostSpeakDispatchResponse( AIConcept_t aiconcept, AI_Response *response ) // NEO
 {
 #ifdef HL2_EPISODIC
 	CAI_AllySpeechManager *pSpeechManager = GetAllySpeechManager();
@@ -892,7 +892,7 @@ void CAI_PlayerAlly::AnswerQuestion( CAI_PlayerAlly *pQuestioner, int iQARandomN
 		}
 
 		SetSpeechTarget( selection.hSpeechTarget );
-		SpeakDispatchResponse( selection.aiconcept.c_str(), selection.Response );
+		SpeakDispatchResponse( selection.aiconcept.c_str(), selection.Response ); // NEO
 
 		// Prevent idle speech for a while
 		DeferAllIdleSpeech( random->RandomFloat( TALKER_DEFER_IDLE_SPEAK_MIN, TALKER_DEFER_IDLE_SPEAK_MAX ), GetSpeechTarget()->MyNPCPointer() );
@@ -944,7 +944,7 @@ int CAI_PlayerAlly::SelectNonCombatSpeechSchedule()
 		if ( SelectNonCombatSpeech( &selection ) )
 		{
 			SetSpeechTarget( selection.hSpeechTarget );
-			SetPendingSpeech( selection.aiconcept.c_str(), selection.Response );
+			SetPendingSpeech( selection.aiconcept.c_str(), selection.Response ); // NEO
 		}
 	}
 	
@@ -1523,10 +1523,10 @@ bool CAI_PlayerAlly::IsOkToSpeakInResponseToPlayer( void )
 //-----------------------------------------------------------------------------
 // Purpose: Return true if I should speak based on the chance & the speech filter's modifier
 //-----------------------------------------------------------------------------
-bool CAI_PlayerAlly::ShouldSpeakRandom( AIConcept_t aiconcept, int iChance )
+bool CAI_PlayerAlly::ShouldSpeakRandom( AIConcept_t aiconcept, int iChance ) // NEO
 {
 	CAI_AllySpeechManager *	pSpeechManager	= GetAllySpeechManager();
-	ConceptInfo_t *			pInfo			= pSpeechManager->GetConceptInfo( aiconcept );
+	ConceptInfo_t *			pInfo			= pSpeechManager->GetConceptInfo( aiconcept ); // NEO
 	ConceptCategory_t		category		= ( pInfo ) ? pInfo->category : SPEECH_IDLE;
 
 	if ( GetSpeechFilter() )
@@ -1552,10 +1552,10 @@ bool CAI_PlayerAlly::ShouldSpeakRandom( AIConcept_t aiconcept, int iChance )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CAI_PlayerAlly::IsAllowedToSpeak( AIConcept_t aiconcept, bool bRespondingToPlayer )
+bool CAI_PlayerAlly::IsAllowedToSpeak( AIConcept_t aiconcept, bool bRespondingToPlayer ) // NEO
 { 
 	CAI_AllySpeechManager *	pSpeechManager	= GetAllySpeechManager();
-	ConceptInfo_t *			pInfo			= pSpeechManager->GetConceptInfo( aiconcept );
+	ConceptInfo_t *			pInfo			= pSpeechManager->GetConceptInfo( aiconcept ); // NEO
 	ConceptCategory_t		category		= ( pInfo ) ? pInfo->category : SPEECH_IDLE;
 
 	if ( !IsOkToSpeak( category, bRespondingToPlayer ) )
@@ -1563,19 +1563,19 @@ bool CAI_PlayerAlly::IsAllowedToSpeak( AIConcept_t aiconcept, bool bRespondingTo
 
 	if ( GetSpeechFilter() && GetSpeechFilter()->NeverSayHello() )
 	{
-		if ( CompareConcepts( aiconcept, TLK_HELLO ) )
+		if ( CompareConcepts( aiconcept, TLK_HELLO ) ) // NEO
 			return false;
-		if ( CompareConcepts( aiconcept, TLK_HELLO_NPC ) )
+		if ( CompareConcepts( aiconcept, TLK_HELLO_NPC ) ) // NEO
 			return false;
 	}
 			
-	if ( !pSpeechManager->ConceptDelayExpired( aiconcept ) )
+	if ( !pSpeechManager->ConceptDelayExpired( aiconcept ) ) // NEO
 		return false;
 
-	if ( ( pInfo && pInfo->flags & AICF_SPEAK_ONCE ) && GetExpresser()->SpokeConcept( aiconcept ) )
+	if ( ( pInfo && pInfo->flags & AICF_SPEAK_ONCE ) && GetExpresser()->SpokeConcept( aiconcept ) ) // NEO
 		return false;
 
-	if ( !GetExpresser()->CanSpeakConcept( aiconcept ) )
+	if ( !GetExpresser()->CanSpeakConcept( aiconcept ) ) // NEO
 		return false;
 	
 	return true;
@@ -1583,11 +1583,11 @@ bool CAI_PlayerAlly::IsAllowedToSpeak( AIConcept_t aiconcept, bool bRespondingTo
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CAI_PlayerAlly::SpeakIfAllowed( AIConcept_t aiconcept, const char *modifiers, bool bRespondingToPlayer, char *pszOutResponseChosen, size_t bufsize )
+bool CAI_PlayerAlly::SpeakIfAllowed( AIConcept_t aiconcept, const char *modifiers, bool bRespondingToPlayer, char *pszOutResponseChosen, size_t bufsize ) // NEO
 { 
-	if ( IsAllowedToSpeak( aiconcept, bRespondingToPlayer ) )
+	if ( IsAllowedToSpeak( aiconcept, bRespondingToPlayer ) ) // NEO
 	{
-		return Speak( aiconcept, modifiers, pszOutResponseChosen, bufsize );
+		return Speak( aiconcept, modifiers, pszOutResponseChosen, bufsize ); // NEO
 	}
 	return false;
 }
@@ -1614,10 +1614,10 @@ void CAI_PlayerAlly::ModifyOrAppendCriteria( AI_CriteriaSet& set )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CAI_PlayerAlly::OnSpokeConcept( AIConcept_t aiconcept, AI_Response *response )
+void CAI_PlayerAlly::OnSpokeConcept( AIConcept_t aiconcept, AI_Response *response ) // NEO
 {
 	CAI_AllySpeechManager *pSpeechManager = GetAllySpeechManager();
-	pSpeechManager->OnSpokeConcept( this, aiconcept, response );
+	pSpeechManager->OnSpokeConcept( this, aiconcept, response ); // NEO
 
 	if( response != NULL && (response->GetParams()->flags & AI_ResponseParams::RG_WEAPONDELAY) )
 	{

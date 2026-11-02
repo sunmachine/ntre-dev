@@ -16,7 +16,7 @@ class CHL2MP_Player;
 #include "hl2_player.h"
 #include "simtimer.h"
 #include "soundenvelope.h"
-#include "hl2mp_playeranimstate.h"
+#include "hl2mp_playeranimstate.h" // NEO
 #include "hl2mp_player_shared.h"
 #include "hl2mp_gamerules.h"
 #include "utldict.h"
@@ -105,7 +105,7 @@ public:
 	QAngle GetAnimEyeAngles( void ) { return m_angEyeAngles.Get(); }
 
 	Vector GetAttackSpread( CBaseCombatWeapon *pWeapon, CBaseEntity *pTarget = NULL );
-	virtual Vector GetAutoaimVector( float flDelta );
+	virtual Vector GetAutoaimVector( float flDelta ); // NEO
 
 	void CheatImpulseCommands( int iImpulse );
 	void CreateRagdollEntity( void );
@@ -119,7 +119,7 @@ public:
 
 	void NoteWeaponFired( void );
 
-	void SetAnimation( PLAYER_ANIM playerAnim );
+	void SetAnimation( PLAYER_ANIM playerAnim ); // NEO
 
 	void SetPlayerModel( void );
 	void SetPlayerTeamModel( void );
@@ -179,7 +179,7 @@ private:
 #ifdef NEO
 	CHL2MPPlayerAnimState *m_PlayerAnimState;
 #else
-	CPlayerAnimState m_PlayerAnimState;
+	CPlayerAnimState m_PlayerAnimState; // NEO
 #endif
 
 	CNetworkQAngle( m_angEyeAngles );

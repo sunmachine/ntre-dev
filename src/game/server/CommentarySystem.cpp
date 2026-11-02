@@ -884,7 +884,7 @@ bool IsListeningToCommentary( void )
 void CPointCommentaryNode::Spawn( void )
 {
 	// No model specified?
-	const char *szModel = (char *)STRING( GetModelName() );
+	const char *szModel = (char *)STRING( GetModelName() ); // NEO
 	if (!szModel || !*szModel)
 	{
 		szModel = "models/extras/info_speech.mdl";

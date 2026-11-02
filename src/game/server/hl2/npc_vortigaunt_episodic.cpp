@@ -1090,7 +1090,7 @@ void CNPC_Vortigaunt::Spawn( void )
 #endif // HL2_EPISODIC
 
 	// Allow multiple models (for slaves), but default to vortigaunt.mdl
-	const char *szModel = STRING( GetModelName() );
+	const char *szModel = STRING( GetModelName() ); // NEO
 	if (!szModel || !*szModel)
 	{
 		szModel = "models/vortigaunt.mdl";

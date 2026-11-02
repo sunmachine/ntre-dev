@@ -2573,11 +2573,11 @@ void CNPC_Combine::SpeakSentence( int sentenceType )
 //=========================================================
 // PainSound
 //=========================================================
-#ifdef SDK2013CE
-void CNPC_Combine::PainSound( const CTakeDamageInfo &info )
-#else
+#ifdef SDK2013CE // NEO
+void CNPC_Combine::PainSound( const CTakeDamageInfo &info ) // NEO
+#else // NEO
 void CNPC_Combine::PainSound ( void )
-#endif
+#endif // NEO
 {
 	// NOTE: The response system deals with this at the moment
 	if ( GetFlags() & FL_DISSOLVING )

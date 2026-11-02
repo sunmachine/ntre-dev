@@ -10,7 +10,7 @@
 #include "NextBotUtil.h"
 #include "NextBotPlayer.h"
 #include "NextBotPlayerLocomotion.h"
-#include "bot/neo_bot.h"
+#include "bot/neo_bot.h" // NEO
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -759,9 +759,9 @@ void PlayerLocomotion::Approach( const Vector &pos, float goalWeight )
 	const bool bHoldForView = m_player->IsOnLadder() && m_ladderState == DESCENDING_LADDER
 		&& m_ladderInfo && !IsForwardDownLadder( m_ladderInfo );
 #else
-	const bool bHoldForView = false;
+	const bool bHoldForView = false; // NEO
 #endif
-	if ( !bHoldForView && m_player->IsOnLadder() && IsUsingLadder() && ( m_ladderState == ASCENDING_LADDER || m_ladderState == DESCENDING_LADDER ) )
+	if ( !bHoldForView && m_player->IsOnLadder() && IsUsingLadder() && ( m_ladderState == ASCENDING_LADDER || m_ladderState == DESCENDING_LADDER ) ) // NEO
 	{
 		// we are on a ladder and WANT to be on a ladder.
 		playerButtons->PressForwardButton();
@@ -797,7 +797,7 @@ void PlayerLocomotion::Approach( const Vector &pos, float goalWeight )
 			}
 		}
 	}
-	else if ( !bHoldForView )
+	else if ( !bHoldForView ) // NEO
 	{
 		const float epsilon = 0.25f;
 		if ( NextBotPlayerMoveDirect.GetBool() )

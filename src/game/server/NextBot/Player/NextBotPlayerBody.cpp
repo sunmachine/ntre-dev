@@ -10,8 +10,8 @@
 #include "NextBotPlayer.h"
 
 // NEO NOTE (nullsystem): CNEOBotBody will overload the VEC_ usage functions instead
-// and here will use the SDK_ prefix macros to not warn out about redefining VEC_... macros
-// and making it clear it's using what was the base SDK's version not NT;RE's version here
+// and here will use the SDK_ prefix macros to not warn out about redefining VEC_... macros // NEO
+// and making it clear it's using what was the base SDK's version not NT;RE's version here // NEO
 #ifdef NEO
 #define SDK_VEC_HULL_MIN_SCALED( player )			( g_pGameRules->GetViewVectors()->m_vHullMin * player->GetModelScale() )
 #define SDK_VEC_HULL_MAX_SCALED( player )			( g_pGameRules->GetViewVectors()->m_vHullMax * player->GetModelScale() )

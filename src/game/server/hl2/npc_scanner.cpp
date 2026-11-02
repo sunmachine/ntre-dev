@@ -506,9 +506,9 @@ void CNPC_CScanner::HandleAnimEvent( animevent_t *pEvent )
 char *CNPC_CScanner::GetEngineSound( void )
 {
 	if( m_bIsClawScanner )
-		return (char *)"NPC_SScanner.FlyLoop";
+		return (char *)"NPC_SScanner.FlyLoop"; // NEO
 
-	return (char *)"NPC_CScanner.FlyLoop";
+	return (char *)"NPC_CScanner.FlyLoop"; // NEO
 }
 
 //-----------------------------------------------------------------------------
@@ -2272,7 +2272,7 @@ void CNPC_CScanner::StartTask( const Task_t *pTask )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-const char *CNPC_CScanner::GetScannerSoundPrefix( void )
+const char *CNPC_CScanner::GetScannerSoundPrefix( void ) // NEO
 {
 	if( m_bIsClawScanner )
 		return "NPC_SScanner";

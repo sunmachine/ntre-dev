@@ -57,7 +57,7 @@ extern Vector		g_vecAttackDir;
 		"item_ammo_ar2",			// 7
 		"item_ammo_ar2_large",		// 8
 		"item_box_buckshot",		// 9
-		"unused (item_flare_round) 10",			// 10
+		"unused (item_flare_round) 10",			// 10 // NEO
 		"item_box_flare_rounds",	// 11
 		"item_rpg_round",			// 12
 		"unused (item_smg1_grenade) 13",// 13
@@ -69,9 +69,9 @@ extern Vector		g_vecAttackDir;
 		"unused (weapon_stunstick) 16",
 #endif
 		"unused (weapon_ar1) 17",	// 17
-		"unused (weapon_ar2) 18",				// 18
+		"unused (weapon_ar2) 18",				// 18 // NEO
 		"unused (???"") 19",		// 19 - split into two strings to avoid trigraph warning 
-		"unused (weapon_rpg) 20",				// 20
+		"unused (weapon_rpg) 20",				// 20 // NEO
 #ifndef NEO	
 		"weapon_smg1",				// 21
 #else

@@ -100,14 +100,14 @@ inline bool CompareConcepts( AIConcept_t c1, AIConcept_t c2 )
 }
 
 //-------------------------------------
-// Specifies and stores the base timing and attentuation values for aiconcepts
+// Specifies and stores the base timing and attentuation values for aiconcepts // NEO
 //
 class AI_Response;
 
 //-----------------------------------------------------------------------------
 // CAI_Expresser
 //
-// Purpose: Provides the functionality of going from abstract aiconcept ("hello")
+// Purpose: Provides the functionality of going from abstract aiconcept ("hello") // NEO
 //			to specific sentence/scene/wave
 //
 
@@ -117,7 +117,7 @@ class AI_Response;
 class CAI_ExpresserSink
 {
 public:
-	virtual void OnSpokeConcept( AIConcept_t aiconcept, AI_Response *response )	{};
+	virtual void OnSpokeConcept( AIConcept_t aiconcept, AI_Response *response )	{}; // NEO
 	virtual void OnStartSpeaking()						{}
 	virtual bool UseSemaphore()							{ return true; }
 };
@@ -156,11 +156,11 @@ public:
 
 	// --------------------------------
 	
-	bool Speak( AIConcept_t aiconcept, const char *modifiers = NULL, char *pszOutResponseChosen = NULL, size_t bufsize = 0, IRecipientFilter *filter = NULL );
+	bool Speak( AIConcept_t aiconcept, const char *modifiers = NULL, char *pszOutResponseChosen = NULL, size_t bufsize = 0, IRecipientFilter *filter = NULL ); // NEO
 
 	// These two methods allow looking up a response and dispatching it to be two different steps
-	bool SpeakFindResponse( AI_Response &response, AIConcept_t aiconcept, const char *modifiers = NULL );
-	bool SpeakDispatchResponse( AIConcept_t aiconcept, AI_Response &response, IRecipientFilter *filter = NULL );
+	bool SpeakFindResponse( AI_Response &response, AIConcept_t aiconcept, const char *modifiers = NULL ); // NEO
+	bool SpeakDispatchResponse( AIConcept_t aiconcept, AI_Response &response, IRecipientFilter *filter = NULL ); // NEO
 	float GetResponseDuration( AI_Response &response );
 
 	virtual int SpeakRawSentence( const char *pszSentence, float delay, float volume = VOL_NORM, soundlevel_t soundlevel = SNDLVL_TALKING, CBaseEntity *pListener = NULL );
@@ -220,7 +220,7 @@ private:
 	
 	// --------------------------------
 	//
-	// Speech aiconcept data structures
+	// Speech aiconcept data structures // NEO
 	//
 
 	CUtlDict< ConceptHistory_t, int > m_ConceptHistories;
@@ -280,12 +280,12 @@ class CAI_ExpresserHost : public BASE_NPC, protected CAI_ExpresserSink
 public:
 	virtual void	NoteSpeaking( float duration, float delay );
 
-	virtual bool 	Speak( AIConcept_t aiconcept, const char *modifiers = NULL, char *pszOutResponseChosen = NULL, size_t bufsize = 0, IRecipientFilter *filter = NULL );
+	virtual bool 	Speak( AIConcept_t aiconcept, const char *modifiers = NULL, char *pszOutResponseChosen = NULL, size_t bufsize = 0, IRecipientFilter *filter = NULL ); // NEO
 
 	// These two methods allow looking up a response and dispatching it to be two different steps
-	bool			SpeakFindResponse( AI_Response& response, AIConcept_t aiconcept, const char *modifiers = NULL );
-	bool 			SpeakDispatchResponse( AIConcept_t aiconcept, AI_Response& response );
-	virtual void	PostSpeakDispatchResponse( AIConcept_t aiconcept, AI_Response& response ) { return; }
+	bool			SpeakFindResponse( AI_Response& response, AIConcept_t aiconcept, const char *modifiers = NULL ); // NEO
+	bool 			SpeakDispatchResponse( AIConcept_t aiconcept, AI_Response& response ); // NEO
+	virtual void	PostSpeakDispatchResponse( AIConcept_t aiconcept, AI_Response& response ) { return; } // NEO
 	float 			GetResponseDuration( AI_Response& response );
 
 	float GetTimeSpeechComplete() const 	{ return this->GetExpresser()->GetTimeSpeechComplete(); }
@@ -294,9 +294,9 @@ public:
 	bool CanSpeak()					{ return this->GetExpresser()->CanSpeak(); }
 	bool CanSpeakAfterMyself()		{ return this->GetExpresser()->CanSpeakAfterMyself(); }
 
-	void SetSpokeConcept( AIConcept_t aiconcept, AI_Response *response, bool bCallback = true ) 		{ this->GetExpresser()->SetSpokeConcept( aiconcept, response, bCallback ); }
-	float GetTimeSpokeConcept( AIConcept_t aiconcept )												{ return this->GetExpresser()->GetTimeSpokeConcept( aiconcept ); }
-	bool SpokeConcept( AIConcept_t aiconcept )														{ return this->GetExpresser()->SpokeConcept( aiconcept ); }
+	void SetSpokeConcept( AIConcept_t aiconcept, AI_Response *response, bool bCallback = true ) 		{ this->GetExpresser()->SetSpokeConcept( aiconcept, response, bCallback ); } // NEO
+	float GetTimeSpokeConcept( AIConcept_t aiconcept )												{ return this->GetExpresser()->GetTimeSpokeConcept( aiconcept ); } // NEO
+	bool SpokeConcept( AIConcept_t aiconcept )														{ return this->GetExpresser()->SpokeConcept( aiconcept ); } // NEO
 
 protected:
 	int 			PlaySentence( const char *pszSentence, float delay, float volume = VOL_NORM, soundlevel_t soundlevel = SNDLVL_TALKING, CBaseEntity *pListener = NULL );
@@ -304,7 +304,7 @@ protected:
 
 	virtual IResponseSystem *GetResponseSystem();
 	// Override of base entity response input handler
-	virtual void	DispatchResponse( const char *aiconceptName );
+	virtual void	DispatchResponse( const char *aiconceptName ); // NEO
 };
 
 //-----------------------------------------------------------------------------
@@ -318,10 +318,10 @@ inline void CAI_ExpresserHost<BASE_NPC>::NoteSpeaking( float duration, float del
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 template <class BASE_NPC>
-inline bool CAI_ExpresserHost<BASE_NPC>::Speak( AIConcept_t aiconcept, const char *modifiers /*= NULL*/, char *pszOutResponseChosen /*=NULL*/, size_t bufsize /* = 0 */, IRecipientFilter *filter /* = NULL */ )
+inline bool CAI_ExpresserHost<BASE_NPC>::Speak( AIConcept_t aiconcept, const char *modifiers /*= NULL*/, char *pszOutResponseChosen /*=NULL*/, size_t bufsize /* = 0 */, IRecipientFilter *filter /* = NULL */ ) // NEO
 {
 	AssertOnce( this->GetExpresser()->GetOuter() == this );
-	return this->GetExpresser()->Speak( aiconcept, modifiers, pszOutResponseChosen, bufsize, filter );
+	return this->GetExpresser()->Speak( aiconcept, modifiers, pszOutResponseChosen, bufsize, filter ); // NEO
 }
 
 //-----------------------------------------------------------------------------
@@ -360,19 +360,19 @@ inline IResponseSystem *CAI_ExpresserHost<BASE_NPC>::GetResponseSystem()
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 template <class BASE_NPC>
-inline bool CAI_ExpresserHost<BASE_NPC>::SpeakFindResponse( AI_Response& response, AIConcept_t aiconcept, const char *modifiers /*= NULL*/ )
+inline bool CAI_ExpresserHost<BASE_NPC>::SpeakFindResponse( AI_Response& response, AIConcept_t aiconcept, const char *modifiers /*= NULL*/ ) // NEO
 {
-	return this->GetExpresser()->SpeakFindResponse( response, aiconcept, modifiers );
+	return this->GetExpresser()->SpeakFindResponse( response, aiconcept, modifiers ); // NEO
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 template <class BASE_NPC>
-inline bool CAI_ExpresserHost<BASE_NPC>::SpeakDispatchResponse( AIConcept_t aiconcept, AI_Response& response )
+inline bool CAI_ExpresserHost<BASE_NPC>::SpeakDispatchResponse( AIConcept_t aiconcept, AI_Response& response ) // NEO
 {
-	if ( this->GetExpresser()->SpeakDispatchResponse( aiconcept, response ) )
+	if ( this->GetExpresser()->SpeakDispatchResponse( aiconcept, response ) ) // NEO
 	{
-		PostSpeakDispatchResponse( aiconcept, response );
+		PostSpeakDispatchResponse( aiconcept, response ); // NEO
 		return true;
 	}
 
@@ -391,9 +391,9 @@ inline float CAI_ExpresserHost<BASE_NPC>::GetResponseDuration( AI_Response& resp
 // Override of base entity response input handler
 //-----------------------------------------------------------------------------
 template <class BASE_NPC>
-inline void CAI_ExpresserHost<BASE_NPC>::DispatchResponse( const char *aiconceptName )
+inline void CAI_ExpresserHost<BASE_NPC>::DispatchResponse( const char *aiconceptName ) // NEO
 {
-	Speak( (AIConcept_t)aiconceptName );
+	Speak( (AIConcept_t)aiconceptName ); // NEO
 }
 
 //-----------------------------------------------------------------------------

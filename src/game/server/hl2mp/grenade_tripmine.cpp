@@ -8,7 +8,7 @@
 #include "cbase.h"
 #include "beam_shared.h"
 #include "shake.h"
-#include "hl2mp/grenade_tripmine.h" // Load the hl2mp header!!
+#include "hl2mp/grenade_tripmine.h" // Load the hl2mp header!! // NEO
 #include "vstdlib/random.h"
 #include "engine/IEngineSound.h"
 #include "explode.h"
@@ -132,7 +132,7 @@ void CTripmineGrenade::PowerupThink( void  )
 {
 	if (gpGlobals->curtime > m_flPowerUp)
 	{
-		m_flPowerUp = 0;
+		m_flPowerUp = 0; // NEO
 		MakeBeam( );
 		RemoveSolidFlags( FSOLID_NOT_SOLID );
 		m_bIsLive			= true;
@@ -253,8 +253,8 @@ void CTripmineGrenade::BeamBreakThink( void  )
 	if (pBCC || fabs( m_flBeamLength - tr.fraction ) > 0.001 || ( m_bAttached && m_hAttachEntity.Get() == NULL) || bAttachMoved )
 	{
 		m_iHealth = 0;
-		if (m_pConstraint)
-			m_pConstraint->Deactivate();
+		if (m_pConstraint) // NEO
+			m_pConstraint->Deactivate(); // NEO
 
 		Event_Killed( CTakeDamageInfo( (CBaseEntity*)m_hOwner, this, 100, GIB_NORMAL ) );
 		return;
@@ -262,12 +262,12 @@ void CTripmineGrenade::BeamBreakThink( void  )
 
 	SetNextThink( gpGlobals->curtime + 0.05f );
 }
-int CTripmineGrenade::OnTakeDamage( const CTakeDamageInfo &info )
+int CTripmineGrenade::OnTakeDamage( const CTakeDamageInfo &info ) // NEO
 {
-	if ( m_iHealth < 0 )
-		return 0;	//already dead.
+	if ( m_iHealth < 0 ) // NEO
+		return 0;	//already dead. // NEO
 
-	if ( gpGlobals->curtime > m_flPowerUp )
+	if ( gpGlobals->curtime > m_flPowerUp ) // NEO
 	{
 		m_iHealth -= info.GetDamage();
 
@@ -276,7 +276,7 @@ int CTripmineGrenade::OnTakeDamage( const CTakeDamageInfo &info )
 
 		return info.GetDamage();
 	}
-	return 0;
+	return 0; // NEO
 }
 
 //-----------------------------------------------------------------------------
@@ -288,8 +288,8 @@ void CTripmineGrenade::Event_Killed( const CTakeDamageInfo &info )
 {
 	m_takedamage		= DAMAGE_NO;
 
-	if (m_pConstraint)
-		m_pConstraint->Deactivate();
+	if (m_pConstraint) // NEO
+		m_pConstraint->Deactivate(); // NEO
 
 	SetThink( &CTripmineGrenade::DelayDeathThink );
 	SetNextThink( gpGlobals->curtime + 0.25 );

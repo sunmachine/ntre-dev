@@ -2207,7 +2207,7 @@ void CBaseFlex::DoBodyLean( void )
 #else
 			m_vecShift = m_vecLean * decay;
 			m_vecLean = m_vecShift * decay;
-#endif // SDK2013CE
+#endif // SDK2013CE // NEO
  		}
 
 		m_vecPrevOrigin = vecOrigin;
