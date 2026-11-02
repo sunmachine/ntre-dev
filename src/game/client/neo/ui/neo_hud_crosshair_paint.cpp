@@ -16,8 +16,10 @@
 
 using namespace vgui;
 
-ConVar cl_neo_crosshair_scope_inaccuracy("cl_neo_crosshair_scope_inaccuracy", "1", FCVAR_ARCHIVE, "Show the player's inaccuracy when scoped", true, 0, true, 1);
-ConVar cl_neo_crosshair_friendly_fire_warning("cl_neo_crosshair_friendly_fire_warning", "1", FCVAR_ARCHIVE, "Replace crosshair with friendly fire warning where applicable", true, 0, true, 1);
+ConVar cl_neo_crosshair_scope_inaccuracy("cl_neo_crosshair_scope_inaccuracy", "1", FCVAR_ARCHIVE,
+	"Show the player's inaccuracy when scoped", true, 0, true, 1);
+ConVar cl_neo_crosshair_friendly_fire_warning("cl_neo_crosshair_friendly_fire_warning", "1", FCVAR_ARCHIVE,
+	"Replace crosshair with friendly fire warning where applicable", true, 0, true, 1);
 
 // NEO TODO (Rain): move to server game rules for server op toggling
 ConVar cl_neo_scope_restrict_to_rectangle("cl_neo_scope_restrict_to_rectangle", "1", FCVAR_CHEAT,
@@ -27,10 +29,10 @@ ConVar cl_neo_scope_restrict_to_rectangle("cl_neo_scope_restrict_to_rectangle", 
 // calls this under #ifdef NEO and keeps Valve's own body under #else.
 void CHudCrosshair::PaintNeo()
 {
-	if ( !m_pCrosshair )
+	if (!m_pCrosshair)
 		return;
 
-	if ( !IsCurrentViewAccessAllowed() )
+	if (!IsCurrentViewAccessAllowed())
 		return;
 
 	if (!ShouldDraw())
@@ -38,9 +40,9 @@ void CHudCrosshair::PaintNeo()
 
 	float x, y;
 	bool bBehindCamera;
-	GetDrawPosition ( &x, &y, &bBehindCamera, m_vecCrossHairOffsetAngle );
+	GetDrawPosition(&x, &y, &bBehindCamera, m_vecCrossHairOffsetAngle);
 
-	if( bBehindCamera )
+	if (bBehindCamera)
 		return;
 
 	float flWeaponScale_X = 1.0f;
@@ -48,7 +50,8 @@ void CHudCrosshair::PaintNeo()
 	int iTextureW = m_pCrosshair->Width();
 	int iTextureH = m_pCrosshair->Height();
 
-	//DevMsg("TexFileW: %s (%s) :: W %d H %d\n", m_pCrosshair->szTextureFile, m_pCrosshair->szShortName, iTextureW, iTextureH);
+	// DevMsg("TexFileW: %s (%s) :: W %d H %d\n", m_pCrosshair->szTextureFile, m_pCrosshair->szShortName, iTextureW,
+	// iTextureH);
 
 	if (iTextureH == 0 || iTextureW == 0)
 	{
@@ -56,8 +59,7 @@ void CHudCrosshair::PaintNeo()
 		return;
 	}
 
-
-	C_NEO_Player* pPlayer = C_NEO_Player::GetLocalNEOPlayer();
+	C_NEO_Player *pPlayer = C_NEO_Player::GetLocalNEOPlayer();
 	if (!pPlayer)
 		return;
 
@@ -68,7 +70,7 @@ void CHudCrosshair::PaintNeo()
 			return;
 	}
 	auto *pWeapon = static_cast<CNEOBaseCombatWeapon *>(pPlayer->GetActiveWeapon());
-	if ( pWeapon )
+	if (pWeapon)
 	{
 		// NEO HACK (Rain): this should get implemented in virtual pNeoWep->GetWeaponCrosshairScale
 		if (pWeapon && pWeapon->GetNeoWepBits() & NEO_WEP_SCOPEDWEAPON)
@@ -87,9 +89,11 @@ void CHudCrosshair::PaintNeo()
 #define RECT_SCOPE03_VISIBLE_AREA_SCALING (720.0f / 960.0f)
 				// Get the smaller dimension as base for the square scope.
 				flWeaponScale_X = Min(flWeaponScale_X, flWeaponScale_Y);
-				// And further downscale with this ratio to make the actual scope lens part of the texture square shaped.
+				// And further downscale with this ratio to make the actual scope lens part of the texture square
+				// shaped.
 				flWeaponScale_Y = flWeaponScale_X * RECT_SCOPE03_VISIBLE_AREA_SCALING;
-				// We can increase the final rectangle scale size by about this much without overflowing the screen area.
+				// We can increase the final rectangle scale size by about this much without overflowing the screen
+				// area.
 				flWeaponScale_X *= (1.0f + (1.0f - RECT_SCOPE03_VISIBLE_AREA_SCALING));
 				flWeaponScale_Y *= (1.0f + (1.0f - RECT_SCOPE03_VISIBLE_AREA_SCALING));
 			}
@@ -104,11 +108,11 @@ void CHudCrosshair::PaintNeo()
 	float flWidth = flWeaponScale_X * (float)iTextureW;
 	float flHeight = flWeaponScale_Y * (float)iTextureH;
 
-	int iWidth = (int)( flWidth + 0.5f );
-	int iHeight = (int)( flHeight + 0.5f );
+	int iWidth = (int)(flWidth + 0.5f);
+	int iHeight = (int)(flHeight + 0.5f);
 
-	int iX = (int)( x + 0.5f );
-	int iY = (int)( y + 0.5f );
+	int iX = (int)(x + 0.5f);
+	int iY = (int)(y + 0.5f);
 
 	// NEO TODO (nullsystem): Probably be better if the entire class refreshed to our own
 	// thing and can do away with that CHudTexture nonsense entirely
@@ -171,14 +175,13 @@ void CHudCrosshair::PaintNeo()
 	if (pWeapon)
 	{
 		int iNeoXHairWep = MAP_WEAPON_TYPE_TO_XHAIR[NEO_WEAPON_TYPE[pWeapon->WeaponIndex()]];
-		if (iNeoXHairWep >= CROSSHAIR_WEP_DEFAULT
-				&& iNeoXHairWep < CROSSHAIR_WEP_DEFAULT_HIPFIRE
-				&& false == pNeoPlayer->m_bInAim)
+		if (iNeoXHairWep >= CROSSHAIR_WEP_DEFAULT && iNeoXHairWep < CROSSHAIR_WEP_DEFAULT_HIPFIRE &&
+			false == pNeoPlayer->m_bInAim)
 		{
 			iNeoXHairWep += CROSSHAIR_WEP_DEFAULT_HIPFIRE;
 		}
-		eNeoXHairWep = static_cast<ENeoCrosshairWep>(
-				UseCrosshairIndexFor(&m_crosshairInfo, iNeoXHairWep, &bHideCrosshair));
+		eNeoXHairWep =
+			static_cast<ENeoCrosshairWep>(UseCrosshairIndexFor(&m_crosshairInfo, iNeoXHairWep, &bHideCrosshair));
 	}
 	CrosshairWepInfo *crh = &m_crosshairInfo.wep[eNeoXHairWep];
 	const int iTexXHId = m_iTexXHId[clamp(crh->iStyle, 0, CROSSHAIR_STYLE__TOTAL - 1)];
@@ -190,19 +193,17 @@ void CHudCrosshair::PaintNeo()
 		CTraceFilterSimpleList iffTraceFilter(COLLISION_GROUP_NONE);
 		iffTraceFilter.AddEntityToIgnore(pPlayer);
 		constexpr int IFF_TRACELINE_LENGTH = 8192; // a little over 200m
-		UTIL_TraceLine(pPlayer->Weapon_ShootPosition(), pPlayer->Weapon_ShootPosition() + pPlayer->GetAutoaimVector(0) * IFF_TRACELINE_LENGTH, MASK_SHOT_HULL, &iffTraceFilter, &iffTrace);
-		showFriendlyFireCrosshair = IsPlayerIndex(iffTrace.GetEntityIndex()) && iffTrace.m_pEnt->GetTeamNumber() == pPlayer->GetTeamNumber();
+		UTIL_TraceLine(pPlayer->Weapon_ShootPosition(),
+			pPlayer->Weapon_ShootPosition() + pPlayer->GetAutoaimVector(0) * IFF_TRACELINE_LENGTH, MASK_SHOT_HULL,
+			&iffTraceFilter, &iffTrace);
+		showFriendlyFireCrosshair =
+			IsPlayerIndex(iffTrace.GetEntityIndex()) && iffTrace.m_pEnt->GetTeamNumber() == pPlayer->GetTeamNumber();
 	}
 
 	if (bIsScopedWep && pPlayer->m_bInAim)
 	{
-		m_pCrosshair->DrawSelfCropped (
-			iX-(iWidth/2), iY-(iHeight/2),
-			0, 0,
-			iTextureW, iTextureH,
-			iWidth, iHeight,
-			COLOR_WHITE
-		);
+		m_pCrosshair->DrawSelfCropped(
+			iX - (iWidth / 2), iY - (iHeight / 2), 0, 0, iTextureW, iTextureH, iWidth, iHeight, COLOR_WHITE);
 
 		// NEO NOTE (Rain): If we "need" to bolt the gun, don't show the xhair inaccuracy.
 		// This is a special case for SRS handling when un-scoping right after firing a bullet.
@@ -213,7 +214,7 @@ void CHudCrosshair::PaintNeo()
 		bool weaponNeedsToBeBolted = false;
 		if (pWeapon->GetNeoWepBits() & NEO_WEP_SRS)
 		{
-			weaponNeedsToBeBolted = assert_cast<CWeaponSRS*>(pWeapon)->GetNeedsBolting();
+			weaponNeedsToBeBolted = assert_cast<CWeaponSRS *>(pWeapon)->GetNeedsBolting();
 		}
 		if (!weaponNeedsToBeBolted)
 		{
@@ -224,18 +225,10 @@ void CHudCrosshair::PaintNeo()
 				{
 					surface()->DrawSetTexture(m_hCrosshairLight);
 					surface()->DrawSetColor(COLOR_FADED_WHITE);
-					surface()->DrawTexturedRect(
-						x - size - m_iCrosshairLightWidth,
-						y - size - m_iCrosshairLightHeight,
-						x - size + m_iCrosshairLightWidth,
-						y - size + m_iCrosshairLightHeight
-					);
-					surface()->DrawTexturedRect(
-						x + size - m_iCrosshairLightWidth,
-						y + size - m_iCrosshairLightHeight,
-						x + size + m_iCrosshairLightWidth,
-						y + size + m_iCrosshairLightHeight
-					);
+					surface()->DrawTexturedRect(x - size - m_iCrosshairLightWidth, y - size - m_iCrosshairLightHeight,
+						x - size + m_iCrosshairLightWidth, y - size + m_iCrosshairLightHeight);
+					surface()->DrawTexturedRect(x + size - m_iCrosshairLightWidth, y + size - m_iCrosshairLightHeight,
+						x + size + m_iCrosshairLightWidth, y + size + m_iCrosshairLightHeight);
 				}
 			}
 		}
