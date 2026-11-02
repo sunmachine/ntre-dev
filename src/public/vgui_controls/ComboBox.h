@@ -51,7 +51,7 @@ class ComboBox : public TextEntry
 
 public:
 	ComboBox(Panel *parent, const char *panelName, int numLines, bool allowEdit);
-	virtual ~ComboBox();
+	virtual ~ComboBox(); // NEO
 
 	// functions designed to be overriden
 	virtual void OnShowMenu(Menu *menu) {}

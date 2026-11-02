@@ -1,4 +1,4 @@
-//====== Copyright (C) 1996-2009, Valve Corporation, All rights reserved. =======
+//====== Copyright (C) 1996-2009, Valve Corporation, All rights reserved. ======= // NEO
 //
 // Purpose: interface to stats, achievements, and leaderboards 
 //

@@ -112,7 +112,7 @@ public:
 	
 	inline bool HasElement( const char* pStr ) const
 	{
-		return Find( pStr ).m_Id != UTL_INVAL_SYMBOL;
+		return Find( pStr ).m_Id != UTL_INVAL_SYMBOL; // NEO
 	}
 
 	// Remove all symbols in the table.
