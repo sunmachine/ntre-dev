@@ -1,0 +1,67 @@
+name: clang-tidy
+
+# Analyses only the lines a pull request changed, and only in NEO-owned
+# directories. Valve directories have a .clang-tidy with no checks and are
+# never analysed. Runs in the same steamrt sniper image as the build, since
+# the compile database comes from a CMake configure of the real project.
+
+on:
+  pull_request:
+    paths:
+      - 'src/game/client/neo/**'
+      - 'src/game/server/neo/**'
+      - 'src/game/shared/neo/**'
+      - 'src/common/neo/**'
+      - 'src/tests/**'
+      - '**/.clang-tidy'
+
+jobs:
+  tidy:
+    name: clang-tidy (changed lines)
+    runs-on: ubuntu-latest
+    container:
+      image: 'registry.gitlab.steamos.cloud/steamrt/sniper/sdk:latest'
+    steps:
+      - name: Set initial default branch name
+        run: git config --global init.defaultBranch master
+
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      # The container runs as a different user from the checkout, and git
+      # refuses a repository it does not own. CMake's build_info.cmake then
+      # cannot read the version tag and stops. Same fix as the Build workflow.
+      - name: Set ownership
+        run: chown -R $(id -u):$(id -g) "$PWD"
+
+      - name: Git fetch tags
+        run: git fetch origin --tags --force
+
+      - name: Install clang-tidy 19
+        # The sniper image lists bullseye-security on deb.debian.org, which
+        # no longer serves it; Debian moved it to archive.debian.org.
+        run: |
+          sed -i 's|http://deb.debian.org/debian-security|http://archive.debian.org/debian-security|' /etc/apt/sources.list
+          apt-get update
+          apt-get install -y --no-install-recommends clang-tidy-19
+
+      - name: Configure the tooling build (unity build off)
+        run: cmake --preset linux-tooling
+        working-directory: src
+
+      - name: Strip GCC-only flags from the compile database
+        run: python3 -I tools/tidy_compile_db.py src/build/linux-tooling build/tidy-db
+
+      - name: Analyse changed lines
+        run: |
+          base=$(git merge-base "origin/${{ github.base_ref }}" HEAD)
+          git diff -U0 "$base" HEAD -- \
+            src/game/client/neo src/game/server/neo src/game/shared/neo src/common/neo src/tests \
+            | clang-tidy-diff-19.py -clang-tidy-binary clang-tidy-19 -p1 -path build/tidy-db -j 4 -quiet \
+            | tee tidy.log
+          if grep -q 'warning:' tidy.log; then
+            echo "::error::clang-tidy reported findings on changed lines. Each is shown above with its check name."
+            exit 1
+          fi
+          echo "No clang-tidy findings on changed lines."
