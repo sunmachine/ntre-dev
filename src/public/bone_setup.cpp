@@ -5998,11 +5998,12 @@ const char *Studio_GetDefaultSurfaceProps( CStudioHdr *pstudiohdr )
 
 float Studio_GetMass( CStudioHdr *pstudiohdr )
 {
+#ifdef NEO
 	if ( pstudiohdr == NULL )
 	{
 		return 0.f;
 	}
-
+#endif // NEO
 	return pstudiohdr->mass();
 }
 
