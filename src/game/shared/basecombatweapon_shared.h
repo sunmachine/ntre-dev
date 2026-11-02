@@ -521,8 +521,8 @@ public:
 	bool					WantsToOverrideViewmodelAttachments( void ) { return false; }
 #endif
 
-	//Tony; notifications of any third person switches.
-	virtual void			ThirdPersonSwitch( bool bThirdPerson ) {};
+	//Tony; notifications of any third person switches. // NEO
+	virtual void			ThirdPersonSwitch( bool bThirdPerson ) {}; // NEO
 
 #endif // End client-only methods
 
@@ -588,11 +588,11 @@ public:
 	
 	// Weapon state
 
-	// Are we in the middle of a reload;
+	// Are we in the middle of a reload; // NEO
 #ifdef NEO
 	CNetworkVar(bool, m_bInReload);
 #else
-	bool					m_bInReload;			
+	bool					m_bInReload; // NEO
 #endif
 
 	bool					m_bFireOnEmpty;			// True when the gun is empty and the player is still holding down the attack key(s)
@@ -638,8 +638,8 @@ public:
 	CNetworkVar( int, m_iSecondaryAmmoType );	// "secondary" ammo index into the ammo info array
 	CNetworkVar( int, m_iClip1 );				// number of shots left in the primary weapon clip, -1 it not used
 	CNetworkVar( int, m_iClip2 );				// number of shots left in the secondary weapon clip, -1 it not used
-	CNetworkVar(int, m_iPrimaryAmmoCount );				// number of shots left in the primary weapon clip, -1 it not used
-	CNetworkVar(int, m_iSecondaryAmmoCount );				// number of shots left in the secondary weapon clip, -1 it not used
+	CNetworkVar(int, m_iPrimaryAmmoCount );				// number of shots left in the primary weapon clip, -1 it not used // NEO
+	CNetworkVar(int, m_iSecondaryAmmoCount );				// number of shots left in the secondary weapon clip, -1 it not used // NEO
 	bool					m_bFiresUnderwater;		// true if this weapon can fire underwater
 	bool					m_bAltFiresUnderwater;		// true if this weapon can fire underwater
 	float					m_fMinRange1;			// What's the closest this weapon can be used?

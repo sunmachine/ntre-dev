@@ -815,20 +815,20 @@ void CWeaponCrossbow::DoLoadEffect( void )
 	data.m_nEntIndex = entindex();
 #else
 	CBaseViewModel *pViewModel = pOwner->GetViewModel();
-	if ( ShouldDrawUsingViewModel() && pViewModel != NULL )
+	if ( ShouldDrawUsingViewModel() && pViewModel != NULL ) // NEO
 		data.m_hEntity = pViewModel->GetRefEHandle();
-	else
-		data.m_hEntity = GetRefEHandle();
+	else // NEO
+		data.m_hEntity = GetRefEHandle(); // NEO
 #endif
 
-	DispatchEffect( "CrossbowLoad", data, filter );
+	DispatchEffect( "CrossbowLoad", data, filter ); // NEO
 
 #ifndef CLIENT_DLL
 	CSprite *pBlast = CSprite::SpriteCreate( CROSSBOW_GLOW_SPRITE2, GetAbsOrigin(), false );
 
 	if ( pBlast )
 	{
-		pBlast->SetAttachment( this, 1 );
+		pBlast->SetAttachment( this, 1 ); // NEO
 		pBlast->SetTransparency( kRenderTransAdd, 255, 255, 255, 255, kRenderFxNone );
 		pBlast->SetBrightness( 128 );
 		pBlast->SetScale( 0.2f );

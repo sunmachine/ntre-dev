@@ -339,7 +339,7 @@ void CWeaponFrag::ItemPostFrame( void )
 {
 	if( m_fDrawbackFinished )
 	{
-		CHL2MP_Player *pOwner = ToHL2MPPlayer( GetOwner() );
+		CHL2MP_Player *pOwner = ToHL2MPPlayer( GetOwner() ); // NEO
 
 		if (pOwner)
 		{
@@ -349,7 +349,7 @@ void CWeaponFrag::ItemPostFrame( void )
 				if( !(pOwner->m_nButtons & IN_ATTACK) )
 				{
 					SendWeaponAnim( ACT_VM_THROW );
-					pOwner->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
+					pOwner->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY ); // NEO
 					m_fDrawbackFinished = false;
 				}
 				break;
@@ -368,8 +368,8 @@ void CWeaponFrag::ItemPostFrame( void )
 						//Send the weapon animation
 						SendWeaponAnim( ACT_VM_HAULBACK );
 					}
-					//Tony; the grenade really should have a secondary anim. but it doesn't on the player.
-					pOwner->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
+					//Tony; the grenade really should have a secondary anim. but it doesn't on the player. // NEO
+					pOwner->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY ); // NEO
 
 					m_fDrawbackFinished = false;
 				}

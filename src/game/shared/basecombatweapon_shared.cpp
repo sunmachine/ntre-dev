@@ -948,7 +948,7 @@ bool CBaseCombatWeapon::ShouldDisplayReloadHUDHint()
 		// I'm owned by a player, I use clips, I have less then half a clip loaded. Now, does the player have more ammo?
 		if ( pOwner )
 		{
-			if ( m_iPrimaryAmmoCount > 0 )
+			if ( m_iPrimaryAmmoCount > 0 ) // NEO
 				return true;
 		}
 	}
@@ -1283,7 +1283,7 @@ bool CBaseCombatWeapon::HasPrimaryAmmo( void )
 			return true;
 	}
 
-	if (GetPrimaryAmmoCount() > 0)
+	if (GetPrimaryAmmoCount() > 0) // NEO
 		return true;
 
 	return false;
@@ -1302,7 +1302,7 @@ bool CBaseCombatWeapon::HasSecondaryAmmo( void )
 			return true;
 	}
 
-	if (GetSecondaryAmmoCount() > 0)
+	if (GetSecondaryAmmoCount() > 0) // NEO
 		return true;
 
 	return false;
@@ -1765,7 +1765,7 @@ void CBaseCombatWeapon::ItemPostFrame( void )
 				// reload clip2 if empty
 				if ( m_iClip2 < 1 )
 				{
-					m_iSecondaryAmmoCount -= 1;
+					m_iSecondaryAmmoCount -= 1; // NEO
 					m_iClip2 = m_iClip2 + 1;
 				}
 			}
@@ -1776,7 +1776,7 @@ void CBaseCombatWeapon::ItemPostFrame( void )
 	{
 		// Clip empty? Or out of ammo on a no-clip weapon?
 		if ( !IsMeleeWeapon() &&  
-			(( UsesClipsForAmmo1() && m_iClip1 <= 0) || ( !UsesClipsForAmmo1() && m_iPrimaryAmmoCount <=0)))
+			(( UsesClipsForAmmo1() && m_iClip1 <= 0) || ( !UsesClipsForAmmo1() && m_iPrimaryAmmoCount <=0))) // NEO
 		{
 			HandleFireOnEmpty();
 		}
@@ -2056,7 +2056,7 @@ bool CBaseCombatWeapon::DefaultReload( int iClipSize1, int iClipSize2, int iActi
 #endif
 
 		// need to reload primary clip?
-		int primary	= MIN(iClipSize1 - m_iClip1, m_iPrimaryAmmoCount);
+		int primary	= MIN(iClipSize1 - m_iClip1, m_iPrimaryAmmoCount); // NEO
 		if ( primary != 0 )
 		{
 			bReload = true;
@@ -2066,7 +2066,7 @@ bool CBaseCombatWeapon::DefaultReload( int iClipSize1, int iClipSize2, int iActi
 	if ( UsesClipsForAmmo2() )
 	{
 		// need to reload secondary clip?
-		int secondary = MIN(iClipSize2 - m_iClip2, m_iSecondaryAmmoCount);
+		int secondary = MIN(iClipSize2 - m_iClip2, m_iSecondaryAmmoCount); // NEO
 		if ( secondary != 0 )
 		{
 			bReload = true;
@@ -2076,10 +2076,10 @@ bool CBaseCombatWeapon::DefaultReload( int iClipSize1, int iClipSize2, int iActi
 	if ( !bReload )
 		return false;
 
-	// On NEO, we want to always give out reload sound cues
-#if defined(CLIENT_DLL) || defined(NEO)
+	// On NEO, we want to always give out reload sound cues // NEO
+#if defined(CLIENT_DLL) || defined(NEO) // NEO
 	// Play reload
-	CBaseCombatWeapon::WeaponSound(RELOAD_NPC);
+	CBaseCombatWeapon::WeaponSound(RELOAD_NPC); // NEO
 #endif
 	SendWeaponAnim( iActivity );
 
@@ -2167,7 +2167,7 @@ char *CBaseCombatWeapon::GetDeathNoticeName( void )
 #if !defined( CLIENT_DLL )
 	return (char*)STRING( m_iszName );
 #else
-	return const_cast<char *>("GetDeathNoticeName not implemented on client yet");
+	return const_cast<char *>("GetDeathNoticeName not implemented on client yet"); // NEO
 #endif
 }
 
@@ -2191,7 +2191,7 @@ void CBaseCombatWeapon::CheckReload( void )
 			}
 
 			// If out of ammo end reload
-			if (m_iPrimaryAmmoCount)
+			if (m_iPrimaryAmmoCount) // NEO
 			{
 				FinishReload();
 				return;
@@ -2201,7 +2201,7 @@ void CBaseCombatWeapon::CheckReload( void )
 			{
 				// Add them to the clip
 				m_iClip1 += 1;
-				m_iPrimaryAmmoCount -= 1;
+				m_iPrimaryAmmoCount -= 1; // NEO
 
 				Reload();
 				return;
@@ -2240,17 +2240,17 @@ void CBaseCombatWeapon::FinishReload( void )
 		// If I use primary clips, reload primary
 		if ( UsesClipsForAmmo1() )
 		{
-			int primary = MIN(GetMaxClip1() - m_iClip1, m_iPrimaryAmmoCount);
+			int primary = MIN(GetMaxClip1() - m_iClip1, m_iPrimaryAmmoCount); // NEO
 			m_iClip1 += primary;
-			m_iPrimaryAmmoCount -= primary;
+			m_iPrimaryAmmoCount -= primary; // NEO
 		}
 
 		// If I use secondary clips, reload secondary
 		if ( UsesClipsForAmmo2() )
 		{
-			int secondary = MIN(GetMaxClip2() - m_iClip2, m_iSecondaryAmmoCount);
+			int secondary = MIN(GetMaxClip2() - m_iClip2, m_iSecondaryAmmoCount); // NEO
 			m_iClip2 += secondary;
-			m_iSecondaryAmmoCount -= secondary;
+			m_iSecondaryAmmoCount -= secondary; // NEO
 		}
 
 		if ( m_bReloadsSingly )
@@ -2374,8 +2374,8 @@ void CBaseCombatWeapon::PrimaryAttack( void )
 	}
 	else
 	{
-		info.m_iShots = MIN(info.m_iShots, m_iPrimaryAmmoCount);
-		m_iPrimaryAmmoCount -= info.m_iShots;
+		info.m_iShots = MIN(info.m_iShots, m_iPrimaryAmmoCount); // NEO
+		m_iPrimaryAmmoCount -= info.m_iShots; // NEO
 	}
 
 	info.m_flDistance = MAX_TRACE_LENGTH;
@@ -2392,7 +2392,7 @@ void CBaseCombatWeapon::PrimaryAttack( void )
 
 	pPlayer->FireBullets( info );
 
-	if (!m_iClip1 && m_iPrimaryAmmoCount <= 0)
+	if (!m_iClip1 && m_iPrimaryAmmoCount <= 0) // NEO
 	{
 		// HEV suit - indicate out of ammo condition
 		pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0); 
@@ -2630,8 +2630,8 @@ BEGIN_PREDICTION_DATA( CBaseCombatWeapon )
 	DEFINE_PRED_FIELD( m_iSecondaryAmmoType, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_iClip1, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),			
 	DEFINE_PRED_FIELD( m_iClip2, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
-	DEFINE_PRED_FIELD( m_iPrimaryAmmoCount, FIELD_INTEGER, FTYPEDESC_INSENDTABLE),
-	DEFINE_PRED_FIELD( m_iSecondaryAmmoCount, FIELD_INTEGER, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD( m_iPrimaryAmmoCount, FIELD_INTEGER, FTYPEDESC_INSENDTABLE), // NEO
+	DEFINE_PRED_FIELD( m_iSecondaryAmmoCount, FIELD_INTEGER, FTYPEDESC_INSENDTABLE), // NEO
 
 	DEFINE_PRED_FIELD( m_nViewModelIndex, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 
@@ -2687,8 +2687,8 @@ BEGIN_DATADESC( CBaseCombatWeapon )
 	DEFINE_FIELD( m_iSecondaryAmmoType, FIELD_INTEGER ),
 	DEFINE_FIELD( m_iClip1, FIELD_INTEGER ),
 	DEFINE_FIELD( m_iClip2, FIELD_INTEGER ),
-	DEFINE_FIELD( m_iPrimaryAmmoCount, FIELD_INTEGER),
-	DEFINE_FIELD( m_iSecondaryAmmoCount, FIELD_INTEGER),
+	DEFINE_FIELD( m_iPrimaryAmmoCount, FIELD_INTEGER), // NEO
+	DEFINE_FIELD( m_iSecondaryAmmoCount, FIELD_INTEGER), // NEO
 	DEFINE_FIELD( m_bFiresUnderwater, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_bAltFiresUnderwater, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_fMinRange1, FIELD_FLOAT ),
@@ -2892,8 +2892,8 @@ BEGIN_NETWORK_TABLE_NOBASE( CBaseCombatWeapon, DT_LocalWeaponData )
 	SendPropIntWithMinusOneFlag( SENDINFO(m_iClip1 ), 8 ),
 	SendPropIntWithMinusOneFlag( SENDINFO(m_iClip2 ), 8 ),
 #endif // NEO
-	SendPropIntWithMinusOneFlag( SENDINFO(m_iPrimaryAmmoCount), 8),
-	SendPropIntWithMinusOneFlag( SENDINFO(m_iSecondaryAmmoCount), 8),
+	SendPropIntWithMinusOneFlag( SENDINFO(m_iPrimaryAmmoCount), 8), // NEO
+	SendPropIntWithMinusOneFlag( SENDINFO(m_iSecondaryAmmoCount), 8), // NEO
 	SendPropInt( SENDINFO(m_iPrimaryAmmoType ), 8 ),
 	SendPropInt( SENDINFO(m_iSecondaryAmmoType ), 8 ),
 
@@ -2911,8 +2911,8 @@ BEGIN_NETWORK_TABLE_NOBASE( CBaseCombatWeapon, DT_LocalWeaponData )
 	RecvPropIntWithMinusOneFlag( RECVINFO(m_iClip1 )),
 	RecvPropIntWithMinusOneFlag( RECVINFO(m_iClip2 )),
 #endif // NEO
-	RecvPropIntWithMinusOneFlag( RECVINFO(m_iPrimaryAmmoCount )),
-	RecvPropIntWithMinusOneFlag( RECVINFO(m_iSecondaryAmmoCount )),
+	RecvPropIntWithMinusOneFlag( RECVINFO(m_iPrimaryAmmoCount )), // NEO
+	RecvPropIntWithMinusOneFlag( RECVINFO(m_iSecondaryAmmoCount )), // NEO
 	RecvPropInt( RECVINFO(m_iPrimaryAmmoType )),
 	RecvPropInt( RECVINFO(m_iSecondaryAmmoType )),
 

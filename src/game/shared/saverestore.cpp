@@ -537,7 +537,7 @@ void CSave::WriteString( const char *pname, const string_t *stringId, int count 
 	for ( i = 0; i < count; i++ )
 		size += strlen( STRING( stringId[i] ) ) + 1;
 
-	WriteHeader( pname, narrow_cast<int>(size) );
+	WriteHeader( pname, narrow_cast<int>(size) ); // NEO
 	WriteString( stringId, count );
 }
 
@@ -1832,7 +1832,7 @@ int CRestore::ReadData( char *pData, int size, int nBytesAvailable )
 void CRestore::ReadString( char *pDest, int nSizeDest, int nBytesAvailable )
 {
 	const char *pString = BufferPointer();
-	if (!nBytesAvailable)
+	if ( !nBytesAvailable )
 #ifdef NEO
 		nBytesAvailable = narrow_cast<int>(strlen(pString) + 1);
 #else
