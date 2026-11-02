@@ -8,15 +8,10 @@
 101	src/game/server/hl2/hl2_player.cpp
 72	src/public/shaderlib/cshader.h
 54	src/game/shared/gamerules.cpp
-40	src/game/client/smoke_fog_overlay.cpp
 38	src/game/server/physics_impact_damage.cpp
-27	src/game/client/clientmode_shared.cpp
 27	src/game/shared/baseentity_shared.cpp
-24	src/game/client/c_playerresource.cpp
 21	src/game/server/baseentity.cpp
 21	src/game/shared/hl2mp/hl2mp_gamerules.cpp
-20	src/game/client/c_basecombatcharacter.cpp
-19	src/game/client/c_baseanimatingoverlay.cpp
 19	src/materialsystem/stdshaders/BaseVSShader.h
 17	src/materialsystem/stdshaders/lightmappedgeneric_ps2_3_x.h
 14	src/materialsystem/stdshaders/water_ps2x_helper.h
@@ -25,7 +20,6 @@
 12	src/game/shared/basecombatweapon_shared.cpp
 12	src/game/shared/gamemovement.cpp
 11	src/game/shared/hl2mp/weapon_hl2mpbase.cpp
-10	src/game/client/clientmode_shared.h
 10	src/game/client/c_particle_smokegrenade.cpp
 10	src/game/server/ai_speech.h
 9	src/game/shared/base_playeranimstate.cpp
