@@ -3,7 +3,6 @@
 # Lines tagged // NEO do not count. A count may only shrink.
 # Format: <count><tab><path>, largest first.
 2045	src/game/client/mp3player.cpp
-232	src/game/client/hud_crosshair.cpp
 152	src/game/client/hl2mp/c_hl2mp_player.cpp
 131	src/game/server/hl2mp/hl2mp_player.cpp
 101	src/game/server/hl2/hl2_player.cpp
