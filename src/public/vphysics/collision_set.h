@@ -6,11 +6,9 @@
 //
 //=============================================================================//
 
-#ifndef COLLISION_SET_H
-#define COLLISION_SET_H
-#ifdef _WIN32
+#ifdef NEO
 #pragma once
-#endif
+#endif // NEO
 
 // A set of collision rules
 // NOTE: Defaults to all indices disabled
@@ -24,5 +22,3 @@ public:
 
 	virtual bool ShouldCollide( int index0, int index1 ) = 0;
 };
-
-#endif // COLLISION_SET_H // NEO
