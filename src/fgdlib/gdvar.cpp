@@ -7,9 +7,9 @@
 #include "fgdlib/WCKeyValues.h"
 #include "fgdlib/gdvar.h"
 
-#ifdef _WIN32
-#define snprintf _snprintf
-#endif
+#ifdef _WIN32 // NEO
+#define snprintf _snprintf // NEO
+#endif // NEO
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include <tier0/memdbgon.h>

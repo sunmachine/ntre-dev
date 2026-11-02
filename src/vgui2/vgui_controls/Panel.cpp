@@ -3005,7 +3005,7 @@ void Panel::OnThink()
 			return;
 		}
 
-		if ( m_pDragDrop->m_hCurrentDrop.Get() )
+		if ( m_pDragDrop->m_hCurrentDrop.Get() ) // NEO
 		{
 			if ( !input()->IsMouseDown( MOUSE_LEFT ) )
 			{
@@ -5031,7 +5031,7 @@ void Panel::OnMessage(const KeyValues *params, VPANEL ifromPanel)
 	for ( ; panelMap != NULL && !bFound; panelMap = panelMap->baseMap )
 	{
 #if defined( _DEBUG )
-//		[[maybe_unused]] char const *className = panelMap->pfnClassName();
+//		[[maybe_unused]] char const *className = panelMap->pfnClassName(); // NEO
 #endif
 
 		// iterate all the entries in the panel map
@@ -6924,7 +6924,7 @@ void Panel::OnFinishDragging( bool mousereleased, MouseCode code, bool abort /*=
 		Q_strncpy( cmd, "default", sizeof( cmd ) );
 
 		if ( mousereleased &&
-			m_pDragDrop->m_hCurrentDrop.Get() &&
+			m_pDragDrop->m_hCurrentDrop.Get() && // NEO
 			m_pDragDrop->m_hDropContextMenu.Get() )
 		{
 			Menu *menu = m_pDragDrop->m_hDropContextMenu;
@@ -7183,7 +7183,7 @@ void Panel::OnContinueDragging()
 		}
 	}
 
-	if ( m_pDragDrop->m_hCurrentDrop.Get() &&
+	if ( m_pDragDrop->m_hCurrentDrop.Get() && // NEO
 		m_pDragDrop->m_hDropContextMenu.Get() )
 	{
 		Menu *menu = m_pDragDrop->m_hDropContextMenu;
@@ -8619,7 +8619,7 @@ void VguiPanelGetSortedChildPanelList( Panel *pParentPanel, void *pSortedPanels 
 	}
 }
 
-void VguiPanelGetSortedChildButtonList( Panel *pParentPanel, void *pSortedPanels, const char *pchFilter /*= NULL*/, int nFilterType /*= 0*/ )
+void VguiPanelGetSortedChildButtonList( Panel *pParentPanel, void *pSortedPanels, const char *pchFilter /*= NULL*/, int nFilterType /*= 0*/ ) // NEO
 {
 	CUtlSortVector< SortedPanel_t, CSortedPanelYLess > *pList = reinterpret_cast< CUtlSortVector< SortedPanel_t, CSortedPanelYLess >* >( pSortedPanels );
 
