@@ -187,7 +187,7 @@ public:
 #ifdef NEO
 	int		FindGestureLayer(int sequence);
 #endif
-	int		FindGestureLayer(Activity activity);
+	int		FindGestureLayer( Activity activity );
 
 	void	RemoveLayer( int iLayer, float flKillRate = 0.2, float flKillDelay = 0.0 );
 	void	FastRemoveLayer( int iLayer );

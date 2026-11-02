@@ -14,7 +14,7 @@
 #endif
 
 #include "baseentity.h"
-#include "interface.h"
+#include "interface.h" // NEO
 
 #define EVENT_FIRE_ALWAYS	-1
 
@@ -73,7 +73,7 @@ public:
 
 	fieldtype_t ValueFieldType() { return m_Value.FieldType(); }
 
-	DLL_CLASS_EXPORT void FireOutput( variant_t Value, CBaseEntity *pActivator, CBaseEntity *pCaller, float fDelay = 0 );
+	DLL_CLASS_EXPORT void FireOutput( variant_t Value, CBaseEntity *pActivator, CBaseEntity *pCaller, float fDelay = 0 ); // NEO
 
 	/// Delete every single action in the action list. 
 	void DeleteAllElements( void ) ;

@@ -95,7 +95,7 @@ void CNPC_Crow::Spawn( void )
 	AddSpawnFlags( SF_NPC_FADE_CORPSE );
 #endif // _XBOX
 
-	const char *szModel = STRING( GetModelName() );
+	const char *szModel = STRING( GetModelName() ); // NEO
 	if (!szModel || !*szModel)
 	{
 		szModel = "models/crow.mdl";

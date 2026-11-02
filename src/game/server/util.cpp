@@ -2870,7 +2870,7 @@ void CC_KDTreeTest( const CCommand &args )
 	auto pPlayer = static_cast<CNEO_Player*>(UTIL_GetLocalPlayer());
 #endif
 #else
-	CBasePlayer* pPlayer = static_cast<CBasePlayer*>(UTIL_GetLocalPlayer());
+	CBasePlayer *pPlayer = static_cast<CBasePlayer*>( UTIL_GetLocalPlayer() );
 #endif
 	
 	Vector vecStart = pPlayer->GetAbsOrigin();
@@ -3058,7 +3058,7 @@ void CC_VoxelTreePlayerView( void )
 	auto pPlayer = static_cast<CNEO_Player*>(UTIL_GetLocalPlayer());
 #endif
 #else
-	CBasePlayer* pPlayer = static_cast<CBasePlayer*>(UTIL_GetLocalPlayer());
+	CBasePlayer *pPlayer = static_cast<CBasePlayer*>( UTIL_GetLocalPlayer() );
 #endif
 
 	Vector vecStart = pPlayer->GetAbsOrigin();

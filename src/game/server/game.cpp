@@ -35,13 +35,13 @@ ConVar	teamplay( "mp_teamplay","0", FCVAR_NOTIFY );
 #ifdef NEO
 ConVar	falldamage("mp_falldamage", "1", FCVAR_NOTIFY, "Whether to apply fall damage to players."); // Note that this has a different meaning (and default value) in base gamerules. Using a dmg toggle here to help custom modes.
 #else
-ConVar	falldamage("mp_falldamage", "0", FCVAR_NOTIFY);
+ConVar	falldamage("mp_falldamage", "0", FCVAR_NOTIFY); // NEO
 #endif
 
 #ifdef NEO
 ConVar	weaponstay( "mp_weaponstay","1", FCVAR_NOTIFY );
 #else
-ConVar	weaponstay("mp_weaponstay", "0", FCVAR_NOTIFY);
+ConVar	weaponstay("mp_weaponstay", "0", FCVAR_NOTIFY); // NEO
 #endif
 
 ConVar	forcerespawn( "mp_forcerespawn","1", FCVAR_NOTIFY );

@@ -200,9 +200,9 @@ END_SEND_TABLE();
 IMPLEMENT_SERVERCLASS_ST(CBaseCombatCharacter, DT_BaseCombatCharacter)
 #ifdef GLOWS_ENABLE
 	SendPropBool( SENDINFO( m_bGlowEnabled ) ),
-	SendPropFloat( SENDINFO( m_flGlowR ) ),
-	SendPropFloat( SENDINFO( m_flGlowG ) ),
-	SendPropFloat( SENDINFO( m_flGlowB ) ),
+	SendPropFloat( SENDINFO( m_flGlowR ) ), // NEO
+	SendPropFloat( SENDINFO( m_flGlowG ) ), // NEO
+	SendPropFloat( SENDINFO( m_flGlowB ) ), // NEO
 #endif // GLOWS_ENABLE
 	// Data that only gets sent to the local player.
 	SendPropDataTable( "bcc_localdata", 0, &REFERENCE_SEND_TABLE(DT_BCCLocalPlayerExclusive), SendProxy_SendBaseCombatCharacterLocalDataTable ),
@@ -2257,7 +2257,7 @@ bool CBaseCombatCharacter::Weapon_EquipAmmoOnly( CBaseCombatWeapon *pWeapon )
 			}
 			
 			//Only succeed if we've taken ammo from the weapon
-			if ((takenPrimary > 0 || takenSecondary > 0) && (pWeapon->GetPrimaryAmmoCount() < 1 && pWeapon->GetSecondaryAmmoCount() < 1))
+			if ((takenPrimary > 0 || takenSecondary > 0) && (pWeapon->GetPrimaryAmmoCount() < 1 && pWeapon->GetSecondaryAmmoCount() < 1)) // NEO
 				return true;
 			
 			return false;

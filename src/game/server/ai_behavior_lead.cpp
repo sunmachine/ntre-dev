@@ -265,8 +265,8 @@ bool CAI_LeadBehavior::GetClosestPointOnRoute( const Vector &targetPos, Vector *
 	}
 
 	// Find the nearest node to the target (going forward)
-	float		flNearestDist2D	= 999999999.0f;
-	float		flNearestDist	= 999999999.0f;
+	float		flNearestDist2D	= 999999999.0f; // NEO
+	float		flNearestDist	= 999999999.0f; // NEO
 	float		flPathDist, flPathDist2D;
 
 	Vector vecNearestPoint(0, 0, 0);
@@ -996,7 +996,7 @@ void CAI_LeadBehavior::RunTask( const Task_t *pTask )
 
 //-------------------------------------
 
-bool CAI_LeadBehavior::Speak( AIConcept_t aiconcept )
+bool CAI_LeadBehavior::Speak( AIConcept_t aiconcept ) // NEO
 {
 	CAI_Expresser *pExpresser = GetOuter()->GetExpresser();
 	if ( !pExpresser )
@@ -1007,7 +1007,7 @@ bool CAI_LeadBehavior::Speak( AIConcept_t aiconcept )
 		return false;
 
 	// If we haven't said the start speech, don't nag
-	bool bNag = ( FStrEq(aiconcept,TLK_LEAD_COMINGBACK) || FStrEq(aiconcept, TLK_LEAD_CATCHUP) || FStrEq(aiconcept, TLK_LEAD_RETRIEVE) );
+	bool bNag = ( FStrEq(aiconcept,TLK_LEAD_COMINGBACK) || FStrEq(aiconcept, TLK_LEAD_CATCHUP) || FStrEq(aiconcept, TLK_LEAD_RETRIEVE) ); // NEO
 	if ( !m_hasspokenstart && bNag )
 		return false;
 
@@ -1018,7 +1018,7 @@ bool CAI_LeadBehavior::Speak( AIConcept_t aiconcept )
 		// We ignore nag timers for this, because the response rules will control refire rates.
 		CAI_PlayerAlly *pAlly = dynamic_cast<CAI_PlayerAlly*>(GetOuter());
 		if ( pAlly )
-			return pAlly->SpeakIfAllowed( aiconcept, GetConceptModifiers( aiconcept ) );
+			return pAlly->SpeakIfAllowed( aiconcept, GetConceptModifiers( aiconcept ) ); // NEO
 	}
 
 	// Don't spam Nags
@@ -1031,7 +1031,7 @@ bool CAI_LeadBehavior::Speak( AIConcept_t aiconcept )
 		}
 	}
 	
-	if ( pExpresser->Speak( aiconcept, GetConceptModifiers( aiconcept ) ) )
+	if ( pExpresser->Speak( aiconcept, GetConceptModifiers( aiconcept ) ) ) // NEO
 	{
 		m_flSpeakNextNagTime = gpGlobals->curtime + LEAD_NAG_TIME;
 		return true;

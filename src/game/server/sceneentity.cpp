@@ -3394,7 +3394,7 @@ void MissingSceneWarning( char const *scenename )
 	static CUtlSymbolTable missing;
 
 	// Make sure we only show the message once
-	if ( !missing.Find( scenename ).IsValid() )
+	if ( !missing.Find( scenename ).IsValid() ) // NEO
 	{
 		missing.AddString( scenename );
 
