@@ -541,7 +541,7 @@ char *studiohdr_t::pszNodeName( int iNode )
 	Assert( pVModel );
 
 	if ( pVModel->m_node.Count() <= iNode-1 )
-		return const_cast<char *>("Invalid node");
+		return const_cast<char *>("Invalid node"); // NEO
 
 	return pVModel->m_group[ pVModel->m_node[iNode-1].group ].GetStudioHdr()->pszLocalNodeName( pVModel->m_node[iNode-1].index );
 }
@@ -1204,7 +1204,7 @@ char *CStudioHdr::pszNodeName( int iNode )
 	}
 
 	if ( m_pVModel->m_node.Count() <= iNode-1 )
-		return const_cast<char *>("Invalid node");
+		return const_cast<char *>("Invalid node"); // NEO
 
 	const studiohdr_t *pStudioHdr = GroupStudioHdr( m_pVModel->m_node[iNode-1].group );
 	

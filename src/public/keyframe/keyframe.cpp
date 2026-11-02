@@ -173,7 +173,7 @@ void CPositionInterpolator_Linear::Release()
 
 void CPositionInterpolator_Linear::GetDetails( char **outName, int *outMinKeyReq, int *outMaxKeyReq )
 {
-	*outName = (char*)"Linear";
+	*outName = (char*)"Linear"; // NEO
 	*outMinKeyReq = 0;
 	*outMaxKeyReq = 1;
 }
@@ -220,7 +220,7 @@ void CPositionInterpolator_CatmullRom::Release()
 
 void CPositionInterpolator_CatmullRom::GetDetails( char **outName, int *outMinKeyReq, int *outMaxKeyReq )
 {
-	*outName = (char *)"Catmull-Rom Spline";
+	*outName = (char *)"Catmull-Rom Spline"; // NEO
 	*outMinKeyReq = -1;
 	*outMaxKeyReq = 2;
 }
@@ -321,7 +321,7 @@ void CPositionInterpolator_Rope::Release()
 
 void CPositionInterpolator_Rope::GetDetails( char **outName, int *outMinKeyReq, int *outMaxKeyReq )
 {
-	*outName = (char *)"Rope";
+	*outName = (char *)"Rope"; // NEO
 	*outMinKeyReq = 0;
 	*outMinKeyReq = 1;
 }
@@ -450,7 +450,7 @@ void RotationInterpolatorFunc_Linear( float time, Quaternion &outRot )
 
 RotationInterpolator_t g_RotationInterpolators[] =
 {
-	{ (char*)"Linear", RotationInterpolatorFunc_Linear, 0, 1 },
+	{ (char*)"Linear", RotationInterpolatorFunc_Linear, 0, 1 }, // NEO
 };
 
 int Motion_GetNumberOfRotationInterpolators( void )

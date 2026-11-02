@@ -156,7 +156,7 @@ char (*RtlpNumberOf( UNALIGNED T (&)[N] ))[N];
 #define V_ARRAYSIZE(p)		ARRAYSIZE(p)
 
 template< typename IndexType, typename T, unsigned int N >
-IndexType ClampedArrayIndex( [[maybe_unused]] const T (&buffer)[N], IndexType index )
+IndexType ClampedArrayIndex( [[maybe_unused]] const T (&buffer)[N], IndexType index ) // NEO
 {
 	return clamp( index, 0, (IndexType)N - 1 );
 }

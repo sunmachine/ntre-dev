@@ -29,7 +29,7 @@
 abstract_class IBaseCacheInfo
 {
 public:
-	virtual ~IBaseCacheInfo(){}
+	virtual ~IBaseCacheInfo(){} // NEO
 	virtual void Save( CUtlBuffer& buf ) = 0;
 	virtual void Restore( CUtlBuffer& buf ) = 0;
 
