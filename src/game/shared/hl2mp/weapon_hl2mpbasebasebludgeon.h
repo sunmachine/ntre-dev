@@ -66,13 +66,11 @@ protected:
 	virtual void		Hit(trace_t& traceHit, Activity nHitActivity);
 #else
 private:
-	void				Swing(int bIsSecondary);
-	Activity			ChooseIntersectionPointAndActivity(trace_t& hitTrace, const Vector& mins, const Vector& maxs, CBasePlayer* pOwner);
-	bool				ImpactWater(const Vector& start, const Vector& end);
-	void				Hit(trace_t& traceHit, Activity nHitActivity);
-#endif
-
-private:
+	bool			ImpactWater( const Vector &start, const Vector &end );
+	void			Swing( int bIsSecondary );
+	void			Hit( trace_t &traceHit, Activity nHitActivity );
+	Activity		ChooseIntersectionPointAndActivity( trace_t &hitTrace, const Vector &mins, const Vector &maxs, CBasePlayer *pOwner );
+#endif // NEO
 };
 
 #endif
