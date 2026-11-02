@@ -178,11 +178,19 @@ public:
 
 	// --------------------------------
 	
+#ifdef NEO
 	bool CanSpeakConcept( AIConcept_t aiconcept );
 	bool SpokeConcept( AIConcept_t aiconcept );
 	float GetTimeSpokeConcept( AIConcept_t aiconcept ); // returns -1 if never
 	void SetSpokeConcept( AIConcept_t aiconcept, AI_Response *response, bool bCallback = true );
 	void ClearSpokeConcept( AIConcept_t aiconcept );
+#else
+	bool CanSpeakConcept( AIConcept_t concept );
+	bool SpokeConcept( AIConcept_t concept );
+	float GetTimeSpokeConcept( AIConcept_t concept ); // returns -1 if never
+	void SetSpokeConcept( AIConcept_t concept, AI_Response *response, bool bCallback = true );
+	void ClearSpokeConcept( AIConcept_t concept );
+#endif // NEO
 	
 	// --------------------------------
 	
