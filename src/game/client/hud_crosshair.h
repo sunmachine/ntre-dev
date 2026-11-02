@@ -57,6 +57,9 @@ public:
 protected:
 	virtual void	ApplySchemeSettings( vgui::IScheme *scheme );
 	virtual void	Paint();
+#ifdef NEO
+	void	PaintNeo();
+#endif // NEO
 	
 	// Crosshair sprite and colors
 	CHudTexture		*m_pCrosshair;
