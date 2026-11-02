@@ -25,4 +25,4 @@ public:
 	virtual bool ShouldCollide( int index0, int index1 ) = 0;
 };
 
-#endif // COLLISION_SET_H
+#endif // COLLISION_SET_H // NEO

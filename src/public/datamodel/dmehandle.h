@@ -53,7 +53,7 @@ public:
 	template < class T, bool B >
 	CDmeHandle( const CDmeHandle< T, B > &handle ) : m_handle( DMELEMENT_HANDLE_INVALID )
 	{
-		[[maybe_unused]] DmeType *p = ( T* )NULL; // triggers compiler error if converting from invalid handle type
+		[[maybe_unused]] DmeType *p = ( T* )NULL; // triggers compiler error if converting from invalid handle type // NEO
 
 		Set( handle.GetHandle() );
 	}
@@ -69,7 +69,7 @@ public:
 	template < class T, bool B >
 	CDmeHandle& operator=( const CDmeHandle< T, B > &handle )
 	{
-		[[maybe_unused]] DmeType *p = ( T* )NULL; // triggers compiler error if converting from invalid handle type
+		[[maybe_unused]] DmeType *p = ( T* )NULL; // triggers compiler error if converting from invalid handle type // NEO
 
 		Set( handle.GetHandle() );
 		return *this;

@@ -53,7 +53,7 @@ public:
 
 	bool Defined( const char *pString ) const
 	{
-		return m_SymbolTable.Find( pString ).IsValid();
+		return m_SymbolTable.Find( pString ).IsValid(); // NEO
 	}
 
 	UtlSymId_t Find( const char *pString ) const
