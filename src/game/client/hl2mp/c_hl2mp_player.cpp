@@ -182,6 +182,10 @@ C_HL2MP_Player::C_HL2MP_Player() : m_PlayerAnimState( this ), m_iv_angEyeAngles(
 	m_iIDEntIndex = 0;
 	m_iSpawnInterpCounterCache = 0;
 
+#ifndef NEO
+	m_angEyeAngles.Init();
+
+#endif // NEO
 	AddVar( &m_angEyeAngles, &m_iv_angEyeAngles, LATCH_SIMULATION_VAR );
 
 #ifndef NEO
@@ -456,6 +460,26 @@ void C_HL2MP_Player::DoImpactEffect( trace_t &tr, int nDamageType )
 
 void C_HL2MP_Player::PreThink( void )
 {
+#ifndef NEO
+	QAngle vTempAngles = GetLocalAngles();
+
+	if ( GetLocalPlayer() == this )
+	{
+		vTempAngles[PITCH] = EyeAngles()[PITCH];
+	}
+	else
+	{
+		vTempAngles[PITCH] = m_angEyeAngles[PITCH];
+	}
+
+	if ( vTempAngles[YAW] < 0.0f )
+	{
+		vTempAngles[YAW] += 360.0f;
+	}
+
+	SetLocalAngles( vTempAngles );
+
+#endif // NEO
 	BaseClass::PreThink();
 }
 
@@ -720,6 +744,15 @@ void C_HL2MP_Player::AddEntity( void )
 {
 	BaseClass::AddEntity();
 
+#ifndef NEO
+	QAngle vTempAngles = GetLocalAngles();
+	vTempAngles[PITCH] = m_angEyeAngles[PITCH];
+
+	SetLocalAngles( vTempAngles );
+		
+	m_PlayerAnimState.Update();
+
+#endif // NEO
 	// Zero out model pitch, blending takes care of all of it.
 	SetLocalAnglesDim( X_INDEX, 0 );
 
@@ -933,22 +966,17 @@ bool C_HL2MP_Player::CanSprint( void )
 
 extern ConVar sv_maxspeed;
 
+#ifdef NEO
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void C_HL2MP_Player::StartSprinting( void )
 {
-#ifdef NEO
 	if (m_HL2Local.m_flSuitPower < SPRINT_START_MIN)
-#else
-	if( m_HL2Local.m_flSuitPower < 10 )
-#endif
 	{
-#ifdef NEO
 #if(0)
 		CPASAttenuationFilter filter( this );
 		filter.UsePredictionRules();
 		EmitSound( filter, entindex(), "HL2Player.SprintNoPower" );
-#endif
 #endif
 
 		// Don't sprint unless there's a reasonable
@@ -956,38 +984,27 @@ void C_HL2MP_Player::StartSprinting( void )
 		return;
 	}
 
-#ifdef NEO
 #if(0)
 	CPASAttenuationFilter filter( this );
 	filter.UsePredictionRules();
 	EmitSound( filter, entindex(), "HL2Player.SprintStart" );
 #endif
-#endif
-
-#ifndef NEO
-	SetMaxSpeed( HL2_SPRINT_SPEED );
-#endif
 
 	m_fIsSprinting = true;
-#ifdef NEO
 	if (IsLocalPlayer())
 	{
 		IN_LeanToggleReset();
 	}
-#endif // NEO
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void C_HL2MP_Player::StopSprinting( void )
 {
-#ifndef NEO
-	SetMaxSpeed( HL2_NORM_SPEED );
-#endif
 
 	m_fIsSprinting = false;
 }
-
+#endif // NEO
 void C_HL2MP_Player::HandleSpeedChanges( CMoveData *mv )
 {
 #ifndef NEO
@@ -1554,15 +1571,10 @@ int C_HL2MPRagdoll::DrawModel(int flags)
 
 	return BaseClass::DrawModel(flags);
 }
-#endif // NEO
 
 void C_HL2MP_Player::UpdateClientSideAnimation()
 {
-#ifdef NEO // TODO (nullsystem): 2025-02-18 SOURCE SDK 2013 CHECK
 	m_PlayerAnimState->Update( EyeAngles()[YAW], EyeAngles()[PITCH] );
-#else
-	m_PlayerAnimState.Update();
-#endif
 
 	BaseClass::UpdateClientSideAnimation();
 }
@@ -1612,11 +1624,7 @@ void C_HL2MP_Player::DoAnimationEvent( PlayerAnimEvent_t event, int nData )
 	}
 
 	MDLCACHE_CRITICAL_SECTION();
-#ifdef NEO
 	m_PlayerAnimState->DoAnimationEvent( event, nData );
-#else
-	m_PlayerAnimState.DoAnimationEvent( event, nData );
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1640,9 +1648,6 @@ void C_HL2MP_Player::CalculateIKLocks( float currentTime )
 
 	for (int i = 0; i < targetCount; i++)
 	{
-#ifndef NEO
-		trace_t trace;
-#endif
 		CIKTarget *pTarget = &m_pIk->m_target[i];
 
 		if (!pTarget->IsActive())
@@ -1705,6 +1710,7 @@ void C_HL2MP_Player::CalculateIKLocks( float currentTime )
 	CBaseEntity::PopEnableAbsRecomputations();
 	partition->SuppressLists( curSuppressed, true );
 }
+#endif // NEO
 
 void C_HL2MP_Player::PostThink( void )
 {
