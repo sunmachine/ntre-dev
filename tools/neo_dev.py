@@ -19,6 +19,10 @@ After fixing a problem a check already allowed
   update-valve-baseline   Lower the counts in tools/valve-edits-baseline.txt.
                           Script: check_valve_edits.py.
 
+Editor setup
+  tidy-compile-db         Write a compile database that clangd and clang-tidy accept.
+                          Script: make_tidy_compile_db.py.
+
 Taking a newer Valve SDK
   merge-valve-sdk         Start merging a newer Valve SDK and resolve the conflicts NEO always
                           resolves the same way. Needs bash; on Windows, run it from Git Bash.
@@ -35,6 +39,7 @@ COMMANDS = {
     'format': ('format_changed.py', []),
     'check-valve-edits': ('check_valve_edits.py', ['--check']),
     'update-valve-baseline': ('check_valve_edits.py', ['--update-baseline']),
+    'tidy-compile-db': ('make_tidy_compile_db.py', []),
     'merge-valve-sdk': ('merge_valve_sdk.sh', []),
 }
 
