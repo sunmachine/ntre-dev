@@ -14,7 +14,7 @@
 	#include "c_hl2mp_player.h"
 #else
 	#include "hl2mp_player.h"
-	#include "hl2mp/grenade_tripmine.h" // Load the hl2mp version!
+	#include "hl2mp/grenade_tripmine.h" // Load the hl2mp version! // NEO
 	#include "grenade_satchel.h"
 	#include "entitylist.h"
 	#include "eventqueue.h"
@@ -26,7 +26,7 @@
 #include "tier0/memdbgon.h"
 
 #define	SLAM_PRIMARY_VOLUME		450
-#define SLAM_REFIRE_DELAY		0.05f
+#define SLAM_REFIRE_DELAY		0.05f // NEO
 
 IMPLEMENT_NETWORKCLASS_ALIASED( Weapon_SLAM, DT_Weapon_SLAM )
 
@@ -92,7 +92,7 @@ BEGIN_DATADESC( CWeapon_SLAM )
 	DEFINE_FUNCTION( SlamTouch ),
 
 END_DATADESC()
-#endif
+#endif // NEO
 
 acttable_t	CWeapon_SLAM::m_acttable[] = 
 {
@@ -353,8 +353,8 @@ void CWeapon_SLAM::StartSatchelDetonate()
 	}
 	SatchelDetonate();
 
-	// needs a higher delay on all of these, a minimum time really - to elimiate refires.
-	m_flNextPrimaryAttack	= m_flNextSecondaryAttack = SLAM_REFIRE_DELAY + gpGlobals->curtime + SequenceDuration();
+	// needs a higher delay on all of these, a minimum time really - to elimiate refires. // NEO
+	m_flNextPrimaryAttack	= m_flNextSecondaryAttack = SLAM_REFIRE_DELAY + gpGlobals->curtime + SequenceDuration(); // NEO
 }
 
 
@@ -402,8 +402,8 @@ void CWeapon_SLAM::TripmineAttach( void )
 
 			CTripmineGrenade *pMine = (CTripmineGrenade *)pEnt;
 			pMine->m_hOwner = GetOwner();
-			// Attempt to attach to entity, or just sit still in place.
-			pMine->AttachToEntity( pEntity );
+			// Attempt to attach to entity, or just sit still in place. // NEO
+			pMine->AttachToEntity( pEntity ); // NEO
 
 #endif
 
@@ -420,7 +420,7 @@ void CWeapon_SLAM::TripmineAttach( void )
 void CWeapon_SLAM::StartTripmineAttach( void )
 {
 	// Only the player fires this way so we can cast
-	CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() );
+	CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() ); // NEO
 	if (!pPlayer)
 	{
 		return;
@@ -447,7 +447,7 @@ void CWeapon_SLAM::StartTripmineAttach( void )
 		if (pEntity && !(pEntity->GetFlags() & FL_CONVEYOR))
 		{
 			// player "shoot" animation
-			pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
+			pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY ); // NEO
 
 			// -----------------------------------------
 			//  Play attach animation
@@ -472,8 +472,8 @@ void CWeapon_SLAM::StartTripmineAttach( void )
 		}
 	}
 	
-	// needs a higher delay on all of these, a minimum time really - to elimiate refires.
-	m_flNextPrimaryAttack	= m_flNextSecondaryAttack = SLAM_REFIRE_DELAY + gpGlobals->curtime + SequenceDuration();
+	// needs a higher delay on all of these, a minimum time really - to elimiate refires. // NEO
+	m_flNextPrimaryAttack	= m_flNextSecondaryAttack = SLAM_REFIRE_DELAY + gpGlobals->curtime + SequenceDuration(); // NEO
 //	SetWeaponIdleTime( gpGlobals->curtime + SequenceDuration() );
 }
 
@@ -484,8 +484,8 @@ void CWeapon_SLAM::StartTripmineAttach( void )
 //-----------------------------------------------------------------------------
 void CWeapon_SLAM::SatchelThrow( void )
 {	
-	// Only the player fires this way so we can cast
-	CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() );
+	// Only the player fires this way so we can cast // NEO
+	CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() ); // NEO
 
 #ifndef CLIENT_DLL
 	m_bThrowSatchel = false;
@@ -523,8 +523,8 @@ void CWeapon_SLAM::SatchelThrow( void )
 	pPlayer->RemoveAmmo( 1, m_iSecondaryAmmoType );
 #endif
 
-	//Tony; is there a different anim in the player? must check..
-	pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
+	//Tony; is there a different anim in the player? must check.. // NEO
+	pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY ); // NEO
 
 	// Play throw sound
 	EmitSound( "Weapon_SLAM.SatchelThrow" );
@@ -557,7 +557,7 @@ void CWeapon_SLAM::StartSatchelThrow( void )
 	m_bNeedReload		= true;
 	m_bThrowSatchel		= true;
 
-	m_flNextPrimaryAttack	= m_flNextSecondaryAttack = SLAM_REFIRE_DELAY + gpGlobals->curtime + SequenceDuration();
+	m_flNextPrimaryAttack	= m_flNextSecondaryAttack = SLAM_REFIRE_DELAY + gpGlobals->curtime + SequenceDuration(); // NEO
 }
 
 //-----------------------------------------------------------------------------
@@ -616,7 +616,7 @@ void CWeapon_SLAM::SatchelAttach( void )
 void CWeapon_SLAM::StartSatchelAttach( void )
 {
 #ifndef CLIENT_DLL
-	CHL2MP_Player *pOwner = ToHL2MPPlayer( GetOwner() );
+	CHL2MP_Player *pOwner = ToHL2MPPlayer( GetOwner() ); // NEO
 	if (!pOwner)
 	{
 		return;
@@ -635,7 +635,7 @@ void CWeapon_SLAM::StartSatchelAttach( void )
 		if (pEntity && !(pEntity->GetFlags() & FL_CONVEYOR))
 		{
 			// player "shoot" animation
-			pOwner->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
+			pOwner->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY ); // NEO
 
 			// -----------------------------------------
 			//  Play attach animation
@@ -657,7 +657,7 @@ void CWeapon_SLAM::StartSatchelAttach( void )
 			m_bNeedReload		= true;
 			m_bAttachSatchel	= true;
 
-			m_flNextPrimaryAttack	= m_flNextSecondaryAttack = SLAM_REFIRE_DELAY + gpGlobals->curtime + SequenceDuration();
+			m_flNextPrimaryAttack	= m_flNextSecondaryAttack = SLAM_REFIRE_DELAY + gpGlobals->curtime + SequenceDuration(); // NEO
 
 		}
 	}

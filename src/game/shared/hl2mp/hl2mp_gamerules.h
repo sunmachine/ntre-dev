@@ -129,7 +129,7 @@ public:
 	virtual void RestartGame();
 #else
 	void RestartGame();
-	void CleanUpMap();
+	void CleanUpMap(); // NEO
 #endif
 	void OnNavMeshLoad( void );
 
@@ -155,7 +155,7 @@ public:
 #ifdef NEO
 	virtual bool CheckGameOver( void );
 #else
-	bool CheckGameOver(void);
+	bool CheckGameOver( void );
 #endif
 
 	bool IsIntermission( void );
@@ -188,10 +188,10 @@ protected:
 	CNetworkVar(float, m_flGameStartTime);
 #else
 private:
-	CNetworkVar(float, m_flGameStartTime);
+	CNetworkVar(float, m_flGameStartTime); // NEO
 #endif
 
-private:
+private: // NEO
 	CNetworkVar( bool, m_bTeamPlayEnabled );
 	CUtlVector<EHANDLE> m_hRespawnableItemsAndWeapons;
 	float m_tmNextPeriodicThink;

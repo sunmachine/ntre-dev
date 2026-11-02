@@ -1233,13 +1233,13 @@ bool CHL2GameMovement::CanAccelerate()
 	}
 #endif
 
-#ifdef SDK2013CE
-	return BaseClass::CanAccelerate();
-#else
+#ifdef SDK2013CE // NEO
+	return BaseClass::CanAccelerate(); // NEO
+#else // NEO
 	BaseClass::CanAccelerate();
 
 	return true;
-#endif
+#endif // NEO
 }
 
 

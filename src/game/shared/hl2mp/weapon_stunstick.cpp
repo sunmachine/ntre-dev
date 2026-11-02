@@ -65,7 +65,7 @@ public:
 	virtual void			OnDataChanged( DataUpdateType_t updateType );
 	virtual RenderGroup_t	GetRenderGroup( void );
 	virtual void			ViewModelDrawn( C_BaseViewModel *pBaseViewModel );
-	virtual bool			IsTransparent( void );
+	virtual bool			IsTransparent( void ); // NEO
 #endif
 
 	virtual void Precache();
@@ -122,8 +122,8 @@ private:
 
 	float	m_flFadeTime;
 
-	//Tony; third person check thing, this has to be done for the local player if third person switches, so we can re-calc attachment points.
-	virtual void			ThirdPersonSwitch( bool bThirdPerson );
+	//Tony; third person check thing, this has to be done for the local player if third person switches, so we can re-calc attachment points. // NEO
+	virtual void			ThirdPersonSwitch( bool bThirdPerson ); // NEO
 
 #endif
 

@@ -1024,11 +1024,11 @@ void PhysFrictionSound( CBaseEntity *pEntity, IPhysicsObject *pObject, float ene
 	if ( psurf->sounds.scrapeSmooth && phit->audio.roughnessFactor < psurf->audio.roughThreshold )
 	{
 		soundName = psurf->sounds.scrapeSmooth;
-	#ifdef SDK2013CE
-		soundHandle = &psurf->soundhandles.scrapeSmooth;
-	#else
+	#ifdef SDK2013CE // NEO
+		soundHandle = &psurf->soundhandles.scrapeSmooth; // NEO
+	#else // NEO
 		soundHandle = &psurf->soundhandles.scrapeRough;
-	#endif
+	#endif // NEO
 	}
 
 	const char *pSoundName = physprops->GetString( soundName );

@@ -34,13 +34,13 @@
 	#include "hl2mp_gameinterface.h"
 	#include "hl2mp_cvars.h"
 
-#if defined(DEBUG) || defined(NEO)
+#if defined(DEBUG) || defined(NEO) // NEO
 #ifdef NEO
 	#include "hl2mp_bot_temp.h"
 #else
-	#include "tf_bot_temp.h"
+	#include "tf_bot_temp.h" // NEO
 #endif // NEO
-#endif // defined(DEBUG) || defined(NEO)
+#endif // defined(DEBUG) || defined(NEO) // NEO
 
 #ifdef NEO
 	#include "neo_gamerules.h"
@@ -184,7 +184,7 @@ static const char *s_PreserveEnts[] =
 #endif
 
 // NOTE: the indices here must match TEAM_TERRORIST, TEAM_CT, TEAM_SPECTATOR, etc.
-const char *sTeamNames[] =
+const char *sTeamNames[] = // NEO
 {
 #ifdef NEO
 	"Unassigned",

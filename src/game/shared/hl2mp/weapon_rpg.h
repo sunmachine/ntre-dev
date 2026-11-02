@@ -238,8 +238,8 @@ public:
 	CMaterialReference	m_hBeamMaterial;	// Used for the laser beam
 	Beam_t				*m_pBeam;			// Laser beam temp entity
 
-	//Tony; third person check thing, to destroy/reinitialize the beam ( swapping first -> third or back, etc )
-	virtual void			ThirdPersonSwitch( bool bThirdPerson );
+	//Tony; third person check thing, to destroy/reinitialize the beam ( swapping first -> third or back, etc ) // NEO
+	virtual void			ThirdPersonSwitch( bool bThirdPerson ); // NEO
 
 #endif	//CLIENT_DLL
 
