@@ -3,9 +3,6 @@
 # Lines tagged // NEO do not count. A count may only shrink.
 # Format: <count><tab><path>, largest first.
 2045	src/game/client/mp3player.cpp
-152	src/game/client/hl2mp/c_hl2mp_player.cpp
-131	src/game/server/hl2mp/hl2mp_player.cpp
-101	src/game/server/hl2/hl2_player.cpp
 72	src/public/shaderlib/cshader.h
 19	src/materialsystem/stdshaders/BaseVSShader.h
 17	src/materialsystem/stdshaders/lightmappedgeneric_ps2_3_x.h
@@ -20,9 +17,7 @@
 9	src/game/shared/base_playeranimstate.cpp
 9	src/game/shared/hl2mp/weapon_hl2mpbasebasebludgeon.h
 9	src/game/shared/shot_manipulator.h
-8	src/game/server/hl2/hl2_player.h
 8	src/game/shared/sdk/sdk_basegrenade_projectile.cpp
-7	src/game/server/hl2mp/hl2mp_player.h
 6	src/game/client/c_baseplayer.cpp
 6	src/game/client/c_colorcorrection.cpp
 6	src/game/client/c_colorcorrectionvolume.cpp
