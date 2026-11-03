@@ -48,6 +48,7 @@
 
 LINK_ENTITY_TO_CLASS(player, CNEO_Player);
 
+// clang-format off
 IMPLEMENT_SERVERCLASS_ST(CNEO_Player, DT_NEO_Player)
 SendPropInt(SENDINFO(m_iNeoClass)),
 SendPropInt(SENDINFO(m_iNeoSkin), NumBitsForCount(NEO_SKIN_ENUM_COUNT), SPROP_UNSIGNED),
@@ -88,7 +89,9 @@ SendPropTime(SENDINFO(m_flDeathTime)),
 SendPropEHandle(SENDINFO(m_hSpectatorTakeoverPlayerTarget)),
 SendPropEHandle(SENDINFO(m_hSpectatorTakeoverPlayerImpersonatingMe)),
 END_SEND_TABLE()
+// clang-format on
 
+// clang-format off
 BEGIN_DATADESC(CNEO_Player)
 DEFINE_FIELD(m_iNeoClass, FIELD_INTEGER),
 DEFINE_FIELD(m_iNeoSkin, FIELD_INTEGER),
@@ -126,9 +129,12 @@ DEFINE_INPUTFUNC(FIELD_VOID, "RefillAmmo", InputRefillAmmo),
 DEFINE_INPUTFUNC(FIELD_INTEGER, "SetTeam", InputSetTeam),
 
 END_DATADESC()
+// clang-format on
 
+// clang-format off
 BEGIN_ENT_SCRIPTDESC(CNEO_Player, CHL2MP_Player, "NEO Player")
 END_SCRIPTDESC();
+// clang-format on
 
 static constexpr int SHOWMENU_STRLIMIT = 512;
 

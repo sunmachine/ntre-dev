@@ -31,17 +31,22 @@ public:
 LINK_ENTITY_TO_CLASS(info_player_defender, CNEOSpawnPoint_Defender);
 
 #ifdef GAME_DLL
+// clang-format off
 IMPLEMENT_SERVERCLASS_ST(CNEOSpawnPoint, DT_NEOSpawnPoint)
 END_SEND_TABLE()
+// clang-format on
 #else
 #ifdef CNEOSpawnPoint
 #undef CNEOSpawnPoint
 #endif
+// clang-format off
 IMPLEMENT_CLIENTCLASS_DT(C_NEOSpawnPoint, DT_NEOSpawnPoint, CNEOSpawnPoint)
 END_RECV_TABLE()
+// clang-format on
 #define CNEOSpawnPoint C_NEOSpawnPoint
 #endif
 
+// clang-format off
 BEGIN_DATADESC(CNEOSpawnPoint)
 #ifdef GAME_DLL
 	DEFINE_KEYFIELD(m_bDisabled, FIELD_BOOLEAN, "StartDisabled"),
@@ -52,6 +57,7 @@ BEGIN_DATADESC(CNEOSpawnPoint)
 	DEFINE_OUTPUT(m_OnPlayerSpawn, "OnPlayerSpawn")
 #endif
 END_DATADESC()
+// clang-format on
 
 CNEOSpawnPoint::CNEOSpawnPoint()
 {

@@ -17,6 +17,7 @@
 
 LINK_ENTITY_TO_CLASS(neo_grenade_frag, CNEOGrenadeFrag);
 
+// clang-format off
 BEGIN_DATADESC(CNEOGrenadeFrag)
 // Fields
 DEFINE_FIELD(m_inSolid, FIELD_BOOLEAN),
@@ -28,6 +29,7 @@ DEFINE_THINKFUNC(DelayThink),
 // Inputs
 DEFINE_INPUTFUNC(FIELD_FLOAT, "SetTimer", InputSetTimer),
 END_DATADESC()
+// clang-format on
 
 ConVar sv_neo_frag_bot_danger_sound_radius("sv_neo_frag_bot_danger_sound_radius", "1000", FCVAR_CHEAT, "Radius of the SOUND_DANGER signal emitted by frag grenades for bot AI awareness.", true, 0.0, false, 0);
 ConVar sv_neo_frag_showdebug("sv_neo_frag_showdebug", "0", FCVAR_CHEAT, "Show frag collision debug", true, 0.0, true, 1.0);

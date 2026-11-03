@@ -16,6 +16,7 @@ ConVar sv_neo_recoil_viewfollow_scale("sv_neo_recoil_viewfollow_scale", "0.45", 
 #define MAKE_TEMP_WEP_RECOIL_SCALER(weapon, defval) ConVar sv_neo_##weapon##_recoil_scale(TEMP_WEP_STR(sv_neo_##weapon##_recoil_scale), #defval, FCVAR_REPLICATED, TEMP_WEP_STR(Temporary recoil scaler for #weapon), true, 0.0, true, 10.0)
 #define MAKE_TEMP_WEP_RECOIL_CAPBULLETS(weapon, defval) ConVar sv_neo_##weapon##_recoil_capbullets(TEMP_WEP_STR(sv_neo_##weapon##_recoil_capbullets), #defval, FCVAR_REPLICATED, TEMP_WEP_STR(At how many bullets should #weapon reach max recoil.), true, 0.01, true, 9999.0)
 
+// clang-format off
 MAKE_TEMP_WEP_RECOIL_SCALER(weapon_jitte,			0);
 MAKE_TEMP_WEP_RECOIL_SCALER(weapon_jittescoped,		0);
 MAKE_TEMP_WEP_RECOIL_SCALER(weapon_kyla,			0);
@@ -59,6 +60,7 @@ MAKE_TEMP_WEP_RECOIL_CAPBULLETS(weapon_zr68s,			30);
 #ifdef INCLUDE_WEP_PBK
 MAKE_TEMP_WEP_RECOIL_CAPBULLETS(weapon_pbk56s,			30);
 #endif
+// clang-format on
 
 float CNEOShotManipulator::GetVerticalRecoil() const
 {

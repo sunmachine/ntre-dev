@@ -28,9 +28,11 @@ private:
 	float m_flBloomAmountSetting;
 };
 
+// clang-format off
 IMPLEMENT_CLIENTCLASS_DT(C_NeoBloomController, DT_NeoBloomController, CNeoBloomController)
 RecvPropFloat(RECVINFO(m_flBloomAmountSetting)),
 END_RECV_TABLE()
+// clang-format on
 
 //-----------------------------------------------------------------------------
 // Purpose: 

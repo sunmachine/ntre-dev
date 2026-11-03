@@ -4,11 +4,13 @@
 #include "ui/neo_hud_message.h"
 #include "vgui/ILocalize.h"
 
+// clang-format off
 IMPLEMENT_CLIENTCLASS_DT(C_NEO_Message, DT_NEO_Message, CNEO_Message)
     RecvPropString(RECVINFO(m_NetworkedMessageKey)),
     RecvPropString(RECVINFO(m_NetworkedSubMessageKey)),
     RecvPropBool(RECVINFO(m_bTimerMode))
 END_RECV_TABLE()
+// clang-format on
 
 C_NEO_Message::C_NEO_Message()
 {

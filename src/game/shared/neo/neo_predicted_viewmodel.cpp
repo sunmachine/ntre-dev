@@ -29,6 +29,7 @@
 
 IMPLEMENT_NETWORKCLASS_ALIASED(NEOPredictedViewModel, DT_NEOPredictedViewModel)
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CNEOPredictedViewModel, DT_NEOPredictedViewModel)
 #ifdef CLIENT_DLL
 RecvPropFloat(RECVINFO(m_flLeanRatio)),
@@ -36,11 +37,14 @@ RecvPropFloat(RECVINFO(m_flLeanRatio)),
 SendPropFloat(SENDINFO(m_flLeanRatio)),
 #endif
 END_NETWORK_TABLE()
+// clang-format on
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CNEOPredictedViewModel)
 DEFINE_PRED_FIELD(m_flLeanRatio, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
 LINK_ENTITY_TO_CLASS(neo_predicted_viewmodel, CNEOPredictedViewModel);

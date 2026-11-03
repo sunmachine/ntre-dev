@@ -33,6 +33,7 @@ ConVar sv_neo_grenade_friction("sv_neo_grenade_friction", "0.2", FCVAR_CHEAT | F
 
 IMPLEMENT_NETWORKCLASS_ALIASED(WeaponGrenade, DT_WeaponGrenade)
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CWeaponGrenade, DT_WeaponGrenade)
 #ifdef CLIENT_DLL
 	RecvPropBool(RECVINFO(m_bRedraw)),
@@ -44,13 +45,16 @@ BEGIN_NETWORK_TABLE(CWeaponGrenade, DT_WeaponGrenade)
 	SendPropInt(SENDINFO(m_AttackPaused)),
 #endif
 END_NETWORK_TABLE()
+// clang-format on
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CWeaponGrenade)
 	DEFINE_PRED_FIELD(m_bRedraw, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_bDrawbackFinished, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_AttackPaused, FIELD_INTEGER, FTYPEDESC_INSENDTABLE),
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
 NEO_IMPLEMENT_ACTTABLE(CWeaponGrenade)
@@ -58,11 +62,13 @@ NEO_IMPLEMENT_ACTTABLE(CWeaponGrenade)
 LINK_ENTITY_TO_CLASS(weapon_grenade, CWeaponGrenade);
 
 #ifdef GAME_DLL
+// clang-format off
 BEGIN_DATADESC(CWeaponGrenade)
 	DEFINE_FIELD(m_bRedraw, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_bDrawbackFinished, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_AttackPaused, FIELD_INTEGER),
 END_DATADESC()
+// clang-format on
 #endif
 
 PRECACHE_WEAPON_REGISTER(weapon_grenade);

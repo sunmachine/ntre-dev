@@ -33,15 +33,19 @@ private:
 
 LINK_ENTITY_TO_CLASS( neo_bloom_controller, CNeoBloomController );
 
+// clang-format off
 BEGIN_DATADESC( CNeoBloomController )
 	DEFINE_KEYFIELD( m_flBloomAmountSetting, FIELD_FLOAT, "bloomamount" ),
 	DEFINE_INPUTFUNC( FIELD_FLOAT, "SetBloomScale", InputSetBloomScale ),
 END_DATADESC()
+// clang-format on
 
 
+// clang-format off
 IMPLEMENT_SERVERCLASS_ST( CNeoBloomController, DT_NeoBloomController )
 	SendPropFloat( SENDINFO(m_flBloomAmountSetting), 0, SPROP_NOSCALE),
 END_SEND_TABLE()
+// clang-format on
 
 //-----------------------------------------------------------------------------
 // Purpose: 

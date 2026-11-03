@@ -5,12 +5,15 @@
 
 LINK_ENTITY_TO_CLASS(neo_message, CNEO_Message);
 
+// clang-format off
 IMPLEMENT_SERVERCLASS_ST(CNEO_Message, DT_NEO_Message)
 	SendPropString(SENDINFO(m_NetworkedMessageKey)),
 	SendPropString(SENDINFO(m_NetworkedSubMessageKey)),
 	SendPropBool(SENDINFO(m_bTimerMode))
 END_SEND_TABLE()
+// clang-format on
 
+// clang-format off
 BEGIN_DATADESC(CNEO_Message)
 	DEFINE_KEYFIELD(m_sSound, FIELD_SOUNDNAME, "sound"),
 	DEFINE_KEYFIELD(m_SoundVolume, FIELD_FLOAT, "volume"),
@@ -25,6 +28,7 @@ BEGIN_DATADESC(CNEO_Message)
 
 	DEFINE_THINKFUNC(Think)
 END_DATADESC()
+// clang-format on
 
 void CNEO_Message::Spawn()
 {

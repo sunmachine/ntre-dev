@@ -34,6 +34,7 @@ extern ConVar weaponstay;
 
 IMPLEMENT_NETWORKCLASS_ALIASED( NEOBaseCombatWeapon, DT_NEOBaseCombatWeapon )
 
+// clang-format off
 BEGIN_NETWORK_TABLE( CNEOBaseCombatWeapon, DT_NEOBaseCombatWeapon )
 #ifdef CLIENT_DLL
 	RecvPropTime(RECVINFO(m_flSoonestAttack)),
@@ -54,8 +55,10 @@ BEGIN_NETWORK_TABLE( CNEOBaseCombatWeapon, DT_NEOBaseCombatWeapon )
 	SendPropExclude("DT_BaseAnimating", "m_nSequence"),
 #endif
 END_NETWORK_TABLE()
+// clang-format on
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CNEOBaseCombatWeapon)
 	DEFINE_PRED_FIELD(m_flSoonestAttack, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_flLastAttackTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
@@ -64,11 +67,13 @@ BEGIN_PREDICTION_DATA(CNEOBaseCombatWeapon)
 	DEFINE_PRED_FIELD(m_bTriggerReset, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_flReloadReadyTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
 LINK_ENTITY_TO_CLASS(neobasecombatweapon, CNEOBaseCombatWeapon);
 
 #ifdef GAME_DLL
+// clang-format off
 BEGIN_DATADESC( CNEOBaseCombatWeapon )
 	DEFINE_FIELD(m_flSoonestAttack, FIELD_TIME),
 	DEFINE_FIELD(m_flLastAttackTime, FIELD_TIME),
@@ -77,6 +82,7 @@ BEGIN_DATADESC( CNEOBaseCombatWeapon )
 	DEFINE_FIELD(m_bTriggerReset, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_flReloadReadyTime, FIELD_TIME),
 END_DATADESC()
+// clang-format on
 #endif
 
 ConVar sv_neo_accuracy_penalty_scale("sv_neo_accuracy_penalty_scale", "1.0", FCVAR_REPLICATED, "Scales the accuracy penalty per shot.", true, 0.0f, true, 2.0f);

@@ -30,8 +30,10 @@ BEGIN_SHADER(Neo_TestShader, "Help string for shader.")
 	// This block is where you'd define inputs that users can feed to your
 	// shader.
 	// ----------------------------------------------------------------------------
+	// clang-format off
 	BEGIN_SHADER_PARAMS
 	END_SHADER_PARAMS
+	// clang-format on
 
 	// ----------------------------------------------------------------------------
 	// This is the shader initialization block.

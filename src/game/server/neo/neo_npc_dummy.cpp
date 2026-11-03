@@ -58,18 +58,22 @@ CNEO_NPCDummy* CNEO_NPCDummy::GetList()
 	return dummies.m_pClassList;
 }
 
+// clang-format off
 IMPLEMENT_SERVERCLASS_ST(CNEO_NPCDummy, DT_NEO_NPCDummy)
 END_SEND_TABLE()
+// clang-format on
 
 LINK_ENTITY_TO_CLASS(neo_npc_dummy, CNEO_NPCDummy);
 IMPLEMENT_CUSTOM_AI(npc_citizen, CNEO_NPCDummy);
 
+// clang-format off
 BEGIN_DATADESC(CNEO_NPCDummy)
 	DEFINE_KEYFIELD(m_iKeyHealth, FIELD_INTEGER, "Health"),
 	DEFINE_KEYFIELD(m_strKeyModel, FIELD_STRING, "Model"),
 	DEFINE_KEYFIELD(m_strKeyWeaponModel, FIELD_STRING, "Weapon"),
 	DEFINE_KEYFIELD(m_bKeyDistortEffect, FIELD_BOOLEAN, "DistortEffect"),
 END_DATADESC()
+// clang-format on
 
 // -- This is also useless
 void CNEO_NPCDummy::InitCustomSchedules(void)

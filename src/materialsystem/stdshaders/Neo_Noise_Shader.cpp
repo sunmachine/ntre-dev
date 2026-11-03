@@ -11,9 +11,11 @@ ConVar mat_neo_mv_noise_brightness_scale("mat_neo_mv_noise_brightness_scale", "2
 
 BEGIN_SHADER_FLAGS(Neo_Noise, "Help for Neo_Noise.", SHADER_NOT_EDITABLE)
 
+// clang-format off
 BEGIN_SHADER_PARAMS
 SHADER_PARAM(FRAMEBUFFER, SHADER_PARAM_TYPE_TEXTURE, "_rt_FullFrameFB", "")
 END_SHADER_PARAMS
+// clang-format on
 
 SHADER_INIT
 {

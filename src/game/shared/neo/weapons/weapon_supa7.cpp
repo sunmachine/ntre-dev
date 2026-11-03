@@ -5,6 +5,7 @@
 
 IMPLEMENT_NETWORKCLASS_ALIASED(WeaponSupa7, DT_WeaponSupa7)
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CWeaponSupa7, DT_WeaponSupa7)
 #ifdef CLIENT_DLL
 	RecvPropBool(RECVINFO(m_bSlugDelayed)),
@@ -20,8 +21,10 @@ BEGIN_NETWORK_TABLE(CWeaponSupa7, DT_WeaponSupa7)
 	SendPropFloat(SENDINFO(m_flNextReload)),
 #endif
 END_NETWORK_TABLE()
+// clang-format on
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CWeaponSupa7)
 	DEFINE_PRED_FIELD(m_bSlugDelayed, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_bSlugLoaded, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
@@ -29,6 +32,7 @@ BEGIN_PREDICTION_DATA(CWeaponSupa7)
 	DEFINE_PRED_FIELD(m_bShellInChamber, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_flNextReload, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
 LINK_ENTITY_TO_CLASS(weapon_supa7, CWeaponSupa7);
@@ -36,6 +40,7 @@ LINK_ENTITY_TO_CLASS(weapon_supa7, CWeaponSupa7);
 PRECACHE_WEAPON_REGISTER(weapon_supa7);
 
 #ifdef GAME_DLL
+// clang-format off
 BEGIN_DATADESC(CWeaponSupa7)
 	DEFINE_FIELD(m_bSlugDelayed, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_bSlugLoaded, FIELD_BOOLEAN),
@@ -43,6 +48,7 @@ BEGIN_DATADESC(CWeaponSupa7)
 	DEFINE_FIELD(m_bShellInChamber, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_flNextReload, FIELD_FLOAT),
 END_DATADESC()
+// clang-format on
 #endif
 
 #if(0)

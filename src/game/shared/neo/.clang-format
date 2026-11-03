@@ -20,3 +20,7 @@ AccessModifierOffset: -4
 IndentCaseLabels: false
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortFunctionsOnASingleLine: Inline
+# The SDK's table macros open and close a block without braces. Tables are
+# fenced with clang-format off and on, and these keep an unfenced one indented.
+MacroBlockBegin: "^(BEGIN_(DATADESC|SIMPLE_DATADESC|NETWORK_TABLE|NETWORK_TABLE_NOBASE|PREDICTION_DATA|SEND_TABLE|RECV_TABLE|ENT_SCRIPTDESC|SHADER_PARAMS)|IMPLEMENT_(SERVERCLASS_ST|CLIENTCLASS_DT|CLIENTCLASS_EVENT_DT))$"
+MacroBlockEnd: "^END_(DATADESC|NETWORK_TABLE|PREDICTION_DATA|SEND_TABLE|RECV_TABLE|SCRIPTDESC|SHADER_PARAMS)$"

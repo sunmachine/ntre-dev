@@ -4,8 +4,10 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+// clang-format off
 IMPLEMENT_CLIENTCLASS_DT(C_NEO_NPCDummy, DT_NEO_NPCDummy, CNEO_NPCDummy)
 END_RECV_TABLE()
+// clang-format on
 
 static C_EntityClassList<C_NEO_NPCDummy> dummies;
 template <> C_NEO_NPCDummy* C_EntityClassList<C_NEO_NPCDummy>::m_pClassList = nullptr;

@@ -13,6 +13,7 @@ DEFINE_FALLBACK_SHADER( Neo_Refract, Neo_Refract_DX90 )
 
 BEGIN_VS_SHADER( Neo_Refract_DX90, "Help for Neo_Refract" )
 
+	// clang-format off
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM_OVERRIDE( COLOR, SHADER_PARAM_TYPE_COLOR, "{255 255 255}", "unused", SHADER_PARAM_NOT_EDITABLE )
 		SHADER_PARAM_OVERRIDE(ALPHA, SHADER_PARAM_TYPE_FLOAT, "1.0", "Alpha", SHADER_PARAM_NOT_EDITABLE)
@@ -40,6 +41,7 @@ BEGIN_VS_SHADER( Neo_Refract_DX90, "Help for Neo_Refract" )
 		SHADER_PARAM( VERTEXCOLORMODULATE, SHADER_PARAM_TYPE_BOOL, "0","Use the vertex color to effect refract color. alpha will adjust refract amount" )
 		SHADER_PARAM( FORCEALPHAWRITE, SHADER_PARAM_TYPE_BOOL, "0","Force the material to write alpha to the dest buffer" )
 	END_SHADER_PARAMS
+	// clang-format on
 // FIXME: doesn't support Fresnel!
 
 	void SetupVars( Neo_Refract_DX9_Vars_t& info )

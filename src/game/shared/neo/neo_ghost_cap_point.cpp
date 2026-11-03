@@ -37,23 +37,28 @@ static constexpr int NEO_FGD_TEAMNUM_NEUTRAL = 2;
 LINK_ENTITY_TO_CLASS(neo_ghost_retrieval_point, CNEOGhostCapturePoint);
 
 #ifdef GAME_DLL
+// clang-format off
 IMPLEMENT_SERVERCLASS_ST(CNEOGhostCapturePoint, DT_NEOGhostCapturePoint)
 	SendPropFloat(SENDINFO(m_flCapzoneRadius)),
 	SendPropInt(SENDINFO(m_iOwningTeam)),
 	SendPropBool(SENDINFO(m_bIsActive)),
 END_SEND_TABLE()
+// clang-format on
 #else
 #ifdef CNEOGhostCapturePoint
 #undef CNEOGhostCapturePoint
 #endif
+// clang-format off
 IMPLEMENT_CLIENTCLASS_DT(C_NEOGhostCapturePoint, DT_NEOGhostCapturePoint, CNEOGhostCapturePoint)
 	RecvPropFloat(RECVINFO(m_flCapzoneRadius)),
 	RecvPropInt(RECVINFO(m_iOwningTeam)),
 	RecvPropBool(RECVINFO(m_bIsActive)),
 END_RECV_TABLE()
+// clang-format on
 #define CNEOGhostCapturePoint C_NEOGhostCapturePoint
 #endif
 
+// clang-format off
 BEGIN_DATADESC(CNEOGhostCapturePoint)
 #ifdef GAME_DLL
 	DEFINE_THINKFUNC(Think_CheckMyRadius),
@@ -75,6 +80,7 @@ BEGIN_DATADESC(CNEOGhostCapturePoint)
 	DEFINE_OUTPUT(m_OnCap, "OnCap"),
 #endif
 END_DATADESC()
+// clang-format on
 
 CNEOGhostCapturePoint::CNEOGhostCapturePoint()
 {

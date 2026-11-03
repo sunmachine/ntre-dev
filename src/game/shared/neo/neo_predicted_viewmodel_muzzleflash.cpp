@@ -25,6 +25,7 @@ static void RecvProxy_ScaleChangeFlag(const CRecvProxyData* pData, void* pStruct
 
 IMPLEMENT_NETWORKCLASS_ALIASED(NEOPredictedViewModelMuzzleFlash, DT_NEOPredictedViewModelMuzzleFlash)
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CNEOPredictedViewModelMuzzleFlash, DT_NEOPredictedViewModelMuzzleFlash)
 #ifndef CLIENT_DLL
 SendPropEHandle(SENDINFO_NAME(m_hMoveParent, moveparent)),
@@ -36,13 +37,16 @@ RecvPropBool(RECVINFO(m_bActive)),
 RecvPropEHandle(RECVINFO(m_bScaleChangeFlag), RecvProxy_ScaleChangeFlag)
 #endif
 END_NETWORK_TABLE()
+// clang-format on
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CNEOPredictedViewModelMuzzleFlash)
 DEFINE_PRED_FIELD(m_hNetworkMoveParent, FIELD_EHANDLE, FTYPEDESC_INSENDTABLE),
 DEFINE_PRED_FIELD(m_bActive, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 DEFINE_PRED_FIELD(m_bScaleChangeFlag, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
 LINK_ENTITY_TO_CLASS(neo_predicted_viewmodel_muzzleflash, CNEOPredictedViewModelMuzzleFlash);

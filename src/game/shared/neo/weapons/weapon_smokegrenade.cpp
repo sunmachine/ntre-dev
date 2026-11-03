@@ -29,12 +29,16 @@ ConVar sv_neo_infinite_smoke_grenades("sv_neo_infinite_smoke_grenades", "0", FCV
 
 IMPLEMENT_NETWORKCLASS_ALIASED(WeaponSmokeGrenade, DT_WeaponSmokeGrenade)
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CWeaponSmokeGrenade, DT_WeaponSmokeGrenade)
 END_NETWORK_TABLE()
+// clang-format on
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CWeaponSmokeGrenade)
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
 NEO_IMPLEMENT_ACTTABLE(CWeaponSmokeGrenade)

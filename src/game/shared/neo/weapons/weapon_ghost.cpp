@@ -28,13 +28,16 @@ ConVar sv_neo_ctg_ghost_beacons_when_inactive("sv_neo_ctg_ghost_beacons_when_ina
 IMPLEMENT_NETWORKCLASS_ALIASED(WeaponGhost, DT_WeaponGhost)
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CWeaponGhost)
 	DEFINE_NEO_BASE_WEP_PREDICTION
 	DEFINE_PRED_FIELD_TOL(m_flDeployTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE, TICKS_TO_TIME(1)),
 	DEFINE_PRED_FIELD(m_flNearestEnemyDist, FIELD_FLOAT, FTYPEDESC_INSENDTABLE | FTYPEDESC_NOERRORCHECK),
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CWeaponGhost, DT_WeaponGhost)
 	DEFINE_NEO_BASE_WEP_NETWORK_TABLE
 #ifdef CLIENT_DLL
@@ -47,6 +50,7 @@ BEGIN_NETWORK_TABLE(CWeaponGhost, DT_WeaponGhost)
 	SendPropTime(SENDINFO(m_flPickupTime)),
 #endif
 END_NETWORK_TABLE()
+// clang-format on
 
 NEO_IMPLEMENT_ACTTABLE(CWeaponGhost)
 

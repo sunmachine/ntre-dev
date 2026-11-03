@@ -8,10 +8,12 @@
 
 BEGIN_SHADER(Neo_SSAO_Combine, "Help for my shader.")
 
+// clang-format off
 BEGIN_SHADER_PARAMS
 	SHADER_PARAM(SSAOTEXTURE, SHADER_PARAM_TYPE_TEXTURE, "_rt_SSAO", "")
 	SHADER_PARAM(INTERMEDIATE, SHADER_PARAM_TYPE_TEXTURE, "_rt_SSAO_Intermediate", "")
 END_SHADER_PARAMS
+// clang-format on
 
 SHADER_INIT
 {

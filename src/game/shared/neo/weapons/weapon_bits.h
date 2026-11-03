@@ -2,6 +2,7 @@
 
 #include "neo_weapon_types.h"
 
+// clang-format off
 //	Upper name		Lower name		Detailed name, (X_ALT) alt name		Weapon type
 #define FOR_LIST_WEAPONS(X, X_ALT) \
 	X(AA13, 		aa13, 			"AA13", 							WEP_TYPE_SHOTGUN) \
@@ -38,6 +39,7 @@
 	X(SUPPRESSED, 	suppressed, 	"", 								WEP_TYPE_NIL) \
 	X(FIREARM, 		firearm, 		"", 								WEP_TYPE_NIL) \
 	X(EXPLOSIVE, 	explosive, 		"", 								WEP_TYPE_NIL)
+// clang-format on
 
 // SCOPEDWEAPON - Scoped weapons should OR this in their flags.
 // THROWABLE - Generic for grenades 
@@ -53,6 +55,7 @@
 enum NeoWepBits : NEO_WEP_BITS_UNDERLYING_TYPE
 {
 	// Index section
+	// clang-format off
 	NEO_WIDX_INVALID = 0,
 	FOR_LIST_WEAPONS(DEFINE_ENUM, DEFINE_ENUM)
 #ifdef INCLUDE_WEP_PBK
@@ -71,6 +74,7 @@ enum NeoWepBits : NEO_WEP_BITS_UNDERLYING_TYPE
 	DEFINE_BITENUM(PBK56S)
 	NEO_WEP_BITS_LAST_VALUE = NEO_WEP_PBK56S
 #endif
+	// clang-format on
 };
 
 extern const ENeoWeaponType NEO_WEAPON_TYPE[NEO_WIDX__TOTAL];
