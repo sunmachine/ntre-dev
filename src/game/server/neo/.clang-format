@@ -27,3 +27,6 @@ MacroBlockEnd: "^END_(DATADESC|NETWORK_TABLE|PREDICTION_DATA|SEND_TABLE|RECV_TAB
 # Comments keep their own line breaks and hanging indents, so text copied from
 # the SDK stays searchable.
 ReflowComments: false
+# Namespace closing comments stay as written, so a formatting pass changes
+# only whitespace.
+FixNamespaceComments: false
