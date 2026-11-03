@@ -1,0 +1,7 @@
+# Commits that only reformat code. git blame skips them when configured with
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+# GitHub's blame view reads this file automatically. A squash or rebase merge
+# gives the commit a new hash; update the line below after it lands.
+
+# Reformat NEO-owned code with the NEO clang-format style
+65ac7797d4f74748b28a358d8792b1f1e3a9a678
