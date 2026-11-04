@@ -18,19 +18,25 @@ namespace NeoMP3
 static void ConCmdCallback()
 {
 	NeoMP3::State *mps = NeoMP3::GetState();
-	mps->flagsPlayStateNext = (mps->bPlaying)
-			? NeoMP3::PLAYSTATE_FLAG_PAUSED : NeoMP3::PLAYSTATE_FLAG_PLAY;
+	mps->flagsPlayStateNext = (mps->bPlaying) ? NeoMP3::PLAYSTATE_FLAG_PAUSED : NeoMP3::PLAYSTATE_FLAG_PLAY;
 	Update();
 }
 
 ConCommand neo_mp3("neo_mp3", ConCmdCallback, "NEO Radio play/pause toggle", FCVAR_DONTRECORD);
 
-ConVar cl_neo_radio_shuffle("cl_neo_radio_shuffle", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE | FCVAR_DONTRECORD, "Randomize NEO Radio song order", true, 0.0f, true, 1.0f);
-ConVar cl_neo_radio_volume_separate_ingame("cl_neo_radio_volume_separate_ingame", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE | FCVAR_DONTRECORD, "NEO Radio song volume is separate in game", true, 0.0f, true, 1.0f);
-ConVar cl_neo_radio_volume_ingame("cl_neo_radio_volume_ingame", "0.2", FCVAR_CLIENTDLL | FCVAR_ARCHIVE | FCVAR_DONTRECORD, "NEO Radio song volume in game", true, 0.0f, true, 1.0f);
-ConVar cl_neo_radio_pause_ingame("cl_neo_radio_pause_ingame", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE | FCVAR_DONTRECORD, "NEO Radio pauses when going in game, unpause when in menu", true, 0.0f, true, 1.0f);
+ConVar cl_neo_radio_shuffle("cl_neo_radio_shuffle", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE | FCVAR_DONTRECORD,
+	"Randomize NEO Radio song order", true, 0.0f, true, 1.0f);
+ConVar cl_neo_radio_volume_separate_ingame("cl_neo_radio_volume_separate_ingame", "0",
+	FCVAR_CLIENTDLL | FCVAR_ARCHIVE | FCVAR_DONTRECORD, "NEO Radio song volume is separate in game", true, 0.0f, true,
+	1.0f);
+ConVar cl_neo_radio_volume_ingame("cl_neo_radio_volume_ingame", "0.2",
+	FCVAR_CLIENTDLL | FCVAR_ARCHIVE | FCVAR_DONTRECORD, "NEO Radio song volume in game", true, 0.0f, true, 1.0f);
+ConVar cl_neo_radio_pause_ingame("cl_neo_radio_pause_ingame", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE | FCVAR_DONTRECORD,
+	"NEO Radio pauses when going in game, unpause when in menu", true, 0.0f, true, 1.0f);
 
-ConVar cl_neo_radio_startup("cl_neo_radio_startup", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE | FCVAR_DONTRECORD, "Which song NEO Radio will pick on startup - 0 = OG:NT Default, 1 = Random, 2 = First or Shuffle", true, 0.0f, true, static_cast<float>(STARTUP_TYPE__LAST));
+ConVar cl_neo_radio_startup("cl_neo_radio_startup", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE | FCVAR_DONTRECORD,
+	"Which song NEO Radio will pick on startup - 0 = OG:NT Default, 1 = Random, 2 = First or Shuffle", true, 0.0f, true,
+	static_cast<float>(STARTUP_TYPE__LAST));
 static constexpr const char DEFAULT_STARTUP_FILENAME_MP3[] = "112 - out.mp3";
 
 static void MaMP3MetaCallback(void *pUserData, const ma_dr_mp3_metadata *pMetadata)
@@ -54,11 +60,9 @@ static void MaMP3MetaCallback(void *pUserData, const ma_dr_mp3_metadata *pMetada
 
 		// 'TAG' - 3 bytes
 		// Title/song name - 30 bytes
-		g_pVGuiLocalize->ConvertANSIToUnicode(pszRawData + 3,
-				pSong->wszTitle, sizeof(pSong->wszTitle));
+		g_pVGuiLocalize->ConvertANSIToUnicode(pszRawData + 3, pSong->wszTitle, sizeof(pSong->wszTitle));
 		// Artist - 30 bytes
-		g_pVGuiLocalize->ConvertANSIToUnicode(pszRawData + 3 + 30,
-				pSong->wszArtist, sizeof(pSong->wszArtist));
+		g_pVGuiLocalize->ConvertANSIToUnicode(pszRawData + 3 + 30, pSong->wszArtist, sizeof(pSong->wszArtist));
 	}
 }
 
@@ -105,27 +109,24 @@ public:
 
 			FileFindHandle_t findHdl;
 			for (const char *pszFilename = filesystem->FindFirstEx("soundtrack/*.mp3", "GAME", &findHdl);
-					pszFilename && m_state.iSongsSize < MAX_SONGS;
-					pszFilename = filesystem->FindNext(findHdl))
+				pszFilename && m_state.iSongsSize < MAX_SONGS; pszFilename = filesystem->FindNext(findHdl))
 			{
 				char szRelPath[MAX_PATH];
 				V_sprintf_safe(szRelPath, "soundtrack/%s", pszFilename);
 
 				NeoMP3::Song *pSong = &m_state.songs[m_state.iSongsSize];
-				filesystem->RelativePathToFullPath_safe(szRelPath, "GAME",
-						pSong->szPath);
+				filesystem->RelativePathToFullPath_safe(szRelPath, "GAME", pSong->szPath);
 
 				// Fallback filename as title
-				g_pVGuiLocalize->ConvertANSIToUnicode(pszFilename,
-						pSong->wszTitle, sizeof(pSong->wszTitle));
+				g_pVGuiLocalize->ConvertANSIToUnicode(pszFilename, pSong->wszTitle, sizeof(pSong->wszTitle));
 
-				if (ma_dr_mp3_init_file_with_metadata(&maMP3, pSong->szPath,
-							MaMP3MetaCallback, (void *)(pSong), nullptr))
+				if (ma_dr_mp3_init_file_with_metadata(
+						&maMP3, pSong->szPath, MaMP3MetaCallback, (void *)(pSong), nullptr))
 				{
 					ma_dr_mp3_uninit(&maMP3);
 
-					if (STARTUP_TYPE_DEFAULT == cl_neo_radio_startup.GetInt()
-							&& 0 == V_strcmp(DEFAULT_STARTUP_FILENAME_MP3, pszFilename))
+					if (STARTUP_TYPE_DEFAULT == cl_neo_radio_startup.GetInt() &&
+						0 == V_strcmp(DEFAULT_STARTUP_FILENAME_MP3, pszFilename))
 					{
 						m_state.iCurIdx = m_state.iSongsSize;
 					}
@@ -149,9 +150,8 @@ public:
 		bool bInitSound = false;
 		ma_sound maSound = {};
 
-		if (STARTUP_TYPE_RANDOM == cl_neo_radio_startup.GetInt()
-				|| (STARTUP_TYPE_SHUFFLETYPE == cl_neo_radio_startup.GetInt()
-					&& cl_neo_radio_shuffle.GetBool()))
+		if (STARTUP_TYPE_RANDOM == cl_neo_radio_startup.GetInt() ||
+			(STARTUP_TYPE_SHUFFLETYPE == cl_neo_radio_startup.GetInt() && cl_neo_radio_shuffle.GetBool()))
 		{
 			m_state.iCurIdx = RandomInt(0, m_state.iSongsSize - 1);
 		}
@@ -175,12 +175,9 @@ public:
 				break;
 			}
 
-			float flVol =
-					(cvr_snd_mute_losefocus.GetBool() && false == engine->IsActiveApp())
-						? 0.0f
-						: (cl_neo_radio_volume_separate_ingame.GetBool() && IsInGame())
-							? cl_neo_radio_volume_ingame.GetFloat()
-							: cvr_snd_musicvolume.GetFloat();
+			float flVol = (cvr_snd_mute_losefocus.GetBool() && false == engine->IsActiveApp()) ? 0.0f
+				: (cl_neo_radio_volume_separate_ingame.GetBool() && IsInGame()) ? cl_neo_radio_volume_ingame.GetFloat()
+																				: cvr_snd_musicvolume.GetFloat();
 			flVol *= cvr_volume.GetFloat();
 
 			if (flVol != ma_engine_get_volume(&maEngine))
@@ -188,8 +185,7 @@ public:
 				ma_engine_set_volume(&maEngine, flVol);
 			}
 
-			if (cl_neo_radio_pause_ingame.GetBool()
-					&& PLAYSTATE_FLAG_NIL == m_state.flagsPlayStateNext)
+			if (cl_neo_radio_pause_ingame.GetBool() && PLAYSTATE_FLAG_NIL == m_state.flagsPlayStateNext)
 			{
 				const bool bNowInGame = IsInGame();
 				if (m_state.bInGame && false == bNowInGame)
@@ -210,30 +206,25 @@ public:
 			ma_sound_get_cursor_in_seconds(&maSound, &flNowSecsCursor);
 			ma_sound_get_length_in_seconds(&maSound, &flNowSecsLength);
 
-			if (ma_sound_at_end(&maSound)
-					|| false == bInitSound
-					|| (m_state.flagsPlayStateNext & (
-							  PLAYSTATE_FLAG_SONGCHANGE
-							| PLAYSTATE_FLAG_SONGNEXT
-							| PLAYSTATE_FLAG_SONGPREVIOUS)))
+			if (ma_sound_at_end(&maSound) || false == bInitSound ||
+				(m_state.flagsPlayStateNext &
+					(PLAYSTATE_FLAG_SONGCHANGE | PLAYSTATE_FLAG_SONGNEXT | PLAYSTATE_FLAG_SONGPREVIOUS)))
 			{
 				if (false == (m_state.flagsPlayStateNext & PLAYSTATE_FLAG_SONGCHANGE))
 				{
-					const int iIdxDiff =
-							(m_state.flagsPlayStateNext & PLAYSTATE_FLAG_SONGPREVIOUS) ? -1 : +1;
+					const int iIdxDiff = (m_state.flagsPlayStateNext & PLAYSTATE_FLAG_SONGPREVIOUS) ? -1 : +1;
 					if (cl_neo_radio_shuffle.GetBool())
 					{
 						// In startup, first should in shuffle should already been == iFirstIdx
-						m_state.iCurShuffleIdx = (bInitSound)
-								? LoopAroundInArray(m_state.iCurShuffleIdx + iIdxDiff, m_state.iSongsSize)
-								: 0;
+						m_state.iCurShuffleIdx =
+							(bInitSound) ? LoopAroundInArray(m_state.iCurShuffleIdx + iIdxDiff, m_state.iSongsSize) : 0;
 						m_state.iCurIdx = m_state.iaShuffleIdx[m_state.iCurShuffleIdx];
 					}
 					else
 					{
 						m_state.iCurIdx = (bInitSound)
-								? LoopAroundInArray(m_state.iCurIdx + iIdxDiff, m_state.iSongsSize)
-								: iFirstIdx;
+							? LoopAroundInArray(m_state.iCurIdx + iIdxDiff, m_state.iSongsSize)
+							: iFirstIdx;
 					}
 				}
 
@@ -249,7 +240,7 @@ public:
 					ma_sound_uninit(&maSound);
 				}
 				maResult = ma_sound_init_from_file(&maEngine, m_state.songs[m_state.iCurIdx].szPath,
-						MA_SOUND_FLAG_DECODE | MA_SOUND_FLAG_ASYNC, nullptr, nullptr, &maSound);
+					MA_SOUND_FLAG_DECODE | MA_SOUND_FLAG_ASYNC, nullptr, nullptr, &maSound);
 				bInitSound = (maResult == MA_SUCCESS);
 				if (bInitSound)
 				{
@@ -388,4 +379,3 @@ void CreateShuffle()
 }
 
 } // end namespace NeoMP3
-

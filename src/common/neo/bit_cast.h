@@ -6,7 +6,8 @@
 #undef STD_BIT_CAST_SUPPORTED
 
 #ifdef __cpp_lib_bit_cast
-#if __cpp_lib_bit_cast != 201806L // this value gets bumped with major api changes, so we error here to catch your attention
+#if __cpp_lib_bit_cast != \
+	201806L // this value gets bumped with major api changes, so we error here to catch your attention
 #error Expected to find __cpp_lib_bit_cast version of 201806L, please verify if this is ok
 #endif
 #define STD_BIT_CAST_SUPPORTED 1 // whether std::bit_cast is available
@@ -26,33 +27,27 @@
 
 namespace neo
 {
-	template <class To, class From>
-	constexpr bool IsBitCastable() noexcept
-	{
-		return (
-			sizeof(To) == sizeof(From)
-			&& std::is_trivially_constructible_v<To>
-			&& std::is_nothrow_constructible_v<To>
-			&& std::is_trivially_copyable_v<From>
-			&& std::is_trivially_copyable_v<To>
-			);
-	}
+template <class To, class From> constexpr bool IsBitCastable() noexcept
+{
+	return (sizeof(To) == sizeof(From) && std::is_trivially_constructible_v<To> &&
+		std::is_nothrow_constructible_v<To> && std::is_trivially_copyable_v<From> && std::is_trivially_copyable_v<To>);
+}
 
-	// Will transparently call std::bit_cast when it's available.
-	// Else, will perform a well-defined type pun using memcpy.
-	// If you want a sanity check for the result, see BC_TEST
-	template <class To, class From>
-		requires (IsBitCastable<To, From>())
-	constexpr auto bit_cast(const From& input) noexcept
-	{
+// Will transparently call std::bit_cast when it's available.
+// Else, will perform a well-defined type pun using memcpy.
+// If you want a sanity check for the result, see BC_TEST
+template <class To, class From>
+	requires(IsBitCastable<To, From>())
+constexpr auto bit_cast(const From &input) noexcept
+{
 #if STD_BIT_CAST_SUPPORTED
-		return std::bit_cast<To>(input);
+	return std::bit_cast<To>(input);
 #else
-		std::remove_cv_t<To> output;
-		memcpy(std::addressof(output), std::addressof(input), sizeof(output));
-		return output;
+	std::remove_cv_t<To> output;
+	memcpy(std::addressof(output), std::addressof(input), sizeof(output));
+	return output;
 #endif
-	}
+}
 
 /** @brief Dynamic assertions for neo::bit
 *
@@ -69,26 +64,37 @@ namespace neo
 *							If you need to specify the capture, use BC_TEST_EX instead.
 * @param[in] expectedOutput	The expected result of the cast
 */
-#define BC_TEST(input, expectedOutput) input, [input](const auto& v){ (void)input; Assert(v == expectedOutput); }
+#define BC_TEST(input, expectedOutput) \
+	input, [input](const auto &v) \
+	{ \
+		(void)input; \
+		Assert(v == expectedOutput); \
+	}
 
 // Same as BC_TEST, but allows specifying the lambda capture.
-#define BC_TEST_EX(input, capture, expectedOutput) input, [capture](const auto& v){ (void)capture; Assert(v == expectedOutput); }
+#define BC_TEST_EX(input, capture, expectedOutput) \
+	input, [capture](const auto &v) \
+	{ \
+		(void)capture; \
+		Assert(v == expectedOutput); \
+	}
 
-	template <class To, class From, typename TestFunc>
-	constexpr auto bit_cast(const From& input, TestFunc&&
+template <class To, class From, typename TestFunc>
+constexpr auto bit_cast(const From &input,
+	TestFunc &&
 #ifdef DEBUG
 		test
 #endif
 	) noexcept
-	{
+{
 #ifdef DEBUG
-		const auto output = bit_cast<To>(input);
-		test(output);
-		return output;
+	const auto output = bit_cast<To>(input);
+	test(output);
+	return output;
 #else
-		return bit_cast<To>(input);
+	return bit_cast<To>(input);
 #endif
-	}
+}
 };
 
 #undef STD_BIT_CAST_SUPPORTED

@@ -17,4 +17,3 @@ struct Context;
 }
 
 void SetupNTRETheme(NeoUI::Context *pNeoUICtx);
-

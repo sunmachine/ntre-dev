@@ -32,4 +32,3 @@ void SetupNTRETheme(NeoUI::Context *pNeoUICtx)
 	pColors->headerDragActiveBg = COLOR_DARK_RED;
 	pColors->progressBarBg = COLOR_WHITE;
 }
-

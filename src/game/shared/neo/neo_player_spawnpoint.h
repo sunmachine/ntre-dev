@@ -41,8 +41,8 @@ public:
 #ifdef GAME_DLL
 	bool m_bDisabled;
 
-	void InputEnable(inputdata_t& inputdata);
-	void InputDisable(inputdata_t& inputdata);
+	void InputEnable(inputdata_t &inputdata);
+	void InputDisable(inputdata_t &inputdata);
 
 	COutputEvent m_OnPlayerSpawn;
 #endif

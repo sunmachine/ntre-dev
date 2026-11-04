@@ -20,19 +20,22 @@
 
 DECLARE_NAMED_HUDELEMENT(CNEOHud_PlayerPing, NHudPlayerPing);
 
-NEO_HUD_ELEMENT_DECLARE_FREQ_CVAR(PlayerPing, 0.05) // distances to pings and thus ping offset update at 20Hz looks nice enough
+NEO_HUD_ELEMENT_DECLARE_FREQ_CVAR(
+	PlayerPing, 0.05) // distances to pings and thus ping offset update at 20Hz looks nice enough
 
-CNEOHud_PlayerPing* playerPingHudElement;
+CNEOHud_PlayerPing *playerPingHudElement;
 
-ConVar cl_neo_player_pings("cl_neo_player_pings", "1", FCVAR_ARCHIVE | FCVAR_USERINFO, "Show player pings.", true, 0, true, 1, 
-	[](IConVar* var [[maybe_unused]], const char* pOldValue [[maybe_unused]], float flOldValue [[maybe_unused]])->void {
+ConVar cl_neo_player_pings("cl_neo_player_pings", "1", FCVAR_ARCHIVE | FCVAR_USERINFO, "Show player pings.", true, 0,
+	true, 1,
+	[](IConVar *var [[maybe_unused]], const char *pOldValue [[maybe_unused]], float flOldValue [[maybe_unused]]) -> void
+	{
 		if (!cl_neo_player_pings.GetBool())
 		{
 			playerPingHudElement->HideAllPings();
 		}
 	});
 
-CNEOHud_PlayerPing::CNEOHud_PlayerPing(const char* pElementName, vgui::Panel* parent)
+CNEOHud_PlayerPing::CNEOHud_PlayerPing(const char *pElementName, vgui::Panel *parent)
 	: CHudElement(pElementName), Panel(parent, pElementName)
 {
 	SetAutoDelete(true);
@@ -80,12 +83,14 @@ void CNEOHud_PlayerPing::ApplySchemeSettings(vgui::IScheme *pScheme)
 void CNEOHud_PlayerPing::UpdateStateForNeoHudElementDraw()
 {
 	auto *localPlayer = C_NEO_Player::GetLocalNEOPlayer();
-	if (!localPlayer) return;
+	if (!localPlayer)
+		return;
 
 	const int playerTeam = localPlayer->GetTeamNumber();
 	for (int playerSlot = 0; playerSlot < gpGlobals->maxClients; playerSlot++)
 	{
-		if (gpGlobals->curtime >= m_iPlayerPings[playerSlot].deathTime || (playerTeam != TEAM_SPECTATOR && m_iPlayerPings[playerSlot].team != playerTeam))
+		if (gpGlobals->curtime >= m_iPlayerPings[playerSlot].deathTime ||
+			(playerTeam != TEAM_SPECTATOR && m_iPlayerPings[playerSlot].team != playerTeam))
 		{
 			continue;
 		}
@@ -95,7 +100,7 @@ void CNEOHud_PlayerPing::UpdateStateForNeoHudElementDraw()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNEOHud_PlayerPing::Init(void)
 {
@@ -107,7 +112,7 @@ void CNEOHud_PlayerPing::Init(void)
 //-----------------------------------------------------------------------------
 // Purpose: Player created a ping
 //-----------------------------------------------------------------------------
-void CNEOHud_PlayerPing::FireGameEvent(IGameEvent* event)
+void CNEOHud_PlayerPing::FireGameEvent(IGameEvent *event)
 {
 	auto eventName = event->GetName();
 	if (!Q_stricmp(eventName, "player_ping"))
@@ -119,7 +124,8 @@ void CNEOHud_PlayerPing::FireGameEvent(IGameEvent* event)
 
 		const int userID = event->GetInt("userid");
 		const int playerIndex = engine->GetPlayerForUserID(userID);
-		if (GetClientVoiceMgr()->IsPlayerBlocked(playerIndex) || (!NEORules()->IsTeamplay() && playerIndex != GetLocalPlayerIndex()))
+		if (GetClientVoiceMgr()->IsPlayerBlocked(playerIndex) ||
+			(!NEORules()->IsTeamplay() && playerIndex != GetLocalPlayerIndex()))
 		{
 			return;
 		}
@@ -147,7 +153,6 @@ void CNEOHud_PlayerPing::FireGameEvent(IGameEvent* event)
 			HideAllPings();
 		}
 	}
-
 }
 
 void CNEOHud_PlayerPing::LevelShutdown(void)
@@ -158,20 +163,22 @@ void CNEOHud_PlayerPing::LevelShutdown(void)
 
 enum NeoPlayerPingsInSpectate
 {
-	NEO_SPECTATE_PINGS_DISABLED	=		0,
+	NEO_SPECTATE_PINGS_DISABLED = 0,
 	NEO_SPECTATE_PINGS_TARGET,
 	NEO_SPECTATE_PINGS_ALL,
 
-	NEO_SPECTATE_PINGS_LAST_VALUE =		NEO_SPECTATE_PINGS_ALL
+	NEO_SPECTATE_PINGS_LAST_VALUE = NEO_SPECTATE_PINGS_ALL
 };
-ConVar cl_neo_player_pings_in_spectate("cl_neo_player_pings_in_spectate", "1", FCVAR_ARCHIVE, "See pings of players playing the game. 0 = disabled, 1 = spectate target team, 2 = all", true, NEO_SPECTATE_PINGS_DISABLED, true, NEO_SPECTATE_PINGS_LAST_VALUE);
+ConVar cl_neo_player_pings_in_spectate("cl_neo_player_pings_in_spectate", "1", FCVAR_ARCHIVE,
+	"See pings of players playing the game. 0 = disabled, 1 = spectate target team, 2 = all", true,
+	NEO_SPECTATE_PINGS_DISABLED, true, NEO_SPECTATE_PINGS_LAST_VALUE);
 void CNEOHud_PlayerPing::DrawNeoHudElement()
 {
 	if (!ShouldDraw())
 	{
 		return;
 	}
-	
+
 	C_BasePlayer *pLocalPlayer = C_BasePlayer::GetLocalPlayer();
 	if (!pLocalPlayer)
 	{
@@ -196,12 +203,15 @@ void CNEOHud_PlayerPing::DrawNeoHudElement()
 	for (int i = 0; i < gpGlobals->maxClients; i++)
 	{
 		Vector offset = Vector(0, 0, 32);
-		if (gpGlobals->curtime >= m_iPlayerPings[i].deathTime || !GetVectorInScreenSpace(m_iPlayerPings[i].worldPos, x, y) || !GetVectorInScreenSpace(m_iPlayerPings[i].worldPos, x2, y2, &offset))
+		if (gpGlobals->curtime >= m_iPlayerPings[i].deathTime ||
+			!GetVectorInScreenSpace(m_iPlayerPings[i].worldPos, x, y) ||
+			!GetVectorInScreenSpace(m_iPlayerPings[i].worldPos, x2, y2, &offset))
 		{
 			continue;
 		}
 
-		if (localPlayerTeam == TEAM_SPECTATOR && playerPingsInSpectate == NEO_SPECTATE_PINGS_TARGET && m_iPlayerPings[i].team != spectateTargetTeam)
+		if (localPlayerTeam == TEAM_SPECTATOR && playerPingsInSpectate == NEO_SPECTATE_PINGS_TARGET &&
+			m_iPlayerPings[i].team != spectateTargetTeam)
 		{
 			continue;
 		}
@@ -223,7 +233,9 @@ void CNEOHud_PlayerPing::DrawNeoHudElement()
 		if (timeTillDeath > PLAYER_PING_LIFETIME - PING_PLACE_ANIMATION_DURATION)
 		{
 			constexpr float PING_PLACE_ANIMATION_MAX_OFFSET = 0.25;
-			y2 += ((y - y2) * PING_PLACE_ANIMATION_MAX_OFFSET) * sin(M_PI * (timeTillDeath - (PLAYER_PING_LIFETIME - PING_PLACE_ANIMATION_DURATION)) * (1 / PING_PLACE_ANIMATION_DURATION));
+			y2 += ((y - y2) * PING_PLACE_ANIMATION_MAX_OFFSET) *
+				sin(M_PI * (timeTillDeath - (PLAYER_PING_LIFETIME - PING_PLACE_ANIMATION_DURATION)) *
+					(1 / PING_PLACE_ANIMATION_DURATION));
 		}
 
 		// Idle animation
@@ -233,14 +245,12 @@ void CNEOHud_PlayerPing::DrawNeoHudElement()
 
 		// Draw Ping Shape
 		const int halfTexture = m_iPlayerPings[i].ghosterPing ? m_iTexTall * 0.8 : m_iTexTall * 0.5;
-		Color color = m_iPlayerPings[i].ghosterPing ? COLOR_GREY : (m_iPlayerPings[i].team == TEAM_JINRAI) ? COLOR_JINRAI : COLOR_NSF;
+		Color color = m_iPlayerPings[i].ghosterPing   ? COLOR_GREY
+			: (m_iPlayerPings[i].team == TEAM_JINRAI) ? COLOR_JINRAI
+													  : COLOR_NSF;
 		color.SetColor(color.r(), color.g(), color.b(), opacity);
 		vgui::surface()->DrawSetColor(color);
-		vgui::surface()->DrawTexturedRect(
-			x2 - halfTexture,
-			y2 - halfTexture,
-			x2 + halfTexture,
-			y2 + halfTexture);
+		vgui::surface()->DrawTexturedRect(x2 - halfTexture, y2 - halfTexture, x2 + halfTexture, y2 + halfTexture);
 
 		// Draw Line to root of Ping
 		const Vector2D directionToOffset = Vector2D(x2 - x, y2 - y);
@@ -251,10 +261,10 @@ void CNEOHud_PlayerPing::DrawNeoHudElement()
 			const int lineX2 = x + directionToOffset.x * ((offsetLengthOnScreen - m_iTexTall) / offsetLengthOnScreen);
 			const int lineY2 = y + directionToOffset.y * ((offsetLengthOnScreen - m_iTexTall) / offsetLengthOnScreen);
 
-			vgui::surface()->DrawLine(x-1,y,lineX2-1,lineY2);
+			vgui::surface()->DrawLine(x - 1, y, lineX2 - 1, lineY2);
 			color.SetColor(COLOR_BLACK.r(), COLOR_BLACK.g(), COLOR_BLACK.b(), opacity);
 			vgui::surface()->DrawSetColor(color);
-			vgui::surface()->DrawLine(x, y+1, lineX2, lineY2+1);
+			vgui::surface()->DrawLine(x, y + 1, lineX2, lineY2 + 1);
 		}
 
 		// Draw Distance to Ping in meters
@@ -263,7 +273,8 @@ void CNEOHud_PlayerPing::DrawNeoHudElement()
 		wchar_t m_wszMarkerTextUnicode[4 + 1] = {};
 		V_snprintf(m_szMarkerText, sizeof(m_szMarkerText), "%im", (int)m_iPlayerPings[i].distance);
 		g_pVGuiLocalize->ConvertANSIToUnicode(m_szMarkerText, m_wszMarkerTextUnicode, sizeof(m_wszMarkerTextUnicode));
-		const int halfTextWidth = 0.5 * GetStringPixelWidth(m_wszMarkerTextUnicode, m_iPlayerPings[i].ghosterPing ? m_hFont : m_hFontSmall);
+		const int halfTextWidth =
+			0.5 * GetStringPixelWidth(m_wszMarkerTextUnicode, m_iPlayerPings[i].ghosterPing ? m_hFont : m_hFontSmall);
 
 		color.SetColor(COLOR_BLACK.r(), COLOR_BLACK.g(), COLOR_BLACK.b(), opacity);
 		vgui::surface()->DrawSetTextColor(color);
@@ -286,11 +297,11 @@ void CNEOHud_PlayerPing::Paint()
 //-----------------------------------------------------------------------------
 // Purpose: Compute length of string using given font, borrowed from hud_credits, maybe make this part of CNEOHud_ChildElement?
 //-----------------------------------------------------------------------------
-int CNEOHud_PlayerPing::GetStringPixelWidth(wchar_t* pString, vgui::HFont hFont)
+int CNEOHud_PlayerPing::GetStringPixelWidth(wchar_t *pString, vgui::HFont hFont)
 {
 	int iLength = 0;
 
-	for (wchar_t* wch = pString; *wch != 0; wch++)
+	for (wchar_t *wch = pString; *wch != 0; wch++)
 	{
 		iLength += vgui::surface()->GetCharacterWidth(hFont, *wch);
 	}
@@ -306,19 +317,25 @@ void CNEOHud_PlayerPing::HideAllPings()
 	}
 }
 
-void CNEOHud_PlayerPing::UpdateDistanceToPlayer(C_BasePlayer* player, const int playerSlot)
+void CNEOHud_PlayerPing::UpdateDistanceToPlayer(C_BasePlayer *player, const int playerSlot)
 {
-	m_iPlayerPings[playerSlot].distance = METERS_PER_INCH * player->GetAbsOrigin().DistTo(m_iPlayerPings[playerSlot].worldPos);
+	m_iPlayerPings[playerSlot].distance =
+		METERS_PER_INCH * player->GetAbsOrigin().DistTo(m_iPlayerPings[playerSlot].worldPos);
 
 	trace_t tr;
-	UTIL_TraceLine(player->EyePosition(), m_iPlayerPings[playerSlot].worldPos, MASK_VISIBLE_AND_NPCS, player, COLLISION_GROUP_NONE, &tr);
+	UTIL_TraceLine(player->EyePosition(), m_iPlayerPings[playerSlot].worldPos, MASK_VISIBLE_AND_NPCS, player,
+		COLLISION_GROUP_NONE, &tr);
 	m_iPlayerPings[playerSlot].noLineOfSight = tr.fraction < 0.999;
 }
 
-void CNEOHud_PlayerPing::SetPos(const int playerSlot, const int playerTeam, const Vector& pos, bool ghosterPing) {
+void CNEOHud_PlayerPing::SetPos(const int playerSlot, const int playerTeam, const Vector &pos, bool ghosterPing)
+{
 	constexpr float PLAYER_PING_LIFETIME = 8;
 	auto localPlayer = C_NEO_Player::GetLocalNEOPlayer();
-	if (!localPlayer) { return; }
+	if (!localPlayer)
+	{
+		return;
+	}
 
 	m_iPlayerPings[playerSlot].worldPos = pos;
 	m_iPlayerPings[playerSlot].deathTime = gpGlobals->curtime + PLAYER_PING_LIFETIME;
@@ -352,11 +369,13 @@ void CNEOHud_PlayerPing::SetPos(const int playerSlot, const int playerTeam, cons
 }
 
 ConVar snd_ping_volume("snd_ping_volume", "0.33", FCVAR_ARCHIVE, "Player ping volume", true, 0.f, true, 1.f);
-ConVar cl_neo_player_pings_chat_message("cl_neo_player_pings_chat_message", "1", FCVAR_ARCHIVE, "Show message in chat for player pings.", true, 0, true, 1); // NEO TODO (Adam) custom chat filter instead?
-ConVar cl_neo_player_pings_time_between_sounds("cl_neo_player_pings_time_between_sounds", "0", FCVAR_ARCHIVE, "Minimum time between two ping sounds", true, 0, false, 0);
+ConVar cl_neo_player_pings_chat_message("cl_neo_player_pings_chat_message", "1", FCVAR_ARCHIVE,
+	"Show message in chat for player pings.", true, 0, true, 1); // NEO TODO (Adam) custom chat filter instead?
+ConVar cl_neo_player_pings_time_between_sounds("cl_neo_player_pings_time_between_sounds", "0", FCVAR_ARCHIVE,
+	"Minimum time between two ping sounds", true, 0, false, 0);
 void CNEOHud_PlayerPing::NotifyPing(const int playerSlot)
 {
-	C_NEO_Player* pPlayer = static_cast<C_NEO_Player*>(UTIL_PlayerByIndex(playerSlot + 1));
+	C_NEO_Player *pPlayer = static_cast<C_NEO_Player *>(UTIL_PlayerByIndex(playerSlot + 1));
 	if (!pPlayer || pPlayer->IsLocalPlayer())
 	{
 		return;
@@ -367,14 +386,14 @@ void CNEOHud_PlayerPing::NotifyPing(const int playerSlot)
 		// Skip text notification for bots
 		if (g_PR && !g_PR->IsFakePlayer(playerSlot + 1))
 		{
-			CBaseHudChat* hudChat = (CBaseHudChat*)GET_HUDELEMENT(CHudChat);
+			CBaseHudChat *hudChat = (CBaseHudChat *)GET_HUDELEMENT(CHudChat);
 			if (hudChat)
 			{
 				hudChat->ChatPrintf(0, CHAT_FILTER_NONE, "%s pinged a location\n", pPlayer->GetNeoPlayerName());
 			}
 		}
 	}
-	
+
 	if (gpGlobals->curtime < m_flNextPingSoundTime)
 	{
 		return;
@@ -401,16 +420,16 @@ void CNEOHud_PlayerPing::NotifyPing(const int playerSlot)
 	et.m_flVolume = snd_ping_volume.GetFloat();
 	et.m_pOrigin = const_cast<Vector *>(&m_iPlayerPings[playerSlot].worldPos);*/
 
-	const Vector* origin = const_cast<Vector *>(&m_iPlayerPings[playerSlot].worldPos);
+	const Vector *origin = const_cast<Vector *>(&m_iPlayerPings[playerSlot].worldPos);
 
 	CLocalPlayerFilter filter;
 	//CBaseEntity::EmitSound(filter, SOUND_FROM_WORLD, et);
 
-	// NEO TODO (Adam) CBaseEntity::EmitSound allows us to pass a handle to the sound and allows players to change sound parameters like the sound level (controls sound fall-off over distance) 
+	// NEO TODO (Adam) CBaseEntity::EmitSound allows us to pass a handle to the sound and allows players to change sound parameters like the sound level (controls sound fall-off over distance)
 	// and attenuation by editing the relevant resource file without adding even more console variables, but this adds a noticeable delay after a ping sound is played before another can be played,
 	// find a solution? (CBaseEntity::EmitSound eventually calls enginesound->EmitSound, even with identical parameters passed this unwanted behavior is still present)
-	enginesound->EmitSound(	filter, SOUND_FROM_WORLD, CHAN_STATIC, ")gameplay/ping.wav", 
-		snd_ping_volume.GetFloat(), SNDLVL_GUNFIRE, 0, PITCH_NORM, 0, origin, NULL, NULL);
+	enginesound->EmitSound(filter, SOUND_FROM_WORLD, CHAN_STATIC, ")gameplay/ping.wav", snd_ping_volume.GetFloat(),
+		SNDLVL_GUNFIRE, 0, PITCH_NORM, 0, origin, NULL, NULL);
 
 	/*CUtlVector<SndInfo_t> sounds;
 	enginesound->GetActiveSounds(sounds);

@@ -47,10 +47,10 @@ extern ConVar sv_neo_comp_name;
 bool StartAutoRecording()
 {
 #ifdef GAME_DLL
-	CBasePlayer* sourceTV = nullptr;
+	CBasePlayer *sourceTV = nullptr;
 	for (int i = 1; i <= gpGlobals->maxClients; i++)
 	{
-		CBasePlayer* pPlayer = UTIL_PlayerByIndex(i);
+		CBasePlayer *pPlayer = UTIL_PlayerByIndex(i);
 		if (pPlayer && pPlayer->IsHLTV())
 		{
 			sourceTV = pPlayer;
@@ -92,7 +92,8 @@ bool StartAutoRecording()
 	const time_t timeVal = time(nullptr);
 	std::tm tmStruct{};
 	std::tm tmd = *(Plat_localtime(&timeVal, &tmStruct));
-	V_sprintf_safe(timeSection, "%04d%02d%02d-%02d%02d", tmd.tm_year + 1900, tmd.tm_mon + 1, tmd.tm_mday, tmd.tm_hour, tmd.tm_min);
+	V_sprintf_safe(
+		timeSection, "%04d%02d%02d-%02d%02d", tmd.tm_year + 1900, tmd.tm_mon + 1, tmd.tm_mday, tmd.tm_hour, tmd.tm_min);
 
 	// Competition name
 	char compSection[32];

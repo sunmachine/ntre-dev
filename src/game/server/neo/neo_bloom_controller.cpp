@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
 
@@ -16,22 +16,23 @@
 //-----------------------------------------------------------------------------
 class CNeoBloomController : public CPointEntity
 {
-	DECLARE_CLASS( CNeoBloomController, CPointEntity );
+	DECLARE_CLASS(CNeoBloomController, CPointEntity);
+
 public:
 	DECLARE_DATADESC();
 	DECLARE_SERVERCLASS();
 
-	void	Spawn( void );
-	int		UpdateTransmitState( void );
+	void Spawn(void);
+	int UpdateTransmitState(void);
 
 	// Inputs
-	void	InputSetBloomScale( inputdata_t &inputdata );
+	void InputSetBloomScale(inputdata_t &inputdata);
 
 private:
-	CNetworkVar( float, m_flBloomAmountSetting);
+	CNetworkVar(float, m_flBloomAmountSetting);
 };
 
-LINK_ENTITY_TO_CLASS( neo_bloom_controller, CNeoBloomController );
+LINK_ENTITY_TO_CLASS(neo_bloom_controller, CNeoBloomController);
 
 // clang-format off
 BEGIN_DATADESC( CNeoBloomController )
@@ -48,26 +49,26 @@ END_SEND_TABLE()
 // clang-format on
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-void CNeoBloomController::Spawn( void )
+void CNeoBloomController::Spawn(void)
 {
-	SetSolid( SOLID_NONE );
-	SetMoveType( MOVETYPE_NONE );
+	SetSolid(SOLID_NONE);
+	SetMoveType(MOVETYPE_NONE);
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int CNeoBloomController::UpdateTransmitState()
 {
-	return SetTransmitState( FL_EDICT_ALWAYS );
+	return SetTransmitState(FL_EDICT_ALWAYS);
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-void CNeoBloomController::InputSetBloomScale( inputdata_t &inputdata )
+void CNeoBloomController::InputSetBloomScale(inputdata_t &inputdata)
 {
 	m_flBloomAmountSetting = inputdata.value.Float();
 }

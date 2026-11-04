@@ -8,7 +8,7 @@
 class ICvar;
 class IFileSystem;
 
-void FixupGlShaders(IFileSystem* filesystem, ICvar* cvar);
+void FixupGlShaders(IFileSystem *filesystem, ICvar *cvar);
 
 #endif // LINUX
 #endif // NEO_FIXUP_GLSHADERS_H

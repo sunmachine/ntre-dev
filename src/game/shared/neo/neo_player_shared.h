@@ -8,7 +8,7 @@
 #include <string_view>
 #include <optional>
 
-#define USERID2NEOPLAYER(i) ToNEOPlayer( ClientEntityList().GetEnt( engine->GetPlayerForUserID( i ) ) )
+#define USERID2NEOPLAYER(i) ToNEOPlayer(ClientEntityList().GetEnt(engine->GetPlayerForUserID(i)))
 
 #include "neo_predicted_viewmodel.h"
 #include "neo_misc.h"
@@ -39,7 +39,10 @@ extern ConVar sv_neo_spec_replace_player_min_exp;
 #define NEO_ASSAULT_SPRINT_MODIFIER 1.6
 #define NEO_SUPPORT_SPRINT_MODIFIER 1.35 // Redundant, but for future usecases
 
-constexpr float NEO_Min(float a, float b) { return a < b ? a : b; }
+constexpr float NEO_Min(float a, float b)
+{
+	return a < b ? a : b;
+}
 
 // The slowest any class sprints. Support cannot sprint today, but its modifier is defined for future use, so it
 // is counted. Anything that must stay under every sprint, such as a footstep rule, compares against this
@@ -59,9 +62,9 @@ static_assert(NEO_MIN_SPRINT_MODIFIER > 1.f, "Sprinting must be faster than runn
 enum NeoFootstepHeldState
 {
 	NEO_FS_HELD_NONE = 0,
-	NEO_FS_HELD_ARMED,	// Crouch, walk or aim pressed, the next audible step is held
-	NEO_FS_HELD_HELD,		// A step is held back
-	NEO_FS_HELD_DROPPED,	// The held step was dropped, but plays if the key is released soon after
+	NEO_FS_HELD_ARMED,   // Crouch, walk or aim pressed, the next audible step is held
+	NEO_FS_HELD_HELD,    // A step is held back
+	NEO_FS_HELD_DROPPED, // The held step was dropped, but plays if the key is released soon after
 };
 
 // Keys that start a silent movement mode, see CNEO_Player::GetSilentMoveKeys
@@ -86,7 +89,8 @@ enum NeoFootstepSilentMoveKey
 #define NEO_ASSAULT_WALK_SPEED NEO_ASSAULT_CROUCH_SPEED
 // Support
 #define NEO_SUPPORT_BASE_SPEED (NEO_BASE_SPEED * NEO_SUPPORT_MODIFIER)
-#define NEO_SUPPORT_SPRINT_SPEED (NEO_SUPPORT_BASE_SPEED * NEO_SUPPORT_SPRINT_MODIFIER) // Redundant, but for future usecases
+#define NEO_SUPPORT_SPRINT_SPEED \
+	(NEO_SUPPORT_BASE_SPEED * NEO_SUPPORT_SPRINT_MODIFIER) // Redundant, but for future usecases
 #define NEO_SUPPORT_CROUCH_SPEED (NEO_SUPPORT_BASE_SPEED * NEO_CROUCH_WALK_MODIFIER)
 #define NEO_SUPPORT_WALK_SPEED NEO_SUPPORT_CROUCH_SPEED
 // VIP
@@ -197,7 +201,7 @@ COMPILE_TIME_ASSERT(NEO_ASSAULT_CROUCH_SPEED == NEO_VIP_CROUCH_SPEED);
 // by subtracting it from these theoretical max heights. Juggernaut uses the default; VIP uses Assault's.
 #define NEO_BOT_JUMP_HEIGHT_BUFFER 4.0f
 #define NEO_BOT_RECON_JUMP_HEIGHT_BUFFER NEO_BOT_JUMP_HEIGHT_BUFFER
-#define NEO_BOT_ASSAULT_JUMP_HEIGHT_BUFFER ( NEO_BOT_JUMP_HEIGHT_BUFFER + 1.0f )
+#define NEO_BOT_ASSAULT_JUMP_HEIGHT_BUFFER (NEO_BOT_JUMP_HEIGHT_BUFFER + 1.0f)
 #define NEO_BOT_SUPPORT_JUMP_HEIGHT_BUFFER NEO_BOT_JUMP_HEIGHT_BUFFER
 
 // END OF NEO MOVEMENT DEFINITIONS
@@ -223,20 +227,22 @@ COMPILE_TIME_ASSERT(NEO_ASSAULT_CROUCH_SPEED == NEO_VIP_CROUCH_SPEED);
 
 #ifdef GAME_DLL
 #define NEO_ACT_TABLE_ENTRY_REQUIRED false
-#define NEO_IMPLEMENT_ACTTABLE(CNEOWepClass) acttable_t CNEOWepClass::m_acttable[] = {\
-{ ACT_NEO_ATTACK, ACT_NEO_ATTACK, NEO_ACT_TABLE_ENTRY_REQUIRED },\
-{ ACT_NEO_RELOAD, ACT_NEO_RELOAD, NEO_ACT_TABLE_ENTRY_REQUIRED },\
-{ ACT_NEO_IDLE_STAND, ACT_NEO_IDLE_STAND, NEO_ACT_TABLE_ENTRY_REQUIRED },\
-{ ACT_NEO_IDLE_STAND, ACT_NEO_IDLE_STAND, NEO_ACT_TABLE_ENTRY_REQUIRED },\
-{ ACT_NEO_IDLE_CROUCH, ACT_NEO_IDLE_CROUCH, NEO_ACT_TABLE_ENTRY_REQUIRED },\
-{ ACT_NEO_MOVE_RUN, ACT_NEO_MOVE_RUN, NEO_ACT_TABLE_ENTRY_REQUIRED },\
-{ ACT_NEO_MOVE_WALK, ACT_NEO_MOVE_WALK, NEO_ACT_TABLE_ENTRY_REQUIRED },\
-{ ACT_NEO_MOVE_CROUCH, ACT_NEO_MOVE_CROUCH, NEO_ACT_TABLE_ENTRY_REQUIRED },\
-{ ACT_NEO_DIE, ACT_NEO_DIE, NEO_ACT_TABLE_ENTRY_REQUIRED },\
-{ ACT_NEO_HOVER, ACT_NEO_HOVER, NEO_ACT_TABLE_ENTRY_REQUIRED },\
-{ ACT_NEO_JUMP, ACT_NEO_JUMP, NEO_ACT_TABLE_ENTRY_REQUIRED },\
-{ ACT_NEO_SWIM, ACT_NEO_SWIM, NEO_ACT_TABLE_ENTRY_REQUIRED },\
-};IMPLEMENT_ACTTABLE(CNEOWepClass);
+#define NEO_IMPLEMENT_ACTTABLE(CNEOWepClass) \
+	acttable_t CNEOWepClass::m_acttable[] = { \
+		{ACT_NEO_ATTACK, ACT_NEO_ATTACK, NEO_ACT_TABLE_ENTRY_REQUIRED}, \
+		{ACT_NEO_RELOAD, ACT_NEO_RELOAD, NEO_ACT_TABLE_ENTRY_REQUIRED}, \
+		{ACT_NEO_IDLE_STAND, ACT_NEO_IDLE_STAND, NEO_ACT_TABLE_ENTRY_REQUIRED}, \
+		{ACT_NEO_IDLE_STAND, ACT_NEO_IDLE_STAND, NEO_ACT_TABLE_ENTRY_REQUIRED}, \
+		{ACT_NEO_IDLE_CROUCH, ACT_NEO_IDLE_CROUCH, NEO_ACT_TABLE_ENTRY_REQUIRED}, \
+		{ACT_NEO_MOVE_RUN, ACT_NEO_MOVE_RUN, NEO_ACT_TABLE_ENTRY_REQUIRED}, \
+		{ACT_NEO_MOVE_WALK, ACT_NEO_MOVE_WALK, NEO_ACT_TABLE_ENTRY_REQUIRED}, \
+		{ACT_NEO_MOVE_CROUCH, ACT_NEO_MOVE_CROUCH, NEO_ACT_TABLE_ENTRY_REQUIRED}, \
+		{ACT_NEO_DIE, ACT_NEO_DIE, NEO_ACT_TABLE_ENTRY_REQUIRED}, \
+		{ACT_NEO_HOVER, ACT_NEO_HOVER, NEO_ACT_TABLE_ENTRY_REQUIRED}, \
+		{ACT_NEO_JUMP, ACT_NEO_JUMP, NEO_ACT_TABLE_ENTRY_REQUIRED}, \
+		{ACT_NEO_SWIM, ACT_NEO_SWIM, NEO_ACT_TABLE_ENTRY_REQUIRED}, \
+	}; \
+	IMPLEMENT_ACTTABLE(CNEOWepClass);
 #else
 #define NEO_IMPLEMENT_ACTTABLE(CNEOWepClass)
 #endif
@@ -255,11 +261,11 @@ static_assert(NEO_CL_INTERP_RATIO_DEFAULT > 0);
 #define NEO_CL_INTERP_RATIO_DEFAULT_STR xstr(NEO_CL_INTERP_RATIO_DEFAULT)
 
 static constexpr int MAX_HEALTH_FOR_CLASS[NEO_CLASS__ENUM_COUNT] = {
-	100,	// RECON
-	120,	// ASSAULT
-	225,	// SUPPORT
-	100,	// VIP
-	990,	// JUGGERNAUT
+	100, // RECON
+	120, // ASSAULT
+	225, // SUPPORT
+	100, // VIP
+	990, // JUGGERNAUT
 };
 
 #define NEO_ANIMSTATE_LEGANIM_TYPE LegAnimType_t::LEGANIM_9WAY
@@ -291,8 +297,7 @@ class CNEO_Player;
 class CNEOBaseCombatWeapon;
 class C_BaseCombatWeapon;
 
-extern bool IsThereRoomForLeanSlide(CNEO_Player *player,
-	const Vector &targetViewOffset, bool &outStartInSolid);
+extern bool IsThereRoomForLeanSlide(CNEO_Player *player, const Vector &targetViewOffset, bool &outStartInSolid);
 
 // Is the player allowed to aim zoom with a weapon of this type?
 bool IsAllowedToZoom(CNEOBaseCombatWeapon *pWep);
@@ -321,9 +326,10 @@ int GetRank(const int xp);
 const char *GetRankName(const int xp, const bool shortened = false);
 const wchar_t *GetRankNameW(const int xp, const bool shortened = false);
 
-CBaseCombatWeapon* GetNeoWepWithBits(const CNEO_Player* player, const NEO_WEP_BITS_UNDERLYING_TYPE& neoWepBits);
+CBaseCombatWeapon *GetNeoWepWithBits(const CNEO_Player *player, const NEO_WEP_BITS_UNDERLYING_TYPE &neoWepBits);
 
-enum NeoLeanDirectionE {
+enum NeoLeanDirectionE
+{
 	NEO_LEAN_NONE = 0,
 	NEO_LEAN_LEFT,
 	NEO_LEAN_RIGHT,
@@ -332,14 +338,15 @@ enum NeoLeanDirectionE {
 };
 static constexpr int NEO_LEAN_ENUM_COUNT = NEO_LEAN__ENUM_COUNT;
 
-enum NeoWeponAimToggleE {
+enum NeoWeponAimToggleE
+{
 	NEO_TOGGLE_NIL = 0,
 	NEO_TOGGLE_FORCE_AIM,
 	NEO_TOGGLE_FORCE_UN_AIM,
 };
 
-void CheckPingButton(CNEO_Player* player);
-void UpdatePingCommands(CNEO_Player* player, const Vector& pingPos);
+void CheckPingButton(CNEO_Player *player);
+void UpdatePingCommands(CNEO_Player *player, const Vector &pingPos);
 
 struct AttackersTotals
 {
@@ -361,8 +368,8 @@ enum ENEOCompactMsgFlag_ : unsigned char
 typedef unsigned char ENEOCompactMsgFlag;
 
 
-[[deprecated]] void KillerLineStr(char* killByLine, const int killByLineMax,
-	CNEO_Player* neoAttacker, const CNEO_Player* neoVictim, const char* killedWith = "");
+[[deprecated]] void KillerLineStr(char *killByLine, const int killByLineMax, CNEO_Player *neoAttacker,
+	const CNEO_Player *neoVictim, const char *killedWith = "");
 
 [[nodiscard]] auto StrToInt(std::string_view strView) -> std::optional<int>;
 [[nodiscard]] int NeoAimFOV(const int fovDef, CBaseCombatWeapon *wep);
@@ -402,14 +409,11 @@ typedef int EClNeoDisplayNameFlag;
 static constexpr int NEO_MAX_CLANTAG_LENGTH = 11 + 1; // Includes null character
 static constexpr int NEO_MAX_DISPLAYNAME = MAX_PLAYER_NAME_LENGTH + 1 + NEO_MAX_CLANTAG_LENGTH + 2;
 bool GetClNeoDisplayName(wchar_t (&pWszDisplayName)[NEO_MAX_DISPLAYNAME],
-						 const wchar_t (&wszNeoName)[MAX_PLAYER_NAME_LENGTH],
-						 const wchar_t (&wszNeoClantag)[NEO_MAX_CLANTAG_LENGTH],
-						 const EClNeoDisplayNameFlag flags = CL_NEODISPLAYNAME_FLAG_NONE);
+	const wchar_t (&wszNeoName)[MAX_PLAYER_NAME_LENGTH], const wchar_t (&wszNeoClantag)[NEO_MAX_CLANTAG_LENGTH],
+	const EClNeoDisplayNameFlag flags = CL_NEODISPLAYNAME_FLAG_NONE);
 
-bool GetClNeoDisplayName(wchar_t (&pWszDisplayName)[NEO_MAX_DISPLAYNAME],
-						 const char *pSzNeoName,
-						 const char *pSzNeoClantag,
-						 const EClNeoDisplayNameFlag flags = CL_NEODISPLAYNAME_FLAG_NONE);
+bool GetClNeoDisplayName(wchar_t (&pWszDisplayName)[NEO_MAX_DISPLAYNAME], const char *pSzNeoName,
+	const char *pSzNeoClantag, const EClNeoDisplayNameFlag flags = CL_NEODISPLAYNAME_FLAG_NONE);
 
 #define TUTORIAL_MAP_CLASSES "ntre_class_tut"
 #define TUTORIAL_MAP_SHOOTING "ntre_shooting_tut"
@@ -438,10 +442,10 @@ enum
 #define TEAM_STR_SPEC "Spectator"
 
 static constexpr const SZWSZTexts SZWSZ_NEO_TEAM_STRS[TEAM__TOTAL] = {
-	SZWSZ_INIT("Unassigned"), // TEAM_UNASSIGNED
-	SZWSZ_INIT("Spectator"), // TEAM_SPECTATOR
+	SZWSZ_INIT("Unassigned"),      // TEAM_UNASSIGNED
+	SZWSZ_INIT("Spectator"),       // TEAM_SPECTATOR
 	X_SZWSZ_INIT(TEAM_STR_JINRAI), // TEAM_JINRAI
-	X_SZWSZ_INIT(TEAM_STR_NSF), // TEAM_NSF
+	X_SZWSZ_INIT(TEAM_STR_NSF),    // TEAM_NSF
 };
 
 #define NEO_GAME_NAME "NEOTOKYO;REBUILD"

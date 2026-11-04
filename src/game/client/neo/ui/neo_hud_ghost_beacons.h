@@ -16,16 +16,16 @@ class CNEOHud_GhostBeacons : public CNEOHud_ChildElement, public CHudElement, pu
 
 public:
 	CNEOHud_GhostBeacons(const char *pElementName, vgui::Panel *parent = NULL);
-	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
+	virtual void ApplySchemeSettings(vgui::IScheme *pScheme) override;
 	virtual void Paint() override;
 
 private:
-	void DrawPlayer(float distance, const Vector& playerPos) const;
+	void DrawPlayer(float distance, const Vector &playerPos) const;
 
 protected:
 	virtual void UpdateStateForNeoHudElementDraw() override;
 	virtual void DrawNeoHudElement() override;
-	virtual ConVar* GetUpdateFrequencyConVar() const override;
+	virtual ConVar *GetUpdateFrequencyConVar() const override;
 
 private:
 	vgui::HFont m_hFont;

@@ -49,7 +49,7 @@ BEGIN_DATADESC( CNEOBotGenerator )
 END_DATADESC()
 // clang-format on
 
-LINK_ENTITY_TO_CLASS( bot_generator, CNEOBotGenerator );
+LINK_ENTITY_TO_CLASS(bot_generator, CNEOBotGenerator);
 
 enum
 {
@@ -73,118 +73,119 @@ CNEOBotGenerator::CNEOBotGenerator( void )
 	, m_bEnabled(true)
 // clang-format on
 {
-	SetThink( NULL );
+	SetThink(NULL);
 }
 
 //------------------------------------------------------------------------------
-void CNEOBotGenerator::InputEnable( inputdata_t &inputdata )
+void CNEOBotGenerator::InputEnable(inputdata_t &inputdata)
 {
 	m_bEnabled = true;
 
-	if ( m_bExpended )
+	if (m_bExpended)
 	{
 		return;
 	}
 
-	SetThink( &CNEOBotGenerator::GeneratorThink );
+	SetThink(&CNEOBotGenerator::GeneratorThink);
 
-	if ( m_spawnCountRemaining )
+	if (m_spawnCountRemaining)
 	{
 		// already generating - don't restart count
 		return;
 	}
-	SetNextThink( gpGlobals->curtime );
+	SetNextThink(gpGlobals->curtime);
 	m_spawnCountRemaining = m_spawnCount;
 }
 
 //------------------------------------------------------------------------------
-void CNEOBotGenerator::InputDisable( inputdata_t &inputdata )
+void CNEOBotGenerator::InputDisable(inputdata_t &inputdata)
 {
 	m_bEnabled = false;
 
 	// just stop thinking
-	SetThink( NULL );
+	SetThink(NULL);
 }
 
 //------------------------------------------------------------------------------
-void CNEOBotGenerator::InputSetSuppressFire( inputdata_t &inputdata )
+void CNEOBotGenerator::InputSetSuppressFire(inputdata_t &inputdata)
 {
 	m_bSuppressFire = inputdata.value.Bool();
 }
 
 //------------------------------------------------------------------------------
-void CNEOBotGenerator::InputSetDisableDodge( inputdata_t &inputdata )
+void CNEOBotGenerator::InputSetDisableDodge(inputdata_t &inputdata)
 {
 	m_bDisableDodge = inputdata.value.Bool();
 }
 
 //------------------------------------------------------------------------------
-void CNEOBotGenerator::InputSetDifficulty( inputdata_t &inputdata )
+void CNEOBotGenerator::InputSetDifficulty(inputdata_t &inputdata)
 {
-	m_difficulty = clamp( inputdata.value.Int(), (int) CNEOBot::UNDEFINED, (int) CNEOBot::EXPERT );
+	m_difficulty = clamp(inputdata.value.Int(), (int)CNEOBot::UNDEFINED, (int)CNEOBot::EXPERT);
 }
 
 //------------------------------------------------------------------------------
-void CNEOBotGenerator::InputCommandGotoActionPoint( inputdata_t &inputdata )
+void CNEOBotGenerator::InputCommandGotoActionPoint(inputdata_t &inputdata)
 {
-	CNEOBotActionPoint *pActionPoint = dynamic_cast<CNEOBotActionPoint *>( gEntList.FindEntityByName( NULL, inputdata.value.String() ) );
-	if ( pActionPoint == NULL )
+	CNEOBotActionPoint *pActionPoint =
+		dynamic_cast<CNEOBotActionPoint *>(gEntList.FindEntityByName(NULL, inputdata.value.String()));
+	if (pActionPoint == NULL)
 	{
 		return;
 	}
-	for ( int i = 0; i < m_spawnedBotVector.Count(); )
+	for (int i = 0; i < m_spawnedBotVector.Count();)
 	{
-		CHandle< CNEOBot > hBot = m_spawnedBotVector[i];
-		if ( hBot == NULL )
+		CHandle<CNEOBot> hBot = m_spawnedBotVector[i];
+		if (hBot == NULL)
 		{
 			m_spawnedBotVector.FastRemove(i);
 			continue;
 		}
-		if ( hBot->GetTeamNumber() == TEAM_SPECTATOR )
+		if (hBot->GetTeamNumber() == TEAM_SPECTATOR)
 		{
 			m_spawnedBotVector.FastRemove(i);
 			continue;
 		}
-		hBot->SetActionPoint( pActionPoint );
-		hBot->OnCommandString( "goto action point" );
+		hBot->SetActionPoint(pActionPoint);
+		hBot->OnCommandString("goto action point");
 		++i;
 	}
 }
 
 //------------------------------------------------------------------------------
-void CNEOBotGenerator::InputSetAttentionFocus( inputdata_t &inputdata )
+void CNEOBotGenerator::InputSetAttentionFocus(inputdata_t &inputdata)
 {
-	CBaseEntity *focus = gEntList.FindEntityByName( NULL, inputdata.value.String() );
+	CBaseEntity *focus = gEntList.FindEntityByName(NULL, inputdata.value.String());
 
-	if ( focus == NULL )
+	if (focus == NULL)
 	{
 		return;
 	}
 
-	for( int i = 0; i < m_spawnedBotVector.Count(); )
+	for (int i = 0; i < m_spawnedBotVector.Count();)
 	{
 		CNEOBot *bot = m_spawnedBotVector[i];
 
-		if ( !bot || bot->GetTeamNumber() == TEAM_SPECTATOR )
+		if (!bot || bot->GetTeamNumber() == TEAM_SPECTATOR)
 		{
 			m_spawnedBotVector.FastRemove(i);
 			continue;
 		}
 
-		bot->SetAttentionFocus( focus );
+		bot->SetAttentionFocus(focus);
 
 		++i;
 	}
 }
 
 //------------------------------------------------------------------------------
-void CNEOBotGenerator::InputClearAttentionFocus( inputdata_t &inputdata )
+void CNEOBotGenerator::InputClearAttentionFocus(inputdata_t &inputdata)
 {
-	for( int i = 0; i < m_spawnedBotVector.Count(); )
+	for (int i = 0; i < m_spawnedBotVector.Count();)
 	{
 		CNEOBot *bot = m_spawnedBotVector[i];
 
-		if ( !bot || bot->GetTeamNumber() == TEAM_SPECTATOR )
+		if (!bot || bot->GetTeamNumber() == TEAM_SPECTATOR)
 		{
 			m_spawnedBotVector.FastRemove(i);
 			continue;
@@ -197,23 +198,23 @@ void CNEOBotGenerator::InputClearAttentionFocus( inputdata_t &inputdata )
 }
 
 //------------------------------------------------------------------------------
-void CNEOBotGenerator::InputSpawnBot( inputdata_t &inputdata )
+void CNEOBotGenerator::InputSpawnBot(inputdata_t &inputdata)
 {
-	if ( m_bEnabled )
+	if (m_bEnabled)
 	{
 		SpawnBot();
 	}
 }
 
 //------------------------------------------------------------------------------
-void CNEOBotGenerator::InputRemoveBots( inputdata_t &inputdata )
+void CNEOBotGenerator::InputRemoveBots(inputdata_t &inputdata)
 {
-	for( int i = 0; i < m_spawnedBotVector.Count(); i++ )
+	for (int i = 0; i < m_spawnedBotVector.Count(); i++)
 	{
 		CNEOBot *pBot = m_spawnedBotVector[i];
-		if ( pBot )
+		if (pBot)
 		{
-			engine->ServerCommand( UTIL_VarArgs( "kickid %d\n", pBot->GetUserID() ) );
+			engine->ServerCommand(UTIL_VarArgs("kickid %d\n", pBot->GetUserID()));
 		}
 
 		m_spawnedBotVector.FastRemove(i);
@@ -221,9 +222,9 @@ void CNEOBotGenerator::InputRemoveBots( inputdata_t &inputdata )
 }
 
 //------------------------------------------------------------------------------
-void CNEOBotGenerator::OnBotKilled( CNEOBot *pBot )
+void CNEOBotGenerator::OnBotKilled(CNEOBot *pBot)
 {
-	m_onBotKilled.FireOutput( pBot, this );
+	m_onBotKilled.FireOutput(pBot, this);
 }
 
 //------------------------------------------------------------------------------
@@ -231,32 +232,32 @@ void CNEOBotGenerator::OnBotKilled( CNEOBot *pBot )
 void CNEOBotGenerator::Activate()
 {
 	BaseClass::Activate();
-	m_moveGoal = gEntList.FindEntityByName( NULL, m_actionPointName.ToCStr() );
+	m_moveGoal = gEntList.FindEntityByName(NULL, m_actionPointName.ToCStr());
 }
 
 //------------------------------------------------------------------------------
-void CNEOBotGenerator::GeneratorThink( void )
+void CNEOBotGenerator::GeneratorThink(void)
 {
 	// create the bot finally...
-	if ( !m_bSpawnOnlyWhenTriggered )
+	if (!m_bSpawnOnlyWhenTriggered)
 	{
 		SpawnBot();
 	}
 }
 
 //------------------------------------------------------------------------------
-void CNEOBotGenerator::SpawnBot( void )
+void CNEOBotGenerator::SpawnBot(void)
 {
 	// did we exceed the max active count?
-	for ( int i = 0; i < m_spawnedBotVector.Count(); )
+	for (int i = 0; i < m_spawnedBotVector.Count();)
 	{
-		CHandle< CNEOBot > hBot = m_spawnedBotVector[i];
-		if ( hBot == NULL )
+		CHandle<CNEOBot> hBot = m_spawnedBotVector[i];
+		if (hBot == NULL)
 		{
 			m_spawnedBotVector.FastRemove(i);
 			continue;
 		}
-		if ( hBot->GetTeamNumber() == TEAM_SPECTATOR )
+		if (hBot->GetTeamNumber() == TEAM_SPECTATOR)
 		{
 			m_spawnedBotVector.FastRemove(i);
 			continue;
@@ -264,15 +265,15 @@ void CNEOBotGenerator::SpawnBot( void )
 		++i;
 	}
 
-	if ( m_spawnedBotVector.Count() >= m_maxActiveCount )
+	if (m_spawnedBotVector.Count() >= m_maxActiveCount)
 	{
-		SetNextThink( gpGlobals->curtime + 0.1f );
+		SetNextThink(gpGlobals->curtime + 0.1f);
 		return;
 	}
 
 	CNEOBot::DifficultyType curBotSkill = static_cast<CNEOBot::DifficultyType>(m_difficulty);
 	CNEOBot *bot = TheNEOBots().GetAvailableBotFromPool();
-	if ( bot == NULL )
+	if (bot == NULL)
 	{
 		const CNEOBotProfileFilter botFilter = {
 			.flagTargetDifficulty = (m_difficulty != CNEOBot::UNDEFINED) ? (1 << m_difficulty) : 0,
@@ -282,9 +283,9 @@ void CNEOBotGenerator::SpawnBot( void )
 
 		char szBotName[MAX_PLAYER_NAME_LENGTH];
 		curBotSkill = static_cast<CNEOBot::DifficultyType>(
-				NEOBotProfileCreateNameRetSkill(szBotName, retProfile.profile, m_difficulty));
+			NEOBotProfileCreateNameRetSkill(szBotName, retProfile.profile, m_difficulty));
 
-		bot = NextBotCreatePlayerBot< CNEOBot >(szBotName);
+		bot = NextBotCreatePlayerBot<CNEOBot>(szBotName);
 		if (bot)
 		{
 			bot->m_iProfileIdx = retProfile.index;
@@ -292,25 +293,25 @@ void CNEOBotGenerator::SpawnBot( void )
 		}
 	}
 
-	if ( bot ) 
-	{										   
-		m_spawnedBotVector.AddToTail( bot );
+	if (bot)
+	{
+		m_spawnedBotVector.AddToTail(bot);
 
-		bot->SetSpawner( this );
+		bot->SetSpawner(this);
 
-		if ( m_bUseTeamSpawnpoint == false )
+		if (m_bUseTeamSpawnpoint == false)
 		{
-			bot->SetSpawnPoint( this );		
+			bot->SetSpawnPoint(this);
 		}
 
-		if ( m_bSuppressFire )
+		if (m_bSuppressFire)
 		{
-			bot->SetAttribute( CNEOBot::SUPPRESS_FIRE );
+			bot->SetAttribute(CNEOBot::SUPPRESS_FIRE);
 		}
 
-		if ( m_bDisableDodge )
+		if (m_bDisableDodge)
 		{
-			bot->SetAttribute( CNEOBot::DISABLE_DODGE );
+			bot->SetAttribute(CNEOBot::DISABLE_DODGE);
 		}
 
 		if (curBotSkill != CNEOBot::UNDEFINED)
@@ -320,19 +321,19 @@ void CNEOBotGenerator::SpawnBot( void )
 
 		// propagate the generator's spawn flags into all bots generated
 		bot->ClearBehaviorFlag(NEOBOT_ALL_BEHAVIOR_FLAGS);
-		bot->SetBehaviorFlag( m_spawnflags );
+		bot->SetBehaviorFlag(m_spawnflags);
 
-		switch ( m_iOnDeathAction )
+		switch (m_iOnDeathAction)
 		{
 		case kOnDeath_RemoveSelf:
-			bot->SetAttribute( CNEOBot::REMOVE_ON_DEATH );
+			bot->SetAttribute(CNEOBot::REMOVE_ON_DEATH);
 			break;
 		case kOnDeath_MoveToSpectatorTeam:
-			bot->SetAttribute( CNEOBot::BECOME_SPECTATOR_ON_DEATH );
+			bot->SetAttribute(CNEOBot::BECOME_SPECTATOR_ON_DEATH);
 			break;
 		} // switch
 
-		bot->SetActionPoint( dynamic_cast<CNEOBotActionPoint *>( m_moveGoal.Get() ) );
+		bot->SetActionPoint(dynamic_cast<CNEOBotActionPoint *>(m_moveGoal.Get()));
 
 		// XXX(misyl): TODO!!!!!
 #if 0
@@ -369,32 +370,32 @@ void CNEOBotGenerator::SpawnBot( void )
 		bot->HandleCommand_JoinClass( pClassName );
 #endif
 
-		if ( bot->IsAlive() == false )
+		if (bot->IsAlive() == false)
 		{
 			bot->ForceRespawn();
 		}
 
 		// make sure the bot is facing the right way.
 		// @todo Tom Bui: for some reason it is still turning towards another direction...need to investigate
-		bot->SnapEyeAngles( GetAbsAngles() );
+		bot->SnapEyeAngles(GetAbsAngles());
 
-		if ( FStrEq( m_initialCommand.ToCStr(), "" ) == false )
+		if (FStrEq(m_initialCommand.ToCStr(), "") == false)
 		{
 			// @note Tom Bui: we call Update() once here to make sure the bot is ready to receive commands
 			bot->Update();
-			bot->OnCommandString( m_initialCommand.ToCStr() );
+			bot->OnCommandString(m_initialCommand.ToCStr());
 		}
-		m_onSpawned.FireOutput( bot, this );
+		m_onSpawned.FireOutput(bot, this);
 
 		--m_spawnCountRemaining;
-		if ( m_spawnCountRemaining )
+		if (m_spawnCountRemaining)
 		{
-			SetNextThink( gpGlobals->curtime + m_spawnInterval );
+			SetNextThink(gpGlobals->curtime + m_spawnInterval);
 		}
 		else
 		{
-			SetThink( NULL );
-			m_onExpended.FireOutput( this, this );
+			SetThink(NULL);
+			m_onExpended.FireOutput(this, this);
 			m_bExpended = true;
 		}
 	}
@@ -412,7 +413,7 @@ BEGIN_DATADESC( CNEOBotActionPoint )
 END_DATADESC()
 // clang-format on
 
-LINK_ENTITY_TO_CLASS( bot_action_point, CNEOBotActionPoint );
+LINK_ENTITY_TO_CLASS(bot_action_point, CNEOBotActionPoint);
 
 //------------------------------------------------------------------------------
 
@@ -431,25 +432,25 @@ CNEOBotActionPoint::CNEOBotActionPoint()
 void CNEOBotActionPoint::Activate()
 {
 	BaseClass::Activate();
-	m_moveGoal = gEntList.FindEntityByName( NULL, m_nextActionPointName.ToCStr() );
+	m_moveGoal = gEntList.FindEntityByName(NULL, m_nextActionPointName.ToCStr());
 }
 
 //------------------------------------------------------------------------------
 
-bool CNEOBotActionPoint::IsWithinRange( CBaseEntity *entity )
+bool CNEOBotActionPoint::IsWithinRange(CBaseEntity *entity)
 {
-	return ( entity->GetAbsOrigin() - GetAbsOrigin() ).IsLengthLessThan( m_desiredDistance );
+	return (entity->GetAbsOrigin() - GetAbsOrigin()).IsLengthLessThan(m_desiredDistance);
 }
 
 //------------------------------------------------------------------------------
 
-void CNEOBotActionPoint::ReachedActionPoint( CNEOBot* pBot )
+void CNEOBotActionPoint::ReachedActionPoint(CNEOBot *pBot)
 {
-	if ( FStrEq( m_command.ToCStr(), "" ) == false )
+	if (FStrEq(m_command.ToCStr(), "") == false)
 	{
-		pBot->OnCommandString( m_command.ToCStr() );
+		pBot->OnCommandString(m_command.ToCStr());
 	}
-	m_onReachedActionPoint.FireOutput( pBot, this );
+	m_onReachedActionPoint.FireOutput(pBot, this);
 }
 
 //------------------------------------------------------------------------------

@@ -6,10 +6,10 @@ class CNEO_Player;
 class CNEOSpawnPoint;
 namespace NeoSpawnManager
 {
-	CNEOSpawnPoint* RequestSpawn(int team, CNEO_Player *player);
+CNEOSpawnPoint *RequestSpawn(int team, CNEO_Player *player);
 
-	void Init();
-	void Deinit();
-	void Register(CNEOSpawnPoint*);
-	void Unregister(CNEOSpawnPoint*);
+void Init();
+void Deinit();
+void Register(CNEOSpawnPoint *);
+void Unregister(CNEOSpawnPoint *);
 };

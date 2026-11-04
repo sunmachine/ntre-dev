@@ -52,15 +52,16 @@
 
 #ifdef CLIENT_DLL
 ConVar cl_autoreload_when_empty("cl_autoreload_when_empty", "1", FCVAR_USERINFO | FCVAR_ARCHIVE,
-	"Automatically start reloading when the active weapon becomes empty.",
-	true, 0.0f, true, 1.0f);
+	"Automatically start reloading when the active weapon becomes empty.", true, 0.0f, true, 1.0f);
 #endif
 
-ConVar sv_neo_dev_loadout("sv_neo_dev_loadout", "0", FCVAR_CHEAT | FCVAR_REPLICATED | FCVAR_HIDDEN | FCVAR_DONTRECORD, "", true, 0.0f, true, 1.0f);
+ConVar sv_neo_dev_loadout("sv_neo_dev_loadout", "0", FCVAR_CHEAT | FCVAR_REPLICATED | FCVAR_HIDDEN | FCVAR_DONTRECORD,
+	"", true, 0.0f, true, 1.0f);
 
 // This default value is not a typo. The OGNT ghost beacon distance is 1800 Hammer units/inches, which equals a little over 45 meters.
 // Since we can represent this value exactly with floating point, it's not really a problem to store it as meters here.
-ConVar sv_neo_ghost_view_distance("sv_neo_ghost_view_distance", "45.72", FCVAR_NOTIFY | FCVAR_REPLICATED, "How far can the ghost user see players in meters.");
+ConVar sv_neo_ghost_view_distance("sv_neo_ghost_view_distance", "45.72", FCVAR_NOTIFY | FCVAR_REPLICATED,
+	"How far can the ghost user see players in meters.");
 
 ConVar sv_neo_ghost_delay_secs("sv_neo_ghost_delay_secs", "3.3", FCVAR_NOTIFY | FCVAR_REPLICATED,
 	"The delay in seconds until the ghost shows up after pick up.", true, 0.0, false, 0.0);
@@ -68,21 +69,20 @@ ConVar sv_neo_ghost_delay_secs("sv_neo_ghost_delay_secs", "3.3", FCVAR_NOTIFY | 
 ConVar sv_neo_serverside_beacons("sv_neo_serverside_beacons", "1", FCVAR_NOTIFY | FCVAR_REPLICATED,
 	"Whether ghost beacons should be processed server-side.", true, false, true, true);
 
-ConVar sv_neo_spec_replace_player_bot_enable("sv_neo_spec_replace_player_bot_enable", "1", FCVAR_REPLICATED, "Allow spectators to take over bots.", true, 0, true, 1);
-ConVar sv_neo_spec_replace_player_afk_enable("sv_neo_spec_replace_player_afk_enable", "0", FCVAR_REPLICATED, "Allow spectators to take over AFK players.", true, 0, true, 1);
-ConVar sv_neo_spec_replace_player_min_exp("sv_neo_spec_replace_player_min_exp",
-	"0", FCVAR_REPLICATED,
-	"Minimum experience allowed to takeover players ",
-	true, -999, true, 999);
+ConVar sv_neo_spec_replace_player_bot_enable("sv_neo_spec_replace_player_bot_enable", "1", FCVAR_REPLICATED,
+	"Allow spectators to take over bots.", true, 0, true, 1);
+ConVar sv_neo_spec_replace_player_afk_enable("sv_neo_spec_replace_player_afk_enable", "0", FCVAR_REPLICATED,
+	"Allow spectators to take over AFK players.", true, 0, true, 1);
+ConVar sv_neo_spec_replace_player_min_exp("sv_neo_spec_replace_player_min_exp", "0", FCVAR_REPLICATED,
+	"Minimum experience allowed to takeover players ", true, -999, true, 999);
 #ifdef GAME_DLL
-ConVar sv_neo_spec_replace_player_afk_time_sec( "sv_neo_spec_replace_player_afk_time_sec",
-	"180", FCVAR_NONE,
-	"Seconds of inactivity before a player is considered AFK for spectator takeover.",
-	true, -1, true, 999);
+ConVar sv_neo_spec_replace_player_afk_time_sec("sv_neo_spec_replace_player_afk_time_sec", "180", FCVAR_NONE,
+	"Seconds of inactivity before a player is considered AFK for spectator takeover.", true, -1, true, 999);
 #endif // GAME_DLL
 
 ConVar sv_neo_aimpunch_damping("sv_neo_aimpunch_damping", "12", FCVAR_NOTIFY | FCVAR_REPLICATED, "Aim punch damping");
-ConVar sv_neo_aimpunch_spring_constant("sv_neo_aimpunch_spring_constant", "65", FCVAR_NOTIFY | FCVAR_REPLICATED, "Aim punch spring constant");
+ConVar sv_neo_aimpunch_spring_constant(
+	"sv_neo_aimpunch_spring_constant", "65", FCVAR_NOTIFY | FCVAR_REPLICATED, "Aim punch spring constant");
 ConVar sv_neo_aimpunch_force("sv_neo_aimpunch_force", "40", FCVAR_NOTIFY | FCVAR_REPLICATED, "Aim punch force");
 ConVar sv_neo_aimpunch_max("sv_neo_aimpunch_max", "2", FCVAR_NOTIFY | FCVAR_REPLICATED, "Aim punch max deflection");
 
@@ -93,14 +93,15 @@ bool IsAllowedToZoom(CNEOBaseCombatWeapon *pWep)
 		return false;
 	}
 
-	if (pWep->GetNeoWepBits() & NEO_WEP_SRS && pWep->GetIdealActivity() == ACT_VM_PULLBACK) {
+	if (pWep->GetNeoWepBits() & NEO_WEP_SRS && pWep->GetIdealActivity() == ACT_VM_PULLBACK)
+	{
 		return false;
 	}
 
 	return true;
 }
 
-CBaseCombatWeapon* GetNeoWepWithBits(const CNEO_Player* player, const NEO_WEP_BITS_UNDERLYING_TYPE& neoWepBits)
+CBaseCombatWeapon *GetNeoWepWithBits(const CNEO_Player *player, const NEO_WEP_BITS_UNDERLYING_TYPE &neoWepBits)
 {
 	int nonNeoWepFoundAtIndex = -1;
 	for (int i = 0; i < MAX_WEAPONS; i++)
@@ -111,7 +112,7 @@ CBaseCombatWeapon* GetNeoWepWithBits(const CNEO_Player* player, const NEO_WEP_BI
 			continue;
 		}
 
-		auto pNeoWep = dynamic_cast<CNEOBaseCombatWeapon*>(pWep);
+		auto pNeoWep = dynamic_cast<CNEOBaseCombatWeapon *>(pWep);
 		if (!pNeoWep)
 		{
 			nonNeoWepFoundAtIndex = i;
@@ -137,9 +138,10 @@ CBaseCombatWeapon* GetNeoWepWithBits(const CNEO_Player* player, const NEO_WEP_BI
 #ifdef CLIENT_DLL
 extern ConVar cl_neo_player_pings;
 #endif // CLIENT_DLL
-void CheckPingButton(CNEO_Player* player)
+void CheckPingButton(CNEO_Player *player)
 {
-	if (!player->IsAlive() || !(player->m_afButtonPressed & IN_ATTACK3) || player->m_flNextPingTime > gpGlobals->curtime)
+	if (!player->IsAlive() || !(player->m_afButtonPressed & IN_ATTACK3) ||
+		player->m_flNextPingTime > gpGlobals->curtime)
 	{
 		return;
 	}
@@ -147,7 +149,8 @@ void CheckPingButton(CNEO_Player* player)
 	if (!player->IsBot())
 	{ // players with pings disabled can't ping
 #ifdef GAME_DLL
-		const bool showPlayerPings = atoi(engine->GetClientConVarValue(engine->IndexOfEdict(player->edict()), "cl_neo_player_pings"));
+		const bool showPlayerPings =
+			atoi(engine->GetClientConVarValue(engine->IndexOfEdict(player->edict()), "cl_neo_player_pings"));
 #else
 		const bool showPlayerPings = cl_neo_player_pings.GetBool();
 #endif // GAME_DLL
@@ -157,14 +160,15 @@ void CheckPingButton(CNEO_Player* player)
 		}
 	}
 
-	IGameEvent* event = gameeventmanager->CreateEvent("player_ping");
+	IGameEvent *event = gameeventmanager->CreateEvent("player_ping");
 	if (event)
 	{
 		trace_t tr;
 		Vector forward;
 		player->EyeVectors(&forward);
 		Vector eyePosition = player->EyePosition();
-		UTIL_TraceLine(eyePosition, eyePosition + forward * MAX_COORD_RANGE, MASK_VISIBLE_AND_NPCS, player, COLLISION_GROUP_NONE, &tr);
+		UTIL_TraceLine(eyePosition, eyePosition + forward * MAX_COORD_RANGE, MASK_VISIBLE_AND_NPCS, player,
+			COLLISION_GROUP_NONE, &tr);
 
 		if (Q_stristr(tr.surface.name, "SKYBOX"))
 		{
@@ -196,17 +200,17 @@ void CheckPingButton(CNEO_Player* player)
 	}
 }
 
-ConVar sv_neo_bot_cmdr_enable("sv_neo_bot_cmdr_enable", "1",
-	FCVAR_REPLICATED | FCVAR_ARCHIVE, "Allow bots to follow you after you press use on them", true, 0, true, 1);
+ConVar sv_neo_bot_cmdr_enable("sv_neo_bot_cmdr_enable", "1", FCVAR_REPLICATED | FCVAR_ARCHIVE,
+	"Allow bots to follow you after you press use on them", true, 0, true, 1);
 
 #ifdef GAME_DLL
-static ConVar sv_neo_bot_cmdr_stop_distance_sq_max("sv_neo_bot_cmdr_stop_distance_sq_max", "50000",
-	FCVAR_CHEAT, "Maximum distance bot following gap interval can be set by player pings", true, 5000, true, 500000);
-static ConVar sv_neo_bot_cmdr_ping_ignore_delay_min_sec("sv_neo_bot_cmdr_ping_ignore_delay_min_sec", "3",
-	FCVAR_CHEAT, "Minimum time bots ignore pings for new waypoint settings", true, 0, true, 1000);
+static ConVar sv_neo_bot_cmdr_stop_distance_sq_max("sv_neo_bot_cmdr_stop_distance_sq_max", "50000", FCVAR_CHEAT,
+	"Maximum distance bot following gap interval can be set by player pings", true, 5000, true, 500000);
+static ConVar sv_neo_bot_cmdr_ping_ignore_delay_min_sec("sv_neo_bot_cmdr_ping_ignore_delay_min_sec", "3", FCVAR_CHEAT,
+	"Minimum time bots ignore pings for new waypoint settings", true, 0, true, 1000);
 #endif // GAME_DLL
 
-void UpdatePingCommands(CNEO_Player* player, const Vector& pingPos)
+void UpdatePingCommands(CNEO_Player *player, const Vector &pingPos)
 {
 #ifdef GAME_DLL
 	if (sv_neo_bot_cmdr_enable.GetBool())
@@ -218,7 +222,8 @@ void UpdatePingCommands(CNEO_Player* player, const Vector& pingPos)
 			// If pinging close to self, calibrate follow distance of commanded bots based on distance to ping
 			float minFollowDistanceSq = 0.0f;
 			sv_neo_bot_cmdr_stop_distance_sq_max.GetMin(minFollowDistanceSq);
-			player->m_flBotDynamicFollowDistanceSq = Clamp(distSqrToPing, minFollowDistanceSq, sv_neo_bot_cmdr_stop_distance_sq_max.GetFloat());
+			player->m_flBotDynamicFollowDistanceSq =
+				Clamp(distSqrToPing, minFollowDistanceSq, sv_neo_bot_cmdr_stop_distance_sq_max.GetFloat());
 		}
 		else
 		{
@@ -230,17 +235,17 @@ void UpdatePingCommands(CNEO_Player* player, const Vector& pingPos)
 #endif
 }
 
-void KillerLineStr(char* killByLine, const int killByLineMax,
-	CNEO_Player* neoAttacker, const CNEO_Player* neoVictim, const char* killedWith)
+void KillerLineStr(char *killByLine, const int killByLineMax, CNEO_Player *neoAttacker, const CNEO_Player *neoVictim,
+	const char *killedWith)
 {
-	const char* dmgerName = neoAttacker->GetNeoPlayerName();
-	const char* dmgerClass = GetNeoClassName(neoAttacker->GetClass());
+	const char *dmgerName = neoAttacker->GetNeoPlayerName();
+	const char *dmgerClass = GetNeoClassName(neoAttacker->GetClass());
 	const int dmgerHP = neoAttacker->GetHealth();
 	const float distance = METERS_PER_INCH * neoAttacker->GetAbsOrigin().DistTo(neoVictim->GetAbsOrigin());
 
 	memset(killByLine, 0, killByLineMax);
-	Q_snprintf(killByLine, killByLineMax, "Killed by: %s [%s | %d hp] with %s at %.0f m\n",
-		dmgerName, dmgerClass, dmgerHP, killedWith, distance);
+	Q_snprintf(killByLine, killByLineMax, "Killed by: %s [%s | %d hp] with %s at %.0f m\n", dmgerName, dmgerClass,
+		dmgerHP, killedWith, distance);
 }
 
 [[nodiscard]] auto StrToInt(std::string_view strView) -> std::optional<int>
@@ -282,34 +287,36 @@ void DMClSortedPlayers(PlayerXPInfo (*pPlayersOrder)[MAX_PLAYERS + 1], int *piTo
 		}
 	}
 
-	V_qsort_s(*pPlayersOrder, iTotalPlayers, sizeof(PlayerXPInfo),
-			  []([[maybe_unused]] void *vpCtx, const void *vpLeft, const void *vpRight) -> int {
-		auto *pLeft = static_cast<const PlayerXPInfo *>(vpLeft);
-		auto *pRight = static_cast<const PlayerXPInfo *>(vpRight);
-		if (pRight->xp == pLeft->xp)
+	V_qsort_s(
+		*pPlayersOrder, iTotalPlayers, sizeof(PlayerXPInfo),
+		[]([[maybe_unused]] void *vpCtx, const void *vpLeft, const void *vpRight) -> int
 		{
-			// More deaths = lower
-			return pLeft->deaths - pRight->deaths;
-		}
-		// More XP = higher
-		return pRight->xp - pLeft->xp;
-	}, nullptr);
+			auto *pLeft = static_cast<const PlayerXPInfo *>(vpLeft);
+			auto *pRight = static_cast<const PlayerXPInfo *>(vpRight);
+			if (pRight->xp == pLeft->xp)
+			{
+				// More deaths = lower
+				return pLeft->deaths - pRight->deaths;
+			}
+			// More XP = higher
+			return pRight->xp - pLeft->xp;
+		},
+		nullptr);
 
 	*piTotalPlayers = iTotalPlayers;
 }
 #endif
 
 bool GetClNeoDisplayName(wchar_t (&pWszDisplayName)[NEO_MAX_DISPLAYNAME],
-						 const wchar_t (&wszNeoName)[MAX_PLAYER_NAME_LENGTH],
-						 const wchar_t (&wszNeoClantag)[NEO_MAX_CLANTAG_LENGTH],
-						 const EClNeoDisplayNameFlag flags)
+	const wchar_t (&wszNeoName)[MAX_PLAYER_NAME_LENGTH], const wchar_t (&wszNeoClantag)[NEO_MAX_CLANTAG_LENGTH],
+	const EClNeoDisplayNameFlag flags)
 {
 	const bool bShowSteamNick = (flags & CL_NEODISPLAYNAME_FLAG_ONLYSTEAMNICK) || wszNeoName[0] == '\0';
 	wchar_t wszDisplayName[MAX_PLAYER_NAME_LENGTH + 1] = {};
 	if (bShowSteamNick)
 	{
-		g_pVGuiLocalize->ConvertANSIToUnicode(steamapicontext->SteamFriends()->GetPersonaName(),
-											  wszDisplayName, sizeof(wszDisplayName));
+		g_pVGuiLocalize->ConvertANSIToUnicode(
+			steamapicontext->SteamFriends()->GetPersonaName(), wszDisplayName, sizeof(wszDisplayName));
 	}
 	else
 	{
@@ -336,7 +343,8 @@ bool GetClNeoDisplayName(wchar_t (&pWszDisplayName)[NEO_MAX_DISPLAYNAME],
 		}
 
 		char szNeoClantag[2 * NEO_MAX_CLANTAG_LENGTH];
-		const int iSzNeoClantagSize = g_pVGuiLocalize->ConvertUnicodeToANSI(wszNeoClantag, szNeoClantag, sizeof(szNeoClantag));
+		const int iSzNeoClantagSize =
+			g_pVGuiLocalize->ConvertUnicodeToANSI(wszNeoClantag, szNeoClantag, sizeof(szNeoClantag));
 		if (iSzNeoClantagSize > NEO_MAX_CLANTAG_LENGTH)
 		{
 			return false;
@@ -346,10 +354,8 @@ bool GetClNeoDisplayName(wchar_t (&pWszDisplayName)[NEO_MAX_DISPLAYNAME],
 	return true;
 }
 
-bool GetClNeoDisplayName(wchar_t (&pWszDisplayName)[NEO_MAX_DISPLAYNAME],
-						 const char *pSzNeoName,
-						 const char *pSzNeoClantag,
-						 const EClNeoDisplayNameFlag flags)
+bool GetClNeoDisplayName(wchar_t (&pWszDisplayName)[NEO_MAX_DISPLAYNAME], const char *pSzNeoName,
+	const char *pSzNeoClantag, const EClNeoDisplayNameFlag flags)
 {
 	wchar_t wszNeoName[MAX_PLAYER_NAME_LENGTH];
 	wchar_t wszNeoClantag[NEO_MAX_CLANTAG_LENGTH];
@@ -360,24 +366,24 @@ bool GetClNeoDisplayName(wchar_t (&pWszDisplayName)[NEO_MAX_DISPLAYNAME],
 
 namespace
 {
-	// Footstep tuning. Fractions are of the player's run speed with the weapon's weight speed modifier applied
+// Footstep tuning. Fractions are of the player's run speed with the weapon's weight speed modifier applied
 
-	// Crouching, walking and aiming are silent until moving faster than this. Anything above it is a sprint, a slide or a push
-	constexpr float FS_SILENT_HEADROOM = 0.10f;
-	constexpr float FS_SILENT_SPEED_FRACTION = float(NEO_CROUCH_WALK_MODIFIER) * (1.f + FS_SILENT_HEADROOM); // 0.825
-	static_assert(FS_SILENT_SPEED_FRACTION < 1.f, "Running must never be silent");
-	static_assert(FS_SILENT_SPEED_FRACTION > NEO_AIM_MODIFIER, "Aiming must be silent");
+// Crouching, walking and aiming are silent until moving faster than this. Anything above it is a sprint, a slide or a push
+constexpr float FS_SILENT_HEADROOM = 0.10f;
+constexpr float FS_SILENT_SPEED_FRACTION = float(NEO_CROUCH_WALK_MODIFIER) * (1.f + FS_SILENT_HEADROOM); // 0.825
+static_assert(FS_SILENT_SPEED_FRACTION < 1.f, "Running must never be silent");
+static_assert(FS_SILENT_SPEED_FRACTION > NEO_AIM_MODIFIER, "Aiming must be silent");
 
-	// Turning or switching movement keys raises ground speed above the mode's speed for as long as the direction keeps
-	// changing, up to about 1.54 times crouching speed at 300 degrees per second. Anything faster is a sprint, a slide or a push
-	constexpr float FS_TURN_MAX_SPEED_FRACTION = float(NEO_CROUCH_WALK_MODIFIER) * 1.55f; // 1.1625
-	static_assert(FS_TURN_MAX_SPEED_FRACTION > FS_SILENT_SPEED_FRACTION, "The turn cap must sit above the silent limit");
-	static_assert(FS_TURN_MAX_SPEED_FRACTION < NEO_MIN_SPRINT_MODIFIER, "A sprint at full speed must never be silent");
+// Turning or switching movement keys raises ground speed above the mode's speed for as long as the direction keeps
+// changing, up to about 1.54 times crouching speed at 300 degrees per second. Anything faster is a sprint, a slide or a push
+constexpr float FS_TURN_MAX_SPEED_FRACTION = float(NEO_CROUCH_WALK_MODIFIER) * 1.55f; // 1.1625
+static_assert(FS_TURN_MAX_SPEED_FRACTION > FS_SILENT_SPEED_FRACTION, "The turn cap must sit above the silent limit");
+static_assert(FS_TURN_MAX_SPEED_FRACTION < NEO_MIN_SPRINT_MODIFIER, "A sprint at full speed must never be silent");
 }
 
-bool CNEO_Player::IsMakingFootstepSounds(float* pVelRun, float* pSpeed, int* pLadder) const
+bool CNEO_Player::IsMakingFootstepSounds(float *pVelRun, float *pSpeed, int *pLadder) const
 {
-	if (GetFlags() & (FL_FROZEN|FL_ATCONTROLS))
+	if (GetFlags() & (FL_FROZEN | FL_ATCONTROLS))
 		return false;
 
 	if (GetNeoFlags() & NEO_FL_FREEZETIME)
@@ -390,16 +396,19 @@ bool CNEO_Player::IsMakingFootstepSounds(float* pVelRun, float* pSpeed, int* pLa
 	if (!sv_footsteps.GetFloat())
 		return false;
 
-	const Vector& absVel = GetAbsVelocity();
+	const Vector &absVel = GetAbsVelocity();
 	const float speed = absVel.Length();
-	if (pSpeed) *pSpeed = speed;
+	if (pSpeed)
+		*pSpeed = speed;
 	const float groundspeed = absVel.AsVector2D().Length();
 	const bool isOnLadder = (GetMoveType() == MOVETYPE_LADDER);
-	if (pLadder) *pLadder = isOnLadder;
+	if (pLadder)
+		*pLadder = isOnLadder;
 
 	float velwalk, velrun;
 	GetStepSoundVelocities(&velwalk, &velrun);
-	if (pVelRun) *pVelRun = velrun;
+	if (pVelRun)
+		*pVelRun = velrun;
 
 	bool onground = (GetFlags() & FL_ONGROUND);
 	bool movingalongground = (groundspeed > 0.0001f);
@@ -453,8 +462,7 @@ bool CNEO_Player::IsInSilentMoveMode() const
 int CNEO_Player::GetSilentMoveKeys(bool bCrouchFromPress) const
 {
 	return ((GetFlags() & (bCrouchFromPress ? FL_ANIMDUCKING : FL_DUCKING)) ? NEO_FS_SILENT_MOVE_KEY_CROUCH : 0) |
-		(IsWalking() ? NEO_FS_SILENT_MOVE_KEY_WALK : 0) |
-		(IsInAim() ? NEO_FS_SILENT_MOVE_KEY_AIM : 0);
+		(IsWalking() ? NEO_FS_SILENT_MOVE_KEY_WALK : 0) | (IsInAim() ? NEO_FS_SILENT_MOVE_KEY_AIM : 0);
 }
 
 // Starts a timestamp the first time a condition holds and clears it when it stops
@@ -770,7 +778,7 @@ void CNEO_Player::CheckAimButtons()
 	}
 	else
 	{
-	    Weapon_SetZoom(false);
+		Weapon_SetZoom(false);
 	}
 }
 
@@ -779,31 +787,31 @@ void CNEO_Player::Splash()
 	CEffectData data;
 	data.m_fFlags = 0;
 	data.m_vOrigin = GetAbsOrigin();
-	data.m_vNormal = Vector(0,0,1);
-	data.m_vAngles = QAngle( 0, 0, 0 );
-	
-	if ( GetWaterType() & CONTENTS_SLIME )
+	data.m_vNormal = Vector(0, 0, 1);
+	data.m_vAngles = QAngle(0, 0, 0);
+
+	if (GetWaterType() & CONTENTS_SLIME)
 	{
 		data.m_fFlags |= FX_WATER_IN_SLIME;
 	}
-	
+
 #ifdef GAME_DLL
-	CPASFilter filter( data.m_vOrigin );
+	CPASFilter filter(data.m_vOrigin);
 #else
 	CLocalPlayerFilter filter;
 #endif // GAME_DLL
 
 	float flSpeedSqr = GetAbsVelocity().LengthSqr();
 	constexpr int SPLASH_SPEED_THRESHOLD = 300;
-	if ( flSpeedSqr < SPLASH_SPEED_THRESHOLD * SPLASH_SPEED_THRESHOLD )
+	if (flSpeedSqr < SPLASH_SPEED_THRESHOLD * SPLASH_SPEED_THRESHOLD)
 	{
-		data.m_flScale = random->RandomFloat( 10, 12 );
-		DispatchEffect( "waterripple", data, filter );
+		data.m_flScale = random->RandomFloat(10, 12);
+		DispatchEffect("waterripple", data, filter);
 	}
 	else
 	{
-		data.m_flScale = random->RandomFloat( 6, 8 );
-		DispatchEffect( "playersplash", data, filter );
+		data.m_flScale = random->RandomFloat(6, 8);
+		DispatchEffect("playersplash", data, filter);
 	}
 }
 
@@ -828,23 +836,24 @@ bool CNEO_Player::IsFakePlayer() const
 
 bool CNEO_Player::ValidTakeoverTargetFor(CNEO_Player *pPlayerTakingOver)
 {
-	return pPlayerTakingOver && pPlayerTakingOver->IsObserver() && !pPlayerTakingOver->IsAlive()
-		&& NEORules()->GetRoundStatus() != PostRound
-		&& pPlayerTakingOver->m_iXP >= sv_neo_spec_replace_player_min_exp.GetInt()
-		&& IsAlive()
-		&& InSameTeam(pPlayerTakingOver) && NEORules()->IsTeamplay()
-		&& ((sv_neo_spec_replace_player_bot_enable.GetBool() && IsFakePlayer()) ||
+	return pPlayerTakingOver && pPlayerTakingOver->IsObserver() && !pPlayerTakingOver->IsAlive() &&
+		NEORules()->GetRoundStatus() != PostRound &&
+		pPlayerTakingOver->m_iXP >= sv_neo_spec_replace_player_min_exp.GetInt() && IsAlive() &&
+		InSameTeam(pPlayerTakingOver) && NEORules()->IsTeamplay() &&
+		((sv_neo_spec_replace_player_bot_enable.GetBool() && IsFakePlayer()) ||
 			(sv_neo_spec_replace_player_afk_enable.GetBool() && IsAFK()));
 }
 
 #ifdef CLIENT_DLL
-ConVar cl_neo_hud_context_hint_show_adjacent_interactable_objects("cl_neo_hud_context_hint_show_adjacent_interactable_objects", "1", FCVAR_ARCHIVE, "Show adjacent interactable objects", true, 0.f, true, 1.f);
+ConVar cl_neo_hud_context_hint_show_adjacent_interactable_objects(
+	"cl_neo_hud_context_hint_show_adjacent_interactable_objects", "1", FCVAR_ARCHIVE,
+	"Show adjacent interactable objects", true, 0.f, true, 1.f);
 #endif // CLIENT_DLL
 extern ConVar sv_debug_player_use;
 CBaseEntity *CNEO_Player::FindUseEntity()
 {
 	Vector forward;
-	EyeVectors( &forward, nullptr, nullptr );
+	EyeVectors(&forward, nullptr, nullptr);
 
 	trace_t tr;
 	// Search for objects in a sphere (tests for entities that are not solid, yet still useable)
@@ -870,48 +879,49 @@ CBaseEntity *CNEO_Player::FindUseEntity()
 	bool addUseItemsToUseItemsList = cl_neo_hud_context_hint_show_adjacent_interactable_objects.GetBool();
 #endif // CLIENT_DLL
 	{
-		UTIL_TraceLine( searchCenter, searchCenter + forward * 1024, useableContents, this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(searchCenter, searchCenter + forward * 1024, useableContents, this, COLLISION_GROUP_NONE, &tr);
 		pObject = tr.m_pEnt;
 
 #ifndef CLIENT_DLL
 		pFoundByTrace = pObject;
 #endif
 		bool bUsable = IsUseableEntity(pObject, 0);
-		while ( pObject && !bUsable && pObject->GetMoveParent() )
+		while (pObject && !bUsable && pObject->GetMoveParent())
 		{
 			pObject = pObject->GetMoveParent();
 			bUsable = IsUseableEntity(pObject, 0);
 		}
 
-		if ( bUsable && pObject && !pObject->IsBaseCombatWeapon() )
+		if (bUsable && pObject && !pObject->IsBaseCombatWeapon())
 		{
 			Vector delta = tr.endpos - tr.startpos;
 			float centerZ = CollisionProp()->WorldSpaceCenter().z;
-			delta.z = IntervalDistance( tr.endpos.z, centerZ + CollisionProp()->OBBMins().z, centerZ + CollisionProp()->OBBMaxs().z );
+			delta.z = IntervalDistance(
+				tr.endpos.z, centerZ + CollisionProp()->OBBMins().z, centerZ + CollisionProp()->OBBMaxs().z);
 			float dist = delta.LengthSqr();
-			if ( dist < (PLAYER_USE_RADIUS * PLAYER_USE_RADIUS) )
+			if (dist < (PLAYER_USE_RADIUS * PLAYER_USE_RADIUS))
 			{
 #ifndef CLIENT_DLL
-				if ( sv_debug_player_use.GetBool() )
+				if (sv_debug_player_use.GetBool())
 				{
-					NDebugOverlay::Line( searchCenter, tr.endpos, 0, 255, 0, true, 30 );
-					NDebugOverlay::Cross3D( tr.endpos, 16, 0, 255, 0, true, 30 );
+					NDebugOverlay::Line(searchCenter, tr.endpos, 0, 255, 0, true, 30);
+					NDebugOverlay::Cross3D(tr.endpos, 16, 0, 255, 0, true, 30);
 				}
 
-				if ( pObject->MyNPCPointer() && pObject->MyNPCPointer()->IsPlayerAlly( this ) )
+				if (pObject->MyNPCPointer() && pObject->MyNPCPointer()->IsPlayerAlly(this))
 				{
 					// If about to select an NPC, do a more thorough check to ensure
 					// that we're selecting the right one from a group.
-					pObject = DoubleCheckUseNPC( pObject, searchCenter, forward );
+					pObject = DoubleCheckUseNPC(pObject, searchCenter, forward);
 				}
 #endif
-				if ( sv_debug_player_use.GetBool() )
+				if (sv_debug_player_use.GetBool())
 				{
-					Msg( "Trace using: %s\n", pObject ? pObject->GetDebugName() : "no usable entity found" );
+					Msg("Trace using: %s\n", pObject ? pObject->GetDebugName() : "no usable entity found");
 				}
 
 				pNearest = pObject;
-				
+
 				// if there is an entity directly under the cursor just return it now
 				if (pObject)
 				{
@@ -921,7 +931,7 @@ CBaseEntity *CNEO_Player::FindUseEntity()
 						nearestDot = 0.f;
 					else
 #endif // CLIENT_DLL
-					return pObject;
+						return pObject;
 				}
 			}
 		}
@@ -930,19 +940,20 @@ CBaseEntity *CNEO_Player::FindUseEntity()
 	// check ground entity first
 	// if you've got a useable ground entity, then shrink the cone of this search to 45 degrees
 	// otherwise, search out in a 90 degree cone (hemisphere)
-	if ( GetGroundEntity() && IsUseableEntity(GetGroundEntity(), FCAP_USE_ONGROUND) )
+	if (GetGroundEntity() && IsUseableEntity(GetGroundEntity(), FCAP_USE_ONGROUND))
 	{
 		pNearest = GetGroundEntity();
 	}
-	if ( pNearest )
+	if (pNearest)
 	{
 		// estimate nearest object by distance from the view vector
 		nearestDot = DotProduct((pNearest->CollisionProp()->WorldSpaceCenter() - searchCenter).Normalized(), forward);
-		if ( sv_debug_player_use.GetBool() )
+		if (sv_debug_player_use.GetBool())
 		{
 			Vector point;
-			pNearest->CollisionProp()->CalcNearestPoint( searchCenter, &point );
-			Msg("Trace found %s, dist %.2f\n", pNearest->GetClassname(), CalcDistanceToLine( point, searchCenter, forward ) );
+			pNearest->CollisionProp()->CalcNearestPoint(searchCenter, &point);
+			Msg("Trace found %s, dist %.2f\n", pNearest->GetClassname(),
+				CalcDistanceToLine(point, searchCenter, forward));
 		}
 	}
 
@@ -950,37 +961,39 @@ CBaseEntity *CNEO_Player::FindUseEntity()
 	int useEntityListIndex = 0;
 	ClearUseEntityListEntry();
 #endif // CLIENT_DLL
-	for ( CEntitySphereQuery sphere( searchCenter, PLAYER_USE_RADIUS ); ( pObject = sphere.GetCurrentEntity() ) != nullptr; sphere.NextEntity() )
+	for (CEntitySphereQuery sphere(searchCenter, PLAYER_USE_RADIUS); (pObject = sphere.GetCurrentEntity()) != nullptr;
+		sphere.NextEntity())
 	{
-		if ( !pObject )
+		if (!pObject)
 			continue;
 
 		// Weapons have very inflated trigger bounds which, if any part of is in the search sphere, get added to the query. This prevents weapons from being picked up from very far away
-		if (pObject->IsBaseCombatWeapon() && pObject->CollisionProp()->CalcDistanceFromPoint(searchCenter) > PLAYER_USE_RADIUS)
+		if (pObject->IsBaseCombatWeapon() &&
+			pObject->CollisionProp()->CalcDistanceFromPoint(searchCenter) > PLAYER_USE_RADIUS)
 			continue;
 
 #ifdef CLIENT_DLL
 		Vector point;
-		pObject->CollisionProp()->CalcNearestPoint( searchCenter, &point );
+		pObject->CollisionProp()->CalcNearestPoint(searchCenter, &point);
 		float dot = -1;
 		dot = DotProduct((pObject->CollisionProp()->WorldSpaceCenter() - searchCenter).Normalized(), forward);
 
 		if (addUseItemsToUseItemsList && IsUseableEntity(pObject, 0) && dot >= 0.8)
 		{
-			pObject->CollisionProp()->CalcNearestPoint( searchCenter, &point );
+			pObject->CollisionProp()->CalcNearestPoint(searchCenter, &point);
 			trace_t trCheckOccluded;
 			const int useableOccluder = MASK_SOLID | CONTENTS_PLAYERCLIP;
-			UTIL_TraceLine( searchCenter, point, useableOccluder, this, COLLISION_GROUP_PLAYER, &trCheckOccluded );
+			UTIL_TraceLine(searchCenter, point, useableOccluder, this, COLLISION_GROUP_PLAYER, &trCheckOccluded);
 
 			if (trCheckOccluded.fraction == 1.0 || trCheckOccluded.m_pEnt == pObject)
 			{
 				SetUseEntityListEntry(useEntityListIndex, pObject);
-				useEntityListIndex ++;
+				useEntityListIndex++;
 			}
 		}
 #endif // CLIENT_DLL
 
-		if ( !IsUseableEntity( pObject, FCAP_USE_IN_RADIUS ) )
+		if (!IsUseableEntity(pObject, FCAP_USE_IN_RADIUS))
 			continue;
 
 #ifdef GAME_DLL
@@ -989,28 +1002,29 @@ CBaseEntity *CNEO_Player::FindUseEntity()
 #endif // GAME_DLL
 
 		// Need to be looking at the object more or less
-		if ( dot < 0.8 )
+		if (dot < 0.8)
 			continue;
 
 #ifdef GAME_DLL
 		Vector point;
-		pObject->CollisionProp()->CalcNearestPoint( searchCenter, &point );
+		pObject->CollisionProp()->CalcNearestPoint(searchCenter, &point);
 #endif // GAME_DLL
-		
-		if ( sv_debug_player_use.GetBool() )
+
+		if (sv_debug_player_use.GetBool())
 		{
-			Msg("Radius found %s, dist %.2f\n", pObject->GetClassname(), CalcDistanceToLine( point, searchCenter, forward ) );
+			Msg("Radius found %s, dist %.2f\n", pObject->GetClassname(),
+				CalcDistanceToLine(point, searchCenter, forward));
 		}
 
-		if ( dot > nearestDot )
+		if (dot > nearestDot)
 		{
 			// Since this has purely been a radius search to this point, we now
 			// make sure the object isn't behind glass or a grate.
 			trace_t trCheckOccluded;
 			const int useableOccluder = MASK_SOLID | CONTENTS_PLAYERCLIP;
-			UTIL_TraceLine( searchCenter, point, useableOccluder, this, COLLISION_GROUP_PLAYER, &trCheckOccluded );
+			UTIL_TraceLine(searchCenter, point, useableOccluder, this, COLLISION_GROUP_PLAYER, &trCheckOccluded);
 
-			if ( trCheckOccluded.fraction == 1.0 || trCheckOccluded.m_pEnt == pObject )
+			if (trCheckOccluded.fraction == 1.0 || trCheckOccluded.m_pEnt == pObject)
 			{
 				pNearest = pObject;
 				nearestDot = dot;
@@ -1019,47 +1033,49 @@ CBaseEntity *CNEO_Player::FindUseEntity()
 	}
 
 #ifndef CLIENT_DLL
-	if ( !pNearest )
+	if (!pNearest)
 	{
 		// Haven't found anything near the player to use, nor any NPC's at distance.
 		// Check to see if the player is trying to select an NPC through a rail, fence, or other 'see-though' volume.
 		trace_t trAllies;
-		UTIL_TraceLine( searchCenter, searchCenter + forward * PLAYER_USE_RADIUS, MASK_OPAQUE_AND_NPCS, this, COLLISION_GROUP_NONE, &trAllies );
+		UTIL_TraceLine(searchCenter, searchCenter + forward * PLAYER_USE_RADIUS, MASK_OPAQUE_AND_NPCS, this,
+			COLLISION_GROUP_NONE, &trAllies);
 
-		if ( trAllies.m_pEnt && IsUseableEntity( trAllies.m_pEnt, 0 ) && trAllies.m_pEnt->MyNPCPointer() && trAllies.m_pEnt->MyNPCPointer()->IsPlayerAlly( this ) )
+		if (trAllies.m_pEnt && IsUseableEntity(trAllies.m_pEnt, 0) && trAllies.m_pEnt->MyNPCPointer() &&
+			trAllies.m_pEnt->MyNPCPointer()->IsPlayerAlly(this))
 		{
 			// This is an NPC, take it!
 			pNearest = trAllies.m_pEnt;
 		}
 	}
 
-	if ( pNearest && pNearest->MyNPCPointer() && pNearest->MyNPCPointer()->IsPlayerAlly( this ) )
+	if (pNearest && pNearest->MyNPCPointer() && pNearest->MyNPCPointer()->IsPlayerAlly(this))
 	{
-		pNearest = DoubleCheckUseNPC( pNearest, searchCenter, forward );
+		pNearest = DoubleCheckUseNPC(pNearest, searchCenter, forward);
 	}
 
-	if ( sv_debug_player_use.GetBool() )
+	if (sv_debug_player_use.GetBool())
 	{
-		if ( !pNearest )
+		if (!pNearest)
 		{
-			NDebugOverlay::Line( searchCenter, tr.endpos, 255, 0, 0, true, 30 );
-			NDebugOverlay::Cross3D( tr.endpos, 16, 255, 0, 0, true, 30 );
+			NDebugOverlay::Line(searchCenter, tr.endpos, 255, 0, 0, true, 30);
+			NDebugOverlay::Cross3D(tr.endpos, 16, 255, 0, 0, true, 30);
 		}
-		else if ( pNearest == pFoundByTrace )
+		else if (pNearest == pFoundByTrace)
 		{
-			NDebugOverlay::Line( searchCenter, tr.endpos, 0, 255, 0, true, 30 );
-			NDebugOverlay::Cross3D( tr.endpos, 16, 0, 255, 0, true, 30 );
+			NDebugOverlay::Line(searchCenter, tr.endpos, 0, 255, 0, true, 30);
+			NDebugOverlay::Cross3D(tr.endpos, 16, 0, 255, 0, true, 30);
 		}
 		else
 		{
-			NDebugOverlay::Box( pNearest->WorldSpaceCenter(), Vector(-8, -8, -8), Vector(8, 8, 8), 0, 255, 0, true, 30 );
+			NDebugOverlay::Box(pNearest->WorldSpaceCenter(), Vector(-8, -8, -8), Vector(8, 8, 8), 0, 255, 0, true, 30);
 		}
 	}
 #endif
 
-	if ( sv_debug_player_use.GetBool() )
+	if (sv_debug_player_use.GetBool())
 	{
-		Msg( "Radial using: %s\n", pNearest ? pNearest->GetDebugName() : "no usable entity found" );
+		Msg("Radial using: %s\n", pNearest ? pNearest->GetDebugName() : "no usable entity found");
 	}
 
 	return pNearest;
@@ -1071,7 +1087,7 @@ void CNEO_Player::CheckVisionButtons()
 	{
 		return;
 	}
-	
+
 	constexpr float MIN_INTERVAL_BETWEEN_VISION_TOGGLE = 0.1f;
 	if (gpGlobals->curtime - m_flVisionLastTime < MIN_INTERVAL_BETWEEN_VISION_TOGGLE)
 	{
@@ -1133,11 +1149,13 @@ void CNEO_Player::CheckVisionButtons()
 
 	EmitSound(filter, entindex(), params);
 }
-ConVar sv_neo_hitboxgroup_pen("sv_neo_hitboxgroup_pen", "0", FCVAR_REPLICATED, "When hitting outer limbs, do a second trace against head, chest and stomach", true, 0.f, true, 1.f); // NEO TODO (Adam) remove this and pick one
-bool CNEO_Player::TestHitboxes(const Ray_t& ray, unsigned int fContentsMask, trace_t& tr)
+ConVar sv_neo_hitboxgroup_pen("sv_neo_hitboxgroup_pen", "0", FCVAR_REPLICATED,
+	"When hitting outer limbs, do a second trace against head, chest and stomach", true, 0.f, true,
+	1.f); // NEO TODO (Adam) remove this and pick one
+bool CNEO_Player::TestHitboxes(const Ray_t &ray, unsigned int fContentsMask, trace_t &tr)
 {
 #ifdef CLIENT_DLL
-	VPROF( "C_BaseAnimating::TestHitboxes" );
+	VPROF("C_BaseAnimating::TestHitboxes");
 
 	MDLCACHE_CRITICAL_SECTION();
 #endif // CLIENT_DLL
@@ -1146,69 +1164,71 @@ bool CNEO_Player::TestHitboxes(const Ray_t& ray, unsigned int fContentsMask, tra
 	if (!pStudioHdr)
 		return false;
 
-	mstudiohitboxset_t *set = pStudioHdr->pHitboxSet( m_nHitboxSet );
-	if ( !set || !set->numhitboxes )
+	mstudiohitboxset_t *set = pStudioHdr->pHitboxSet(m_nHitboxSet);
+	if (!set || !set->numhitboxes)
 		return false;
 
 	// Use vcollide for box traces.
-	if ( !ray.m_IsRay )
+	if (!ray.m_IsRay)
 		return false;
 
 	// This *has* to be true for the existing code to function correctly.
-	Assert( ray.m_StartOffset == vec3_origin );
+	Assert(ray.m_StartOffset == vec3_origin);
 
 #ifdef GAME_DLL
-	CBoneCache *pCache = GetBoneCache( );
+	CBoneCache *pCache = GetBoneCache();
 #else
-	CBoneCache *pCache = GetBoneCache( pStudioHdr );
+	CBoneCache *pCache = GetBoneCache(pStudioHdr);
 #endif // GAME_DLL
 	matrix3x4_t *hitboxbones[MAXSTUDIOBONES];
-	pCache->ReadCachedBonePointers( hitboxbones, pStudioHdr->numbones() );
+	pCache->ReadCachedBonePointers(hitboxbones, pStudioHdr->numbones());
 
 #ifdef GAME_DLL
-	if ( TraceToStudio( physprops, ray, pStudioHdr, set, hitboxbones, fContentsMask, GetAbsOrigin(), GetModelScale(), tr ) )
+	if (TraceToStudio(physprops, ray, pStudioHdr, set, hitboxbones, fContentsMask, GetAbsOrigin(), GetModelScale(), tr))
 #else
-	if ( TraceToStudio( physprops, ray, pStudioHdr, set, hitboxbones, fContentsMask, GetRenderOrigin(), GetModelScale(), tr ) )
+	if (TraceToStudio(
+			physprops, ray, pStudioHdr, set, hitboxbones, fContentsMask, GetRenderOrigin(), GetModelScale(), tr))
 #endif // GAME_DLL
 	{
-		mstudiobbox_t *pbox = set->pHitbox( tr.hitbox );
+		mstudiobbox_t *pbox = set->pHitbox(tr.hitbox);
 		mstudiobone_t *pBone = pStudioHdr->pBone(pbox->bone);
 		tr.surface.name = "**studio**";
 		tr.surface.flags = SURF_HITBOX;
-		tr.surface.surfaceProps = physprops->GetSurfaceIndex( pBone->pszSurfaceProp() );
-		
+		tr.surface.surfaceProps = physprops->GetSurfaceIndex(pBone->pszSurfaceProp());
+
 		if (fContentsMask & CONTENTS_HITBOX && sv_neo_hitboxgroup_pen.GetBool())
 		{
 			switch (tr.hitgroup)
 			{
-				case HITGROUP_LEFTARM:
-				case HITGROUP_RIGHTARM:
-				case HITGROUP_LEFTLEG:
-				case HITGROUP_RIGHTLEG:
-					trace_t secondTrace;
-					unsigned int fHitboxGroupMask = UINT_MAX & ~((1 << HITGROUP_LEFTARM) | 
-																(1 << HITGROUP_RIGHTARM) | 
-																(1 << HITGROUP_LEFTLEG) | 
-																(1 << HITGROUP_RIGHTLEG));
-	#ifdef GAME_DLL
-					if (TraceToStudio(physprops, ray, pStudioHdr, set, hitboxbones, fContentsMask, GetAbsOrigin(), GetModelScale(), secondTrace, fHitboxGroupMask))
-	#else
-					if (TraceToStudio(physprops, ray, pStudioHdr, set, hitboxbones, fContentsMask, GetRenderOrigin(), GetModelScale(), secondTrace, fHitboxGroupMask))
-	#endif // GAME_DLL
-					{
-						tr.hitgroup = secondTrace.hitgroup;
-					}
+			case HITGROUP_LEFTARM:
+			case HITGROUP_RIGHTARM:
+			case HITGROUP_LEFTLEG:
+			case HITGROUP_RIGHTLEG:
+				trace_t secondTrace;
+				unsigned int fHitboxGroupMask = UINT_MAX &
+					~((1 << HITGROUP_LEFTARM) | (1 << HITGROUP_RIGHTARM) | (1 << HITGROUP_LEFTLEG) |
+						(1 << HITGROUP_RIGHTLEG));
+#ifdef GAME_DLL
+				if (TraceToStudio(physprops, ray, pStudioHdr, set, hitboxbones, fContentsMask, GetAbsOrigin(),
+						GetModelScale(), secondTrace, fHitboxGroupMask))
+#else
+				if (TraceToStudio(physprops, ray, pStudioHdr, set, hitboxbones, fContentsMask, GetRenderOrigin(),
+						GetModelScale(), secondTrace, fHitboxGroupMask))
+#endif // GAME_DLL
+				{
+					tr.hitgroup = secondTrace.hitgroup;
+				}
 			}
 		}
 
 #ifdef CLIENT_DLL
-		if ( IsRagdoll() )
+		if (IsRagdoll())
 		{
-			IPhysicsObject *pReplace = m_pRagdoll->GetElement( tr.physicsbone );
-			if ( pReplace )
+			IPhysicsObject *pReplace = m_pRagdoll->GetElement(tr.physicsbone);
+			if (pReplace)
 			{
-				VPhysicsSetObject( NULL );
-				VPhysicsSetObject( pReplace );
+				VPhysicsSetObject(NULL);
+				VPhysicsSetObject(pReplace);
 			}
 		}
 #endif // CLIENT_DLL
@@ -1263,12 +1283,12 @@ void CNEO_Player::FixupOnGroundFlag()
 #ifdef GAME_DLL
 	if (GetTeamNumber() < FIRST_GAME_TEAM) // if it's not a player, don't bother
 		return;
-	const Vector& start = GetAbsOrigin();
+	const Vector &start = GetAbsOrigin();
 	constexpr float offset = -2; // same value as CGameMovement::CategorizePosition flOffset
 	Vector end(start.x, start.y, start.z + offset);
 	Ray_t ray;
 	ray.Init(start, end, GetPlayerMins(), GetPlayerMaxs());
-	trace_t	trace;
+	trace_t trace;
 	UTIL_TraceRay(ray, MASK_PLAYERSOLID, this, COLLISION_GROUP_PLAYER_MOVEMENT, &trace);
 	const bool foundGround = trace.DidHit();
 	if (!foundGround)

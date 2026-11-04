@@ -11,9 +11,9 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 #ifdef CLIENT_DLL
-static void RecvProxy_ScaleChangeFlag(const CRecvProxyData* pData, void* pStruct, void* pOut)
+static void RecvProxy_ScaleChangeFlag(const CRecvProxyData *pData, void *pStruct, void *pOut)
 {
-	CNEOPredictedViewModelMuzzleFlash* pViewModel = ((CNEOPredictedViewModelMuzzleFlash*)pStruct);
+	CNEOPredictedViewModelMuzzleFlash *pViewModel = ((CNEOPredictedViewModelMuzzleFlash *)pStruct);
 	if (static_cast<bool>(pData->m_Value.m_Int) != pViewModel->m_bScaleChangeFlag)
 	{ // Client side value for m_flModelScale will not be updated correctly, work out the correct scale clientside
 		pViewModel->UpdateMuzzleFlashProperties(GetActiveWeapon());
@@ -37,7 +37,7 @@ RecvPropBool(RECVINFO(m_bActive)),
 RecvPropEHandle(RECVINFO(m_bScaleChangeFlag), RecvProxy_ScaleChangeFlag)
 #endif
 END_NETWORK_TABLE()
-// clang-format on
+	// clang-format on
 
 #ifdef CLIENT_DLL
 // clang-format off
@@ -51,7 +51,7 @@ END_PREDICTION_DATA()
 
 LINK_ENTITY_TO_CLASS(neo_predicted_viewmodel_muzzleflash, CNEOPredictedViewModelMuzzleFlash);
 
-constexpr const char* MUZZLE_FLASH_ENTITY_MODEL = "models/effect/fpmf/fpmf01.mdl";
+constexpr const char *MUZZLE_FLASH_ENTITY_MODEL = "models/effect/fpmf/fpmf01.mdl";
 
 CNEOPredictedViewModelMuzzleFlash::CNEOPredictedViewModelMuzzleFlash()
 {
@@ -64,9 +64,7 @@ CNEOPredictedViewModelMuzzleFlash::CNEOPredictedViewModelMuzzleFlash()
 	m_bScaleChangeFlag = false;
 }
 
-CNEOPredictedViewModelMuzzleFlash::~CNEOPredictedViewModelMuzzleFlash()
-{
-}
+CNEOPredictedViewModelMuzzleFlash::~CNEOPredictedViewModelMuzzleFlash() {}
 
 //-----------------------------------------------------------------------------
 // Purpose: Precache assets used by the entity
@@ -105,7 +103,7 @@ void CNEOPredictedViewModelMuzzleFlash::ClientThink()
 {
 	// Client side entities can only have one think function. This think function will only run when the muzzle flash properties needs to be updated. If more functionality is
 	// inserted here consider adding a variable to CNEOPredictedviewModelMuzzleFlash that can be checked here so this is done only when necessary, and remove this comment
-	CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 	if (pOwner)
 	{
 		UpdateMuzzleFlashProperties(pOwner->GetActiveWeapon(), false);
@@ -114,18 +112,19 @@ void CNEOPredictedViewModelMuzzleFlash::ClientThink()
 
 #endif //CLIENT_DLL
 
-void CNEOPredictedViewModelMuzzleFlash::CalcViewModelView(CBasePlayer* pOwner,
-	const Vector& eyePosition, const QAngle& eyeAngles)
+void CNEOPredictedViewModelMuzzleFlash::CalcViewModelView(
+	CBasePlayer *pOwner, const Vector &eyePosition, const QAngle &eyeAngles)
 {
 #ifdef CLIENT_DLL
-	auto vm = static_cast<CNEOPredictedViewModel*>(GetMoveParent());
+	auto vm = static_cast<CNEOPredictedViewModel *>(GetMoveParent());
 	if (!vm)
 	{
 		return;
 	}
 
 	int iAttachment = vm->LookupAttachment("muzzle");
-	if (iAttachment < 0) {
+	if (iAttachment < 0)
+	{
 		return;
 	}
 
@@ -139,9 +138,9 @@ void CNEOPredictedViewModelMuzzleFlash::CalcViewModelView(CBasePlayer* pOwner,
 #endif //CLIENT_DLL
 }
 
-void CNEOPredictedViewModelMuzzleFlash::UpdateMuzzleFlashProperties(CBaseCombatWeapon* pWeapon, bool repeat)
+void CNEOPredictedViewModelMuzzleFlash::UpdateMuzzleFlashProperties(CBaseCombatWeapon *pWeapon, bool repeat)
 {
-	auto neoWep = static_cast<CNEOBaseCombatWeapon*>(pWeapon);
+	auto neoWep = static_cast<CNEOBaseCombatWeapon *>(pWeapon);
 	if (!neoWep)
 	{
 #ifdef CLIENT_DLL

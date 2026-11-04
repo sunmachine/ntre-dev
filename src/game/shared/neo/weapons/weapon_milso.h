@@ -23,6 +23,7 @@
 class CWeaponMilso : public CNEOBaseCombatWeapon
 {
 	DECLARE_CLASS(CWeaponMilso, CNEOBaseCombatWeapon);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -34,12 +35,16 @@ public:
 	CWeaponMilso();
 
 	NEO_WEP_BITS_UNDERLYING_TYPE WeaponIndex() const override { return NEO_WIDX_MILSO; }
-	virtual NEO_WEP_BITS_UNDERLYING_TYPE GetNeoWepBits(void) const override { return NEO_WEP_MILSO | NEO_WEP_SUPPRESSED | NEO_WEP_FIREARM; }
+	virtual NEO_WEP_BITS_UNDERLYING_TYPE GetNeoWepBits(void) const override
+	{
+		return NEO_WEP_MILSO | NEO_WEP_SUPPRESSED | NEO_WEP_FIREARM;
+	}
 	virtual int GetNeoWepXPCost(const int neoClass) const override { return 0; }
 
 	virtual float GetSpeedScale(void) const OVERRIDE { return 0.85f; }
 
 	bool CanBePickedUpByClass(int classId) OVERRIDE;
+
 protected:
 	virtual float GetFastestDryRefireTime() const OVERRIDE { return 0.2f; }
 

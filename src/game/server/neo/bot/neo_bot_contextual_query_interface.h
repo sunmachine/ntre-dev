@@ -13,4 +13,3 @@ public:
 	// Should the bot use ADS/Aim down sight?
 	virtual QueryResultType ShouldAim(const CNEOBot *me, const bool bWepHasClip) const = 0;
 };
-

@@ -24,20 +24,22 @@ ConVar neo_bot_path_penalty_exposure_pistol("neo_bot_path_penalty_exposure_pisto
 ConVar neo_bot_path_penalty_exposure_shotgun("neo_bot_path_penalty_exposure_shotgun", "20.0", FCVAR_CHEAT,
 	"Additional penalty per visible area for shotgun-wielding bots", true, 0.0f, false, 0.0f);
 
-ConVar neo_bot_path_penalty_exposure_inverse_base_battle_rifle("neo_bot_path_penalty_exposure_inverse_base_battle_rifle", "500.0", FCVAR_CHEAT,
+ConVar neo_bot_path_penalty_exposure_inverse_base_battle_rifle(
+	"neo_bot_path_penalty_exposure_inverse_base_battle_rifle", "500.0", FCVAR_CHEAT,
 	"Base penalty for calculating inverse traversal penalty for semi-auto battle rifles", true, 1.0f, false, 0.0f);
 
-ConVar neo_bot_path_penalty_exposure_inverse_base_scoped("neo_bot_path_penalty_exposure_inverse_base_scoped", "1000.0", FCVAR_CHEAT,
-	"Base penalty for calculating inverse traversal penalty for scoped weapons", true, 1.0f, false, 0.0f);
+ConVar neo_bot_path_penalty_exposure_inverse_base_scoped("neo_bot_path_penalty_exposure_inverse_base_scoped", "1000.0",
+	FCVAR_CHEAT, "Base penalty for calculating inverse traversal penalty for scoped weapons", true, 1.0f, false, 0.0f);
 
 ConVar neo_bot_path_visibility_exposure_enable("neo_bot_path_visibility_exposure_enable", "1", FCVAR_NONE,
 	"Enable visibility-exposure pathing penalties", true, 0, true, 1);
 
 ConVar neo_bot_path_penalty_hurry_hazard_multiplier("neo_bot_path_penalty_hurry_hazard_multiplier", "20.0", FCVAR_CHEAT,
-	"Cost multiplier for a hurrying bot crossing a hazard area that is not deadly, such as smoke, which it takes only when no shorter detour exists", true, 1.0f, false, 0.0f);
+	"Cost multiplier for a hurrying bot crossing a hazard area that is not deadly, such as smoke, which it takes only when no shorter detour exists",
+	true, 1.0f, false, 0.0f);
 
 //-------------------------------------------------------------------------------------------------
-CNEOBotPathCost::CNEOBotPathCost(CNEOBot* me, RouteType routeType)
+CNEOBotPathCost::CNEOBotPathCost(CNEOBot *me, RouteType routeType)
 {
 	m_me = me;
 	m_routeType = routeType;
@@ -47,15 +49,16 @@ CNEOBotPathCost::CNEOBotPathCost(CNEOBot* me, RouteType routeType)
 	m_bIgnoreReservations = !neo_bot_path_reservation_enable.GetBool();
 	m_bIgnoreHazards = (me->m_hCommandingPlayer.Get() != nullptr);
 	m_bIgnoreVisibilityExposure = !neo_bot_path_visibility_exposure_enable.GetBool();
-	m_bInAHurry = ( me->GetIntentionInterface()->ShouldHurry( me ) == ANSWER_YES );
+	m_bInAHurry = (me->GetIntentionInterface()->ShouldHurry(me) == ANSWER_YES);
 }
 
 //-------------------------------------------------------------------------------------------------
-float CNEOBotPathCost::operator()(CNavArea* baseArea, CNavArea* fromArea, const CNavLadder* ladder, const CFuncElevator* elevator, float length) const
+float CNEOBotPathCost::operator()(
+	CNavArea *baseArea, CNavArea *fromArea, const CNavLadder *ladder, const CFuncElevator *elevator, float length) const
 {
 	VPROF_BUDGET("CNEOBotPathCost::operator()", "NextBot");
 
-	CNavArea* area = (CNavArea*)baseArea;
+	CNavArea *area = (CNavArea *)baseArea;
 
 	if (fromArea == NULL)
 	{
@@ -69,11 +72,12 @@ float CNEOBotPathCost::operator()(CNavArea* baseArea, CNavArea* fromArea, const 
 	}
 
 	float hazardMultiplier = 1.0f;
-	if ( !m_bIgnoreHazards && ( m_routeType == DEFAULT_ROUTE ) && CNEOBotPathReservations()->IsAreaHazardous(area->GetID(), m_me) )
+	if (!m_bIgnoreHazards && (m_routeType == DEFAULT_ROUTE) &&
+		CNEOBotPathReservations()->IsAreaHazardous(area->GetID(), m_me))
 	{
 		// a hurrying bot pushes through a hazard that is not deadly, such as smoke, when no detour exists,
 		// instead of stalling at its edge, but deadly hazards such as frag grenades stay impassable
-		if ( m_bInAHurry && !CNEOBotPathReservations()->IsAreaDeadlyHazard(area->GetID(), m_me) )
+		if (m_bInAHurry && !CNEOBotPathReservations()->IsAreaDeadlyHazard(area->GetID(), m_me))
 		{
 			hazardMultiplier = neo_bot_path_penalty_hurry_hazard_multiplier.GetFloat();
 		}
@@ -121,7 +125,8 @@ float CNEOBotPathCost::operator()(CNavArea* baseArea, CNavArea* fromArea, const 
 			}
 
 			// jumping is slower than flat ground
-			const float jumpPenalty = neo_bot_path_penalty_jump_multiplier.GetFloat() * Square( deltaZ / m_maxJumpHeight );
+			const float jumpPenalty =
+				neo_bot_path_penalty_jump_multiplier.GetFloat() * Square(deltaZ / m_maxJumpHeight);
 			dist *= jumpPenalty;
 		}
 		else if (deltaZ < -m_maxDropHeight)
@@ -160,13 +165,14 @@ float CNEOBotPathCost::operator()(CNavArea* baseArea, CNavArea* fromArea, const 
 
 	// ------------------------------------------------------------------------------------------------
 	// New path reservation related cost adjustments
-	if ( !m_bIgnoreReservations && (m_routeType != FASTEST_ROUTE) )
+	if (!m_bIgnoreReservations && (m_routeType != FASTEST_ROUTE))
 	{
 		cost += CNEOBotPathReservations()->GetAreaPenalty(area->GetID()).GetPathCost();
 
-		if ( NEORules()->IsTeamplay() )
+		if (NEORules()->IsTeamplay())
 		{
-			const int nFriendly = CNEOBotPathReservations()->GetPredictedFriendlyPathCount(area->GetID(), m_me->GetTeamNumber(), m_me);
+			const int nFriendly =
+				CNEOBotPathReservations()->GetPredictedFriendlyPathCount(area->GetID(), m_me->GetTeamNumber(), m_me);
 			if (nFriendly > 0)
 			{
 				// Discourage team clustering: (n^2 * penalty)
@@ -179,16 +185,17 @@ float CNEOBotPathCost::operator()(CNavArea* baseArea, CNavArea* fromArea, const 
 				// Intended for use by ghost carrier team, to emulate a team that knows where enemies are likely to ambush
 				// Compensates for bots' lack of meta knowledge by making them prefer routes not reserved by enemies
 				// Adheres to cheat against bots but not against humans philosophy by not considering human players' positions
-				const int nEnemy = CNEOBotPathReservations()->GetPredictedFriendlyPathCount(area->GetID(), GetEnemyTeam(m_me->GetTeamNumber()));
+				const int nEnemy = CNEOBotPathReservations()->GetPredictedFriendlyPathCount(
+					area->GetID(), GetEnemyTeam(m_me->GetTeamNumber()));
 				cost += nEnemy * neo_bot_path_reservation_penalty.GetFloat() * 2.0f;
 			}
 		}
 	}
 
-	if ( !m_bIgnoreVisibilityExposure && (m_routeType != FASTEST_ROUTE) )
+	if (!m_bIgnoreVisibilityExposure && (m_routeType != FASTEST_ROUTE))
 	{
 		// Weapon range penalties
-		auto* myWeapon = assert_cast<CNEOBaseCombatWeapon*>(m_me->GetActiveWeapon());
+		auto *myWeapon = assert_cast<CNEOBaseCombatWeapon *>(m_me->GetActiveWeapon());
 		if (myWeapon)
 		{
 			const int nWeaponBits = myWeapon->GetNeoWepBits();
@@ -199,8 +206,8 @@ float CNEOBotPathCost::operator()(CNavArea* baseArea, CNavArea* fromArea, const 
 				{
 					constexpr int nShotgunBits = NEO_WEP_AA13 | NEO_WEP_SUPA7;
 					constexpr int nBattleRifleBits = NEO_WEP_M41 | NEO_WEP_M41_S;
-					constexpr int nPistolCaliberBits = NEO_WEP_MILSO | NEO_WEP_TACHI | NEO_WEP_KYLA
-						| NEO_WEP_MPN | NEO_WEP_MPN_S | NEO_WEP_JITTE | NEO_WEP_JITTE_S | NEO_WEP_SRM | NEO_WEP_SRM_S;
+					constexpr int nPistolCaliberBits = NEO_WEP_MILSO | NEO_WEP_TACHI | NEO_WEP_KYLA | NEO_WEP_MPN |
+						NEO_WEP_MPN_S | NEO_WEP_JITTE | NEO_WEP_JITTE_S | NEO_WEP_SRM | NEO_WEP_SRM_S;
 
 					if (nWeaponBits & nPistolCaliberBits)
 					{
@@ -217,7 +224,8 @@ float CNEOBotPathCost::operator()(CNavArea* baseArea, CNavArea* fromArea, const 
 					else if (nWeaponBits & nBattleRifleBits)
 					{
 						// Weapons that benefit from medium sightlines that can see many NavAreas
-						const float baseline_penalty = neo_bot_path_penalty_exposure_inverse_base_battle_rifle.GetFloat();
+						const float baseline_penalty =
+							neo_bot_path_penalty_exposure_inverse_base_battle_rifle.GetFloat();
 						cost += baseline_penalty / visibleAreaCount;
 					}
 					else if (nWeaponBits & NEO_WEP_SCOPEDWEAPON)

@@ -19,16 +19,16 @@ END_DATADESC()
 
 void CNEO_TriggerWeapon::Spawn()
 {
-    BaseClass::Spawn();
-    InitTrigger();
+	BaseClass::Spawn();
+	InitTrigger();
 
-    SetNextThink(gpGlobals->curtime + THINK_INTERVAL);
+	SetNextThink(gpGlobals->curtime + THINK_INTERVAL);
 }
 
 void CNEO_TriggerWeapon::Think()
 {
-    CheckForWeapon();
-    SetNextThink(gpGlobals->curtime + THINK_INTERVAL);
+	CheckForWeapon();
+	SetNextThink(gpGlobals->curtime + THINK_INTERVAL);
 }
 
 // Weapons have the FSOLID_TRIGGER solidflag which is why they can't be used in triggers.
@@ -38,40 +38,41 @@ void CNEO_TriggerWeapon::Think()
 // What's here is fine for the ghost boundary but using this trigger for weapons will spam StartTouch every think
 void CNEO_TriggerWeapon::CheckForWeapon()
 {
-    Vector mins, maxs;
-    CollisionProp()->WorldSpaceAABB(&mins, &maxs);
+	Vector mins, maxs;
+	CollisionProp()->WorldSpaceAABB(&mins, &maxs);
 
-    CBaseEntity* pEntList[128];
-    int count = UTIL_EntitiesInBox(pEntList, ARRAYSIZE(pEntList), mins, maxs, 0); // Low accuracy
+	CBaseEntity *pEntList[128];
+	int count = UTIL_EntitiesInBox(pEntList, ARRAYSIZE(pEntList), mins, maxs, 0); // Low accuracy
 
-    for (int i = 0; i < count; ++i)
-    {
-        CBaseEntity* pEnt = pEntList[i];
+	for (int i = 0; i < count; ++i)
+	{
+		CBaseEntity *pEnt = pEntList[i];
 
-        if (!pEnt->IsBaseCombatWeapon())
-        {
-            continue;
-        }
+		if (!pEnt->IsBaseCombatWeapon())
+		{
+			continue;
+		}
 
-        if (pEnt->GetOwnerEntity())
-        {
-            continue;
-        }
+		if (pEnt->GetOwnerEntity())
+		{
+			continue;
+		}
 
-        if (IsEntityInside(pEnt)) // High(er) accuracy
-        {
-            StartTouch(pEnt);
-        }
-    }
+		if (IsEntityInside(pEnt)) // High(er) accuracy
+		{
+			StartTouch(pEnt);
+		}
+	}
 }
 
-bool CNEO_TriggerWeapon::IsEntityInside(CBaseEntity* pEnt)
+bool CNEO_TriggerWeapon::IsEntityInside(CBaseEntity *pEnt)
 {
-    trace_t tr;
-    Vector point = pEnt->WorldSpaceCenter();
-    UTIL_TraceModel(point, point, pEnt->CollisionProp()->OBBMins(), pEnt->CollisionProp()->OBBMaxs(), this, COLLISION_GROUP_NONE, &tr);
+	trace_t tr;
+	Vector point = pEnt->WorldSpaceCenter();
+	UTIL_TraceModel(point, point, pEnt->CollisionProp()->OBBMins(), pEnt->CollisionProp()->OBBMaxs(), this,
+		COLLISION_GROUP_NONE, &tr);
 
-    return tr.startsolid; // If the trace started inside the trigger or not
+	return tr.startsolid; // If the trace started inside the trigger or not
 }
 
 
@@ -89,103 +90,105 @@ END_DATADESC()
 
 void CNEO_GhostBoundary::Think()
 {
-    BaseClass::Think();
+	BaseClass::Think();
 
-    if (NEORules()->GetGameType() == NEO_GAME_TYPE_JGR)
-    {
-        // In JGR, this is only true when the juggernaut is in it's item form, so there is no player
-        if (NEORules()->JuggernautItemExists())
-        {
-            return;
-        }
+	if (NEORules()->GetGameType() == NEO_GAME_TYPE_JGR)
+	{
+		// In JGR, this is only true when the juggernaut is in it's item form, so there is no player
+		if (NEORules()->JuggernautItemExists())
+		{
+			return;
+		}
 
-        int iJuggernautIndex = NEORules()->GetJuggernautPlayer();
-        if (iJuggernautIndex == 0)
-        {
-            return;
-        }
+		int iJuggernautIndex = NEORules()->GetJuggernautPlayer();
+		if (iJuggernautIndex == 0)
+		{
+			return;
+		}
 
-        CBasePlayer* pPlayer = UTIL_PlayerByIndex(iJuggernautIndex);
-        if (pPlayer && (pPlayer->GetFlags() & FL_ONGROUND))
-        {
-            m_vecLastObjectivePos = pPlayer->GetAbsOrigin();
-        }
-    }
-    else
-    {
-        if (!NEORules()->GhostExists())
-        {
-            return;
-        }
+		CBasePlayer *pPlayer = UTIL_PlayerByIndex(iJuggernautIndex);
+		if (pPlayer && (pPlayer->GetFlags() & FL_ONGROUND))
+		{
+			m_vecLastObjectivePos = pPlayer->GetAbsOrigin();
+		}
+	}
+	else
+	{
+		if (!NEORules()->GhostExists())
+		{
+			return;
+		}
 
-        int iGhosterIndex = NEORules()->GetGhosterPlayer();
-        if (iGhosterIndex == 0)
-        {
-            return;
-        }
+		int iGhosterIndex = NEORules()->GetGhosterPlayer();
+		if (iGhosterIndex == 0)
+		{
+			return;
+		}
 
-        // The ghoster index is only refreshed after entities think, so it can still name a player who just disconnected
-        CBasePlayer* pPlayer = UTIL_PlayerByIndex(iGhosterIndex);
-        if (pPlayer && (pPlayer->GetFlags() & FL_ONGROUND))
-        {
-            m_vecLastObjectivePos = pPlayer->GetAbsOrigin();
-        }
-    }
+		// The ghoster index is only refreshed after entities think, so it can still name a player who just disconnected
+		CBasePlayer *pPlayer = UTIL_PlayerByIndex(iGhosterIndex);
+		if (pPlayer && (pPlayer->GetFlags() & FL_ONGROUND))
+		{
+			m_vecLastObjectivePos = pPlayer->GetAbsOrigin();
+		}
+	}
 }
 
 void CNEO_GhostBoundary::StartTouch(CBaseEntity *pOther)
 {
-    BaseClass::StartTouch(pOther);
+	BaseClass::StartTouch(pOther);
 
-    if (NEORules()->GetGameType() == NEO_GAME_TYPE_JGR)
-    {
-        if ((NEORules()->m_vecPreviousJuggernautSpawn == vec3_origin) && (m_vecLastObjectivePos == vec3_origin))
-        {
-            return; // Don't bother teleporting if there's no juggernaut spawn and no jgr player pos
-        }
+	if (NEORules()->GetGameType() == NEO_GAME_TYPE_JGR)
+	{
+		if ((NEORules()->m_vecPreviousJuggernautSpawn == vec3_origin) && (m_vecLastObjectivePos == vec3_origin))
+		{
+			return; // Don't bother teleporting if there's no juggernaut spawn and no jgr player pos
+		}
 
-        CNEO_Juggernaut *pDroppedJuggernaut = dynamic_cast<CNEO_Juggernaut*>(pOther);
-        if (pDroppedJuggernaut)
-        {
-            pDroppedJuggernaut->SetAbsOrigin(m_vecLastObjectivePos);
-        }
-    }
-    else
-    {
-        Vector vecGhostSpawn = NEORules()->m_vecPreviousGhostSpawn;
-        if ((vecGhostSpawn == vec3_origin) && (m_vecLastObjectivePos == vec3_origin))
-        {
-            return; // Don't bother teleporting if there's no ghost spawn and no ghoster pos
-        }
+		CNEO_Juggernaut *pDroppedJuggernaut = dynamic_cast<CNEO_Juggernaut *>(pOther);
+		if (pDroppedJuggernaut)
+		{
+			pDroppedJuggernaut->SetAbsOrigin(m_vecLastObjectivePos);
+		}
+	}
+	else
+	{
+		Vector vecGhostSpawn = NEORules()->m_vecPreviousGhostSpawn;
+		if ((vecGhostSpawn == vec3_origin) && (m_vecLastObjectivePos == vec3_origin))
+		{
+			return; // Don't bother teleporting if there's no ghost spawn and no ghoster pos
+		}
 
-        auto pDroppedGhost = (pOther && pOther->IsBaseCombatWeapon() && static_cast<CNEOBaseCombatWeapon*>(pOther)->IsGhost())
-            ? static_cast<CWeaponGhost*>(pOther) : nullptr;
-        if (pDroppedGhost)
-        {
-            if (m_vecLastObjectivePos == vec3_origin)
-            {
-                pDroppedGhost->VPhysicsGetObject()->SetPosition(vecGhostSpawn, GHOST_ANGLES, true);
-                // Don't freeze it, ghosts aren't frozen when they spawn
-            }
-            else
-            {
-                pDroppedGhost->VPhysicsGetObject()->SetPosition(m_vecLastObjectivePos, GHOST_ANGLES, true);
-                pDroppedGhost->VPhysicsGetObject()->EnableMotion(false);
-            }
+		auto pDroppedGhost =
+			(pOther && pOther->IsBaseCombatWeapon() && static_cast<CNEOBaseCombatWeapon *>(pOther)->IsGhost())
+			? static_cast<CWeaponGhost *>(pOther)
+			: nullptr;
+		if (pDroppedGhost)
+		{
+			if (m_vecLastObjectivePos == vec3_origin)
+			{
+				pDroppedGhost->VPhysicsGetObject()->SetPosition(vecGhostSpawn, GHOST_ANGLES, true);
+				// Don't freeze it, ghosts aren't frozen when they spawn
+			}
+			else
+			{
+				pDroppedGhost->VPhysicsGetObject()->SetPosition(m_vecLastObjectivePos, GHOST_ANGLES, true);
+				pDroppedGhost->VPhysicsGetObject()->EnableMotion(false);
+			}
 
-            return;
-        }
+			return;
+		}
 
-        CNEO_Player* pNEOPlayer = ToNEOPlayer(pOther);
-        if (pNEOPlayer && pNEOPlayer->IsCarryingGhost())
-        {
-            CBaseCombatWeapon* pHeldGhost = pNEOPlayer->Weapon_OwnsThisType("weapon_ghost");
-            pNEOPlayer->Weapon_Drop(pHeldGhost);
+		CNEO_Player *pNEOPlayer = ToNEOPlayer(pOther);
+		if (pNEOPlayer && pNEOPlayer->IsCarryingGhost())
+		{
+			CBaseCombatWeapon *pHeldGhost = pNEOPlayer->Weapon_OwnsThisType("weapon_ghost");
+			pNEOPlayer->Weapon_Drop(pHeldGhost);
 
-            pHeldGhost->VPhysicsGetObject()->SetPosition(m_vecLastObjectivePos, GHOST_ANGLES, true);
-            pHeldGhost->VPhysicsGetObject()->EnableMotion(false);
+			pHeldGhost->VPhysicsGetObject()->SetPosition(m_vecLastObjectivePos, GHOST_ANGLES, true);
+			pHeldGhost->VPhysicsGetObject()->EnableMotion(false);
 
-            return;
-        }
-    }
+			return;
+		}
+	}
 }

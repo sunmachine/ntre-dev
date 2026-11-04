@@ -31,8 +31,10 @@ DEFINE_INPUTFUNC(FIELD_FLOAT, "SetTimer", InputSetTimer),
 END_DATADESC()
 // clang-format on
 
-ConVar sv_neo_frag_bot_danger_sound_radius("sv_neo_frag_bot_danger_sound_radius", "1000", FCVAR_CHEAT, "Radius of the SOUND_DANGER signal emitted by frag grenades for bot AI awareness.", true, 0.0, false, 0);
-ConVar sv_neo_frag_showdebug("sv_neo_frag_showdebug", "0", FCVAR_CHEAT, "Show frag collision debug", true, 0.0, true, 1.0);
+ConVar sv_neo_frag_bot_danger_sound_radius("sv_neo_frag_bot_danger_sound_radius", "1000", FCVAR_CHEAT,
+	"Radius of the SOUND_DANGER signal emitted by frag grenades for bot AI awareness.", true, 0.0, false, 0);
+ConVar sv_neo_frag_showdebug(
+	"sv_neo_frag_showdebug", "0", FCVAR_CHEAT, "Show frag collision debug", true, 0.0, true, 1.0);
 ConVar sv_neo_frag_vphys_reawaken_vel("sv_neo_frag_vphys_reawaken_vel", "200", FCVAR_CHEAT);
 extern ConVar sv_neo_grenade_cor;
 extern ConVar sv_neo_grenade_gravity;
@@ -82,11 +84,12 @@ void CNEOGrenadeFrag::DelayThink()
 		return;
 	}
 
-#if !defined( CLIENT_DLL )
+#if !defined(CLIENT_DLL)
 	// Emit danger sound periodically for bots to hear
 	if (gpGlobals->curtime >= m_flNextSoundTime)
 	{
-		CSoundEnt::InsertSound(SOUND_DANGER, GetAbsOrigin(), sv_neo_frag_bot_danger_sound_radius.GetFloat(), 0.5f, this, SOUNDENT_CHANNEL_REPEATED_DANGER);
+		CSoundEnt::InsertSound(SOUND_DANGER, GetAbsOrigin(), sv_neo_frag_bot_danger_sound_radius.GetFloat(), 0.5f, this,
+			SOUNDENT_CHANNEL_REPEATED_DANGER);
 		m_flNextSoundTime = gpGlobals->curtime + 0.35f;
 	}
 #endif
@@ -94,7 +97,7 @@ void CNEOGrenadeFrag::DelayThink()
 	SetNextThink(gpGlobals->curtime + 0.1f);
 }
 
-void CNEOGrenadeFrag::Explode(trace_t* pTrace, int bitsDamageType)
+void CNEOGrenadeFrag::Explode(trace_t *pTrace, int bitsDamageType)
 {
 	BaseClass::Explode(pTrace, bitsDamageType);
 #ifdef GAME_DLL
@@ -104,7 +107,8 @@ void CNEOGrenadeFrag::Explode(trace_t* pTrace, int bitsDamageType)
 	{
 		// Use the thrower's position as the reported position
 		Vector vecReported = pThrower ? pThrower->GetAbsOrigin() : vec3_origin;
-		CTakeDamageInfo info(this, pThrower, GetBlastForce(), GetAbsOrigin(), m_flDamage, bitsDamageType, 0, &vecReported);
+		CTakeDamageInfo info(
+			this, pThrower, GetBlastForce(), GetAbsOrigin(), m_flDamage, bitsDamageType, 0, &vecReported);
 		gamestats->Event_WeaponHit(pPlayer, true, "weapon_grenade", info);
 	}
 #endif
@@ -128,7 +132,8 @@ CBaseGrenadeProjectile *NEOFraggrenade_Create(const Vector &position, const QAng
 	// make NPCs afaid of it while in the air
 	pGrenade->SetNextThink(gpGlobals->curtime);
 	pGrenade->SetThrower(ToBaseCombatCharacter(pOwner));
-	if (pOwner) pGrenade->ChangeTeam(pOwner->GetTeamNumber());
+	if (pOwner)
+		pGrenade->ChangeTeam(pOwner->GetTeamNumber());
 	pGrenade->m_takedamage = DAMAGE_EVENTS_ONLY;
 
 	return pGrenade;

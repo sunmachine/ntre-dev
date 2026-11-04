@@ -13,6 +13,7 @@
 class CNeoLoading : public vgui::EditablePanel
 {
 	DECLARE_CLASS_SIMPLE(CNeoLoading, vgui::EditablePanel);
+
 public:
 	CNeoLoading();
 	~CNeoLoading();

@@ -6,43 +6,43 @@
 
 extern ConVar neo_bot_fire_weapon_allowed;
 
-ConVar neo_bot_fire_at_breakable_weapon_min_time( "neo_bot_fire_at_breakable_weapon_min_time", "0.2", FCVAR_CHEAT,
-	"Minimum time to fire at breakables", true, 0.0f, true, 60.0f );
+ConVar neo_bot_fire_at_breakable_weapon_min_time("neo_bot_fire_at_breakable_weapon_min_time", "0.2", FCVAR_CHEAT,
+	"Minimum time to fire at breakables", true, 0.0f, true, 60.0f);
 
 //--------------------------------------------------------------------------------------------------------
-CBaseEntity *CNEOBotPathClearBreakable::GetBreakableInPath( CNEOBot *me )
+CBaseEntity *CNEOBotPathClearBreakable::GetBreakableInPath(CNEOBot *me)
 {
-	if ( !me || !me->IsAlive() )
+	if (!me || !me->IsAlive())
 	{
 		return nullptr;
 	}
 
-	if ( me->GetNeoFlags() & NEO_FL_FREEZETIME )
+	if (me->GetNeoFlags() & NEO_FL_FREEZETIME)
 	{
 		return nullptr;
 	}
 
-	if ( !neo_bot_fire_weapon_allowed.GetBool() )
+	if (!neo_bot_fire_weapon_allowed.GetBool())
 	{
 		return nullptr;
 	}
 
 	// Only enter this behavior if there is no visible threat
 	const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat();
-	if ( threat && threat->GetEntity() && threat->IsVisibleRecently() )
+	if (threat && threat->GetEntity() && threat->IsVisibleRecently())
 	{
 		return nullptr;
 	}
 
 	const PathFollower *path = me->GetCurrentPath();
-	if ( !path || !path->IsValid() )
+	if (!path || !path->IsValid())
 	{
 		return nullptr;
 	}
 
 	// the path follower's look ahead for props also finds breakables in the way
 	CBaseEntity *breakable = path->GetBreakableInWay();
-	if ( breakable && breakable->IsAlive() && breakable->GetHealth() > 0 )
+	if (breakable && breakable->IsAlive() && breakable->GetHealth() > 0)
 	{
 		return breakable;
 	}
@@ -52,25 +52,25 @@ CBaseEntity *CNEOBotPathClearBreakable::GetBreakableInPath( CNEOBot *me )
 
 
 //--------------------------------------------------------------------------------------------------------
-CNEOBotPathClearBreakable::CNEOBotPathClearBreakable( CBaseEntity *breakable )
+CNEOBotPathClearBreakable::CNEOBotPathClearBreakable(CBaseEntity *breakable)
 {
 	m_hBreakable = breakable;
 }
 
 
 //--------------------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotPathClearBreakable::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotPathClearBreakable::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
 	m_isWaitingForFullReload = false;
 	m_bDidSwitchWeapon = false;
 	m_bSkipKnife = false;
-	m_bStrafeRight = RandomInt( 0, 1 ) == 0;
-	m_giveUpTimer.Start( 10.0f );
-	m_meleeTimeoutTimer.Start( 2.0f );
+	m_bStrafeRight = RandomInt(0, 1) == 0;
+	m_giveUpTimer.Start(10.0f);
+	m_meleeTimeoutTimer.Start(2.0f);
 
-	if ( !m_hBreakable.Get() )
+	if (!m_hBreakable.Get())
 	{
-		return Done( "No breakable target" );
+		return Done("No breakable target");
 	}
 
 	// Prioritize weapons for clearing breakables:
@@ -78,19 +78,19 @@ ActionResult< CNEOBot > CNEOBotPathClearBreakable::OnStart( CNEOBot *me, Action<
 	// 2. Secondary (Slot 1) if it has ammo
 	// 3. Current/Primary (Slot 0) as fallback
 
-	auto *myWeapon = static_cast<CNEOBaseCombatWeapon *>( me->GetActiveWeapon() );
-	auto *knife = static_cast<CNEOBaseCombatWeapon *>( me->Weapon_GetSlot( 2 ) );
-	auto *secondaryWep = static_cast<CNEOBaseCombatWeapon *>( me->Weapon_GetSlot( 1 ) );
+	auto *myWeapon = static_cast<CNEOBaseCombatWeapon *>(me->GetActiveWeapon());
+	auto *knife = static_cast<CNEOBaseCombatWeapon *>(me->Weapon_GetSlot(2));
+	auto *secondaryWep = static_cast<CNEOBaseCombatWeapon *>(me->Weapon_GetSlot(1));
 
-	if ( !m_bSkipKnife && knife && knife != myWeapon )
+	if (!m_bSkipKnife && knife && knife != myWeapon)
 	{
-		me->Weapon_Switch( knife );
+		me->Weapon_Switch(knife);
 		m_bDidSwitchWeapon = true;
 	}
-	else if ( secondaryWep && secondaryWep != myWeapon &&
-			( ( secondaryWep->Clip1() + secondaryWep->m_iPrimaryAmmoCount ) > 0 ) )
+	else if (secondaryWep && secondaryWep != myWeapon &&
+		((secondaryWep->Clip1() + secondaryWep->m_iPrimaryAmmoCount) > 0))
 	{
-		me->Weapon_Switch( secondaryWep );
+		me->Weapon_Switch(secondaryWep);
 		m_bDidSwitchWeapon = true;
 	}
 
@@ -99,88 +99,87 @@ ActionResult< CNEOBot > CNEOBotPathClearBreakable::OnStart( CNEOBot *me, Action<
 
 
 //--------------------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotPathClearBreakable::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotPathClearBreakable::Update(CNEOBot *me, float interval)
 {
 	CBaseEntity *breakable = m_hBreakable.Get();
 
 	// If the breakable is destroyed or invalid, we're done
-	if ( !breakable || !breakable->IsAlive() || breakable->GetHealth() <= 0 )
+	if (!breakable || !breakable->IsAlive() || breakable->GetHealth() <= 0)
 	{
-		return Done( "Path is clear" );
+		return Done("Path is clear");
 	}
 
-	if ( m_giveUpTimer.IsElapsed() )
+	if (m_giveUpTimer.IsElapsed())
 	{
-		return Done( "Give up timer elapsed" );
+		return Done("Give up timer elapsed");
 	}
 
 	// Double check distance - if we've moved too far away or the breakable is too far, stop
-	if ( me->GetRangeSquaredTo( breakable ) > Square( 500.0f ) )
+	if (me->GetRangeSquaredTo(breakable) > Square(500.0f))
 	{
-		return Done( "Breakable is too far" );
+		return Done("Breakable is too far");
 	}
 
 	// If freeze time started, bail out
-	if ( me->GetNeoFlags() & NEO_FL_FREEZETIME )
+	if (me->GetNeoFlags() & NEO_FL_FREEZETIME)
 	{
-		return Done( "Freeze time" );
+		return Done("Freeze time");
 	}
 
 	// If a visible threat appeared, bail out and let the normal combat system handle it
 	const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat();
-	if ( threat && threat->GetEntity() && threat->IsVisibleRecently() )
+	if (threat && threat->GetEntity() && threat->IsVisibleRecently())
 	{
-		return Done( "Threat appeared" );
+		return Done("Threat appeared");
 	}
 
-	auto *myWeapon = static_cast<CNEOBaseCombatWeapon *>( me->GetActiveWeapon() );
-	if ( !myWeapon )
+	auto *myWeapon = static_cast<CNEOBaseCombatWeapon *>(me->GetActiveWeapon());
+	if (!myWeapon)
 	{
-		return Done( "No weapon" );
+		return Done("No weapon");
 	}
 
 	// Aim at the breakable
 	me->GetBodyInterface()->AimHeadTowards(
-		breakable->WorldSpaceCenter(), IBody::MANDATORY, 1.0f, nullptr,
-		"Attacking breakable in path" );
+		breakable->WorldSpaceCenter(), IBody::MANDATORY, 1.0f, nullptr, "Attacking breakable in path");
 
 	// Handle reloading if clip is empty
 	bool bUsesClips = myWeapon->UsesClipsForAmmo1();
-	if ( bUsesClips && myWeapon->Clip1() <= 0 )
+	if (bUsesClips && myWeapon->Clip1() <= 0)
 	{
 		me->ReleaseFireButton();
 		me->PressReloadButton();
 		m_isWaitingForFullReload = true;
 	}
 
-	if ( m_isWaitingForFullReload )
+	if (m_isWaitingForFullReload)
 	{
-		m_isWaitingForFullReload = ( bUsesClips && myWeapon->Clip1() < myWeapon->GetMaxClip1() );
+		m_isWaitingForFullReload = (bUsesClips && myWeapon->Clip1() < myWeapon->GetMaxClip1());
 	}
 
 	// Fire at the breakable if aim is ready
-	if ( !m_isWaitingForFullReload && me->GetBodyInterface()->IsHeadAimingOnTarget() )
+	if (!m_isWaitingForFullReload && me->GetBodyInterface()->IsHeadAimingOnTarget())
 	{
 		// First check if friendly in line of fire
 		trace_t aimTr;
 		Vector vForward;
-		me->EyeVectors( &vForward );
+		me->EyeVectors(&vForward);
 		Vector vStart = me->EyePosition();
 		Vector vEnd = vStart + vForward * 500.0f;
-		UTIL_TraceLine( vStart, vEnd, MASK_SHOT_HULL, me->GetEntity(), COLLISION_GROUP_NONE, &aimTr );
+		UTIL_TraceLine(vStart, vEnd, MASK_SHOT_HULL, me->GetEntity(), COLLISION_GROUP_NONE, &aimTr);
 
-		if ( aimTr.m_pEnt )
+		if (aimTr.m_pEnt)
 		{
-			if ( aimTr.m_pEnt->IsPlayer() )
+			if (aimTr.m_pEnt->IsPlayer())
 			{
-				CNEO_Player *pPlayer = ToNEOPlayer( aimTr.m_pEnt );
-				if ( pPlayer && pPlayer->InSameTeam( me->GetEntity() ) )
+				CNEO_Player *pPlayer = ToNEOPlayer(aimTr.m_pEnt);
+				if (pPlayer && pPlayer->InSameTeam(me->GetEntity()))
 				{
 					// Avoid friendly and allow them to break breakable if same path
 					me->ReleaseFireButton();
 					me->ReleaseForwardButton();
 					me->PressBackwardButton();
-					if ( m_bStrafeRight )
+					if (m_bStrafeRight)
 					{
 						me->PressRightButton();
 					}
@@ -194,10 +193,10 @@ ActionResult< CNEOBot > CNEOBotPathClearBreakable::Update( CNEOBot *me, float in
 			}
 
 			// Distance check for knife prioritization
-			if ( aimTr.m_pEnt == breakable )
+			if (aimTr.m_pEnt == breakable)
 			{
-				float flDist = ( aimTr.endpos - vStart ).Length();
-				if ( flDist > 50.0f ) // NEO_WEP_KNIFE_RANGE
+				float flDist = (aimTr.endpos - vStart).Length();
+				if (flDist > 50.0f) // NEO_WEP_KNIFE_RANGE
 				{
 					m_bSkipKnife = true;
 				}
@@ -205,20 +204,20 @@ ActionResult< CNEOBot > CNEOBotPathClearBreakable::Update( CNEOBot *me, float in
 		}
 
 		// If we've been trying to melee for too long, or the target is too far for a knife
-		if ( ( m_meleeTimeoutTimer.IsElapsed() || ( m_bSkipKnife && ( myWeapon->GetNeoWepBits() & NEO_WEP_KNIFE ) ) ) &&
-			 ( myWeapon->GetNeoWepBits() & NEO_WEP_KNIFE ) )
+		if ((m_meleeTimeoutTimer.IsElapsed() || (m_bSkipKnife && (myWeapon->GetNeoWepBits() & NEO_WEP_KNIFE))) &&
+			(myWeapon->GetNeoWepBits() & NEO_WEP_KNIFE))
 		{
-			auto *secondaryWep = static_cast<CNEOBaseCombatWeapon *>( me->Weapon_GetSlot( 1 ) );
-			auto *primaryWeapon = static_cast<CNEOBaseCombatWeapon *>( me->Weapon_GetSlot( 0 ) );
+			auto *secondaryWep = static_cast<CNEOBaseCombatWeapon *>(me->Weapon_GetSlot(1));
+			auto *primaryWeapon = static_cast<CNEOBaseCombatWeapon *>(me->Weapon_GetSlot(0));
 
-			if ( secondaryWep && ( ( secondaryWep->Clip1() + secondaryWep->m_iPrimaryAmmoCount ) > 0 ) )
+			if (secondaryWep && ((secondaryWep->Clip1() + secondaryWep->m_iPrimaryAmmoCount) > 0))
 			{
-				me->Weapon_Switch( secondaryWep );
+				me->Weapon_Switch(secondaryWep);
 				m_bDidSwitchWeapon = true;
 			}
-			else if ( primaryWeapon && ( ( primaryWeapon->Clip1() + primaryWeapon->m_iPrimaryAmmoCount ) > 0 ) )
+			else if (primaryWeapon && ((primaryWeapon->Clip1() + primaryWeapon->m_iPrimaryAmmoCount) > 0))
 			{
-				me->Weapon_Switch( primaryWeapon );
+				me->Weapon_Switch(primaryWeapon);
 				m_bDidSwitchWeapon = true;
 			}
 		}
@@ -227,13 +226,13 @@ ActionResult< CNEOBot > CNEOBotPathClearBreakable::Update( CNEOBot *me, float in
 		me->ReleaseLeanLeftButton();
 		me->ReleaseLeanRightButton();
 
-		if ( me->IsContinuousFireWeapon( myWeapon ) )
+		if (me->IsContinuousFireWeapon(myWeapon))
 		{
-			me->PressFireButton( neo_bot_fire_at_breakable_weapon_min_time.GetFloat() );
+			me->PressFireButton(neo_bot_fire_at_breakable_weapon_min_time.GetFloat());
 		}
 		else
 		{
-			if ( me->m_nButtons & IN_ATTACK )
+			if (me->m_nButtons & IN_ATTACK)
 			{
 				me->ReleaseFireButton();
 			}
@@ -249,19 +248,20 @@ ActionResult< CNEOBot > CNEOBotPathClearBreakable::Update( CNEOBot *me, float in
 
 
 //--------------------------------------------------------------------------------------------------------
-void CNEOBotPathClearBreakable::OnEnd( CNEOBot *me, Action< CNEOBot > *nextAction )
+void CNEOBotPathClearBreakable::OnEnd(CNEOBot *me, Action<CNEOBot> *nextAction)
 {
 	// If we switched weapon, try to switch back to primary
-	if ( m_bDidSwitchWeapon )
+	if (m_bDidSwitchWeapon)
 	{
-		auto *myWeapon = static_cast<CNEOBaseCombatWeapon *>( me->GetActiveWeapon() );
-		if ( !myWeapon ||
-				( myWeapon->GetNeoWepBits() & ( NEO_WEP_MILSO | NEO_WEP_TACHI | NEO_WEP_KYLA | NEO_WEP_KNIFE | NEO_WEP_THROWABLE ) ) )
+		auto *myWeapon = static_cast<CNEOBaseCombatWeapon *>(me->GetActiveWeapon());
+		if (!myWeapon ||
+			(myWeapon->GetNeoWepBits() &
+				(NEO_WEP_MILSO | NEO_WEP_TACHI | NEO_WEP_KYLA | NEO_WEP_KNIFE | NEO_WEP_THROWABLE)))
 		{
-			auto *primaryWeapon = static_cast<CNEOBaseCombatWeapon *>( me->Weapon_GetSlot( 0 ) );
-			if ( primaryWeapon && ( primaryWeapon->Clip1() + primaryWeapon->m_iPrimaryAmmoCount ) > 0 )
+			auto *primaryWeapon = static_cast<CNEOBaseCombatWeapon *>(me->Weapon_GetSlot(0));
+			if (primaryWeapon && (primaryWeapon->Clip1() + primaryWeapon->m_iPrimaryAmmoCount) > 0)
 			{
-				me->Weapon_Switch( primaryWeapon );
+				me->Weapon_Switch(primaryWeapon);
 			}
 		}
 	}

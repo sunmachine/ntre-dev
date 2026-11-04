@@ -21,7 +21,7 @@ BEGIN_NETWORK_TABLE(CWeaponSupa7, DT_WeaponSupa7)
 	SendPropFloat(SENDINFO(m_flNextReload)),
 #endif
 END_NETWORK_TABLE()
-// clang-format on
+	// clang-format on
 
 #ifdef CLIENT_DLL
 // clang-format off
@@ -51,21 +51,20 @@ END_DATADESC()
 // clang-format on
 #endif
 
-#if(0)
+#if (0)
 // Might be unsuitable for shell based shotgun? Should sort out the acttable at some point.
 NEO_IMPLEMENT_ACTTABLE(CWeaponSupa7)
 #else
 #ifdef GAME_DLL
-acttable_t	CWeaponSupa7::m_acttable[] =
-{
-	{ ACT_HL2MP_IDLE, ACT_HL2MP_IDLE_SHOTGUN, false },
-	{ ACT_HL2MP_RUN, ACT_HL2MP_RUN_SHOTGUN, false },
-	{ ACT_HL2MP_IDLE_CROUCH, ACT_HL2MP_IDLE_CROUCH_SHOTGUN, false },
-	{ ACT_HL2MP_WALK_CROUCH, ACT_HL2MP_WALK_CROUCH_SHOTGUN, false },
-	{ ACT_HL2MP_GESTURE_RANGE_ATTACK, ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN, false },
-	{ ACT_HL2MP_GESTURE_RELOAD, ACT_HL2MP_GESTURE_RELOAD_SHOTGUN, false },
-	{ ACT_HL2MP_JUMP, ACT_HL2MP_JUMP_SHOTGUN, false },
-	{ ACT_RANGE_ATTACK1, ACT_RANGE_ATTACK_SHOTGUN, false },
+acttable_t CWeaponSupa7::m_acttable[] = {
+	{ACT_HL2MP_IDLE, ACT_HL2MP_IDLE_SHOTGUN, false},
+	{ACT_HL2MP_RUN, ACT_HL2MP_RUN_SHOTGUN, false},
+	{ACT_HL2MP_IDLE_CROUCH, ACT_HL2MP_IDLE_CROUCH_SHOTGUN, false},
+	{ACT_HL2MP_WALK_CROUCH, ACT_HL2MP_WALK_CROUCH_SHOTGUN, false},
+	{ACT_HL2MP_GESTURE_RANGE_ATTACK, ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN, false},
+	{ACT_HL2MP_GESTURE_RELOAD, ACT_HL2MP_GESTURE_RELOAD_SHOTGUN, false},
+	{ACT_HL2MP_JUMP, ACT_HL2MP_JUMP_SHOTGUN, false},
+	{ACT_RANGE_ATTACK1, ACT_RANGE_ATTACK_SHOTGUN, false},
 };
 IMPLEMENT_ACTTABLE(CWeaponSupa7);
 #endif
@@ -99,7 +98,7 @@ bool CWeaponSupa7::StartReload(void)
 	if (m_bSlugLoaded)
 		return false;
 
-	CBaseCombatCharacter* pOwner = GetOwner();
+	CBaseCombatCharacter *pOwner = GetOwner();
 
 	if (pOwner == NULL)
 		return false;
@@ -140,7 +139,7 @@ bool CWeaponSupa7::StartReloadSlug(void)
 	if (m_bSlugLoaded)
 		return false;
 
-	CBaseCombatCharacter* pOwner = GetOwner();
+	CBaseCombatCharacter *pOwner = GetOwner();
 
 	if (pOwner == NULL)
 		return false;
@@ -180,7 +179,7 @@ bool CWeaponSupa7::Reload(void)
 		Warning("ERROR: Supa7 Reload called incorrectly!\n");
 	}
 
-	auto pOwner = static_cast<CNEO_Player*>(GetOwner());
+	auto pOwner = static_cast<CNEO_Player *>(GetOwner());
 
 	if (pOwner == NULL)
 		return false;
@@ -217,7 +216,7 @@ bool CWeaponSupa7::ReloadSlug(void)
 		Warning("ERROR: Supa7 ReloadSlug called incorrectly!\n");
 	}
 
-	auto pOwner = static_cast<CNEO_Player*>(GetOwner());
+	auto pOwner = static_cast<CNEO_Player *>(GetOwner());
 
 	if (pOwner == NULL)
 		return false;
@@ -248,7 +247,7 @@ void CWeaponSupa7::FinishReload(void)
 {
 	SetShotgunShellVisible(false);
 
-	CBaseCombatCharacter* pOwner = GetOwner();
+	CBaseCombatCharacter *pOwner = GetOwner();
 
 	if (pOwner == NULL)
 		return;
@@ -274,7 +273,7 @@ void CWeaponSupa7::FinishReload(void)
 // Purpose: Play finish reload anim and fill clip
 void CWeaponSupa7::FillClip(void)
 {
-	CBaseCombatCharacter* pOwner = GetOwner();
+	CBaseCombatCharacter *pOwner = GetOwner();
 
 	if (pOwner == NULL)
 		return;
@@ -293,7 +292,7 @@ void CWeaponSupa7::FillClip(void)
 // Purpose: Play finish reload anim and fill clip
 void CWeaponSupa7::FillClipSlug(void)
 {
-	CBaseCombatCharacter* pOwner = GetOwner();
+	CBaseCombatCharacter *pOwner = GetOwner();
 
 	if (pOwner == NULL)
 		return;
@@ -316,7 +315,7 @@ void CWeaponSupa7::PrimaryAttack(void)
 	}
 
 	// Only the player fires this way so we can cast
-	auto pPlayer = static_cast<CNEO_Player*>(GetOwner());
+	auto pPlayer = static_cast<CNEO_Player *>(GetOwner());
 
 	if (!pPlayer)
 	{
@@ -343,7 +342,8 @@ void CWeaponSupa7::PrimaryAttack(void)
 		WeaponSound(SINGLE);
 	}
 #ifdef GAME_DLL
-	CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_PISTOL, 0.2, GetOwner(), SOUNDENT_CHANNEL_WEAPON);
+	CSoundEnt::InsertSound(
+		SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_PISTOL, 0.2, GetOwner(), SOUNDENT_CHANNEL_WEAPON);
 #endif
 
 	FireBulletsInfo_t info(numBullets, vecSrc, vecAiming, bulletSpread, MAX_TRACE_LENGTH, ammoType);
@@ -491,7 +491,7 @@ void CWeaponSupa7::ItemPostFrame(void)
 		else
 		{
 			// If the firing button was just pressed, reset the firing time
-			CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+			CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 			if (pPlayer && pPlayer->m_afButtonPressed & IN_ATTACK)
 			{
 				ProposeNextAttack(gpGlobals->curtime);
@@ -500,12 +500,14 @@ void CWeaponSupa7::ItemPostFrame(void)
 		}
 	}
 
-	if (!(pOwner->m_nButtons & IN_ATTACK) && m_flNextPrimaryAttack <= gpGlobals->curtime && pOwner->m_nButtons & IN_RELOAD && UsesClipsForAmmo1() && !m_bInReload)
+	if (!(pOwner->m_nButtons & IN_ATTACK) && m_flNextPrimaryAttack <= gpGlobals->curtime &&
+		pOwner->m_nButtons & IN_RELOAD && UsesClipsForAmmo1() && !m_bInReload)
 	{
 		// reload when reload is pressed, or if no buttons are down and weapon is empty.
 		StartReload();
 	}
-	else if (!(pOwner->m_nButtons & IN_ATTACK) && m_flNextPrimaryAttack <= gpGlobals->curtime && pOwner->m_nButtons & IN_ATTACK2 && UsesClipsForAmmo1() && !m_bInReload)
+	else if (!(pOwner->m_nButtons & IN_ATTACK) && m_flNextPrimaryAttack <= gpGlobals->curtime &&
+		pOwner->m_nButtons & IN_ATTACK2 && UsesClipsForAmmo1() && !m_bInReload)
 	{
 		StartReloadSlug();
 	}
@@ -542,7 +544,7 @@ bool CWeaponSupa7::SlugLoaded() const
 	return m_bSlugLoaded;
 }
 
-void CWeaponSupa7::Drop(const Vector& vecVelocity)
+void CWeaponSupa7::Drop(const Vector &vecVelocity)
 {
 	ClearDelayedInputs();
 	CNEOBaseCombatWeapon::Drop(vecVelocity);

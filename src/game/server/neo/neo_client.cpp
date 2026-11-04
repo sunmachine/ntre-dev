@@ -18,22 +18,19 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-void Host_Say( edict_t *pEdict, bool teamonly );
+void Host_Say(edict_t *pEdict, bool teamonly);
 
-ConVar sv_motd_unload_on_dismissal( "sv_motd_unload_on_dismissal",
-	"1", 0,
-	"If enabled, the MOTD contents will be unloaded when the player \
-closes the MOTD." );
+ConVar sv_motd_unload_on_dismissal(
+	"sv_motd_unload_on_dismissal", "1", 0, "If enabled, the MOTD contents will be unloaded when the player \
+closes the MOTD.");
 
 ConVar sv_neo_show_motd("sv_neo_show_motd", "0", FCVAR_REPLICATED,
-						"If enabled, the MOTD will be shown on player entering the server.",
-						true, 0.0f, true, 1.0f);
+	"If enabled, the MOTD will be shown on player entering the server.", true, 0.0f, true, 1.0f);
 
-extern CBaseEntity*	FindPickerEntityClass( CBasePlayer *pPlayer,
-	char *classname );
-extern bool			g_fGameOver;
+extern CBaseEntity *FindPickerEntityClass(CBasePlayer *pPlayer, char *classname);
+extern bool g_fGameOver;
 
-void FinishClientPutInServer( CNEO_Player *pPlayer )
+void FinishClientPutInServer(CNEO_Player *pPlayer)
 {
 	// NEO NOTE (nullsystem): CNEORules::ClientConnected is done before even CNEO_Player is
 	// created, so that's why this is here and not in CNEORules
@@ -61,43 +58,44 @@ void FinishClientPutInServer( CNEO_Player *pPlayer )
 	pPlayer->Spawn();
 
 	char sName[128];
-	Q_strncpy( sName, pPlayer->GetNeoPlayerName(), sizeof( sName ) );
-	
+	Q_strncpy(sName, pPlayer->GetNeoPlayerName(), sizeof(sName));
+
 	// First parse the name and remove any %'s
-	for ( char *pApersand = sName; pApersand != NULL && *pApersand != 0; pApersand++ )
+	for (char *pApersand = sName; pApersand != NULL && *pApersand != 0; pApersand++)
 	{
 		// This causes problems with Source engine, purge!
 		const int bellCharCode = 7;
 
 		// Replace it with a space
-		if ( *pApersand == '%' || *pApersand == bellCharCode)
-				*pApersand = ' ';
+		if (*pApersand == '%' || *pApersand == bellCharCode)
+			*pApersand = ' ';
 	}
 
 	// notify other clients of player joining the game
 	if (!pPlayer->IsBot())
 	{
-		UTIL_ClientPrintAll( HUD_PRINTNOTIFY, "#Game_connected", sName[0] != 0 ? sName : "<unconnected>" );
+		UTIL_ClientPrintAll(HUD_PRINTNOTIFY, "#Game_connected", sName[0] != 0 ? sName : "<unconnected>");
 	}
 
-	if ( NEORules()->IsTeamplay() == true && NEORules()->GetGameType() != NEO_GAME_TYPE_TUT && gpGlobals->eLoadType != MapLoad_Background )
+	if (NEORules()->IsTeamplay() == true && NEORules()->GetGameType() != NEO_GAME_TYPE_TUT &&
+		gpGlobals->eLoadType != MapLoad_Background)
 	{
-		ClientPrint( pPlayer, HUD_PRINTTALK, "You are on team %s1\n", pPlayer->GetTeam()->GetName() );
+		ClientPrint(pPlayer, HUD_PRINTTALK, "You are on team %s1\n", pPlayer->GetTeam()->GetName());
 	}
 
 	INetChannelInfo *nci = engine->GetPlayerNetInfo(pPlayer->entindex());
 	if (nci && !nci->IsLoopback() && sv_neo_show_motd.GetBool())
 	{
-		const ConVar *hostname = cvar->FindVar( "hostname" );
+		const ConVar *hostname = cvar->FindVar("hostname");
 		const char *title = (hostname) ? hostname->GetString() : "MESSAGE OF THE DAY";
 
 		KeyValues *data = new KeyValues("data");
-		data->SetString( "title", title );		// info panel title
-		data->SetString( "type", "1" );			// show userdata from stringtable entry
-		data->SetString( "message",	"motd" );		// use this stringtable entry
-		data->SetBool( "unload", sv_motd_unload_on_dismissal.GetBool() );
+		data->SetString("title", title);    // info panel title
+		data->SetString("type", "1");       // show userdata from stringtable entry
+		data->SetString("message", "motd"); // use this stringtable entry
+		data->SetBool("unload", sv_motd_unload_on_dismissal.GetBool());
 
-		pPlayer->ShowViewPortPanel( PANEL_INFO, true, data );
+		pPlayer->ShowViewPortPanel(PANEL_INFO, true, data);
 
 		data->deleteThis();
 	}
@@ -114,21 +112,21 @@ ClientPutInServer
 called each time a player is spawned into the game
 ============
 */
-void ClientPutInServer( edict_t *pEdict, const char *playername )
+void ClientPutInServer(edict_t *pEdict, const char *playername)
 {
 	// Allocate a CBaseTFPlayer for pev, and call spawn
-	CNEO_Player *pPlayer = CNEO_Player::CreatePlayer( "player", pEdict );
-	pPlayer->SetPlayerName( playername );
+	CNEO_Player *pPlayer = CNEO_Player::CreatePlayer("player", pEdict);
+	pPlayer->SetPlayerName(playername);
 }
 
 
-void ClientActive( edict_t *pEdict, bool bLoadGame )
+void ClientActive(edict_t *pEdict, bool bLoadGame)
 {
 	// Can't load games in NEO multiplayer!
-	Assert( !bLoadGame );
+	Assert(!bLoadGame);
 
-	CNEO_Player *pPlayer = ToNEOPlayer( CBaseEntity::Instance( pEdict ) );
-	FinishClientPutInServer( pPlayer );
+	CNEO_Player *pPlayer = ToNEOPlayer(CBaseEntity::Instance(pEdict));
+	FinishClientPutInServer(pPlayer);
 }
 
 
@@ -148,18 +146,18 @@ const char *GetGameDescription()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: Given a player and optional name returns the entity of that 
+// Purpose: Given a player and optional name returns the entity of that
 //			classname that the player is nearest facing
-//			
+//
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-CBaseEntity* FindEntity( edict_t *pEdict, char *classname)
+CBaseEntity *FindEntity(edict_t *pEdict, char *classname)
 {
 	// If no name was given set bits based on the picked
-	if (FStrEq(classname,"")) 
+	if (FStrEq(classname, ""))
 	{
-		return (FindPickerEntityClass( static_cast<CBasePlayer*>(GetContainingEntity(pEdict)), classname ));
+		return (FindPickerEntityClass(static_cast<CBasePlayer *>(GetContainingEntity(pEdict)), classname));
 	}
 	return NULL;
 }
@@ -167,25 +165,25 @@ CBaseEntity* FindEntity( edict_t *pEdict, char *classname)
 // These are what hl2mp_client.cpp calls on ClientGamePrecache().
 // NEO TODO (Rain): we can probably skip this once we're guaranteed
 // to no longer use any of these.
-void Precache_HL2MP( void )
+void Precache_HL2MP(void)
 {
 	CBaseEntity::PrecacheModel("models/player.mdl");
 	CBaseEntity::PrecacheModel("models/gibs/agibs.mdl");
 	CBaseEntity::PrecacheModel("models/weapons/v_hands.mdl");
 
-	CBaseEntity::PrecacheScriptSound( "HUDQuickInfo.LowAmmo" );
-	CBaseEntity::PrecacheScriptSound( "HUDQuickInfo.LowHealth" );
+	CBaseEntity::PrecacheScriptSound("HUDQuickInfo.LowAmmo");
+	CBaseEntity::PrecacheScriptSound("HUDQuickInfo.LowHealth");
 
-	CBaseEntity::PrecacheScriptSound( "Missile.ShotDown" );
-	CBaseEntity::PrecacheScriptSound( "Bullets.DefaultNearmiss" );
-	CBaseEntity::PrecacheScriptSound( "Bullets.GunshipNearmiss" );
-	CBaseEntity::PrecacheScriptSound( "Bullets.StriderNearmiss" );
-	
-	CBaseEntity::PrecacheScriptSound( "Geiger.BeepHigh" );
-	CBaseEntity::PrecacheScriptSound( "Geiger.BeepLow" );
+	CBaseEntity::PrecacheScriptSound("Missile.ShotDown");
+	CBaseEntity::PrecacheScriptSound("Bullets.DefaultNearmiss");
+	CBaseEntity::PrecacheScriptSound("Bullets.GunshipNearmiss");
+	CBaseEntity::PrecacheScriptSound("Bullets.StriderNearmiss");
+
+	CBaseEntity::PrecacheScriptSound("Geiger.BeepHigh");
+	CBaseEntity::PrecacheScriptSound("Geiger.BeepLow");
 }
 
-void Precache_NEO_Sounds( void )
+void Precache_NEO_Sounds(void)
 {
 	CBaseEntity::PrecacheScriptSound("weapon_milso.reload");
 	CBaseEntity::PrecacheScriptSound("weapon_milso.npc_reload");
@@ -333,10 +331,10 @@ void Precache_NEO_Sounds( void )
 //-----------------------------------------------------------------------------
 // Purpose: Precache game-specific models & sounds
 //-----------------------------------------------------------------------------
-void ClientGamePrecache( void )
+void ClientGamePrecache(void)
 {
 	Precache_HL2MP();
-	
+
 	CNEOModelManager *modelManager = CNEOModelManager::Instance();
 	if (!modelManager)
 	{
@@ -348,13 +346,13 @@ void ClientGamePrecache( void )
 }
 
 // called by ClientKill and DeadThink
-bool RespawnWithRet( CBaseEntity *pEdict, bool fCopyCorpse )
+bool RespawnWithRet(CBaseEntity *pEdict, bool fCopyCorpse)
 {
-	CNEO_Player *pPlayer = ToNEOPlayer( pEdict );
+	CNEO_Player *pPlayer = ToNEOPlayer(pEdict);
 
-	if ( pPlayer )
+	if (pPlayer)
 	{
-		if ( (gpGlobals->curtime > pPlayer->GetDeathTime() + DEATH_ANIMATION_TIME) || pPlayer->GetDeathTime() == 0.f)
+		if ((gpGlobals->curtime > pPlayer->GetDeathTime() + DEATH_ANIMATION_TIME) || pPlayer->GetDeathTime() == 0.f)
 		{
 			if (NEORules()->FPlayerCanRespawn(pPlayer))
 			{
@@ -365,7 +363,7 @@ bool RespawnWithRet( CBaseEntity *pEdict, bool fCopyCorpse )
 		}
 		else
 		{
-			pPlayer->SetNextThink( gpGlobals->curtime + 0.1f );
+			pPlayer->SetNextThink(gpGlobals->curtime + 0.1f);
 		}
 	}
 	return false;
@@ -376,10 +374,10 @@ void respawn(CBaseEntity *pEdict, bool fCopyCorpse)
 	RespawnWithRet(pEdict, fCopyCorpse);
 }
 
-void GameStartFrame( void )
+void GameStartFrame(void)
 {
 	VPROF("GameStartFrame()");
-	if ( g_fGameOver )
+	if (g_fGameOver)
 		return;
 
 	gpGlobals->teamplay = (teamplay.GetInt() != 0);
@@ -390,5 +388,5 @@ void GameStartFrame( void )
 //=========================================================
 void InstallGameRules()
 {
-	CreateGameRulesObject( "CNEORules" );
+	CreateGameRulesObject("CNEORules");
 }

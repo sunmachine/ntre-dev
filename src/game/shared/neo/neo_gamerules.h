@@ -17,19 +17,19 @@
 #include "neo_juggernaut.h"
 
 #ifdef CLIENT_DLL
-	#include "c_neo_player.h"
+#include "c_neo_player.h"
 #else
-	#include "neo_player.h"
-	#include "neo_ghost_spawn_point.h"
-	#include "utlhashtable.h"
-	#include "neo_gamerules_restore.h"
+#include "neo_player.h"
+#include "neo_ghost_spawn_point.h"
+#include "utlhashtable.h"
+#include "neo_gamerules_restore.h"
 #endif
 
 #include "neo_player_shared.h"
 
 #ifdef CLIENT_DLL
-	#define CNEORules C_NEORules
-	#define CNEOGameRulesProxy C_NEOGameRulesProxy
+#define CNEORules C_NEORules
+#define CNEOGameRulesProxy C_NEOGameRulesProxy
 #endif
 
 // NEO JANK (Rain): magic value for signaling a mp_restart originated from "neo_restart_this".
@@ -40,7 +40,7 @@ constexpr float MAGIC_NEO_RESTART_THIS = 0xdaff;
 class CNEOGameRulesProxy : public CHL2MPGameRulesProxy
 {
 public:
-	DECLARE_CLASS( CNEOGameRulesProxy, CHL2MPGameRulesProxy );
+	DECLARE_CLASS(CNEOGameRulesProxy, CHL2MPGameRulesProxy);
 	DECLARE_NETWORKCLASS();
 
 #ifdef CLIENT_DLL
@@ -51,31 +51,12 @@ public:
 class NEOViewVectors : public HL2MPViewVectors
 {
 public:
-	NEOViewVectors( 
+	NEOViewVectors(
 		// Same as HL2MP, passed to parent ctor
-		Vector vView,
-		Vector vHullMin,
-		Vector vHullMax,
-		Vector vDuckHullMin,
-		Vector vDuckHullMax,
-		Vector vDuckView,
-		Vector vObsHullMin,
-		Vector vObsHullMax,
-		Vector vDeadViewHeight,
-		Vector vCrouchTraceMin,
-		Vector vCrouchTraceMax) :
-			HL2MPViewVectors( 
-				vView,
-				vHullMin,
-				vHullMax,
-				vDuckHullMin,
-				vDuckHullMax,
-				vDuckView,
-				vObsHullMin,
-				vObsHullMax,
-				vDeadViewHeight,
-				vCrouchTraceMin,
-				vCrouchTraceMax )
+		Vector vView, Vector vHullMin, Vector vHullMax, Vector vDuckHullMin, Vector vDuckHullMax, Vector vDuckView,
+		Vector vObsHullMin, Vector vObsHullMax, Vector vDeadViewHeight, Vector vCrouchTraceMin, Vector vCrouchTraceMax)
+		: HL2MPViewVectors(vView, vHullMin, vHullMax, vDuckHullMin, vDuckHullMax, vDuckView, vObsHullMin, vObsHullMax,
+			  vDeadViewHeight, vCrouchTraceMin, vCrouchTraceMax)
 	{
 	}
 };
@@ -99,7 +80,8 @@ class C_NEO_Player;
 
 extern ConVar sv_neo_player_restore;
 
-enum NeoGameType {
+enum NeoGameType
+{
 	NEO_GAME_TYPE_TDM = 0,
 	NEO_GAME_TYPE_CTG,
 	NEO_GAME_TYPE_VIP,
@@ -112,8 +94,9 @@ enum NeoGameType {
 	NEO_GAME_TYPE__TOTAL // Number of game types
 };
 
-struct NeoGameTypeSettings {
-	const char* gameTypeName;
+struct NeoGameTypeSettings
+{
+	const char *gameTypeName;
 	bool respawns;
 	bool neoRulesThink;
 	bool changeTeamClassLoadoutWhenAlive;
@@ -124,7 +107,8 @@ struct NeoGameTypeSettings {
 extern const NeoGameTypeSettings NEO_GAME_TYPE_SETTINGS[NEO_GAME_TYPE__TOTAL];
 extern const SZWSZTexts NEO_GAME_TYPE_DESC_STRS[NEO_GAME_TYPE__TOTAL];
 
-enum NeoRoundStatus {
+enum NeoRoundStatus
+{
 	Idle = 0,
 	Warmup,
 	PreRoundFreeze,
@@ -137,7 +121,8 @@ enum NeoRoundStatus {
 	RoundStatusTotal
 };
 
-enum NeoWinReason {
+enum NeoWinReason
+{
 	NEO_VICTORY_GHOST_CAPTURE = 0,
 	NEO_VICTORY_VIP_ESCORT,
 	NEO_VICTORY_VIP_ELIMINATION,
@@ -151,7 +136,8 @@ enum NeoWinReason {
 };
 
 #define NEO_HUD_BITS_UNDERLYING_TYPE int
-enum NeoHudElements : NEO_HUD_BITS_UNDERLYING_TYPE {
+enum NeoHudElements : NEO_HUD_BITS_UNDERLYING_TYPE
+{
 	NEO_HUD_ELEMENT_INVALID = 0x0,
 
 	NEO_HUD_ELEMENT_AMMO = (static_cast<NEO_HUD_BITS_UNDERLYING_TYPE>(1) << 0),
@@ -175,7 +161,8 @@ enum NeoHudElements : NEO_HUD_BITS_UNDERLYING_TYPE {
 	NEO_HUD_ELEMENT_PLACE_NAME = (static_cast<NEO_HUD_BITS_UNDERLYING_TYPE>(1) << 18),
 };
 
-enum NeoSpectateEvent {
+enum NeoSpectateEvent
+{
 	NEO_SPECTATE_EVENT_LAST_HURT = 0,
 	NEO_SPECTATE_EVENT_LAST_SHOOTER,
 	NEO_SPECTATE_EVENT_LAST_EVENT,
@@ -187,7 +174,7 @@ enum NeoSpectateEvent {
 class CNEORules : public CHL2MPRules, public CGameEventListener
 {
 public:
-	DECLARE_CLASS( CNEORules, CHL2MPRules );
+	DECLARE_CLASS(CNEORules, CHL2MPRules);
 
 // This makes datatables able to access our private vars.
 #ifdef CLIENT_DLL
@@ -202,28 +189,30 @@ public:
 #ifdef GAME_DLL
 	virtual void Precache() OVERRIDE;
 
-	virtual bool ClientConnected(edict_t *pEntity, const char *pszName, const char *pszAddress, char *reject, int maxrejectlen) OVERRIDE;
+	virtual bool ClientConnected(
+		edict_t *pEntity, const char *pszName, const char *pszAddress, char *reject, int maxrejectlen) OVERRIDE;
 
-	virtual bool ClientCommand(CBaseEntity* pEdict, const CCommand& args) OVERRIDE;
+	virtual bool ClientCommand(CBaseEntity *pEdict, const CCommand &args) OVERRIDE;
 
-	virtual void SetWinningTeam(int team, int iWinReason, bool bForceMapReset = true, bool bSwitchTeams = false, bool bDontAddScore = false, bool bFinal = false) OVERRIDE;
+	virtual void SetWinningTeam(int team, int iWinReason, bool bForceMapReset = true, bool bSwitchTeams = false,
+		bool bDontAddScore = false, bool bFinal = false) OVERRIDE;
 	void SetWinningDMPlayer(CNEO_Player *pWinner);
 
 	virtual void ChangeLevel(void) OVERRIDE;
 
-	virtual void ClientDisconnected(edict_t* pClient) OVERRIDE;
+	virtual void ClientDisconnected(edict_t *pClient) OVERRIDE;
 
 	CBaseEntity *GetPlayerSpawnSpot(CBasePlayer *pPlayer) override;
 
 	virtual bool IsOfficialMap(void) override;
 
-	virtual void MarkAchievement ( IRecipientFilter& filter, char const *pchAchievementName ) override;
+	virtual void MarkAchievement(IRecipientFilter &filter, char const *pchAchievementName) override;
 
 	virtual void InitDefaultAIRelationships(void);
 #endif
-	virtual bool ShouldCollide( int collisionGroup0, int collisionGroup1 ) OVERRIDE;
+	virtual bool ShouldCollide(int collisionGroup0, int collisionGroup1) OVERRIDE;
 
-	virtual const char* GetGameName() { return NEO_GAME_NAME; }
+	virtual const char *GetGameName() { return NEO_GAME_NAME; }
 
 #ifdef NEO
 	bool GetTeamPlayEnabled() const override;
@@ -231,7 +220,7 @@ public:
 
 
 #ifdef GAME_DLL
-	virtual bool FPlayerCanRespawn(CBasePlayer* pPlayer) OVERRIDE;
+	virtual bool FPlayerCanRespawn(CBasePlayer *pPlayer) OVERRIDE;
 #endif
 
 	virtual int GetGameType(void) OVERRIDE;
@@ -244,34 +233,33 @@ public:
 	int GetForcedSkin();
 	int GetForcedWeapon();
 	bool IsCyberspace();
-	virtual const char* GetGameTypeName(void) OVERRIDE;
+	virtual const char *GetGameTypeName(void) OVERRIDE;
 	bool CanChangeTeamClassLoadoutWhenAlive();
 	bool CanRespawnAnyTime();
 
 	void GetDMHighestScorers(
 #ifdef GAME_DLL
-			CNEO_Player *(*pHighestPlayers)[MAX_PLAYERS + 1],
+		CNEO_Player *(*pHighestPlayers)[MAX_PLAYERS + 1],
 #endif
-			int *iHighestPlayersTotal,
-			int *iHighestXP) const;
+		int *iHighestPlayersTotal, int *iHighestXP) const;
 
-	virtual void Think( void ) OVERRIDE;
-	virtual void CreateStandardEntities( void ) OVERRIDE;
+	virtual void Think(void) OVERRIDE;
+	virtual void CreateStandardEntities(void) OVERRIDE;
 
-	virtual const char *GetGameDescription( void ) OVERRIDE;
-	virtual const CViewVectors* GetViewVectors() const OVERRIDE;
+	virtual const char *GetGameDescription(void) OVERRIDE;
+	virtual const CViewVectors *GetViewVectors() const OVERRIDE;
 
-	const NEOViewVectors* GetNEOViewVectors() const;
+	const NEOViewVectors *GetNEOViewVectors() const;
 
 	virtual void ClientSettingsChanged(CBasePlayer *pPlayer) OVERRIDE;
 
-	virtual void ClientSpawned(edict_t* pPlayer) OVERRIDE;
+	virtual void ClientSpawned(edict_t *pPlayer) OVERRIDE;
 
-	virtual void DeathNotice(CBasePlayer* pVictim, const CTakeDamageInfo& info) OVERRIDE
+	virtual void DeathNotice(CBasePlayer *pVictim, const CTakeDamageInfo &info) OVERRIDE
 #ifdef CLIENT_DLL
-	{ }
+		{}
 #else
-	;
+		;
 #endif
 
 	bool RoundIsInSuddenDeath() const;
@@ -334,7 +322,7 @@ public:
 	virtual void CleanUpMap() OVERRIDE;
 	virtual void RestartGame() OVERRIDE;
 
-	virtual float FlPlayerFallDamage(CBasePlayer* pPlayer) OVERRIDE;
+	virtual float FlPlayerFallDamage(CBasePlayer *pPlayer) OVERRIDE;
 #endif
 	bool IsRoundPreRoundFreeze() const;
 	bool IsRoundLive() const;
@@ -362,9 +350,12 @@ public:
 	bool RoundTimeoutJGR();
 	bool RoundTimeoutATK();
 
-	virtual const char* GetChatFormat(bool bTeamOnly, CBasePlayer* pPlayer) OVERRIDE;
-	virtual const char* GetChatPrefix(bool bTeamOnly, CBasePlayer* pPlayer) OVERRIDE { return ""; } // handled by GetChatFormat
-	virtual const char* GetChatLocation(bool bTeamOnly, CBasePlayer* pPlayer) OVERRIDE { return NULL; } // unimplemented
+	virtual const char *GetChatFormat(bool bTeamOnly, CBasePlayer *pPlayer) OVERRIDE;
+	virtual const char *GetChatPrefix(bool bTeamOnly, CBasePlayer *pPlayer) OVERRIDE
+	{
+		return "";
+	} // handled by GetChatFormat
+	virtual const char *GetChatLocation(bool bTeamOnly, CBasePlayer *pPlayer) OVERRIDE { return NULL; } // unimplemented
 #endif
 	bool CheckShouldNotThink();
 
@@ -374,17 +365,17 @@ public:
 	// This is the supposed encrypt key on NT, although it has its issues.
 	// See https://steamcommunity.com/groups/ANPA/discussions/0/1482109512299590948/
 	// (and NT Discord) for discussions.
-	virtual const unsigned char* GetEncryptionKey(void) OVERRIDE { return (unsigned char*)"tBA%-ygc"; }
+	virtual const unsigned char *GetEncryptionKey(void) OVERRIDE { return (unsigned char *)"tBA%-ygc"; }
 
 	int GetGhosterTeam() const { return m_iGhosterTeam; }
 	int GetGhosterPlayer() const { return m_iGhosterPlayer; }
 	bool GhostExists() const { return m_bGhostExists; }
-	const Vector& GetGhostPos() const;
+	const Vector &GetGhostPos() const;
 	Vector GetGhostMarkerPos() const;
 
 	int GetJuggernautPlayer() const { return m_iJuggernautPlayerIndex; }
 	bool JuggernautItemExists() const;
-	const Vector& GetJuggernautMarkerPos() const;
+	const Vector &GetJuggernautMarkerPos() const;
 	bool IsJuggernautLocked() const;
 
 	bool IsReadyUpEnabled() const;
@@ -393,13 +384,19 @@ public:
 
 	int GetOpposingTeam(const int team) const
 	{
-		if (team == TEAM_JINRAI) { return TEAM_NSF; }
-		if (team == TEAM_NSF) { return TEAM_JINRAI; }
+		if (team == TEAM_JINRAI)
+		{
+			return TEAM_NSF;
+		}
+		if (team == TEAM_NSF)
+		{
+			return TEAM_JINRAI;
+		}
 		Assert(false);
 		return TEAM_SPECTATOR;
 	}
 
-	int GetOpposingTeam(const CBaseCombatCharacter* player) const
+	int GetOpposingTeam(const CBaseCombatCharacter *player) const
 	{
 		if (!player)
 		{
@@ -411,8 +408,8 @@ public:
 	}
 
 	inline void SetRoundNumber(const int iNewVal) { m_iRoundNumber.Set(iNewVal); }
-    inline int roundNumber() const { return m_iRoundNumber; }
-    inline bool roundNumberIsEven() const { return (roundNumber() % 2 == 0); }
+	inline int roundNumber() const { return m_iRoundNumber; }
+	inline bool roundNumberIsEven() const { return (roundNumber() % 2 == 0); }
 	int GetAttackingTeam() const;
 	int GetDefendingTeam() const;
 
@@ -421,15 +418,15 @@ public:
 	{
 		if (teamNumber == TEAM_JINRAI)
 		{
-			r = static_cast<float>(COLOR_JINRAI.r()/255.f);
-			g = static_cast<float>(COLOR_JINRAI.g()/255.f);
-			b = static_cast<float>(COLOR_JINRAI.b()/255.f);
+			r = static_cast<float>(COLOR_JINRAI.r() / 255.f);
+			g = static_cast<float>(COLOR_JINRAI.g() / 255.f);
+			b = static_cast<float>(COLOR_JINRAI.b() / 255.f);
 		}
 		else if (teamNumber == TEAM_NSF)
 		{
-			r = static_cast<float>(COLOR_NSF.r()/255.f);
-			g = static_cast<float>(COLOR_NSF.g()/255.f);
-			b = static_cast<float>(COLOR_NSF.b()/255.f);
+			r = static_cast<float>(COLOR_NSF.r() / 255.f);
+			g = static_cast<float>(COLOR_NSF.g() / 255.f);
+			b = static_cast<float>(COLOR_NSF.b() / 255.f);
 		}
 		else
 		{
@@ -484,6 +481,7 @@ private:
 	void SpawnTheGhost(const Vector *origin = nullptr);
 	void SpawnTheJuggernaut(const Vector *origin = nullptr);
 	void SelectTheVIP();
+
 public:
 	void JuggernautActivated(CNEO_Player *pPlayer);
 	void JuggernautDeactivated(CNEO_Juggernaut *pJuggernaut);
@@ -517,7 +515,7 @@ private:
 	CNEO_Player *m_pJuggernautPlayer = nullptr;
 	float m_flJuggernautDeathTime = 0.0f;
 	int m_iLastJuggernautTeam = TEAM_INVALID;
-	
+
 	// For looking up the ghost
 	friend class CNEOBotCtgLoneWolf;
 	friend class CNEOBotCtgLoneWolfAmbush;
@@ -569,12 +567,12 @@ private:
 	CNetworkVector(m_vecGhostMarkerPos);
 	CNetworkVar(bool, m_bGhostExists);
 	CNetworkVar(float, m_flGhostLastHeld);
-	CNetworkHandle( CWeaponGhost, m_hGhost );
+	CNetworkHandle(CWeaponGhost, m_hGhost);
 
 	// Juggernaut networked variables
 	CNetworkVar(int, m_iJuggernautPlayerIndex);
 	CNetworkVar(bool, m_bJuggernautItemExists);
-	CNetworkHandle( CBaseEntity, m_hJuggernaut );
+	CNetworkHandle(CBaseEntity, m_hJuggernaut);
 
 	CNetworkVar(float, m_flNeoRoundStartTime);
 	CNetworkVar(float, m_flNeoNextRoundStartTime);
@@ -623,7 +621,7 @@ public:
 
 inline CNEORules *NEORules()
 {
-	return static_cast<CNEORules*>(g_pGameRules);
+	return static_cast<CNEORules *>(g_pGameRules);
 }
 
 #endif // NEO_GAMERULES_H

@@ -12,37 +12,37 @@
 #include "weapon_ghost.h"
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotCtgSeek::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotCtgSeek::Update(CNEOBot *me, float interval)
 {
 	if (NEORules()->GetGameType() != NEO_GAME_TYPE_CTG)
 	{
-		return Done( "Game mode is no longer CTG" );
+		return Done("Game mode is no longer CTG");
 	}
 
 	if (NEORules()->IsRoundOver())
 	{
-		return Done( "Round Over: CTG objective no longer relevant" );
+		return Done("Round Over: CTG objective no longer relevant");
 	}
 
-	ActionResult< CNEOBot > result = UpdateCommon( me, interval );
-	if ( result.IsRequestingChange() || result.IsDone() )
+	ActionResult<CNEOBot> result = UpdateCommon(me, interval);
+	if (result.IsRequestingChange() || result.IsDone())
 	{
 		return result;
 	}
 
 	int team_members = 0;
-	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
+	for (int i = 1; i <= gpGlobals->maxClients; i++)
 	{
-		CNEO_Player *pPlayer = ToNEOPlayer( UTIL_PlayerByIndex( i ) );
-		if ( pPlayer && pPlayer->IsAlive() && pPlayer->GetTeamNumber() == me->GetTeamNumber() )
+		CNEO_Player *pPlayer = ToNEOPlayer(UTIL_PlayerByIndex(i));
+		if (pPlayer && pPlayer->IsAlive() && pPlayer->GetTeamNumber() == me->GetTeamNumber())
 		{
 			team_members++;
 		}
 	}
 
-	if ( team_members == 1 )
+	if (team_members == 1)
 	{
-		return SuspendFor( new CNEOBotCtgLoneWolf, "I'm the last one on my team!" );
+		return SuspendFor(new CNEOBotCtgLoneWolf, "I'm the last one on my team!");
 	}
 
 	if (NEORules()->GhostExists())
@@ -50,7 +50,7 @@ ActionResult< CNEOBot > CNEOBotCtgSeek::Update( CNEOBot *me, float interval )
 		int iGhosterPlayer = NEORules()->GetGhosterPlayer();
 		if (iGhosterPlayer > 0 && iGhosterPlayer <= gpGlobals->maxClients)
 		{
-			CNEO_Player* pGhostCarrier = ToNEOPlayer(UTIL_PlayerByIndex(iGhosterPlayer));
+			CNEO_Player *pGhostCarrier = ToNEOPlayer(UTIL_PlayerByIndex(iGhosterPlayer));
 			if (pGhostCarrier && pGhostCarrier != me)
 			{
 				if (pGhostCarrier->GetTeamNumber() == me->GetTeamNumber())
@@ -75,20 +75,20 @@ ActionResult< CNEOBot > CNEOBotCtgSeek::Update( CNEOBot *me, float interval )
 	if (m_bGoingToTargetEntity && m_hTargetEntity)
 	{
 		const float useRangeSq = 100.0f * 100.0f;
-		if ( me->GetAbsOrigin().DistToSqr( m_hTargetEntity->GetAbsOrigin() ) < useRangeSq ) 
+		if (me->GetAbsOrigin().DistToSqr(m_hTargetEntity->GetAbsOrigin()) < useRangeSq)
 		{
-			if ( !m_hTargetEntity->IsPlayer() )
+			if (!m_hTargetEntity->IsPlayer())
 			{
-				if ( me->IsLineOfSightClear( m_hTargetEntity, CBaseCombatCharacter::IGNORE_ACTORS ) )
+				if (me->IsLineOfSightClear(m_hTargetEntity, CBaseCombatCharacter::IGNORE_ACTORS))
 				{
 					const char *classname = m_hTargetEntity->GetClassname();
-					if ( FStrEq( classname, "weapon_ghost" ) )
+					if (FStrEq(classname, "weapon_ghost"))
 					{
-						CBaseCombatWeapon* pWeapon = m_hTargetEntity->MyCombatWeaponPointer();
-						if ( pWeapon && !pWeapon->GetOwner() )
+						CBaseCombatWeapon *pWeapon = m_hTargetEntity->MyCombatWeaponPointer();
+						if (pWeapon && !pWeapon->GetOwner())
 						{
-							CWeaponGhost *pGhost = assert_cast<CWeaponGhost*>( m_hTargetEntity.Get() );
-							return SuspendFor( new CNEOBotCtgCapture( pGhost ), "Capturing Ghost" );
+							CWeaponGhost *pGhost = assert_cast<CWeaponGhost *>(m_hTargetEntity.Get());
+							return SuspendFor(new CNEOBotCtgCapture(pGhost), "Capturing Ghost");
 						}
 					}
 				}
@@ -97,11 +97,12 @@ ActionResult< CNEOBot > CNEOBotCtgSeek::Update( CNEOBot *me, float interval )
 					// Only count the ghost as stuck if we can't see it in the last area of our path
 					// e.g. continue walking around a blocking wall before deciding the ghost is blocked
 					const Path::Segment *pathGoal = m_path.IsValid() ? m_path.GetCurrentGoal() : nullptr;
-					const bool bStillWalkingAround = pathGoal && ( pathGoal != m_path.LastSegment() );
+					const bool bStillWalkingAround = pathGoal && (pathGoal != m_path.LastSegment());
 
-					if ( !bStillWalkingAround )
+					if (!bStillWalkingAround)
 					{
-						return SuspendFor(new CNEOBotCtgLoneWolf, "Capture target is blocked by some other entity, searching around the nearest areas");
+						return SuspendFor(new CNEOBotCtgLoneWolf,
+							"Capture target is blocked by some other entity, searching around the nearest areas");
 					}
 				}
 			}
@@ -112,7 +113,7 @@ ActionResult< CNEOBot > CNEOBotCtgSeek::Update( CNEOBot *me, float interval )
 }
 
 //---------------------------------------------------------------------------------------------
-void CNEOBotCtgSeek::RecomputeSeekPath( CNEOBot *me )
+void CNEOBotCtgSeek::RecomputeSeekPath(CNEOBot *me)
 {
 	if (NEORules()->GetGameType() != NEO_GAME_TYPE_CTG)
 	{
@@ -137,14 +138,15 @@ void CNEOBotCtgSeek::RecomputeSeekPath( CNEOBot *me )
 		else
 		{
 			// Search for ghost on the ground
-			CBaseEntity* pGhost = gEntList.FindEntityByClassname( nullptr, "weapon_ghost" );
-			if ( pGhost )
+			CBaseEntity *pGhost = gEntList.FindEntityByClassname(nullptr, "weapon_ghost");
+			if (pGhost)
 			{
 				m_vGoalPos = pGhost->WorldSpaceCenter();
 				m_bGoingToTargetEntity = true;
 				m_hTargetEntity = pGhost;
 
-				if ( CNEOBotPathCompute( me, m_path, m_vGoalPos, DEFAULT_ROUTE ) && m_path.IsValid() && m_path.GetResult() == Path::COMPLETE_PATH )
+				if (CNEOBotPathCompute(me, m_path, m_vGoalPos, DEFAULT_ROUTE) && m_path.IsValid() &&
+					m_path.GetResult() == Path::COMPLETE_PATH)
 				{
 					return;
 				}
@@ -153,5 +155,5 @@ void CNEOBotCtgSeek::RecomputeSeekPath( CNEOBot *me )
 	}
 
 	// Fallback to base behavior (roaming spawn points)
-	CNEOBotSeekAndDestroy::RecomputeSeekPath( me );
+	CNEOBotSeekAndDestroy::RecomputeSeekPath(me);
 }

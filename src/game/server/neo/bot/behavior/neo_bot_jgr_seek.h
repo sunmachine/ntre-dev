@@ -10,12 +10,12 @@
 class CNEOBotJgrSeek : public CNEOBotSeekAndDestroy
 {
 public:
-	CNEOBotJgrSeek( float duration = -1.0f ) : CNEOBotSeekAndDestroy( duration ) { }
+	CNEOBotJgrSeek(float duration = -1.0f) : CNEOBotSeekAndDestroy(duration) {}
 
-	virtual ActionResult< CNEOBot >	Update( CNEOBot *me, float interval );
-	virtual const char *GetName( void ) const	{ return "jgrSeek"; };
+	virtual ActionResult<CNEOBot> Update(CNEOBot *me, float interval);
+	virtual const char *GetName(void) const { return "jgrSeek"; };
 
 protected:
-	virtual void RecomputeSeekPath( CNEOBot *me );
+	virtual void RecomputeSeekPath(CNEOBot *me);
 };
 #endif // NEO_BOT_JGR_SEEK_H

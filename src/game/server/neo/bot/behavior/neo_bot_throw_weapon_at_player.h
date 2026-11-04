@@ -8,16 +8,16 @@
 
 class CNEO_Player;
 
-class CNEOBotThrowWeaponAtPlayer : public Action< CNEOBot >
+class CNEOBotThrowWeaponAtPlayer : public Action<CNEOBot>
 {
 public:
-	CNEOBotThrowWeaponAtPlayer( CNEO_Player *pTargetPlayer );
+	CNEOBotThrowWeaponAtPlayer(CNEO_Player *pTargetPlayer);
 
-	virtual ActionResult< CNEOBot >	OnStart( CNEOBot *me, Action< CNEOBot > *priorAction ) override;
-	virtual ActionResult< CNEOBot >	Update( CNEOBot *me, float interval ) override;
-	virtual void					OnEnd( CNEOBot *me, Action< CNEOBot > *nextAction ) override;
+	virtual ActionResult<CNEOBot> OnStart(CNEOBot *me, Action<CNEOBot> *priorAction) override;
+	virtual ActionResult<CNEOBot> Update(CNEOBot *me, float interval) override;
+	virtual void OnEnd(CNEOBot *me, Action<CNEOBot> *nextAction) override;
 
-	virtual const char *GetName( void ) const override { return "ThrowWeaponAtPlayer"; };
+	virtual const char *GetName(void) const override { return "ThrowWeaponAtPlayer"; };
 
 protected:
 	CountdownTimer m_expirationTimer;

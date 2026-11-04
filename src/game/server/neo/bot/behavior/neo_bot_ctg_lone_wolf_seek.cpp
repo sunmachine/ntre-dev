@@ -7,7 +7,8 @@
 #include "neo_gamerules.h"
 #include "neo_player.h"
 
-ConVar sv_neo_bot_path_debug_lone_wolf_seek( "sv_neo_bot_path_debug_lone_wolf_seek", "0", FCVAR_CHEAT, "Debug lone wolf area seeking", true, 0, true, 1 );
+ConVar sv_neo_bot_path_debug_lone_wolf_seek(
+	"sv_neo_bot_path_debug_lone_wolf_seek", "0", FCVAR_CHEAT, "Debug lone wolf area seeking", true, 0, true, 1);
 
 //---------------------------------------------------------------------------------------------
 class CSearchForUnexplored : public ISearchSurroundingAreasFunctor
@@ -16,20 +17,20 @@ public:
 	static constexpr int DEFAULT_AREA_LIMIT = 100000;
 	static constexpr int CANDIDATE_LIMIT = 10;
 
-	CSearchForUnexplored( CNEOBot *me, CUtlMap<int, bool> &exploredAreaIds, int areaLimit = DEFAULT_AREA_LIMIT )
-		: m_me( me ), m_exploredAreaIds( exploredAreaIds ), m_iAreaCount( 0 ), m_iAreaLimit( areaLimit )
+	CSearchForUnexplored(CNEOBot *me, CUtlMap<int, bool> &exploredAreaIds, int areaLimit = DEFAULT_AREA_LIMIT)
+		: m_me(me), m_exploredAreaIds(exploredAreaIds), m_iAreaCount(0), m_iAreaLimit(areaLimit)
 	{
 	}
 
 	// return true to keep searching, return false to stop searching
-	virtual bool operator() ( CNavArea *baseArea, CNavArea *priorArea, float travelDistanceSoFar ) override
+	virtual bool operator()(CNavArea *baseArea, CNavArea *priorArea, float travelDistanceSoFar) override
 	{
-		if ( m_exploredAreaIds.Find( (int)baseArea->GetID() ) == m_exploredAreaIds.InvalidIndex() )
+		if (m_exploredAreaIds.Find((int)baseArea->GetID()) == m_exploredAreaIds.InvalidIndex())
 		{
-			m_candidateAreas.AddToTail( baseArea );
+			m_candidateAreas.AddToTail(baseArea);
 		}
 
-		if ( m_candidateAreas.Count() >= CANDIDATE_LIMIT )
+		if (m_candidateAreas.Count() >= CANDIDATE_LIMIT)
 		{
 			return false;
 		}
@@ -38,22 +39,22 @@ public:
 	}
 
 	// return true if 'adjArea' should be included in the ongoing search
-	virtual bool ShouldSearch( CNavArea *adjArea, CNavArea *currentArea, float travelDistanceSoFar ) override
+	virtual bool ShouldSearch(CNavArea *adjArea, CNavArea *currentArea, float travelDistanceSoFar) override
 	{
-		if ( m_candidateAreas.Count() >= CANDIDATE_LIMIT )
+		if (m_candidateAreas.Count() >= CANDIDATE_LIMIT)
 		{
 			return false;
 		}
 
 		// hit the max search limit
-		if ( ++m_iAreaCount > m_iAreaLimit )
+		if (++m_iAreaCount > m_iAreaLimit)
 		{
 			return false;
 		}
 
 		// don't want to jump or drop
-		const float heightChange = currentArea->ComputeAdjacentConnectionHeightChange( adjArea );
-		if ( fabs( heightChange ) > m_me->GetLocomotionInterface()->GetStepHeight() )
+		const float heightChange = currentArea->ComputeAdjacentConnectionHeightChange(adjArea);
+		if (fabs(heightChange) > m_me->GetLocomotionInterface()->GetStepHeight())
 		{
 			return false;
 		}
@@ -63,12 +64,12 @@ public:
 
 	CNavArea *GetRandomCandidate() const
 	{
-		if ( m_candidateAreas.IsEmpty() )
+		if (m_candidateAreas.IsEmpty())
 		{
 			return nullptr;
 		}
-		int which = RandomInt( 0, m_candidateAreas.Count() - 1 );
-		return m_candidateAreas[ which ];
+		int which = RandomInt(0, m_candidateAreas.Count() - 1);
+		return m_candidateAreas[which];
 	}
 
 	CNEOBot *m_me;
@@ -79,7 +80,7 @@ public:
 };
 
 //---------------------------------------------------------------------------------------------
-CNEOBotCtgLoneWolfSeek::CNEOBotCtgLoneWolfSeek( void )
+CNEOBotCtgLoneWolfSeek::CNEOBotCtgLoneWolfSeek(void)
 {
 	m_pIgnoredWeapons = std::make_unique<CNEOIgnoredWeaponsCache>();
 }
@@ -88,16 +89,16 @@ CNEOBotCtgLoneWolfSeek::CNEOBotCtgLoneWolfSeek( void )
 CNEOBotCtgLoneWolfSeek::~CNEOBotCtgLoneWolfSeek() = default;
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotCtgLoneWolfSeek::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotCtgLoneWolfSeek::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
-	BaseClass::OnStart( me, priorAction );
+	BaseClass::OnStart(me, priorAction);
 
-	SetDefLessFunc( m_exploredAreaIds );
+	SetDefLessFunc(m_exploredAreaIds);
 	m_exploredAreaIds.RemoveAll();
 	m_iExplorationTargetId = -1;
 
 	m_vecLastGhostPos = NEORules()->GetGhostPos();
-	m_pCachedGhostArea = TheNavMesh->GetNearestNavArea( m_vecLastGhostPos );
+	m_pCachedGhostArea = TheNavMesh->GetNearestNavArea(m_vecLastGhostPos);
 
 	m_scavengeTimer.Invalidate();
 	m_pIgnoredWeapons->Reset();
@@ -106,28 +107,28 @@ ActionResult< CNEOBot >	CNEOBotCtgLoneWolfSeek::OnStart( CNEOBot *me, Action< CN
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotCtgLoneWolfSeek::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotCtgLoneWolfSeek::Update(CNEOBot *me, float interval)
 {
-	ActionResult< CNEOBot > result = ConsiderGhostCaptureTransition( me );
-	if ( result.IsRequestingChange() )
+	ActionResult<CNEOBot> result = ConsiderGhostCaptureTransition(me);
+	if (result.IsRequestingChange())
 	{
 		return result;
 	}
 
-	me->PressCrouchButton( 0.2f ); // Keep a lower profile
+	me->PressCrouchButton(0.2f); // Keep a lower profile
 
-	if ( !NEORules()->GhostExists() || !NEORules()->m_pGhost )
+	if (!NEORules()->GhostExists() || !NEORules()->m_pGhost)
 	{
-		return Done( "Ghost not found" );
+		return Done("Ghost not found");
 	}
 
-	if ( me->DropGhost() )
+	if (me->DropGhost())
 	{
 		return Continue(); // ghost drop in progress
 	}
 
-	ActionResult< CNEOBot > interceptionResult = ConsiderGhostInterception( me );
-	if ( interceptionResult.IsRequestingChange() )
+	ActionResult<CNEOBot> interceptionResult = ConsiderGhostInterception(me);
+	if (interceptionResult.IsRequestingChange())
 	{
 		return interceptionResult;
 	}
@@ -135,45 +136,46 @@ ActionResult< CNEOBot >	CNEOBotCtgLoneWolfSeek::Update( CNEOBot *me, float inter
 	CWeaponGhost *pGhostWeapon = NEORules()->m_pGhost;
 	const CBaseCombatCharacter *pGhostOwner = pGhostWeapon ? pGhostWeapon->GetOwner() : nullptr;
 
-	if ( pGhostOwner && !me->InSameTeam( pGhostOwner ) )
+	if (pGhostOwner && !me->InSameTeam(pGhostOwner))
 	{
 		// Don't interrupt enemy carrier pursuit with search pathing
 		return Continue();
 	}
 
 	const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat();
-	if ( threat && threat->GetEntity() && threat->GetEntity()->IsAlive() )
+	if (threat && threat->GetEntity() && threat->GetEntity()->IsAlive())
 	{
 		me->ReleaseCrouchButton(); // move faster
-		return ChangeTo( new CNEOBotAttack(), "Engaging enemy from seek" );
+		return ChangeTo(new CNEOBotAttack(), "Engaging enemy from seek");
 	}
 
-	if ( !threat && me->GetActiveWeapon() )
+	if (!threat && me->GetActiveWeapon())
 	{
 		// Aggressively reload due to lack of backup
 		me->ReloadIfLowClip(true); // force reload true
 	}
 
 	// Periodically look for better weapons
-	if ( ( !m_scavengeTimer.HasStarted() || m_scavengeTimer.IsElapsed() ) )
+	if ((!m_scavengeTimer.HasStarted() || m_scavengeTimer.IsElapsed()))
 	{
-		m_scavengeTimer.Start( RandomFloat( 3.0f, 6.0f ) );
+		m_scavengeTimer.Start(RandomFloat(3.0f, 6.0f));
 
-		CBaseEntity *pNearbyWeapon = FindNearestPrimaryWeapon( me, true, m_pIgnoredWeapons.get() );
-		if ( pNearbyWeapon )
+		CBaseEntity *pNearbyWeapon = FindNearestPrimaryWeapon(me, true, m_pIgnoredWeapons.get());
+		if (pNearbyWeapon)
 		{
-			return SuspendFor( new CNEOBotSeekWeapon( pNearbyWeapon, m_pIgnoredWeapons.get() ), "Scavenging for nearby weapon" );
+			return SuspendFor(
+				new CNEOBotSeekWeapon(pNearbyWeapon, m_pIgnoredWeapons.get()), "Scavenging for nearby weapon");
 		}
 	}
 
-	const Vector& currentGhostPos = NEORules()->GetGhostPos();
-	if ( !m_pCachedGhostArea || currentGhostPos.DistToSqr( m_vecLastGhostPos ) > Square( 64.0f ) )
+	const Vector &currentGhostPos = NEORules()->GetGhostPos();
+	if (!m_pCachedGhostArea || currentGhostPos.DistToSqr(m_vecLastGhostPos) > Square(64.0f))
 	{
 		CNavArea *pLastGhostArea = m_pCachedGhostArea;
-		m_pCachedGhostArea = TheNavMesh->GetNearestNavArea( currentGhostPos );
+		m_pCachedGhostArea = TheNavMesh->GetNearestNavArea(currentGhostPos);
 		m_vecLastGhostPos = currentGhostPos;
 
-		if ( m_pCachedGhostArea != pLastGhostArea )
+		if (m_pCachedGhostArea != pLastGhostArea)
 		{
 			m_iExplorationTargetId = -1;
 			m_vecSearchWaypoint = CNEO_Player::VECTOR_INVALID_WAYPOINT;
@@ -182,22 +184,23 @@ ActionResult< CNEOBot >	CNEOBotCtgLoneWolfSeek::Update( CNEOBot *me, float inter
 			m_path.Invalidate();
 			m_exploredAreaIds.RemoveAll();
 
-			if ( me->IsDebugging( NEXTBOT_BEHAVIOR ) )
+			if (me->IsDebugging(NEXTBOT_BEHAVIOR))
 			{
-				DevMsg( "Lone Wolf Seek: Ghost moved, re-calculating exploration targets locally\n" );
+				DevMsg("Lone Wolf Seek: Ghost moved, re-calculating exploration targets locally\n");
 			}
 		}
 	}
 
 	CNavArea *ghostArea = m_pCachedGhostArea;
 
-	const bool bReachedSearchTarget = ( m_vecSearchWaypoint != CNEO_Player::VECTOR_INVALID_WAYPOINT && me->GetAbsOrigin().DistToSqr( m_vecSearchWaypoint ) < Square( SEARCH_WAYPOINT_REACHED_DIST ) );
+	const bool bReachedSearchTarget = (m_vecSearchWaypoint != CNEO_Player::VECTOR_INVALID_WAYPOINT &&
+		me->GetAbsOrigin().DistToSqr(m_vecSearchWaypoint) < Square(SEARCH_WAYPOINT_REACHED_DIST));
 
-	if ( bReachedSearchTarget )
+	if (bReachedSearchTarget)
 	{
-		if ( me->IsDebugging( NEXTBOT_BEHAVIOR ) )
+		if (me->IsDebugging(NEXTBOT_BEHAVIOR))
 		{
-			DevMsg( "Lone Wolf Seek: Search area reached, looking for new search area\n" );
+			DevMsg("Lone Wolf Seek: Search area reached, looking for new search area\n");
 		}
 
 		m_iExplorationTargetId = -1;
@@ -205,51 +208,52 @@ ActionResult< CNEOBot >	CNEOBotCtgLoneWolfSeek::Update( CNEOBot *me, float inter
 		m_path.Invalidate();
 	}
 
-	if ( m_vecSearchWaypoint == CNEO_Player::VECTOR_INVALID_WAYPOINT )
+	if (m_vecSearchWaypoint == CNEO_Player::VECTOR_INVALID_WAYPOINT)
 	{
-		if ( !me->IsCarryingGhost() )
+		if (!me->IsCarryingGhost())
 		{
-			if ( ghostArea )
+			if (ghostArea)
 			{
 				// Before searching, mark what we can see from our current position as explored,
 				CNavArea *currentArea = me->GetLastKnownArea();
-				if ( currentArea )
+				if (currentArea)
 				{
-					MarkVisibleAreasAsExplored( me, currentArea, ghostArea );
+					MarkVisibleAreasAsExplored(me, currentArea, ghostArea);
 				}
 
-				CSearchForUnexplored search( me, m_exploredAreaIds );
-				SearchSurroundingAreas( ghostArea, search );
+				CSearchForUnexplored search(me, m_exploredAreaIds);
+				SearchSurroundingAreas(ghostArea, search);
 
-				if ( search.m_candidateAreas.IsEmpty() )
+				if (search.m_candidateAreas.IsEmpty())
 				{
 					// Track already explored areas around the ghost
-					auto searchFromVisible = [&search]( CNavArea *visibleArea ) -> bool
+					auto searchFromVisible = [&search](CNavArea *visibleArea) -> bool
 					{
-						if ( search.m_candidateAreas.Count() >= CSearchForUnexplored::CANDIDATE_LIMIT || search.m_iAreaCount >= search.m_iAreaLimit )
+						if (search.m_candidateAreas.Count() >= CSearchForUnexplored::CANDIDATE_LIMIT ||
+							search.m_iAreaCount >= search.m_iAreaLimit)
 						{
 							return false;
 						}
-						SearchSurroundingAreas( visibleArea, search );
+						SearchSurroundingAreas(visibleArea, search);
 						return search.m_candidateAreas.Count() < CSearchForUnexplored::CANDIDATE_LIMIT;
 					};
-					ghostArea->ForAllPotentiallyVisibleAreas( searchFromVisible );
+					ghostArea->ForAllPotentiallyVisibleAreas(searchFromVisible);
 				}
 
-				if ( m_iExplorationTargetId == -1 && !search.m_candidateAreas.IsEmpty() )
+				if (m_iExplorationTargetId == -1 && !search.m_candidateAreas.IsEmpty())
 				{
 					CNavArea *target = search.GetRandomCandidate();
 					m_iExplorationTargetId = (int)target->GetID();
-					m_exploredAreaIds.InsertOrReplace( m_iExplorationTargetId, true );
+					m_exploredAreaIds.InsertOrReplace(m_iExplorationTargetId, true);
 					m_vecSearchWaypoint = target->GetCenter();
 					m_path.Invalidate();
 
-					if ( sv_neo_bot_path_debug_lone_wolf_seek.GetBool() )
+					if (sv_neo_bot_path_debug_lone_wolf_seek.GetBool())
 					{
-						target->DrawFilled( 255, 255, 0, 128, DEBUG_OVERLAY_DURATION );
+						target->DrawFilled(255, 255, 0, 128, DEBUG_OVERLAY_DURATION);
 					}
 				}
-				else if ( m_iExplorationTargetId == -1 )
+				else if (m_iExplorationTargetId == -1)
 				{
 					// All nearby areas explored, or search failed to find new search area.
 					// Reset search to restart patrol
@@ -257,53 +261,53 @@ ActionResult< CNEOBot >	CNEOBotCtgLoneWolfSeek::Update( CNEOBot *me, float inter
 
 					// Fallback: move towards the ghost itself while we search
 					m_path.Invalidate();
-					
-					if ( me->IsDebugging( NEXTBOT_BEHAVIOR ) )
+
+					if (me->IsDebugging(NEXTBOT_BEHAVIOR))
 					{
-						DevMsg( "Lone Wolf Seek: Searched all areas around ghost, resetting seen tracking\n" );
+						DevMsg("Lone Wolf Seek: Searched all areas around ghost, resetting seen tracking\n");
 					}
 				}
 			}
 		}
 	}
 
-	if ( m_vecSearchWaypoint == CNEO_Player::VECTOR_INVALID_WAYPOINT )
+	if (m_vecSearchWaypoint == CNEO_Player::VECTOR_INVALID_WAYPOINT)
 	{
 		m_vecSearchWaypoint = NEORules()->GetGhostPos();
 	}
 
-	if ( me->GetAbsOrigin().DistToSqr( m_vecSearchWaypoint ) > Square( PATH_RECOMPUTE_DIST ) )
+	if (me->GetAbsOrigin().DistToSqr(m_vecSearchWaypoint) > Square(PATH_RECOMPUTE_DIST))
 	{
-		if ( !m_path.IsValid() )
+		if (!m_path.IsValid())
 		{
-			CNEOBotPathCompute( me, m_path, m_vecSearchWaypoint, FASTEST_ROUTE );
+			CNEOBotPathCompute(me, m_path, m_vecSearchWaypoint, FASTEST_ROUTE);
 		}
 	}
 
-	m_path.Update( me );
+	m_path.Update(me);
 
 	return Continue();
 }
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotCtgLoneWolfSeek::OnStuck( CNEOBot *me )
+EventDesiredResult<CNEOBot> CNEOBotCtgLoneWolfSeek::OnStuck(CNEOBot *me)
 {
-	if ( m_iExplorationTargetId != -1 )
+	if (m_iExplorationTargetId != -1)
 	{
-		m_exploredAreaIds.InsertOrReplace( m_iExplorationTargetId, true );
+		m_exploredAreaIds.InsertOrReplace(m_iExplorationTargetId, true);
 	}
-	else if ( m_vecSearchWaypoint != CNEO_Player::VECTOR_INVALID_WAYPOINT )
+	else if (m_vecSearchWaypoint != CNEO_Player::VECTOR_INVALID_WAYPOINT)
 	{
-		CNavArea *area = TheNavMesh->GetNearestNavArea( m_vecSearchWaypoint );
-		if ( area )
+		CNavArea *area = TheNavMesh->GetNearestNavArea(m_vecSearchWaypoint);
+		if (area)
 		{
-			m_exploredAreaIds.InsertOrReplace( (int)area->GetID(), true );
+			m_exploredAreaIds.InsertOrReplace((int)area->GetID(), true);
 		}
 	}
 
-	if ( me->IsDebugging( NEXTBOT_BEHAVIOR ) )
+	if (me->IsDebugging(NEXTBOT_BEHAVIOR))
 	{
-		DevMsg( "Lone Wolf Seek: Bot stuck going to search area, marking as explored and finding new target\n" );
+		DevMsg("Lone Wolf Seek: Bot stuck going to search area, marking as explored and finding new target\n");
 	}
 
 	m_iExplorationTargetId = -1;
@@ -314,50 +318,50 @@ EventDesiredResult< CNEOBot > CNEOBotCtgLoneWolfSeek::OnStuck( CNEOBot *me )
 }
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotCtgLoneWolfSeek::OnMoveToSuccess( CNEOBot *me, const Path *path )
+EventDesiredResult<CNEOBot> CNEOBotCtgLoneWolfSeek::OnMoveToSuccess(CNEOBot *me, const Path *path)
 {
 	return TryContinue();
 }
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotCtgLoneWolfSeek::OnMoveToFailure( CNEOBot *me, const Path *path, MoveToFailureType reason )
+EventDesiredResult<CNEOBot> CNEOBotCtgLoneWolfSeek::OnMoveToFailure(
+	CNEOBot *me, const Path *path, MoveToFailureType reason)
 {
 	m_path.Invalidate();
 	return TryContinue();
 }
 
 //---------------------------------------------------------------------------------------------
-void CNEOBotCtgLoneWolfSeek::MarkVisibleAreasAsExplored( CNEOBot *me, CNavArea *currentArea, CNavArea *ghostArea )
+void CNEOBotCtgLoneWolfSeek::MarkVisibleAreasAsExplored(CNEOBot *me, CNavArea *currentArea, CNavArea *ghostArea)
 {
-	if ( !currentArea )
+	if (!currentArea)
 	{
 		return;
 	}
 
 	// Mark the currently occupied area explored
-	if ( m_exploredAreaIds.InsertOrReplace( (int)currentArea->GetID(), true ) != m_exploredAreaIds.InvalidIndex() )
+	if (m_exploredAreaIds.InsertOrReplace((int)currentArea->GetID(), true) != m_exploredAreaIds.InvalidIndex())
 	{
-		if ( sv_neo_bot_path_debug_lone_wolf_seek.GetBool() )
+		if (sv_neo_bot_path_debug_lone_wolf_seek.GetBool())
 		{
-			currentArea->DrawFilled( 0, 255, 0, 128, DEBUG_OVERLAY_DURATION );
+			currentArea->DrawFilled(0, 255, 0, 128, DEBUG_OVERLAY_DURATION);
 		}
 	}
 
 	// Mark all potentially visible areas
-	auto markVisible = [this, me, ghostArea]( CNavArea *area ) -> bool
+	auto markVisible = [this, me, ghostArea](CNavArea *area) -> bool
 	{
-		if ( area && area != ghostArea )
+		if (area && area != ghostArea)
 		{
-			if ( m_exploredAreaIds.InsertOrReplace( (int)area->GetID(), true ) != m_exploredAreaIds.InvalidIndex() )
+			if (m_exploredAreaIds.InsertOrReplace((int)area->GetID(), true) != m_exploredAreaIds.InvalidIndex())
 			{
-				if ( sv_neo_bot_path_debug_lone_wolf_seek.GetBool() )
+				if (sv_neo_bot_path_debug_lone_wolf_seek.GetBool())
 				{
-					area->DrawFilled( 0, 255, 0, 128, DEBUG_OVERLAY_DURATION );
+					area->DrawFilled(0, 255, 0, 128, DEBUG_OVERLAY_DURATION);
 				}
 			}
 		}
 		return true;
 	};
-	currentArea->ForAllPotentiallyVisibleAreas( markVisible );
+	currentArea->ForAllPotentiallyVisibleAreas(markVisible);
 }
-

@@ -25,7 +25,8 @@ bool HasDMSpawn()
 
 Info GiveNextSpawn()
 {
-	if (gDMSpawnLocs.IsEmpty()) return Info{};
+	if (gDMSpawnLocs.IsEmpty())
+		return Info{};
 
 	// Try to give the next available spawn rather than just giving only a random number
 	const int iSpawnTotal = gDMSpawnLocs.Size();
@@ -199,7 +200,7 @@ void DMSpawnComCallbackLoad([[maybe_unused]] const CCommand &command)
 		return;
 	}
 
-	/*const int version =*/ (void)buf.GetInt();
+	/*const int version =*/(void)buf.GetInt();
 	const int locsSize = buf.GetInt();
 	for (int i = 0; i < locsSize && buf.IsValid(); ++i)
 	{
@@ -216,7 +217,8 @@ void DMSpawnComCallbackLoad([[maybe_unused]] const CCommand &command)
 
 static void DMSpawnComCallbackTeleportNext()
 {
-	if (gDMSpawnLocs.IsEmpty()) return;
+	if (gDMSpawnLocs.IsEmpty())
+		return;
 	gDMSpawnCur = LoopAroundInArray(gDMSpawnCur + 1, gDMSpawnLocs.Size());
 	if (auto *pPlayer = LoopbackPlayer())
 	{
@@ -225,7 +227,8 @@ static void DMSpawnComCallbackTeleportNext()
 		pPlayer->SetAbsOrigin(spawn.pos);
 		pPlayer->SetAbsAngles(spawnAngle);
 		pPlayer->SnapEyeAngles(spawnAngle);
-		Msg("Teleported to spawn %d: %.2f %.2f %.2f (%.2f)\n", gDMSpawnCur, spawn.pos.x, spawn.pos.y, spawn.pos.z, spawn.lookY);
+		Msg("Teleported to spawn %d: %.2f %.2f %.2f (%.2f)\n", gDMSpawnCur, spawn.pos.x, spawn.pos.y, spawn.pos.z,
+			spawn.lookY);
 	}
 }
 
@@ -245,11 +248,19 @@ static void DMSpawnComCallbackMapinfo()
 		szCurrentMapName, gDMSpawnLocs.Size(), iEntCount, (iEntCount > 0 || !gDMSpawnLocs.IsEmpty()) ? "YES" : "NO");
 }
 
-ConCommand sv_neo_dmspawn_create("sv_neo_dmspawn_create", &DMSpawnComCallbackCreate, "DMSpawn - Create a new spawn", FCVAR_USERINFO | FCVAR_CHEAT);
-ConCommand sv_neo_dmspawn_removeallspawns("sv_neo_dmspawn_removeallspawns", &DMSpawnComCallbackRemoveAll, "DMSpawn - Remove all spawns", FCVAR_USERINFO | FCVAR_CHEAT);
-ConCommand sv_neo_dmspawn_removeone("sv_neo_dmspawn_removeone", &DMSpawnComCallbackRemoveOne, "DMSpawn - Remove one spawn by a given index", FCVAR_USERINFO | FCVAR_CHEAT);
-ConCommand sv_neo_dmspawn_printlocs("sv_neo_dmspawn_printlocs", &DMSpawnComCallbackPrintLocs, "DMSpawn - Print locations and Y-angle of all spawns", FCVAR_USERINFO | FCVAR_CHEAT);
-ConCommand sv_neo_dmspawn_save("sv_neo_dmspawn_save", &DMSpawnComCallbackSave, "DMSpawn - Save spawn file to filesystem", FCVAR_USERINFO | FCVAR_CHEAT);
-ConCommand sv_neo_dmspawn_load("sv_neo_dmspawn_load", &DMSpawnComCallbackLoad, "DMSpawn - Load spawn file from filesystem", FCVAR_USERINFO | FCVAR_CHEAT);
-ConCommand sv_neo_dmspawn_teleportnext("sv_neo_dmspawn_teleportnext", &DMSpawnComCallbackTeleportNext, "DMSpawn - Teleport to the next spawn", FCVAR_USERINFO | FCVAR_CHEAT);
-ConCommand sv_neo_dmspawn_mapinfo("sv_neo_dmspawn_mapinfo", &DMSpawnComCallbackMapinfo, "DMSpawn - Map deathmatch spawns check and information", FCVAR_USERINFO);
+ConCommand sv_neo_dmspawn_create(
+	"sv_neo_dmspawn_create", &DMSpawnComCallbackCreate, "DMSpawn - Create a new spawn", FCVAR_USERINFO | FCVAR_CHEAT);
+ConCommand sv_neo_dmspawn_removeallspawns("sv_neo_dmspawn_removeallspawns", &DMSpawnComCallbackRemoveAll,
+	"DMSpawn - Remove all spawns", FCVAR_USERINFO | FCVAR_CHEAT);
+ConCommand sv_neo_dmspawn_removeone("sv_neo_dmspawn_removeone", &DMSpawnComCallbackRemoveOne,
+	"DMSpawn - Remove one spawn by a given index", FCVAR_USERINFO | FCVAR_CHEAT);
+ConCommand sv_neo_dmspawn_printlocs("sv_neo_dmspawn_printlocs", &DMSpawnComCallbackPrintLocs,
+	"DMSpawn - Print locations and Y-angle of all spawns", FCVAR_USERINFO | FCVAR_CHEAT);
+ConCommand sv_neo_dmspawn_save("sv_neo_dmspawn_save", &DMSpawnComCallbackSave,
+	"DMSpawn - Save spawn file to filesystem", FCVAR_USERINFO | FCVAR_CHEAT);
+ConCommand sv_neo_dmspawn_load("sv_neo_dmspawn_load", &DMSpawnComCallbackLoad,
+	"DMSpawn - Load spawn file from filesystem", FCVAR_USERINFO | FCVAR_CHEAT);
+ConCommand sv_neo_dmspawn_teleportnext("sv_neo_dmspawn_teleportnext", &DMSpawnComCallbackTeleportNext,
+	"DMSpawn - Teleport to the next spawn", FCVAR_USERINFO | FCVAR_CHEAT);
+ConCommand sv_neo_dmspawn_mapinfo("sv_neo_dmspawn_mapinfo", &DMSpawnComCallbackMapinfo,
+	"DMSpawn - Map deathmatch spawns check and information", FCVAR_USERINFO);

@@ -16,12 +16,13 @@ DECLARE_NAMED_HUDELEMENT(CNEOHud_Hint, neo_hint);
 
 NEO_HUD_ELEMENT_DECLARE_FREQ_CVAR(Hint, 0.1);
 
-CNEOHud_Hint::CNEOHud_Hint(const char* pElementName, vgui::Panel* parent)
+CNEOHud_Hint::CNEOHud_Hint(const char *pElementName, vgui::Panel *parent)
 	: CHudElement(pElementName), Panel(parent, pElementName)
 {
 	SetAutoDelete(true);
 
-	if (parent) {
+	if (parent)
+	{
 		SetParent(parent);
 	}
 	else
@@ -45,7 +46,7 @@ CNEOHud_Hint::CNEOHud_Hint(const char* pElementName, vgui::Panel* parent)
 	SetHiddenBits(HIDEHUD_PLAYERDEAD | HIDEHUD_NEEDSUIT);
 }
 
-void CNEOHud_Hint::ApplySchemeSettings(vgui::IScheme* pScheme)
+void CNEOHud_Hint::ApplySchemeSettings(vgui::IScheme *pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 
@@ -66,13 +67,13 @@ void CNEOHud_Hint::DrawNeoHudElement()
 		return;
 	}
 
-	auto* localPlayer = C_NEO_Player::GetLocalNEOPlayer();
+	auto *localPlayer = C_NEO_Player::GetLocalNEOPlayer();
 	if (!ShouldDraw() || (!localPlayer || localPlayer->IsObserver()))
 	{
 		return;
 	}
 
-	auto gameRules = static_cast<CNEORules*>(g_pGameRules);
+	auto gameRules = static_cast<CNEORules *>(g_pGameRules);
 	NeoRoundStatus roundStatus = gameRules->GetRoundStatus();
 	if (roundStatus == NeoRoundStatus::PreRoundFreeze)
 	{
@@ -98,6 +99,4 @@ void CNEOHud_Hint::Paint()
 	PaintNeoElement();
 }
 
-void CNEOHud_Hint::UpdateStateForNeoHudElementDraw()
-{
-}
+void CNEOHud_Hint::UpdateStateForNeoHudElementDraw() {}

@@ -9,15 +9,15 @@ class CNEOHud_Hint : public CNEOHud_ChildElement, public CHudElement, public vgu
 	DECLARE_CLASS_SIMPLE(CNEOHud_Hint, Panel);
 
 public:
-	CNEOHud_Hint(const char* pElementName, vgui::Panel* parent = NULL);
-	void ApplySchemeSettings(vgui::IScheme* pScheme) override;
+	CNEOHud_Hint(const char *pElementName, vgui::Panel *parent = NULL);
+	void ApplySchemeSettings(vgui::IScheme *pScheme) override;
 
 	virtual void Paint() override;
 
 protected:
 	virtual void UpdateStateForNeoHudElementDraw() override;
 	virtual void DrawNeoHudElement() override;
-	virtual ConVar* GetUpdateFrequencyConVar() const override;
+	virtual ConVar *GetUpdateFrequencyConVar() const override;
 
 private:
 	vgui::HTexture m_pHintTexture[23];

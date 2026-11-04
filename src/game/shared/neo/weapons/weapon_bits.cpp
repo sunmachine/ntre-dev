@@ -12,4 +12,3 @@ const ENeoWeaponType NEO_WEAPON_TYPE[NEO_WIDX__TOTAL] = {
 #endif
 };
 // clang-format on
-

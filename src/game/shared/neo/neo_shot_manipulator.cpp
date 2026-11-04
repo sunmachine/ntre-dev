@@ -6,15 +6,21 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar sv_neo_recoil_capbullets("sv_neo_recoil_capbullets", "10", FCVAR_CHEAT | FCVAR_REPLICATED, "Generic fallback cvar for at how many bullets should weapons reach max recoil.", true, 0.0f, false, 0.0f);
-ConVar sv_neo_recoil_capscale("sv_neo_recoil_capscale", "1", FCVAR_CHEAT | FCVAR_REPLICATED, "Generic fallback scaler for max recoil cap.", true, 0.0f, false, 0.0f);
-ConVar sv_neo_recoil_viewfollow_scale("sv_neo_recoil_viewfollow_scale", "0.45", FCVAR_CHEAT | FCVAR_REPLICATED, "Scaler for how much should player eyeangle follow the current recoil.", true, 0.0f, false, 0.0f);
+ConVar sv_neo_recoil_capbullets("sv_neo_recoil_capbullets", "10", FCVAR_CHEAT | FCVAR_REPLICATED,
+	"Generic fallback cvar for at how many bullets should weapons reach max recoil.", true, 0.0f, false, 0.0f);
+ConVar sv_neo_recoil_capscale("sv_neo_recoil_capscale", "1", FCVAR_CHEAT | FCVAR_REPLICATED,
+	"Generic fallback scaler for max recoil cap.", true, 0.0f, false, 0.0f);
+ConVar sv_neo_recoil_viewfollow_scale("sv_neo_recoil_viewfollow_scale", "0.45", FCVAR_CHEAT | FCVAR_REPLICATED,
+	"Scaler for how much should player eyeangle follow the current recoil.", true, 0.0f, false, 0.0f);
 
 // NEO HACK/FIXME (Rain): Doing some temporary recoil cvars here for testing.
 // Need to clean these up later once we have good values!!
 #define TEMP_WEP_STR(name) #name
 #define MAKE_TEMP_WEP_RECOIL_SCALER(weapon, defval) ConVar sv_neo_##weapon##_recoil_scale(TEMP_WEP_STR(sv_neo_##weapon##_recoil_scale), #defval, FCVAR_REPLICATED, TEMP_WEP_STR(Temporary recoil scaler for #weapon), true, 0.0, true, 10.0)
-#define MAKE_TEMP_WEP_RECOIL_CAPBULLETS(weapon, defval) ConVar sv_neo_##weapon##_recoil_capbullets(TEMP_WEP_STR(sv_neo_##weapon##_recoil_capbullets), #defval, FCVAR_REPLICATED, TEMP_WEP_STR(At how many bullets should #weapon reach max recoil.), true, 0.01, true, 9999.0)
+#define MAKE_TEMP_WEP_RECOIL_CAPBULLETS(weapon, defval) \
+	ConVar sv_neo_##weapon##_recoil_capbullets(TEMP_WEP_STR(sv_neo_##weapon##_recoil_capbullets), #defval, \
+		FCVAR_REPLICATED, TEMP_WEP_STR(At how many bullets should #weapon reach max recoil.), true, 0.01, true, \
+		9999.0)
 
 // clang-format off
 MAKE_TEMP_WEP_RECOIL_SCALER(weapon_jitte,			0);
@@ -73,7 +79,7 @@ float CNEOShotManipulator::GetVerticalRecoil() const
 	// NEO HACK/FIXME (Rain): Doing some temporary bloom accuracy scaling here for easier testing.
 	// Need to clean this up later once we have good values!!
 	// (These should probably live in weapon scripts, eventually.)
-	const std::initializer_list<ConVar*> recoilScalers = {
+	const std::initializer_list<ConVar *> recoilScalers = {
 		&sv_neo_weapon_jitte_recoil_scale,
 		&sv_neo_weapon_jittescoped_recoil_scale,
 		&sv_neo_weapon_kyla_recoil_scale,
@@ -93,11 +99,11 @@ float CNEOShotManipulator::GetVerticalRecoil() const
 		&sv_neo_weapon_zr68c_recoil_scale,
 		&sv_neo_weapon_zr68s_recoil_scale,
 #ifdef INCLUDE_WEP_PBK
-		& sv_neo_weapon_pbk56s_recoil_scale,
+		&sv_neo_weapon_pbk56s_recoil_scale,
 #endif
 	};
 	float wepSpecificRecoilScale = sv_neo_recoil_capscale.GetFloat();
-	for (ConVar* scaler : recoilScalers)
+	for (ConVar *scaler : recoilScalers)
 	{
 		if (V_strstr(scaler->GetName(), m_pWeapon->GetName()))
 		{
@@ -111,7 +117,7 @@ float CNEOShotManipulator::GetVerticalRecoil() const
 		return 0;
 	}
 
-	const std::initializer_list<ConVar*> recoilCapbulletLimits = {
+	const std::initializer_list<ConVar *> recoilCapbulletLimits = {
 		&sv_neo_weapon_jitte_recoil_capbullets,
 		&sv_neo_weapon_jittescoped_recoil_capbullets,
 		&sv_neo_weapon_kyla_recoil_capbullets,
@@ -134,8 +140,8 @@ float CNEOShotManipulator::GetVerticalRecoil() const
 		&sv_neo_weapon_pbk56s_recoil_capbullets,
 #endif
 	};
-	ConVar* myCapBullets = &sv_neo_recoil_capbullets;
-	for (ConVar* capbulletLimit : recoilCapbulletLimits)
+	ConVar *myCapBullets = &sv_neo_recoil_capbullets;
+	for (ConVar *capbulletLimit : recoilCapbulletLimits)
 	{
 		if (V_strstr(capbulletLimit->GetName(), m_pWeapon->GetName()))
 		{

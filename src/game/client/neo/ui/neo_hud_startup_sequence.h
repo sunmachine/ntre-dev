@@ -10,7 +10,7 @@ class CNEOHud_StartupSequence : public CNEOHud_ChildElement, public CHudElement,
 
 public:
 	CNEOHud_StartupSequence(const char *pElementName, vgui::Panel *parent = NULL);
-	void ApplySchemeSettings(vgui::IScheme* pScheme) override;
+	void ApplySchemeSettings(vgui::IScheme *pScheme) override;
 	virtual void Reset() override;
 	virtual void Paint() override;
 
@@ -18,7 +18,7 @@ protected:
 	virtual void UpdateStateForNeoHudElementDraw() override;
 	virtual bool ShouldDraw() override;
 	virtual void DrawNeoHudElement() override;
-	virtual ConVar* GetUpdateFrequencyConVar() const override;
+	virtual ConVar *GetUpdateFrequencyConVar() const override;
 
 private:
 	vgui::HFont m_hFont = 0UL;
@@ -31,5 +31,5 @@ private:
 	CPanelAnimationVarAliasType(int, wide, "wide", "640", "proportional_int");
 
 private:
-	CNEOHud_StartupSequence(const CNEOHud_StartupSequence&other);
+	CNEOHud_StartupSequence(const CNEOHud_StartupSequence &other);
 };

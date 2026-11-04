@@ -49,17 +49,42 @@ struct PhononApi
 #ifdef _WIN32
 typedef HMODULE LibraryHandle;
 // LOAD_WITH_ALTERED_SEARCH_PATH resolves phonon.dll's own dependencies from its directory.
-LibraryHandle OpenLibrary(const char *path) { return LoadLibraryExA(path, nullptr, LOAD_WITH_ALTERED_SEARCH_PATH); }
-void *FindSymbol(LibraryHandle library, const char *name) { return reinterpret_cast<void *>(GetProcAddress(library, name)); }
-void CloseLibrary(LibraryHandle library) { FreeLibrary(library); }
-void FormatLoaderError(char *out, int len) { snprintf(out, len, "Win32 error %lu", GetLastError()); }
+LibraryHandle OpenLibrary(const char *path)
+{
+	return LoadLibraryExA(path, nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);
+}
+void *FindSymbol(LibraryHandle library, const char *name)
+{
+	return reinterpret_cast<void *>(GetProcAddress(library, name));
+}
+void CloseLibrary(LibraryHandle library)
+{
+	FreeLibrary(library);
+}
+void FormatLoaderError(char *out, int len)
+{
+	snprintf(out, len, "Win32 error %lu", GetLastError());
+}
 #else
 typedef void *LibraryHandle;
 // RTLD_LOCAL keeps phonon's bundled symbols from interposing on the engine's.
-LibraryHandle OpenLibrary(const char *path) { return dlopen(path, RTLD_NOW | RTLD_LOCAL); }
-void *FindSymbol(LibraryHandle library, const char *name) { return dlsym(library, name); }
-void CloseLibrary(LibraryHandle library) { dlclose(library); }
-void FormatLoaderError(char *out, int len) { const char *error = dlerror(); snprintf(out, len, "%s", error ? error : "unknown dlerror"); }
+LibraryHandle OpenLibrary(const char *path)
+{
+	return dlopen(path, RTLD_NOW | RTLD_LOCAL);
+}
+void *FindSymbol(LibraryHandle library, const char *name)
+{
+	return dlsym(library, name);
+}
+void CloseLibrary(LibraryHandle library)
+{
+	dlclose(library);
+}
+void FormatLoaderError(char *out, int len)
+{
+	const char *error = dlerror();
+	snprintf(out, len, "%s", error ? error : "unknown dlerror");
+}
 #endif
 
 constexpr int MAX_VOICES = 64;
@@ -69,7 +94,7 @@ constexpr int LOADER_ERROR_LEN = 256;
 constexpr float MIN_SOURCE_DISTANCE_SQR = 1e-6f;
 
 // Steam Audio's frame: +x right, +y up, -z ahead.
-constexpr IPLVector3 STEAMAUDIO_AHEAD = { 0.0f, 0.0f, -1.0f };
+constexpr IPLVector3 STEAMAUDIO_AHEAD = {0.0f, 0.0f, -1.0f};
 
 float Dot(const Vec3 &a, const Vec3 &b)
 {
@@ -78,7 +103,7 @@ float Dot(const Vec3 &a, const Vec3 &b)
 
 IPLVector3 ToSteamAudioDirection(const Listener &listener, const Vec3 &origin)
 {
-	const Vec3 delta = { origin.x - listener.origin.x, origin.y - listener.origin.y, origin.z - listener.origin.z };
+	const Vec3 delta = {origin.x - listener.origin.x, origin.y - listener.origin.y, origin.z - listener.origin.z};
 	const float distanceSqr = Dot(delta, delta);
 	if (distanceSqr < MIN_SOURCE_DISTANCE_SQR)
 	{
@@ -86,8 +111,8 @@ IPLVector3 ToSteamAudioDirection(const Listener &listener, const Vec3 &origin)
 	}
 
 	const float invDistance = 1.0f / sqrtf(distanceSqr);
-	const Vec3 dir = { delta.x * invDistance, delta.y * invDistance, delta.z * invDistance };
-	return { Dot(dir, listener.right), Dot(dir, listener.up), -Dot(dir, listener.forward) };
+	const Vec3 dir = {delta.x * invDistance, delta.y * invDistance, delta.z * invDistance};
+	return {Dot(dir, listener.right), Dot(dir, listener.up), -Dot(dir, listener.forward)};
 }
 
 class CSteamAudioSpatializer final : public ISpatializer
@@ -131,7 +156,7 @@ public:
 		if (status != IPL_STATUS_SUCCESS)
 		{
 			snprintf(errorOut, errorLen, "iplContextCreate failed (status %d, built against Steam Audio %d.%d.%d)",
-					 static_cast<int>(status), STEAMAUDIO_VERSION_MAJOR, STEAMAUDIO_VERSION_MINOR, STEAMAUDIO_VERSION_PATCH);
+				static_cast<int>(status), STEAMAUDIO_VERSION_MAJOR, STEAMAUDIO_VERSION_MINOR, STEAMAUDIO_VERSION_PATCH);
 			return false;
 		}
 
@@ -151,10 +176,7 @@ public:
 		return true;
 	}
 
-	void SetListener(const Listener &listener) override
-	{
-		m_listener = listener;
-	}
+	void SetListener(const Listener &listener) override { m_listener = listener; }
 
 	VoiceHandle CreateVoice() override
 	{
@@ -176,7 +198,8 @@ public:
 			{
 				IPLBinauralEffectSettings effectSettings = {};
 				effectSettings.hrtf = m_hrtf;
-				if (m_api.iplBinauralEffectCreate(m_context, &m_audioSettings, &effectSettings, &voice.effect) != IPL_STATUS_SUCCESS)
+				if (m_api.iplBinauralEffectCreate(m_context, &m_audioSettings, &effectSettings, &voice.effect) !=
+					IPL_STATUS_SUCCESS)
 				{
 					voice.effect = nullptr;
 					return INVALID_VOICE;
@@ -215,10 +238,10 @@ public:
 		params.hrtf = m_hrtf;
 
 		// The C API takes non-const channel pointers but never writes to an input buffer.
-		float *inChannels[] = { const_cast<float *>(monoIn) };
-		float *outChannels[] = { outLeft, outRight };
-		IPLAudioBuffer inBuffer = { 1, frames, inChannels };
-		IPLAudioBuffer outBuffer = { 2, frames, outChannels };
+		float *inChannels[] = {const_cast<float *>(monoIn)};
+		float *outChannels[] = {outLeft, outRight};
+		IPLAudioBuffer inBuffer = {1, frames, inChannels};
+		IPLAudioBuffer outBuffer = {2, frames, outChannels};
 		m_api.iplBinauralEffectApply(voice->effect, &params, &inBuffer, &outBuffer);
 	}
 
@@ -251,8 +274,8 @@ private:
 
 } // namespace
 
-ISpatializer *CreateSteamAudioSpatializer(const char *phononLibraryPath, int sampleRate, int frameSize,
-										  char *errorOut, int errorLen)
+ISpatializer *CreateSteamAudioSpatializer(
+	const char *phononLibraryPath, int sampleRate, int frameSize, char *errorOut, int errorLen)
 {
 	const LibraryHandle library = OpenLibrary(phononLibraryPath);
 	if (!library)

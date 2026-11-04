@@ -5,9 +5,9 @@
 #endif
 
 #ifdef CLIENT_DLL
-	#include "c_neo_player.h"
+#include "c_neo_player.h"
 #else
-	#include "neo_player.h"
+#include "neo_player.h"
 #endif
 
 #include "neo_player_shared.h"
@@ -18,7 +18,7 @@
 #endif
 
 #ifdef CLIENT_DLL
-	#define CNEOBaseCombatWeapon C_NEOBaseCombatWeapon
+#define CNEOBaseCombatWeapon C_NEOBaseCombatWeapon
 #endif
 
 #include "weapon_bits.h"
@@ -27,7 +27,8 @@
 // These are the .res file id numbers for
 // NEO weapon loadout choices used by the
 // client cvar "loadout <int>"
-enum {
+enum
+{
 	NEO_WEP_LOADOUT_ID_MPN = 0,
 	NEO_WEP_LOADOUT_ID_SRM,
 	NEO_WEP_LOADOUT_ID_SRM_S,
@@ -47,21 +48,24 @@ enum {
 
 const char *GetWeaponByLoadoutId(int id);
 
-struct WeaponSpreadInfo_t {
+struct WeaponSpreadInfo_t
+{
 	Vector minSpreadHip;
 	Vector maxSpreadHip;
 	Vector minSpreadAim;
 	Vector maxSpreadAim;
 };
 
-struct WeaponKickInfo_t {
+struct WeaponKickInfo_t
+{
 	float minX;
 	float maxX;
 	float minY;
 	float maxY;
 };
 
-struct WeaponRecoilInfo_t {
+struct WeaponRecoilInfo_t
+{
 	float hipFactor;
 	float adsFactor;
 	float minX;
@@ -86,13 +90,13 @@ struct WeaponSeeds_t
 	const char *recoilY;
 };
 
-#define	SOUNDENT_VOLUME_NEO_SUPPRESSED 900.0
+#define SOUNDENT_VOLUME_NEO_SUPPRESSED 900.0
 #define NEO_THROWABLES_WEAPON_SLOT 3
 
-#if(1)
-		// This does nothing; dummy value for network test. Remove when not needed anymore.
+#if (1)
+// This does nothing; dummy value for network test. Remove when not needed anymore.
 #define DEFINE_NEO_BASE_WEP_PREDICTION
-		// This does nothing; dummy value for network test. Remove when not needed anymore.
+// This does nothing; dummy value for network test. Remove when not needed anymore.
 #define DEFINE_NEO_BASE_WEP_NETWORK_TABLE
 #else
 // clang-format off
@@ -125,6 +129,7 @@ enum EDeathIconType
 class CNEOBaseCombatWeapon : public CBaseHL2MPCombatWeapon
 {
 	DECLARE_CLASS(CNEOBaseCombatWeapon, CBaseHL2MPCombatWeapon);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -143,19 +148,20 @@ public:
 	virtual void ClientThink() override;
 #endif // CLIENT_DLL
 
-	virtual void Equip(CBaseCombatCharacter* pOwner) override;
-	virtual	void CheckReload(void) override;
+	virtual void Equip(CBaseCombatCharacter *pOwner) override;
+	virtual void CheckReload(void) override;
 
-	virtual bool Reload( void ) override;
+	virtual bool Reload(void) override;
 	virtual void FinishReload(void) override;
 	virtual bool IsWeaponReloadable(void) const { return true; }
 
 	virtual bool CanBeSelected(void) override;
-	virtual bool IsFollowingEntity() override {
+	virtual bool IsFollowingEntity() override
+	{
 		// NEO NOTE (Adam) stops non-active weapons attached to players from showing a pickup hint, also should fix position of attached weapons where they were previously interpolated separate to the owner instead of always being attached to the owner
 		return (GetMoveType() == MOVETYPE_NONE) && GetMoveParent();
 	};
-	virtual int	ObjectCaps(void) override
+	virtual int ObjectCaps(void) override
 	{
 		int caps = BaseClass::ObjectCaps();
 		if (!IsFollowingEntity()
@@ -164,9 +170,9 @@ public:
 #else
 			&& !(m_spawnflags & SF_WEAPON_NO_PLAYER_PICKUP)
 #endif // GAME_DLL
-			)
+		)
 		{
-			caps |= FCAP_IMPULSE_USE|FCAP_USE_IN_RADIUS; 
+			caps |= FCAP_IMPULSE_USE | FCAP_USE_IN_RADIUS;
 		}
 
 		return caps;
@@ -174,13 +180,29 @@ public:
 
 	CNEOWeaponInfo const &GetNEOWpnData() const;
 
-	virtual const char *GetViewModel( int viewmodelindex = 0 ) const override;
+	virtual const char *GetViewModel(int viewmodelindex = 0) const override;
 
-	virtual NEO_WEP_BITS_UNDERLYING_TYPE WeaponIndex() const { Assert(false); return NEO_WIDX_INVALID; }
-	virtual NEO_WEP_BITS_UNDERLYING_TYPE GetNeoWepBits(void) const { Assert(false); return NEO_WEP_INVALID; } // Should never call this base class; implement in children.
-	virtual int GetNeoWepXPCost(const int neoClass) const { Assert(false); return 0; } // Should never call this base class; implement in children.
+	virtual NEO_WEP_BITS_UNDERLYING_TYPE WeaponIndex() const
+	{
+		Assert(false);
+		return NEO_WIDX_INVALID;
+	}
+	virtual NEO_WEP_BITS_UNDERLYING_TYPE GetNeoWepBits(void) const
+	{
+		Assert(false);
+		return NEO_WEP_INVALID;
+	} // Should never call this base class; implement in children.
+	virtual int GetNeoWepXPCost(const int neoClass) const
+	{
+		Assert(false);
+		return 0;
+	} // Should never call this base class; implement in children.
 
-	virtual float GetSpeedScale(void) const { Assert(false); return 1.0; } // Should never call this base class; implement in children.
+	virtual float GetSpeedScale(void) const
+	{
+		Assert(false);
+		return 1.0;
+	} // Should never call this base class; implement in children.
 
 	virtual void ItemPreFrame(void) override;
 	virtual void ItemPostFrame(void) override;
@@ -189,7 +211,7 @@ public:
 	virtual void PrimaryAttack(void) override;
 	virtual void SecondaryAttack(void) override;
 #ifdef GAME_DLL
-	virtual void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value ) override;
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value) override;
 #endif
 
 	virtual void DryFire(void);
@@ -205,7 +227,7 @@ public:
 
 	bool ShootingIsPrevented(void) const
 	{
-		auto owner = static_cast<CNEO_Player*>(GetOwner());
+		auto owner = static_cast<CNEO_Player *>(GetOwner());
 		if (!owner)
 		{
 			return true;
@@ -227,20 +249,23 @@ public:
 	// Whether this weapon should fire automatically when holding down the attack.
 	inline virtual bool IsAutomatic(void) const
 	{
-		return ((GetNeoWepBits() & (NEO_WEP_AA13 | NEO_WEP_JITTE | NEO_WEP_JITTE_S |
-			NEO_WEP_KNIFE | NEO_WEP_MPN | NEO_WEP_MPN_S | NEO_WEP_MX | NEO_WEP_MX_S |
-			NEO_WEP_PZ | NEO_WEP_SMAC | NEO_WEP_SRM | NEO_WEP_SRM_S | NEO_WEP_ZR68_C | NEO_WEP_ZR68_S
+		return ((GetNeoWepBits() &
+					(NEO_WEP_AA13 | NEO_WEP_JITTE | NEO_WEP_JITTE_S | NEO_WEP_KNIFE | NEO_WEP_MPN | NEO_WEP_MPN_S |
+						NEO_WEP_MX | NEO_WEP_MX_S | NEO_WEP_PZ | NEO_WEP_SMAC | NEO_WEP_SRM | NEO_WEP_SRM_S |
+						NEO_WEP_ZR68_C | NEO_WEP_ZR68_S
 #ifdef INCLUDE_WEP_PBK
-			| NEO_WEP_PBK56S
+						| NEO_WEP_PBK56S
 #endif
-			)) ? true : false);
+						))
+				? true
+				: false);
 	}
 
 	// Whether this weapon should fire only once per each attack command, even if held down.
 	inline bool IsSemiAuto(void) const { return !IsAutomatic(); }
 
-	virtual const Vector& GetBulletSpread(void) override;
-	virtual const WeaponSpreadInfo_t& GetSpreadInfo(void);
+	virtual const Vector &GetBulletSpread(void) override;
+	virtual const WeaponSpreadInfo_t &GetSpreadInfo(void);
 	virtual void AddViewKick(void) override;
 
 	virtual bool CanBePickedUpByClass(int classId);
@@ -250,12 +275,12 @@ public:
 
 	virtual void SetPickupTouch(void) override;
 
-	virtual bool Holster(CBaseCombatWeapon* pSwitchingTo) override;
+	virtual bool Holster(CBaseCombatWeapon *pSwitchingTo) override;
 	virtual void ItemHolsterFrame() override;
 #ifdef CLIENT_DLL
 	virtual bool ShouldDraw(void) override;
 	virtual void ThirdPersonSwitch(bool bThirdPerson) override;
-	virtual int RestoreData(const char* context, int slot, int type) override;
+	virtual int RestoreData(const char *context, int slot, int type) override;
 	virtual int DrawModel(int flags) override;
 	virtual RenderGroup_t GetRenderGroup() override;
 	virtual bool UsesPowerOfTwoFrameBufferTexture() override;
@@ -269,10 +294,9 @@ public:
 	float m_flTemperature;
 	int m_spawnflags;
 #endif // CLIENT_DLL
-	
-	static const char *GetDeathIcon(const CNEOBaseCombatWeapon *pNeoWep,
-			const EDeathIconType eType,
-			bool isGrenade = false, bool isRemoteDetpack = false);
+
+	static const char *GetDeathIcon(const CNEOBaseCombatWeapon *pNeoWep, const EDeathIconType eType,
+		bool isGrenade = false, bool isRemoteDetpack = false);
 
 protected:
 	WeaponHandlingInfo_t m_weaponHandling;
@@ -282,7 +306,11 @@ protected:
 	virtual float GetAccuracyPenalty() const { return 0.8; }
 	virtual float GetMaxAccuracyPenalty() const { return 1.0; }
 	virtual float GetAccuracyPenaltyDecay();
-	virtual float GetFastestDryRefireTime() const { Assert(false); return 0; } // Should never call this base class; implement in children.
+	virtual float GetFastestDryRefireTime() const
+	{
+		Assert(false);
+		return 0;
+	} // Should never call this base class; implement in children.
 
 protected:
 	CNetworkVar(float, m_flSoonestAttack);
@@ -297,7 +325,6 @@ protected:
 
 private:
 	CNEOBaseCombatWeapon(const CNEOBaseCombatWeapon &other);
-
 };
 
 #endif // WEAPON_NEO_BASECOMBATWEAPON_SHARED_H

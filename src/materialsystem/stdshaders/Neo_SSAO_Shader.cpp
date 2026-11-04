@@ -74,7 +74,7 @@ SHADER_DRAW
 		const int width = src_texture->GetActualWidth();
 		const int height = src_texture->GetActualHeight();
 
-		const float g_TexelSize[2] = { 1.0f / float(width), 1.0f / float(height) };
+		const float g_TexelSize[2] = {1.0f / float(width), 1.0f / float(height)};
 		const float samples = mat_neo_ssao_samples.GetInt();
 		const float radius = mat_neo_ssao_radius.GetFloat();
 		const float bias = mat_neo_ssao_bias.GetFloat();

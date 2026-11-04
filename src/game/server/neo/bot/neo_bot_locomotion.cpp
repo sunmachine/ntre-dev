@@ -7,10 +7,10 @@
 extern ConVar falldamage;
 
 //-----------------------------------------------------------------------------------------
-void CNEOBotLocomotion::Update( void )
+void CNEOBotLocomotion::Update(void)
 {
-	CNEOBot* me = ToNEOBot( GetBot()->GetEntity() );
-	if ( !me || me->GetNeoFlags() & NEO_FL_FREEZETIME)
+	CNEOBot *me = ToNEOBot(GetBot()->GetEntity());
+	if (!me || me->GetNeoFlags() & NEO_FL_FREEZETIME)
 	{
 		return;
 	}
@@ -18,12 +18,12 @@ void CNEOBotLocomotion::Update( void )
 	BaseClass::Update();
 
 	// always 'crouch jump'
-	if ( IsOnGround() )
+	if (IsOnGround())
 	{
-		CNavArea* currentArea = me->GetLastKnownArea();
+		CNavArea *currentArea = me->GetLastKnownArea();
 		if (currentArea && (currentArea->GetAttributes() & NAV_MESH_CROUCH))
 		{
-			me->PressCrouchButton( 0.3f );
+			me->PressCrouchButton(0.3f);
 		}
 #ifdef NEO
 		// NEO JANK resetting of crouch timer moved to NextBotPlayer::PressJumpButton
@@ -39,10 +39,10 @@ void CNEOBotLocomotion::Update( void )
 		// Don't try to crouch jump if we are climbing a ladder
 		if (!me->IsBotOnLadder())
 		{
-			me->PressCrouchButton( 0.3f );
+			me->PressCrouchButton(0.3f);
 		}
 #else
-		me->PressCrouchButton( 0.3f );
+		me->PressCrouchButton(0.3f);
 #endif
 	}
 }
@@ -50,22 +50,22 @@ void CNEOBotLocomotion::Update( void )
 
 //-----------------------------------------------------------------------------------------
 // Move directly towards the given position
-void CNEOBotLocomotion::Approach( const Vector& pos, float goalWeight )
+void CNEOBotLocomotion::Approach(const Vector &pos, float goalWeight)
 {
-	BaseClass::Approach( pos, goalWeight );
+	BaseClass::Approach(pos, goalWeight);
 }
 
 
 //-----------------------------------------------------------------------------------------
 // Distance at which we will die if we fall
-float CNEOBotLocomotion::GetDeathDropHeight( void ) const
+float CNEOBotLocomotion::GetDeathDropHeight(void) const
 {
-	CNEOBot* me = ( CNEOBot* )GetBot()->GetEntity();
+	CNEOBot *me = (CNEOBot *)GetBot()->GetEntity();
 
-	// misyl: Fall damage only deals 10 health otherwise. 
-	if ( falldamage.GetInt() != 1 )
+	// misyl: Fall damage only deals 10 health otherwise.
+	if (falldamage.GetInt() != 1)
 	{
-		if ( me->GetHealth() > 10.0f )
+		if (me->GetHealth() > 10.0f)
 			return MAX_COORD_FLOAT;
 
 		// #define PLAYER_MAX_SAFE_FALL_SPEED	526.5f // approx 20 feet sqrt( 2 * gravity * 20 * 12 )
@@ -80,19 +80,19 @@ float CNEOBotLocomotion::GetDeathDropHeight( void ) const
 
 //-----------------------------------------------------------------------------------------
 // Get maximum running speed
-float CNEOBotLocomotion::GetRunSpeed( void ) const
+float CNEOBotLocomotion::GetRunSpeed(void) const
 {
 	CNEOBot *me = (CNEOBot *)GetBot()->GetEntity();
 	return me->GetSprintSpeed_WithActiveWepEncumberment();
 }
 
-float CNEOBotLocomotion::GetWalkSpeed( void ) const
+float CNEOBotLocomotion::GetWalkSpeed(void) const
 {
 	CNEOBot *me = (CNEOBot *)GetBot()->GetEntity();
 	return me->GetNormSpeed_WithActiveWepEncumberment();
 }
 
-bool CNEOBotLocomotion::IsRunning( void ) const
+bool CNEOBotLocomotion::IsRunning(void) const
 {
 	return GetSpeed() > GetWalkSpeed();
 }
@@ -100,11 +100,11 @@ bool CNEOBotLocomotion::IsRunning( void ) const
 
 //-----------------------------------------------------------------------------------------
 // Return true if given area can be used for navigation
-bool CNEOBotLocomotion::IsAreaTraversable( const CNavArea* area ) const
+bool CNEOBotLocomotion::IsAreaTraversable(const CNavArea *area) const
 {
-	CNEOBot* me = ( CNEOBot* )GetBot()->GetEntity();
+	CNEOBot *me = (CNEOBot *)GetBot()->GetEntity();
 
-	if ( area->IsBlocked( me->GetTeamNumber() ) )
+	if (area->IsBlocked(me->GetTeamNumber()))
 	{
 		return false;
 	}
@@ -114,26 +114,26 @@ bool CNEOBotLocomotion::IsAreaTraversable( const CNavArea* area ) const
 
 
 //-----------------------------------------------------------------------------------------
-bool CNEOBotLocomotion::IsEntityTraversable( CBaseEntity* obstacle, TraverseWhenType when ) const
+bool CNEOBotLocomotion::IsEntityTraversable(CBaseEntity *obstacle, TraverseWhenType when) const
 {
 	// assume all players are "traversable" in that they will move or can be killed
-	if ( obstacle && obstacle->IsPlayer() )
+	if (obstacle && obstacle->IsPlayer())
 	{
 		return true;
 	}
 
-	if ( obstacle )
+	if (obstacle)
 	{
 		// misyl:
 		// override the base brush logic here to work better for hl2mp (w/ solid flags)
 		// changing this for TF would be scary.
 		//
 		// if we hit a clip brush, ignore it if it is not BRUSHSOLID_ALWAYS
-		if ( FClassnameIs( obstacle, "func_brush" ) )
+		if (FClassnameIs(obstacle, "func_brush"))
 		{
-			CFuncBrush* brush = ( CFuncBrush* )obstacle;
+			CFuncBrush *brush = (CFuncBrush *)obstacle;
 
-			switch ( brush->m_iSolidity )
+			switch (brush->m_iSolidity)
 			{
 			case CFuncBrush::BRUSHSOLID_ALWAYS:
 				return false;
@@ -145,6 +145,6 @@ bool CNEOBotLocomotion::IsEntityTraversable( CBaseEntity* obstacle, TraverseWhen
 		}
 	}
 
-	const bool bIsTraversable = PlayerLocomotion::IsEntityTraversable( obstacle, when );
+	const bool bIsTraversable = PlayerLocomotion::IsEntityTraversable(obstacle, when);
 	return bIsTraversable || GetBot()->IsAbleToBreak(obstacle);
 }

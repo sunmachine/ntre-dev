@@ -22,7 +22,8 @@ CNEOHud_GhostUplinkState::CNEOHud_GhostUplinkState(const char *pElementName, vgu
 	SetAutoDelete(true);
 	m_iHideHudElementNumber = NEO_HUD_ELEMENT_GHOST_UPLINK_STATE;
 
-	if (parent) {
+	if (parent)
+	{
 		SetParent(parent);
 	}
 	else
@@ -47,7 +48,7 @@ CNEOHud_GhostUplinkState::CNEOHud_GhostUplinkState(const char *pElementName, vgu
 	SetVisible(true);
 }
 
-void CNEOHud_GhostUplinkState::ApplySchemeSettings(vgui::IScheme* pScheme)
+void CNEOHud_GhostUplinkState::ApplySchemeSettings(vgui::IScheme *pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 
@@ -60,7 +61,7 @@ void CNEOHud_GhostUplinkState::ApplySchemeSettings(vgui::IScheme* pScheme)
 	int iCompassMargin = (screenHeight / 480) * 3;
 	vgui::HFont m_hFont = pScheme->GetFont("NHudOCRSmall");
 	int iFontHeight = vgui::surface()->GetFontTall(m_hFont);
-	int textureYPos = screenHeight - m_iUplinkTextureHeight - iFontHeight - ( 2 * iCompassMargin);
+	int textureYPos = screenHeight - m_iUplinkTextureHeight - iFontHeight - (2 * iCompassMargin);
 	SetBounds(textureXPos, textureYPos, m_iUplinkTextureWidth, m_iUplinkTextureHeight);
 	SetFgColor(COLOR_TRANSPARENT);
 	SetBgColor(COLOR_TRANSPARENT);
@@ -70,7 +71,8 @@ void CNEOHud_GhostUplinkState::UpdateStateForNeoHudElementDraw()
 {
 	if (m_iCurrentTextureIndex < (NUM_TEXTURE_START_TIMES - 1))
 	{
-		static constexpr float textureStartTimes[NUM_TEXTURE_START_TIMES] = { 0, 0.2, 0.5, 0.6, 1.0, 1.1, 1.4, 1.8, 2.5, 2.7, 3.0 };
+		static constexpr float textureStartTimes[NUM_TEXTURE_START_TIMES] = {
+			0, 0.2, 0.5, 0.6, 1.0, 1.1, 1.4, 1.8, 2.5, 2.7, 3.0};
 		if ((gpGlobals->curtime - m_flTimeGhostEquip) >= textureStartTimes[m_iCurrentTextureIndex + 1])
 		{
 			m_iCurrentTextureIndex++;
@@ -84,24 +86,25 @@ void CNEOHud_GhostUplinkState::DrawNeoHudElement()
 	if (!ShouldDraw())
 		return;
 
-	C_NEO_Player* pLocalPlayer = C_NEO_Player::GetLocalNEOPlayer();
+	C_NEO_Player *pLocalPlayer = C_NEO_Player::GetLocalNEOPlayer();
 	if (!pLocalPlayer)
 		return;
 
-	C_NEOBaseCombatWeapon* pActiveWeapon = static_cast<C_NEOBaseCombatWeapon*>(pLocalPlayer->GetActiveWeapon());
-	if ((pActiveWeapon && pActiveWeapon->IsGhost()) || 
-		(sv_neo_ctg_ghost_beacons_when_inactive.GetBool() && (NEORules()->GetGhosterPlayer() == pLocalPlayer->entindex() || pLocalPlayer->IsCarryingGhost())))
+	C_NEOBaseCombatWeapon *pActiveWeapon = static_cast<C_NEOBaseCombatWeapon *>(pLocalPlayer->GetActiveWeapon());
+	if ((pActiveWeapon && pActiveWeapon->IsGhost()) ||
+		(sv_neo_ctg_ghost_beacons_when_inactive.GetBool() &&
+			(NEORules()->GetGhosterPlayer() == pLocalPlayer->entindex() || pLocalPlayer->IsCarryingGhost())))
 	{
 		if (NEORules()->IsRoundOver())
 			return;
-		
+
 		if (m_flTimeGhostEquip == 0.f)
 		{
 			m_flTimeGhostEquip = gpGlobals->curtime;
 		}
 
 		surface()->DrawSetColor(COLOR_RED);
-		static constexpr int textureOrder[NUM_TEXTURE_START_TIMES] = { 0, 1, 2, 3, 2, 0, 1, 2, 3, 0, 1 };
+		static constexpr int textureOrder[NUM_TEXTURE_START_TIMES] = {0, 1, 2, 3, 2, 0, 1, 2, 3, 0, 1};
 		surface()->DrawSetTexture(m_pUplinkTextures[textureOrder[m_iCurrentTextureIndex]]);
 		surface()->DrawTexturedRect(0, 0, m_iUplinkTextureWidth, m_iUplinkTextureHeight);
 	}

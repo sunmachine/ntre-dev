@@ -218,14 +218,15 @@ enum PopupFlag_
 {
 	// Public flags, used as BeginPopup options
 	POPUPFLAG_NIL = 0,
-	POPUPFLAG_FOCUSONOPEN = 1 << 0, // Direct focus to this popup when it opens 
+	POPUPFLAG_FOCUSONOPEN = 1 << 0,      // Direct focus to this popup when it opens
 	POPUPFLAG_COLORHOTASACTIVE = 1 << 1, // Color hot widgets as active, mainly for menu-style popups
 
 	// Internal only flags
 	POPUPFLAG__EXTERNAL = ((1 << 8) - 1), // Mask of all external/options flags below start of internal
-	POPUPFLAG__INPOPUPSECTION = 1 << 8, // Inside a Begin/EndPopup section
-	POPUPFLAG__NEWOPENPOPUP = 1 << 9, // The popup just initialized
-	POPUPFLAG__CTXDONEPOPUP = 1 << 10, // Popup have been shown in this context, it's so OpenPopup to another one won't just immediately close
+	POPUPFLAG__INPOPUPSECTION = 1 << 8,   // Inside a Begin/EndPopup section
+	POPUPFLAG__NEWOPENPOPUP = 1 << 9,     // The popup just initialized
+	POPUPFLAG__CTXDONEPOPUP =
+		1 << 10, // Popup have been shown in this context, it's so OpenPopup to another one won't just immediately close
 };
 typedef int PopupFlags;
 
@@ -233,18 +234,19 @@ enum NextTableRowFlag_
 {
 	// Public flags, used as NextTableRow options
 	NEXTTABLEROWFLAG_NONE = 0,
-	NEXTTABLEROWFLAG_SELECTABLE = 1 << 0,			// Mark this row as selectable
-	NEXTTABLEROWFLAG_SELECTED = 1 << 1,				// Mark as selected (only if selectable)
+	NEXTTABLEROWFLAG_SELECTABLE = 1 << 0, // Mark this row as selectable
+	NEXTTABLEROWFLAG_SELECTED = 1 << 1,   // Mark as selected (only if selectable)
 
 	// Internal only flags
-	NEXTTABLEROWFLAG__EXTERNAL = ((1 << 8) - 1), 	// Mask of all external/options flags below start of internal
-	NEXTTABLEROWFLAG__HOT = 1 << 8,					// Mouse hovering the row
-	NEXTTABLEROWFLAG__UPDOWNPROCESSED = 1 << 9,		// Up/down button already been processed
-	NEXTTABLEROWFLAG__HASROWSELECTED = 1 << 10,		// There's a row selection in this table
-	NEXTTABLEROWFLAG__HASROWSELECTABLES = 1 << 11,	// Any row in this table can be selected
+	NEXTTABLEROWFLAG__EXTERNAL = ((1 << 8) - 1),   // Mask of all external/options flags below start of internal
+	NEXTTABLEROWFLAG__HOT = 1 << 8,                // Mouse hovering the row
+	NEXTTABLEROWFLAG__UPDOWNPROCESSED = 1 << 9,    // Up/down button already been processed
+	NEXTTABLEROWFLAG__HASROWSELECTED = 1 << 10,    // There's a row selection in this table
+	NEXTTABLEROWFLAG__HASROWSELECTABLES = 1 << 11, // Any row in this table can be selected
 
 	// Flags that'll persists when going to the next row
-	NEXTTABLEROWFLAG__PERSISTS = NEXTTABLEROWFLAG__UPDOWNPROCESSED | NEXTTABLEROWFLAG__HASROWSELECTED | NEXTTABLEROWFLAG__HASROWSELECTABLES,
+	NEXTTABLEROWFLAG__PERSISTS =
+		NEXTTABLEROWFLAG__UPDOWNPROCESSED | NEXTTABLEROWFLAG__HASROWSELECTED | NEXTTABLEROWFLAG__HASROWSELECTABLES,
 };
 typedef int NextTableRowFlags;
 
@@ -293,7 +295,7 @@ struct Layout
 
 	// Main layout
 	int iRowPartsTotal;
-	const int *iRowParts; 
+	const int *iRowParts;
 	int iRowTall;
 	int iDefRowTall;
 
@@ -437,7 +439,7 @@ struct Context
 
 	// # Internal managed popups variables
 	ECopyMenu eRightClickCopyMenuRet = COPYMENU_NIL; // Right-click copy menu
-	ColorEditInfo colorEditInfo; // Color editor popup
+	ColorEditInfo colorEditInfo;                     // Color editor popup
 
 	// TextEdit text selection
 	int iTextSelStart = -1;
@@ -479,8 +481,8 @@ struct RetButton
 	bool bMouseRightPressed;
 
 	// Table row only
-	bool bKeyUpPressed;		// bPressed not set if this set
-	bool bKeyDownPressed;	// bPressed not set if this set
+	bool bKeyUpPressed;   // bPressed not set if this set
+	bool bKeyDownPressed; // bPressed not set if this set
 };
 
 struct LabelExOpt
@@ -568,7 +570,7 @@ void EndOverrideFgColor();
 enum TabsFlag_
 {
 	TABFLAG_DEFAULT = 0,
-	TABFLAG_NOSIDEKEYS = 1 << 0,  // Don't show hints and don't recognize keys EX: F1-F3/L-R on left-right side
+	TABFLAG_NOSIDEKEYS = 1 << 0,    // Don't show hints and don't recognize keys EX: F1-F3/L-R on left-right side
 	TABFLAG_NOSTATERESETS = 1 << 1, // Don't reset scroll/hot/active states
 };
 typedef int TabsFlags;
@@ -582,27 +584,27 @@ struct TabsState
 enum TextureOptFlag_
 {
 	TEXTUREOPTFLAGS_NONE = 0,
-	TEXTUREOPTFLAGS_DONOTCROPTOPANEL = 1 << 0, // Disable cropping based on panel's dimension
+	TEXTUREOPTFLAGS_DONOTCROPTOPANEL = 1 << 0,    // Disable cropping based on panel's dimension
 	TEXTUREOPTFLAGS_DONOTCACHEIFINVALID = 1 << 1, // Don't insert to htTexMap cache if invalid
-	TEXTUREOPTFLAGS_RESIZETO256 = 1 << 2, // Resize texture to 256px square using NeoUtils::CropScaleTo256
+	TEXTUREOPTFLAGS_RESIZETO256 = 1 << 2,         // Resize texture to 256px square using NeoUtils::CropScaleTo256
 };
 typedef int TextureOptFlags;
 
 /*1W*/ void Tabs(const wchar_t **wszLabelsList, const int iLabelsSize, int *iIndex,
-		const TabsFlags flags = TABFLAG_DEFAULT,
-		TabsState *pState = nullptr);
+	const TabsFlags flags = TABFLAG_DEFAULT, TabsState *pState = nullptr);
 /*1W*/ RetButton BaseButton(const wchar_t *wszText, const char *szTexturePath, const char *szTextureGroup,
-		const EBaseButtonType eType, const bool bVal = false,
-		const ButtonFlags flags = BUTTONFLAG_NONE, const float flScrollStart = 0.0f,
-		const TextureOptFlags texFlags = TEXTUREOPTFLAGS_NONE);
+	const EBaseButtonType eType, const bool bVal = false, const ButtonFlags flags = BUTTONFLAG_NONE,
+	const float flScrollStart = 0.0f, const TextureOptFlags texFlags = TEXTUREOPTFLAGS_NONE);
 /*1W*/ RetButton Button(const wchar_t *wszText);
 /*2W*/ RetButton Button(const wchar_t *wszLeftLabel, const wchar_t *wszText);
-/*1W*/ RetButton ButtonTexture(const char *szTexturePath, const char *szTextureGroup = "",
-		const wchar_t *wszText = L"", const TextureOptFlags flags = TEXTUREOPTFLAGS_NONE);
+/*1W*/ RetButton ButtonTexture(const char *szTexturePath, const char *szTextureGroup = "", const wchar_t *wszText = L"",
+	const TextureOptFlags flags = TEXTUREOPTFLAGS_NONE);
 /*1W*/ RetButton ButtonCheckbox(const wchar_t *wszText, const bool bVal);
-/*1W*/ RetButton ButtonToggle(const wchar_t *wszText, const bool bVal, const ButtonFlags flags = BUTTONFLAG_NONE, const float flScrollStart = 0.0f);
+/*1W*/ RetButton ButtonToggle(const wchar_t *wszText, const bool bVal, const ButtonFlags flags = BUTTONFLAG_NONE,
+	const float flScrollStart = 0.0f);
 /*1W*/ void RingBoxFlag(const int iToggleFlag, int *iFlags, const wchar_t **wszLabelsCustomList = nullptr);
-/*2W*/ void RingBoxFlag(const wchar_t *wszLeftLabel, const int iToggleFlag, int *iFlags, const wchar_t **wszLabelsCustomList = nullptr);
+/*2W*/ void RingBoxFlag(
+	const wchar_t *wszLeftLabel, const int iToggleFlag, int *iFlags, const wchar_t **wszLabelsCustomList = nullptr);
 /*1W*/ void RingBoxBool(bool *bChecked, const wchar_t **wszLabelsCustomList = nullptr);
 /*2W*/ void RingBoxBool(const wchar_t *wszLeftLabel, bool *bChecked, const wchar_t **wszLabelsCustomList = nullptr);
 /*1W*/ void RingBox(const wchar_t **wszLabelsList, const int iLabelsSize, int *iIndex);
@@ -610,12 +612,12 @@ typedef int TextureOptFlags;
 /*1W*/ void Progress(const float flValue, const float flMin, const float flMax);
 /*1W*/ void ProgressDrag(float *flValue, const float flMin, const float flMax);
 // Sliders relies on wszLeftLabel to cache value string, so only two-widgets variants
-/*2W*/ void Slider(const wchar_t *wszLeftLabel, float *flValue, const float flMin, const float flMax,
-				   const int iDp = 2, const float flStep = 1.0f, const wchar_t *wszSpecialText = nullptr);
+/*2W*/ void Slider(const wchar_t *wszLeftLabel, float *flValue, const float flMin, const float flMax, const int iDp = 2,
+	const float flStep = 1.0f, const wchar_t *wszSpecialText = nullptr);
 /*2W*/ void SliderInt(const wchar_t *wszLeftLabel, int *iValue, const int iMin, const int iMax, const int iStep = 1,
-					  const wchar_t *wszSpecialText = nullptr);
-/*2W*/ void SliderU8(const wchar_t *wszLeftLabel, uint8 *ucValue, const uint8 iMin, const uint8 iMax, const uint8 iStep = 1,
-					 const wchar_t *wszSpecialText = nullptr);
+	const wchar_t *wszSpecialText = nullptr);
+/*2W*/ void SliderU8(const wchar_t *wszLeftLabel, uint8 *ucValue, const uint8 iMin, const uint8 iMax,
+	const uint8 iStep = 1, const wchar_t *wszSpecialText = nullptr);
 /*1W*/ void ColorEdit(uint8 *r, uint8 *g, uint8 *b, uint8 *a);
 /*2W*/ void ColorEdit(const wchar_t *wszLeftLabel, uint8 *r, uint8 *g, uint8 *b, uint8 *a);
 
@@ -623,12 +625,15 @@ enum TextEditFlag_
 {
 	TEXTEDITFLAG_NONE = 0,
 	TEXTEDITFLAG_PASSWORD = 1 << 0, // Replace all characters with "*"
-	TEXTEDITFLAG_FORCEACTIVE = 1 << 1, // Enforce hot+active focusing in this text edit widget all time, only suitable for single-textedit popups
+	TEXTEDITFLAG_FORCEACTIVE = 1
+		<< 1, // Enforce hot+active focusing in this text edit widget all time, only suitable for single-textedit popups
 };
 typedef int TextEditFlags;
 /*1W*/ void TextEdit(wchar_t *wszText, const int iMaxWszTextSize, const TextEditFlags flags = TEXTEDITFLAG_NONE);
-/*2W*/ void TextEdit(const wchar_t *wszLeftLabel, wchar_t *wszText, const int iMaxWszTextSize, const TextEditFlags flags = TEXTEDITFLAG_NONE);
-/*SW*/ void ImageTexture(const char *szTexturePath, const wchar_t *wszErrorMsg = L"", const char *szTextureGroup = "", const TextureOptFlags flags = TEXTUREOPTFLAGS_NONE);
+/*2W*/ void TextEdit(const wchar_t *wszLeftLabel, wchar_t *wszText, const int iMaxWszTextSize,
+	const TextEditFlags flags = TEXTEDITFLAG_NONE);
+/*SW*/ void ImageTexture(const char *szTexturePath, const wchar_t *wszErrorMsg = L"", const char *szTextureGroup = "",
+	const TextureOptFlags flags = TEXTUREOPTFLAGS_NONE);
 
 // Table widgets + functionalities
 // NEO TODO (nullsystem): iColProportions non-const, resizable within TableHeader
@@ -645,8 +650,7 @@ typedef int TableHeaderModFlags;
 // iRelSyncSectionXOffset = relative position to this header, sync to the
 // X-offset of the next/prev section
 /*SW*/ [[nodiscard]] TableHeaderModFlags TableHeader(const wchar_t **wszColNamesList, const int iColsTotal,
-		int *piColsWide, int *piSortIndex, bool *pbSortDescending,
-		const int iRelSyncSectionXOffset = 0);
+	int *piColsWide, int *piSortIndex, bool *pbSortDescending, const int iRelSyncSectionXOffset = 0);
 // NEO TODO (nullsystem): A mode for the table where it'll show y-axis scrollbar but only requires
 // and returns filter view of loop only necessary that's in-view
 // NEO TODO (nullsystem): Instead of iRelSyncSectionXOffset, have it as part of an option for each
@@ -668,12 +672,12 @@ void EndIgnoreXOffset();
 
 // NeoUI::Texture is non-widget, but utilizes NeoUI's image/texture handling
 bool Texture(const char *szTexturePath, const int x, const int y, const int width, const int height,
-			 const char *szTextureGroup = "", const TextureOptFlags texFlags = TEXTUREOPTFLAGS_NONE);
+	const char *szTextureGroup = "", const TextureOptFlags texFlags = TEXTUREOPTFLAGS_NONE);
 void ResetTextures();
 
 // NeoUI::TextureFromFile does not relies on NeoUI context and can be used anywhere
-int TextureFromFile(const char *szTexturePath, const char *szTextureGroup = "",
-		const  TextureOptFlags texFlags = TEXTUREOPTFLAGS_NONE);
+int TextureFromFile(
+	const char *szTexturePath, const char *szTextureGroup = "", const TextureOptFlags texFlags = TEXTUREOPTFLAGS_NONE);
 
 // Non-widgets/convenience functions
 bool Bind(const ButtonCode_t eCode);
@@ -682,6 +686,6 @@ bool BindKeyEnter();
 bool BindKeyBack();
 void OpenURL(const char *szBaseUrl, const char *szPath);
 
-// Convience function to return wszKey or wszController depending on c->eKeyHints mode 
+// Convience function to return wszKey or wszController depending on c->eKeyHints mode
 const wchar_t *HintAlt(const wchar *wszKey, const wchar *wszController);
 }

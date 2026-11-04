@@ -17,9 +17,12 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar cl_neo_hud_scoreboard_hide_others("cl_neo_hud_scoreboard_hide_others", "1", FCVAR_ARCHIVE, "Hide some other HUD elements when the scoreboard is displayed to prevent overlap", true, 0.0f, true, 1.0f);
-ConVar neo_show_scoreboard_avatars("neo_show_scoreboard_avatars", "1", FCVAR_ARCHIVE, "Show avatars on scoreboard.", true, 0.0f, true, 1.0f);
-ConVar cl_neo_hud_scoreboard_padding("cl_neo_hud_scoreboard_padding", "0", FCVAR_ARCHIVE, "Adjust scoreboard space padding. 0 = default, 1 = compact, 2 = spacious", true, 0.0f, true, 2.0f);
+ConVar cl_neo_hud_scoreboard_hide_others("cl_neo_hud_scoreboard_hide_others", "1", FCVAR_ARCHIVE,
+	"Hide some other HUD elements when the scoreboard is displayed to prevent overlap", true, 0.0f, true, 1.0f);
+ConVar neo_show_scoreboard_avatars(
+	"neo_show_scoreboard_avatars", "1", FCVAR_ARCHIVE, "Show avatars on scoreboard.", true, 0.0f, true, 1.0f);
+ConVar cl_neo_hud_scoreboard_padding("cl_neo_hud_scoreboard_padding", "0", FCVAR_ARCHIVE,
+	"Adjust scoreboard space padding. 0 = default, 1 = compact, 2 = spacious", true, 0.0f, true, 2.0f);
 extern ConVar cl_neo_streamermode;
 extern ConVar cl_neo_squad_hud_original;
 extern ConVar cl_neo_hud_team_swap_sides;
@@ -35,10 +38,10 @@ enum EColsPlayers
 	COLSPLAYERS_PING = 0,
 	COLSPLAYERS_AVATAR,
 	COLSPLAYERS_NAME,
-	COLSPLAYERS_READYUP,	// Hidden apart from ready-up
-	COLSPLAYERS_DMG_DEALT,	// Hidden apart from playing local player's death
-	COLSPLAYERS_DMG_TAKEN,	// Hidden apart from playing local player's death
-	COLSPLAYERS_CLASS,		// Hidden if team play, enemy team, and local player alive
+	COLSPLAYERS_READYUP,   // Hidden apart from ready-up
+	COLSPLAYERS_DMG_DEALT, // Hidden apart from playing local player's death
+	COLSPLAYERS_DMG_TAKEN, // Hidden apart from playing local player's death
+	COLSPLAYERS_CLASS,     // Hidden if team play, enemy team, and local player alive
 	COLSPLAYERS_RANK,
 	COLSPLAYERS_XP,
 	COLSPLAYERS_DEATH,
@@ -57,8 +60,7 @@ enum EColsNonPlayers
 
 CNEOScoreBoard *g_pNeoScoreBoard = nullptr;
 
-CNEOScoreBoard::CNEOScoreBoard(IViewPort *pViewPort)
-	: Panel(nullptr, PANEL_SCOREBOARD)
+CNEOScoreBoard::CNEOScoreBoard(IViewPort *pViewPort) : Panel(nullptr, PANEL_SCOREBOARD)
 {
 	SetupNTRETheme(&m_uiCtx);
 	SetProportional(true);
@@ -128,8 +130,7 @@ void CNEOScoreBoard::OnThink()
 	// Close key is set to non-invalid when something other than a keybind
 	// brings the scoreboard up, and it's set to invalid as soon as the
 	// dialog becomes hidden.
-	if (m_nCloseKey != BUTTON_CODE_INVALID
-			&& !g_pInputSystem->IsButtonDown(m_nCloseKey))
+	if (m_nCloseKey != BUTTON_CODE_INVALID && !g_pInputSystem->IsButtonDown(m_nCloseKey))
 	{
 		m_nCloseKey = BUTTON_CODE_INVALID;
 		gViewPortInterface->ShowPanel(PANEL_SCOREBOARD, false);
@@ -186,8 +187,7 @@ void CNEOScoreBoard::FireGameEvent(IGameEvent *event)
 	else if (0 == V_strcmp(type, "server_spawn"))
 	{
 		const char *hostname = event->GetString("hostname");
-		g_pVGuiLocalize->ConvertANSIToUnicode(hostname,
-				m_wszHostname, sizeof(m_wszHostname));
+		g_pVGuiLocalize->ConvertANSIToUnicode(hostname, m_wszHostname, sizeof(m_wszHostname));
 	}
 
 	if (IsVisible())
@@ -322,9 +322,7 @@ void CNEOScoreBoard::Update()
 	const bool bLocalPlaying = (iLocalPlayerTeam >= FIRST_GAME_TEAM);
 	const bool bIsTeamplay = NEORules()->IsTeamplay();
 
-	const bool bShowDamageInfo = pLocalPlayer->IsPlayerDead()
-			&& NEORules()->InRoundState()
-			&& bLocalPlaying;
+	const bool bShowDamageInfo = pLocalPlayer->IsPlayerDead() && NEORules()->InRoundState() && bLocalPlaying;
 
 	// Zero array every update
 	m_iTotalPlayers = 0;
@@ -345,19 +343,15 @@ void CNEOScoreBoard::Update()
 		}
 
 		C_NEO_Player *pNeoPlayer = ToNEOPlayer(UTIL_PlayerByIndex(i));
-		C_NEO_Player *pNeoImpersonator = pNeoPlayer
-				? ToNEOPlayer(pNeoPlayer->m_hSpectatorTakeoverPlayerImpersonatingMe.Get())
-				: nullptr;
+		C_NEO_Player *pNeoImpersonator =
+			pNeoPlayer ? ToNEOPlayer(pNeoPlayer->m_hSpectatorTakeoverPlayerImpersonatingMe.Get()) : nullptr;
 
-		const bool bIsImpersonating = pNeoPlayer
-				&& pNeoPlayer->m_hSpectatorTakeoverPlayerTarget.Get();
+		const bool bIsImpersonating = pNeoPlayer && pNeoPlayer->m_hSpectatorTakeoverPlayerTarget.Get();
 
 		CNEOScoreBoardPlayer *pPlayerInfo = &m_playersInfo[m_iTotalPlayers];
 		pPlayerInfo->iUserID = g_PR->GetUserID(i);
 		pPlayerInfo->iTeam = g_PR->GetTeam(i);
-		pPlayerInfo->iPing = (g_PR->IsFakePlayer(i))
-				? -1
-				: g_PR->GetPing(i);
+		pPlayerInfo->iPing = (g_PR->IsFakePlayer(i)) ? -1 : g_PR->GetPing(i);
 		pPlayerInfo->bBot = g_PR->IsFakePlayer(i);
 		pPlayerInfo->bMuted = GetClientVoiceMgr()->IsPlayerBlocked(i);
 		V_strcpy_safe(pPlayerInfo->szCrosshair, g_PR->GetNeoCrosshair(i));
@@ -367,11 +361,8 @@ void CNEOScoreBoard::Update()
 		player_info_t pi;
 		if (SteamUtils() && engine->GetPlayerInfo(i, &pi) && pi.friendsID)
 		{
-			pPlayerInfo->steamID = CSteamID{
-					pi.friendsID,
-					1,
-					SteamUtils()->GetConnectedUniverse(),
-					k_EAccountTypeIndividual};
+			pPlayerInfo->steamID =
+				CSteamID{pi.friendsID, 1, SteamUtils()->GetConnectedUniverse(), k_EAccountTypeIndividual};
 		}
 		else
 		{
@@ -403,7 +394,8 @@ void CNEOScoreBoard::Update()
 					pPlayerInfo->iDealtHits = pDmgReport->iDealtHits;
 					pPlayerInfo->iTakenDmgs = pDmgReport->iTakenDmgs;
 					pPlayerInfo->iTakenHits = pDmgReport->iTakenHits;
-					pPlayerInfo->bKilledYou = pNeoPlayer ? (pNeoPlayer->entindex() == g_neoKillerInfos.iEntIndex) : false;
+					pPlayerInfo->bKilledYou =
+						pNeoPlayer ? (pNeoPlayer->entindex() == g_neoKillerInfos.iEntIndex) : false;
 					pPlayerInfo->bYouKilled = false;
 					for (int j = 0; j < g_neoUserIDsLocalKilledSize; ++j)
 					{
@@ -418,18 +410,16 @@ void CNEOScoreBoard::Update()
 		}
 
 		// pPlayerInfo->iClass
-		const bool bShowClass = 
-				   (false == bLocalPlaying) // Spectating
-				|| (false == bIsTeamplay && g_PR->IsLocalPlayer(i)) // DM - Only see own class
-				|| (bIsTeamplay && iLocalPlayerTeam == pPlayerInfo->iTeam) // Team - See own team's classes
-				|| (bShowDamageInfo
-						&& ((pPlayerInfo->iDealtDmgs > 0 && pPlayerInfo->iDealtHits > 0)
-							|| (pPlayerInfo->iTakenDmgs > 0 && pPlayerInfo->iTakenHits > 0))); // Dead and have damage dealt/taken
+		const bool bShowClass = (false == bLocalPlaying)               // Spectating
+			|| (false == bIsTeamplay && g_PR->IsLocalPlayer(i))        // DM - Only see own class
+			|| (bIsTeamplay && iLocalPlayerTeam == pPlayerInfo->iTeam) // Team - See own team's classes
+			||
+			(bShowDamageInfo &&
+				((pPlayerInfo->iDealtDmgs > 0 && pPlayerInfo->iDealtHits > 0) ||
+					(pPlayerInfo->iTakenDmgs > 0 && pPlayerInfo->iTakenHits > 0))); // Dead and have damage dealt/taken
 		if (bShowClass)
 		{
-			pPlayerInfo->iClass = (bIsImpersonating)
-					? pNeoPlayer->m_iClassBeforeTakeover
-					: g_PR->GetClass(i);
+			pPlayerInfo->iClass = (bIsImpersonating) ? pNeoPlayer->m_iClassBeforeTakeover : g_PR->GetClass(i);
 		}
 		else
 		{
@@ -451,17 +441,14 @@ void CNEOScoreBoard::Update()
 		else
 		{
 			const char *pClantag = g_PR->GetClanTag(i);
-			if (pClantag && pClantag[0]
-					&& (!cl_neo_streamermode.GetBool() || g_PR->IsLocalPlayer(i)))
+			if (pClantag && pClantag[0] && (!cl_neo_streamermode.GetBool() || g_PR->IsLocalPlayer(i)))
 			{
 				UTIL_MakeSafeName(pClantag, szClantag, ARRAYSIZE(szClantag));
 			}
 			UTIL_MakeSafeName(g_PR->GetPlayerName(i), szName, ARRAYSIZE(szName));
 		}
-		g_pVGuiLocalize->ConvertANSIToUnicode(
-				szName, pPlayerInfo->wszName, sizeof(pPlayerInfo->wszName));
-		g_pVGuiLocalize->ConvertANSIToUnicode(
-				szClantag, pPlayerInfo->wszClantag, sizeof(pPlayerInfo->wszClantag));
+		g_pVGuiLocalize->ConvertANSIToUnicode(szName, pPlayerInfo->wszName, sizeof(pPlayerInfo->wszName));
+		g_pVGuiLocalize->ConvertANSIToUnicode(szClantag, pPlayerInfo->wszClantag, sizeof(pPlayerInfo->wszClantag));
 
 		// pPlayerInfo->bDead
 		pPlayerInfo->bDead = (false == g_PR->IsAlive(i));
@@ -482,36 +469,37 @@ void CNEOScoreBoard::Update()
 		pPlayerInfo->iAvatarIdx = m_iTotalPlayers;
 
 		NeoAvatar *pAvatar = &m_avatars[m_iTotalPlayers];
-		pAvatar->SetSteamID((ShowAvatars() && pPlayerInfo->steamID.IsValid())
-				? pPlayerInfo->steamID : CSteamID{});
+		pAvatar->SetSteamID((ShowAvatars() && pPlayerInfo->steamID.IsValid()) ? pPlayerInfo->steamID : CSteamID{});
 		pAvatar->Fetch(64);
 
 		++m_iTotalPlayers;
 	}
 
 	// Sort players by XP, if equal by death
-	V_qsort_s(m_playersInfo, m_iTotalPlayers, sizeof(CNEOScoreBoardPlayer),
-			[]([[maybe_unused]] void *vpCtx, const void *vpLeft, const void *vpRight) -> int {
-		auto *pLeft = static_cast<const CNEOScoreBoardPlayer *>(vpLeft);
-		auto *pRight = static_cast<const CNEOScoreBoardPlayer *>(vpRight);
-		if (pLeft->iXP == pRight->iXP)
+	V_qsort_s(
+		m_playersInfo, m_iTotalPlayers, sizeof(CNEOScoreBoardPlayer),
+		[]([[maybe_unused]] void *vpCtx, const void *vpLeft, const void *vpRight) -> int
 		{
-			if (pLeft->iDeaths == pRight->iDeaths)
+			auto *pLeft = static_cast<const CNEOScoreBoardPlayer *>(vpLeft);
+			auto *pRight = static_cast<const CNEOScoreBoardPlayer *>(vpRight);
+			if (pLeft->iXP == pRight->iXP)
 			{
-				// Alphabetical order
-				return V_wcscmp(pLeft->wszName, pRight->wszName);
+				if (pLeft->iDeaths == pRight->iDeaths)
+				{
+					// Alphabetical order
+					return V_wcscmp(pLeft->wszName, pRight->wszName);
+				}
+				// More deaths = lower
+				return pLeft->iDeaths - pRight->iDeaths;
 			}
-			// More deaths = lower
-			return pLeft->iDeaths - pRight->iDeaths;
-		}
-		// More XP = higher
-		return pRight->iXP - pLeft->iXP;
-	}, nullptr);
+			// More XP = higher
+			return pRight->iXP - pLeft->iXP;
+		},
+		nullptr);
 
 	// NEO JANK (nullsystem): FireGameEvent is unreliable for fetching
 	// current map so just poll it from NEORules instead
-	g_pVGuiLocalize->ConvertANSIToUnicode(NEORules()->MapName(),
-			m_wszMap, sizeof(m_wszMap));
+	g_pVGuiLocalize->ConvertANSIToUnicode(NEORules()->MapName(), m_wszMap, sizeof(m_wszMap));
 
 	m_flNextUpdateTime = gpGlobals->curtime + 1.0f;
 }
@@ -530,16 +518,15 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 
 	// other resolution scales up/down from it
 	const auto ePadType = static_cast<ENeoScoreBoardPadding>(cl_neo_hud_scoreboard_padding.GetInt());
-	const int iDivBy = (ePadType == NEOSCOREBOARDPADDING_DEFAULT)
-			? 30
-			: (ePadType == NEOSCOREBOARDPADDING_COMPACT)
-				? 35
-				: 25;
+	const int iDivBy = (ePadType == NEOSCOREBOARDPADDING_DEFAULT) ? 30
+		: (ePadType == NEOSCOREBOARDPADDING_COMPACT)              ? 35
+																  : 25;
 	m_uiCtx.layout.iRowTall = m_uiCtx.layout.iDefRowTall = tall / iDivBy;
 	m_uiCtx.iMarginX = wide / 192 / 2;
 	m_uiCtx.iMarginY = tall / 108 / 2;
 	int iWideAs43 = static_cast<float>(tall) * (4.0f / 3.0f);
-	if (iWideAs43 > wide) iWideAs43 = wide;
+	if (iWideAs43 > wide)
+		iWideAs43 = wide;
 	const int iRootSubPanelWide = static_cast<int>(iWideAs43 * 0.975f);
 	const int iPopupCardRowTallBase = tall / 35;
 	const int iPopupCardPerRowTallAvatarName = iPopupCardRowTallBase * 3;
@@ -550,10 +537,8 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 	const bool bLocalPlaying = (iLocalPlayerTeam >= FIRST_GAME_TEAM);
 	const bool bIsTeamplay = NEORules()->IsTeamplay();
 	const bool bShowReadyUp = NEORules()->InReadyUpState();
-	const bool bShowDamageInfo = pLocalPlayer->IsPlayerDead()
-			&& NEORules()->InRoundState()
-			&& g_neoKillerInfos.bHasDmgInfos
-			&& bLocalPlaying;
+	const bool bShowDamageInfo =
+		pLocalPlayer->IsPlayerDead() && NEORules()->InRoundState() && g_neoKillerInfos.bHasDmgInfos && bLocalPlaying;
 	static CrosshairInfo staticXhairInfo = {};
 
 	bool bHasRanklessDog = false;
@@ -567,8 +552,7 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 			++iaTeamTally[iTeam];
 			iaTeamReadyTally[iTeam] += m_playersInfo[i].bReady;
 
-			if (iTeam >= FIRST_GAME_TEAM &&
-					m_playersInfo[i].iXP < 0)
+			if (iTeam >= FIRST_GAME_TEAM && m_playersInfo[i].iXP < 0)
 			{
 				bHasRanklessDog = true;
 			}
@@ -576,9 +560,8 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 	}
 
 	const int iGap = m_uiCtx.iMarginX;
-	const int iMaxSidePlayers = (bIsTeamplay)
-			? Max(iaTeamTally[TEAM_JINRAI], iaTeamTally[TEAM_NSF])
-			: Ceil2Int((iaTeamTally[TEAM_JINRAI] + iaTeamTally[TEAM_NSF]) / 2.0f);
+	const int iMaxSidePlayers = (bIsTeamplay) ? Max(iaTeamTally[TEAM_JINRAI], iaTeamTally[TEAM_NSF])
+											  : Ceil2Int((iaTeamTally[TEAM_JINRAI] + iaTeamTally[TEAM_NSF]) / 2.0f);
 	const int iLocalUserID = pLocalPlayer->GetUserID();
 
 	int iTies = 0;
@@ -591,10 +574,8 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 			// NEO NOTE (nullsystem): PostRound have GetRoundsWon updated, but not
 			// roundNumber, so assume ties like next round
 			iTies = Max(0,
-					NEORules()->roundNumber()
-						+ ((NEORules()->GetRoundStatus() == PostRound) ? +0 : -1)
-						- pTeamJinrai->GetRoundsWon()
-						- pTeamNSF->GetRoundsWon());
+				NEORules()->roundNumber() + ((NEORules()->GetRoundStatus() == PostRound) ? +0 : -1) -
+					pTeamJinrai->GetRoundsWon() - pTeamNSF->GetRoundsWon());
 		}
 	}
 
@@ -602,8 +583,10 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 	{
 		// Figure out tall length of the scoreboard
 		int iTallTotal = m_uiCtx.layout.iRowTall * (1 + 1 + iMaxSidePlayers);
-		if (iaTeamTally[TEAM_UNASSIGNED] > 0) iTallTotal += m_uiCtx.layout.iRowTall * (1 + iaTeamTally[TEAM_UNASSIGNED]);
-		if (iaTeamTally[TEAM_SPECTATOR] > 0) iTallTotal += m_uiCtx.layout.iRowTall * (1 + iaTeamTally[TEAM_SPECTATOR]);
+		if (iaTeamTally[TEAM_UNASSIGNED] > 0)
+			iTallTotal += m_uiCtx.layout.iRowTall * (1 + iaTeamTally[TEAM_UNASSIGNED]);
+		if (iaTeamTally[TEAM_SPECTATOR] > 0)
+			iTallTotal += m_uiCtx.layout.iRowTall * (1 + iaTeamTally[TEAM_SPECTATOR]);
 
 		// Output server's name left-aligned, map's name right-aligned
 		m_uiCtx.dPanel.x = (wide / 2) - (iRootSubPanelWide / 2);
@@ -653,11 +636,15 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 		iColsWidePlayersList[COLSPLAYERS_PING] = NeoUI::SuitableWideByWStr(L"BOT", NeoUI::SUITABLEWIDE_TABLE);
 		iColsWidePlayersList[COLSPLAYERS_AVATAR] = m_uiCtx.layout.iRowTall;
 		iColsWidePlayersList[COLSPLAYERS_NAME] = 0;
-		iColsWidePlayersList[COLSPLAYERS_READYUP] = bShowReadyUp ? NeoUI::SuitableWideByWStr(L"NOT READY", NeoUI::SUITABLEWIDE_TABLE) : 0;
-		iColsWidePlayersList[COLSPLAYERS_DMG_DEALT] = bShowDamageInfo ? NeoUI::SuitableWideByWStr(L"Dmg from", NeoUI::SUITABLEWIDE_TABLE) : 0;
-		iColsWidePlayersList[COLSPLAYERS_DMG_TAKEN] = bShowDamageInfo ? NeoUI::SuitableWideByWStr(L"Dmg from", NeoUI::SUITABLEWIDE_TABLE) : 0;
+		iColsWidePlayersList[COLSPLAYERS_READYUP] =
+			bShowReadyUp ? NeoUI::SuitableWideByWStr(L"NOT READY", NeoUI::SUITABLEWIDE_TABLE) : 0;
+		iColsWidePlayersList[COLSPLAYERS_DMG_DEALT] =
+			bShowDamageInfo ? NeoUI::SuitableWideByWStr(L"Dmg from", NeoUI::SUITABLEWIDE_TABLE) : 0;
+		iColsWidePlayersList[COLSPLAYERS_DMG_TAKEN] =
+			bShowDamageInfo ? NeoUI::SuitableWideByWStr(L"Dmg from", NeoUI::SUITABLEWIDE_TABLE) : 0;
 		iColsWidePlayersList[COLSPLAYERS_CLASS] = iClassWide;
-		iColsWidePlayersList[COLSPLAYERS_RANK] = NeoUI::SuitableWideByWStr(bHasRanklessDog ? L"Rankless Dog" : L"Lieutenant", NeoUI::SUITABLEWIDE_TABLE);
+		iColsWidePlayersList[COLSPLAYERS_RANK] =
+			NeoUI::SuitableWideByWStr(bHasRanklessDog ? L"Rankless Dog" : L"Lieutenant", NeoUI::SUITABLEWIDE_TABLE);
 		iColsWidePlayersList[COLSPLAYERS_XP] = NeoUI::SuitableWideByWStr(L"-99", NeoUI::SUITABLEWIDE_TABLE);
 		iColsWidePlayersList[COLSPLAYERS_DEATH] = NeoUI::SuitableWideByWStr(L"D#", NeoUI::SUITABLEWIDE_TABLE);
 		int iColsWidePlayersTotalNonName = 0;
@@ -688,24 +675,19 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 				continue;
 			}
 
-			m_uiCtx.dPanel.wide = (iCurTeam <= TEAM_SPECTATOR)
-					? iRootSubPanelWide
-					: iRootSubPanelWide / 2;
+			m_uiCtx.dPanel.wide = (iCurTeam <= TEAM_SPECTATOR) ? iRootSubPanelWide : iRootSubPanelWide / 2;
 			if (iCurTeam >= FIRST_GAME_TEAM)
 			{
 				m_uiCtx.dPanel.wide -= (iGap / 2);
 			}
 
 			const bool bNSFFirst = cl_neo_hud_team_swap_sides.GetBool() && TEAM_NSF == iLocalPlayerTeam;
-			const bool bShowClass = (iLocalPlayerTeam <= TEAM_SPECTATOR)
-					|| false == bIsTeamplay
-					|| bShowDamageInfo
-					|| iLocalPlayerTeam == iCurTeam;
+			const bool bShowClass = (iLocalPlayerTeam <= TEAM_SPECTATOR) || false == bIsTeamplay || bShowDamageInfo ||
+				iLocalPlayerTeam == iCurTeam;
 			iColsWidePlayersList[COLSPLAYERS_CLASS] = bShowClass ? iClassWide : 0;
 
 			m_uiCtx.dPanel.x = (wide / 2) - (iRootSubPanelWide / 2);
-			if ((bNSFFirst && TEAM_JINRAI == iCurTeam)
-					|| (false == bNSFFirst && TEAM_NSF == iCurTeam))
+			if ((bNSFFirst && TEAM_JINRAI == iCurTeam) || (false == bNSFFirst && TEAM_NSF == iCurTeam))
 			{
 				m_uiCtx.dPanel.x += (iRootSubPanelWide / 2) + (iGap / 2);
 			}
@@ -720,24 +702,22 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 				}
 			}
 			// One for the heading
-			m_uiCtx.dPanel.tall = m_uiCtx.layout.iRowTall * (1 + ((iCurTeam >= FIRST_GAME_TEAM) ? iMaxSidePlayers : iaTeamTally[iCurTeam]));
+			m_uiCtx.dPanel.tall = m_uiCtx.layout.iRowTall *
+				(1 + ((iCurTeam >= FIRST_GAME_TEAM) ? iMaxSidePlayers : iaTeamTally[iCurTeam]));
 
-			iColsWidePlayersList[COLSPLAYERS_NAME] = m_uiCtx.dPanel.wide - iColsWidePlayersTotalNonName + (bShowClass ? 0 : iClassWide);
+			iColsWidePlayersList[COLSPLAYERS_NAME] =
+				m_uiCtx.dPanel.wide - iColsWidePlayersTotalNonName + (bShowClass ? 0 : iClassWide);
 			iColsWideNonPlayersList[COLSNONPLAYERS_NAME] = m_uiCtx.dPanel.wide - iColsWideNonPlayersTotalNonName;
 
 			NeoUI::BeginSection(NeoUI::SECTIONFLAG_DISABLEOFFSETS);
 			{
-				NeoUI::BeginTable(
-						(iCurTeam >= FIRST_GAME_TEAM)
-								? iColsWidePlayersList
-								: iColsWideNonPlayersList,
-						(iCurTeam >= FIRST_GAME_TEAM)
-								? ARRAYSIZE(iColsWidePlayersList)
-								: ARRAYSIZE(iColsWideNonPlayersList));
+				NeoUI::BeginTable((iCurTeam >= FIRST_GAME_TEAM) ? iColsWidePlayersList : iColsWideNonPlayersList,
+					(iCurTeam >= FIRST_GAME_TEAM) ? ARRAYSIZE(iColsWidePlayersList)
+												  : ARRAYSIZE(iColsWideNonPlayersList));
 
 				m_uiCtx.colors.normalFg = (false == bIsTeamplay && iCurTeam >= FIRST_GAME_TEAM)
-						? COLOR_NEO_WHITE
-						: g_PR->GetTeamColor(iCurTeam);
+					? COLOR_NEO_WHITE
+					: g_PR->GetTeamColor(iCurTeam);
 
 				wchar_t wszText[NEO_MAX_DISPLAYNAME];
 				NeoUI::NextTableRow();
@@ -763,16 +743,14 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 							}
 							if (bShowReadyUp)
 							{
-								V_swprintf_safe(wszText, L"%ls: %d (%d player%ls - %d ready)",
-										wszTeamtag, pTeam->GetRoundsWon(), iaTeamTally[iCurTeam],
-										iaTeamTally[iCurTeam] == 1 ? L"" : L"s",
-										iaTeamReadyTally[iCurTeam]);
+								V_swprintf_safe(wszText, L"%ls: %d (%d player%ls - %d ready)", wszTeamtag,
+									pTeam->GetRoundsWon(), iaTeamTally[iCurTeam],
+									iaTeamTally[iCurTeam] == 1 ? L"" : L"s", iaTeamReadyTally[iCurTeam]);
 							}
 							else
 							{
-								V_swprintf_safe(wszText, L"%ls: %d (%d player%ls)",
-										wszTeamtag, pTeam->GetRoundsWon(), iaTeamTally[iCurTeam],
-										iaTeamTally[iCurTeam] == 1 ? L"" : L"s");
+								V_swprintf_safe(wszText, L"%ls: %d (%d player%ls)", wszTeamtag, pTeam->GetRoundsWon(),
+									iaTeamTally[iCurTeam], iaTeamTally[iCurTeam] == 1 ? L"" : L"s");
 							}
 						}
 					}
@@ -782,8 +760,7 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 						if (iCurTeam == TEAM_JINRAI)
 						{
 							const int total = iaTeamTally[TEAM_JINRAI] + iaTeamTally[TEAM_NSF];
-							V_swprintf_safe(wszText, L"Player%ls: %d",
-									total == 1 ? L"" : L"s", total);
+							V_swprintf_safe(wszText, L"Player%ls: %d", total == 1 ? L"" : L"s", total);
 						}
 						else
 						{
@@ -793,9 +770,8 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 				}
 				else
 				{
-					V_swprintf_safe(wszText, L"%ls (%d player%ls)",
-							SZWSZ_NEO_TEAM_STRS[iCurTeam].wszStr, iaTeamTally[iCurTeam],
-							iaTeamTally[iCurTeam] == 1 ? L"" : L"s");
+					V_swprintf_safe(wszText, L"%ls (%d player%ls)", SZWSZ_NEO_TEAM_STRS[iCurTeam].wszStr,
+						iaTeamTally[iCurTeam], iaTeamTally[iCurTeam] == 1 ? L"" : L"s");
 				}
 				NeoUI::Label(wszText, true);
 
@@ -805,7 +781,8 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 					int x = 0;
 					[[maybe_unused]] int y = 0;
 					vgui::surface()->GetTextSize(m_uiCtx.fonts[m_uiCtx.eFont].hdl, wszText, x, y);
-					vgui::surface()->DrawSetTextPos(m_uiCtx.rWidgetArea.x0 + m_uiCtx.dPanel.wide - x - m_uiCtx.iMarginX, m_uiCtx.rWidgetArea.y0 + m_uiCtx.fonts[m_uiCtx.eFont].iYFontOffset);
+					vgui::surface()->DrawSetTextPos(m_uiCtx.rWidgetArea.x0 + m_uiCtx.dPanel.wide - x - m_uiCtx.iMarginX,
+						m_uiCtx.rWidgetArea.y0 + m_uiCtx.fonts[m_uiCtx.eFont].iYFontOffset);
 					vgui::surface()->DrawPrintText(wszText, V_wcslen(wszText));
 				}
 
@@ -813,8 +790,8 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 				NeoUI::Pad(); // Name column
 				if (iCurTeam >= FIRST_GAME_TEAM)
 				{
-					NeoUI::Label(L"Ready"); // Hidden when not used/not in ready-up
-					NeoUI::Label(L"Dmg to"); // Dealt - Hidden when not showing damage info
+					NeoUI::Label(L"Ready");    // Hidden when not used/not in ready-up
+					NeoUI::Label(L"Dmg to");   // Dealt - Hidden when not showing damage info
 					NeoUI::Label(L"Dmg from"); // Taken - Hidden when not showing damage info
 					NeoUI::Label(L"Class");
 					NeoUI::Label(L"Rank");
@@ -826,11 +803,9 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 				{
 					const int iMargin = Max(static_cast<int>(0.25f * m_uiCtx.iMarginY), 1);
 					vgui::surface()->DrawSetColor(m_uiCtx.colors.normalFg);
-					vgui::surface()->DrawFilledRect(
-							m_uiCtx.dPanel.x,
-							m_uiCtx.dPanel.y + m_uiCtx.layout.iRowTall - iMargin,
-							m_uiCtx.dPanel.x + m_uiCtx.dPanel.wide,
-							m_uiCtx.dPanel.y + m_uiCtx.layout.iRowTall);
+					vgui::surface()->DrawFilledRect(m_uiCtx.dPanel.x,
+						m_uiCtx.dPanel.y + m_uiCtx.layout.iRowTall - iMargin, m_uiCtx.dPanel.x + m_uiCtx.dPanel.wide,
+						m_uiCtx.dPanel.y + m_uiCtx.layout.iRowTall);
 				}
 
 				Color colorAliveFg = m_uiCtx.colors.normalFg;
@@ -855,36 +830,36 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 					iInPlaying += (bIsPlaying);
 
 					const bool bDMNotThisSide = bIsDMPlaying &&
-							((iCurTeam >= FIRST_GAME_TEAM && (static_cast<int>(iInPlaying % 2) == static_cast<int>(TEAM_NSF == iCurTeam)))
-									|| (iCurTeam <= TEAM_SPECTATOR && pPlayerInfo->iTeam != iCurTeam));
+						((iCurTeam >= FIRST_GAME_TEAM &&
+							 (static_cast<int>(iInPlaying % 2) == static_cast<int>(TEAM_NSF == iCurTeam))) ||
+							(iCurTeam <= TEAM_SPECTATOR && pPlayerInfo->iTeam != iCurTeam));
 					if (bDMNotThisSide || (false == bIsDMPlaying && pPlayerInfo->iTeam != iCurTeam))
 					{
 						continue;
 					}
 
-					if (NeoUI::NextTableRow(NeoUI::NEXTTABLEROWFLAG_SELECTABLE).bPressed
-							&& false == pPlayerInfo->bBot)
+					if (NeoUI::NextTableRow(NeoUI::NEXTTABLEROWFLAG_SELECTABLE).bPressed && false == pPlayerInfo->bBot)
 					{
 						m_playerPopup = *pPlayerInfo;
 						m_avatarPopup = *pAvatar;
 						m_avatarPopup.Fetch(184);
-						const bool bHaveFriendReq = (SteamFriends()
-								&& k_EFriendRelationshipRequestInitiator == SteamFriends()->GetFriendRelationship(m_playerPopup.steamID));
+						const bool bHaveFriendReq = (SteamFriends() &&
+							k_EFriendRelationshipRequestInitiator ==
+								SteamFriends()->GetFriendRelationship(m_playerPopup.steamID));
 
-						const int iWidePopupCover = iAvatarWT + ((1 + ShowAvatars()) * iAvatarOffset)
-								+ NeoUI::SuitableWideByWStr(
-										m_playerPopup.wszName,
-										NeoUI::SUITABLEWIDE_TABLE,
-										NeoUI::FONT_NTLARGE);
+						const int iWidePopupCover = iAvatarWT + ((1 + ShowAvatars()) * iAvatarOffset) +
+							NeoUI::SuitableWideByWStr(
+								m_playerPopup.wszName, NeoUI::SUITABLEWIDE_TABLE, NeoUI::FONT_NTLARGE);
 
 						const int iMinWide = ((5 + bHaveFriendReq) * iPopupCardPerRowTallButtons);
 
-						NeoUI::OpenPopup(NEOSCOREBOARDPOPUP_CARD, NeoUI::Dim{
+						NeoUI::OpenPopup(NEOSCOREBOARDPOPUP_CARD,
+							NeoUI::Dim{
 								.x = m_uiCtx.iMouseAbsX,
 								.y = m_uiCtx.iMouseAbsY,
 								.wide = Max(iMinWide, iWidePopupCover),
 								.tall = iPopupCardPerRowTallAvatarName + iPopupCardPerRowTallButtons,
-								});
+							});
 					}
 
 					if (iCurTeam >= FIRST_GAME_TEAM)
@@ -901,20 +876,16 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 					if (pPlayerInfo->iUserID == iLocalUserID)
 					{
 						vgui::surface()->DrawSetColor(colorLocalBg);
-						vgui::surface()->DrawFilledRect(
-								m_uiCtx.dPanel.x,
-								m_uiCtx.dPanel.y + m_uiCtx.iLayoutY,
-								m_uiCtx.dPanel.x + m_uiCtx.dPanel.wide,
-								m_uiCtx.dPanel.y + m_uiCtx.iLayoutY + m_uiCtx.layout.iRowTall);
+						vgui::surface()->DrawFilledRect(m_uiCtx.dPanel.x, m_uiCtx.dPanel.y + m_uiCtx.iLayoutY,
+							m_uiCtx.dPanel.x + m_uiCtx.dPanel.wide,
+							m_uiCtx.dPanel.y + m_uiCtx.iLayoutY + m_uiCtx.layout.iRowTall);
 					}
 					else if (bIsMuted)
 					{
 						vgui::surface()->DrawSetColor(COLOR_MUTE_BG);
-						vgui::surface()->DrawFilledRect(
-								m_uiCtx.dPanel.x,
-								m_uiCtx.dPanel.y + m_uiCtx.iLayoutY,
-								m_uiCtx.dPanel.x + m_uiCtx.dPanel.wide,
-								m_uiCtx.dPanel.y + m_uiCtx.iLayoutY + m_uiCtx.layout.iRowTall);
+						vgui::surface()->DrawFilledRect(m_uiCtx.dPanel.x, m_uiCtx.dPanel.y + m_uiCtx.iLayoutY,
+							m_uiCtx.dPanel.x + m_uiCtx.dPanel.wide,
+							m_uiCtx.dPanel.y + m_uiCtx.iLayoutY + m_uiCtx.layout.iRowTall);
 					}
 
 					// Ping/BOT
@@ -937,53 +908,41 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 					const bool bValidAvatar = (pAvatar->m_iTextureID > 0);
 					if (bValidAvatar)
 					{
-						pAvatar->Paint(m_uiCtx.rWidgetArea.x0,
-								m_uiCtx.rWidgetArea.y0,
-								m_uiCtx.irWidgetTall,
-								pPlayerInfo->bDead && bIsPlaying);
+						pAvatar->Paint(m_uiCtx.rWidgetArea.x0, m_uiCtx.rWidgetArea.y0, m_uiCtx.irWidgetTall,
+							pPlayerInfo->bDead && bIsPlaying);
 					}
 					if (bIsMuted && bValidAvatar)
 					{
 						// Slightly redden the avatar
 						vgui::surface()->DrawSetColor(100, 0, 0, 75);
-						vgui::surface()->DrawFilledRect(
-								m_uiCtx.rWidgetArea.x0,
-								m_uiCtx.rWidgetArea.y0,
-								m_uiCtx.rWidgetArea.x0 + m_uiCtx.irWidgetTall,
-								m_uiCtx.rWidgetArea.y0 + m_uiCtx.irWidgetTall);
+						vgui::surface()->DrawFilledRect(m_uiCtx.rWidgetArea.x0, m_uiCtx.rWidgetArea.y0,
+							m_uiCtx.rWidgetArea.x0 + m_uiCtx.irWidgetTall,
+							m_uiCtx.rWidgetArea.y0 + m_uiCtx.irWidgetTall);
 					}
 					if (iCurTeam >= FIRST_GAME_TEAM)
 					{
 						// Darken the avatar if not ready
-						if (bValidAvatar
-								&& (bShowReadyUp && false == pPlayerInfo->bReady))
+						if (bValidAvatar && (bShowReadyUp && false == pPlayerInfo->bReady))
 						{
 							vgui::surface()->DrawSetColor(0, 0, 0, 200);
-							vgui::surface()->DrawFilledRect(
-									m_uiCtx.rWidgetArea.x0,
-									m_uiCtx.rWidgetArea.y0,
-									m_uiCtx.rWidgetArea.x0 + m_uiCtx.irWidgetTall,
-									m_uiCtx.rWidgetArea.y0 + m_uiCtx.irWidgetTall);
+							vgui::surface()->DrawFilledRect(m_uiCtx.rWidgetArea.x0, m_uiCtx.rWidgetArea.y0,
+								m_uiCtx.rWidgetArea.x0 + m_uiCtx.irWidgetTall,
+								m_uiCtx.rWidgetArea.y0 + m_uiCtx.irWidgetTall);
 						}
 
 						// Dead icon - layered over avatar
 						if (pPlayerInfo->bDead)
 						{
-							NeoUI::Texture("vgui/hud/kill_kill",
-									m_uiCtx.rWidgetArea.x0,
-									m_uiCtx.rWidgetArea.y0,
-									m_uiCtx.irWidgetTall,
-									m_uiCtx.irWidgetTall,
-									"",
-									NeoUI::TEXTUREOPTFLAGS_DONOTCROPTOPANEL);
+							NeoUI::Texture("vgui/hud/kill_kill", m_uiCtx.rWidgetArea.x0, m_uiCtx.rWidgetArea.y0,
+								m_uiCtx.irWidgetTall, m_uiCtx.irWidgetTall, "",
+								NeoUI::TEXTUREOPTFLAGS_DONOTCROPTOPANEL);
 						}
 					}
 
 					// Player's name
 					if (pPlayerInfo->wszClantag[0])
 					{
-						V_swprintf_safe(wszText, L"[%ls] %ls",
-								pPlayerInfo->wszClantag, pPlayerInfo->wszName);
+						V_swprintf_safe(wszText, L"[%ls] %ls", pPlayerInfo->wszClantag, pPlayerInfo->wszName);
 					}
 					else
 					{
@@ -1003,13 +962,9 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 						const int iStartX = m_uiCtx.rWidgetArea.x0 + iNameWide + (2 * m_uiCtx.iMarginX);
 						if ((iStartX + iMuteIconWH) < m_uiCtx.rWidgetArea.x1)
 						{
-							NeoUI::Texture("vgui/hud/voice_mute",
-									iStartX,
-									m_uiCtx.rWidgetArea.y0 + ((m_uiCtx.irWidgetTall - iMuteIconWH) / 2.0f),
-									iMuteIconWH,
-									iMuteIconWH,
-									"",
-									NeoUI::TEXTUREOPTFLAGS_DONOTCROPTOPANEL);
+							NeoUI::Texture("vgui/hud/voice_mute", iStartX,
+								m_uiCtx.rWidgetArea.y0 + ((m_uiCtx.irWidgetTall - iMuteIconWH) / 2.0f), iMuteIconWH,
+								iMuteIconWH, "", NeoUI::TEXTUREOPTFLAGS_DONOTCROPTOPANEL);
 						}
 					}
 
@@ -1078,9 +1033,7 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 			const bool bValidAvatar = (m_avatarPopup.m_iTextureID > 0);
 			if (bValidAvatar)
 			{
-				m_avatarPopup.Paint(m_uiCtx.dPanel.x + iAvatarOffset,
-						m_uiCtx.dPanel.y + iAvatarOffset,
-						iAvatarWT);
+				m_avatarPopup.Paint(m_uiCtx.dPanel.x + iAvatarOffset, m_uiCtx.dPanel.y + iAvatarOffset, iAvatarWT);
 			}
 
 			NeoUI::SetPerRowLayout(1, nullptr, iPopupCardPerRowTallAvatarName);
@@ -1088,27 +1041,25 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 			NeoUI::Pad();
 
 			vgui::surface()->DrawSetTextPos(
-					m_uiCtx.dPanel.x + iAvatarOffset + (bValidAvatar ? (iAvatarWT + iAvatarOffset) : 0),
-					m_uiCtx.dPanel.y + iAvatarOffset);
+				m_uiCtx.dPanel.x + iAvatarOffset + (bValidAvatar ? (iAvatarWT + iAvatarOffset) : 0),
+				m_uiCtx.dPanel.y + iAvatarOffset);
 			if (m_playerPopup.wszClantag[0])
 			{
 				vgui::surface()->DrawSetTextColor(m_uiCtx.colors.normalFg);
-				vgui::surface()->DrawPrintText(m_playerPopup.wszClantag,
-						V_wcslen(m_playerPopup.wszClantag));
+				vgui::surface()->DrawPrintText(m_playerPopup.wszClantag, V_wcslen(m_playerPopup.wszClantag));
 
 				const auto *pFontI = &m_uiCtx.fonts[m_uiCtx.eFont];
 				const int iClantagTall = vgui::surface()->GetFontTall(pFontI->hdl);
 				vgui::surface()->DrawSetTextPos(
-						m_uiCtx.dPanel.x + iAvatarOffset + (bValidAvatar ? (iAvatarWT + iAvatarOffset) : 0),
-						m_uiCtx.dPanel.y + iAvatarOffset + iClantagTall + iAvatarOffset);
+					m_uiCtx.dPanel.x + iAvatarOffset + (bValidAvatar ? (iAvatarWT + iAvatarOffset) : 0),
+					m_uiCtx.dPanel.y + iAvatarOffset + iClantagTall + iAvatarOffset);
 			}
 			NeoUI::SwapFont(NeoUI::FONT_NTLARGE);
 			vgui::surface()->DrawSetTextColor(m_uiCtx.colors.hotFg);
-			vgui::surface()->DrawPrintText(m_playerPopup.wszName,
-					V_wcslen(m_playerPopup.wszName));
+			vgui::surface()->DrawPrintText(m_playerPopup.wszName, V_wcslen(m_playerPopup.wszName));
 
-			const bool bHaveFriendReq = (SteamFriends()
-					&& k_EFriendRelationshipRequestInitiator == SteamFriends()->GetFriendRelationship(m_playerPopup.steamID));
+			const bool bHaveFriendReq = (SteamFriends() &&
+				k_EFriendRelationshipRequestInitiator == SteamFriends()->GetFriendRelationship(m_playerPopup.steamID));
 			const int iBtnCols = 5 + bHaveFriendReq;
 
 			NeoUI::BeginOverridePanelWide(iBtnCols * iPopupCardPerRowTallButtons);
@@ -1146,8 +1097,7 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 						}
 						if (iPlayerIdx > 0)
 						{
-							GetClientVoiceMgr()->SetPlayerBlockedState(iPlayerIdx,
-									!m_playerPopup.bMuted);
+							GetClientVoiceMgr()->SetPlayerBlockedState(iPlayerIdx, !m_playerPopup.bMuted);
 						}
 						NeoUI::ClosePopup();
 					}
@@ -1158,46 +1108,39 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 					CSteamID &steamID = m_playerPopup.steamID;
 					const char *pszOverlay = nullptr;
 
-					if (NeoUI::ButtonTexture("vgui/hud/player_profile", "GAME",
-								L"Profile").bPressed)
+					if (NeoUI::ButtonTexture("vgui/hud/player_profile", "GAME", L"Profile").bPressed)
 					{
 						pszOverlay = "steamid";
 					}
 
 					if (m_playerPopup.iUserID != iLocalUserID)
 					{
-						if (NeoUI::ButtonTexture("vgui/hud/player_message", "GAME",
-									L"Message").bPressed)
+						if (NeoUI::ButtonTexture("vgui/hud/player_message", "GAME", L"Message").bPressed)
 						{
 							pszOverlay = "chat";
 						}
 
-						const EFriendRelationship eFriendRel =
-								SteamFriends()->GetFriendRelationship(steamID);
+						const EFriendRelationship eFriendRel = SteamFriends()->GetFriendRelationship(steamID);
 						switch (eFriendRel)
 						{
 						case k_EFriendRelationshipNone:
-							if (NeoUI::ButtonTexture("vgui/hud/friend_add", "GAME",
-										L"Send").bPressed)
+							if (NeoUI::ButtonTexture("vgui/hud/friend_add", "GAME", L"Send").bPressed)
 							{
 								pszOverlay = "friendadd";
 							}
 							break;
 						case k_EFriendRelationshipRequestRecipient:
-							if (NeoUI::ButtonTexture("vgui/hud/friend_remove", "GAME",
-										L"Cancel").bPressed)
+							if (NeoUI::ButtonTexture("vgui/hud/friend_remove", "GAME", L"Cancel").bPressed)
 							{
 								pszOverlay = "friendremove";
 							}
 							break;
 						case k_EFriendRelationshipRequestInitiator:
-							if (NeoUI::ButtonTexture("vgui/hud/friend_request_accept", "GAME",
-										L"Accept").bPressed)
+							if (NeoUI::ButtonTexture("vgui/hud/friend_request_accept", "GAME", L"Accept").bPressed)
 							{
 								pszOverlay = "friendrequestaccept";
 							}
-							if (NeoUI::ButtonTexture("vgui/hud/friend_request_ignore", "GAME",
-										L"Ignore").bPressed)
+							if (NeoUI::ButtonTexture("vgui/hud/friend_request_ignore", "GAME", L"Ignore").bPressed)
 							{
 								pszOverlay = "friendrequestignore";
 							}
@@ -1219,37 +1162,30 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 					if (bShowReadyUp && bLocalPlaying)
 					{
 						if (NeoUI::ButtonTexture(
-									m_playerPopup.bReady
-										? "vgui/hud/player_not_ready"
-										: "vgui/hud/player_ready",
-									"GAME",
-									m_playerPopup.bReady
-										? L"Unready"
-										: L"Ready").bPressed)
+								m_playerPopup.bReady ? "vgui/hud/player_not_ready" : "vgui/hud/player_ready", "GAME",
+								m_playerPopup.bReady ? L"Unready" : L"Ready")
+								.bPressed)
 						{
-							engine->ClientCmd(m_playerPopup.bReady
-									? "readytoggle unready"
-									: "readytoggle ready");
+							engine->ClientCmd(m_playerPopup.bReady ? "readytoggle unready" : "readytoggle ready");
 							NeoUI::ClosePopup();
 						}
 					}
 				}
 				else
 				{
-					if (NeoUI::ButtonTexture("vgui/hud/player_crosshair_icon", "GAME",
-								L"Crosshair").bPressed)
+					if (NeoUI::ButtonTexture("vgui/hud/player_crosshair_icon", "GAME", L"Crosshair").bPressed)
 					{
 						NeoUI::ClosePopup();
 						if (m_playerPopup.szCrosshair[0])
 						{
 							ImportCrosshair(&staticXhairInfo, m_playerPopup.szCrosshair);
 							NeoUI::OpenPopup(NEOSCOREBOARDPOPUP_COPYCROSSHAIR,
-									NeoUI::Dim{
-											.x = wide / 2 - wide / 4,
-											.y = tall / 2 - ((m_uiCtx.layout.iRowTall * 3) / 2),
-											.wide = wide / 2,
-											.tall = m_uiCtx.layout.iRowTall * 3,
-									});
+								NeoUI::Dim{
+									.x = wide / 2 - wide / 4,
+									.y = tall / 2 - ((m_uiCtx.layout.iRowTall * 3) / 2),
+									.wide = wide / 2,
+									.tall = m_uiCtx.layout.iRowTall * 3,
+								});
 						}
 					}
 				}
@@ -1292,18 +1228,14 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 			{
 				PaintCrosshair(pDefXHair, 0, wide / 2, tall / 2);
 			}
-			else if (IN_BETWEEN_AR(0, pDefXHair->iStyle, CROSSHAIR_STYLE__TOTAL)
-					&& CROSSHAIR_FILES[pDefXHair->iStyle][0])
+			else if (IN_BETWEEN_AR(0, pDefXHair->iStyle, CROSSHAIR_STYLE__TOTAL) &&
+				CROSSHAIR_FILES[pDefXHair->iStyle][0])
 			{
 				Texture *pTex = &m_arTextures[pDefXHair->iStyle];
 				vgui::surface()->DrawSetTexture(pTex->iTexId);
 				vgui::surface()->DrawSetColor(pDefXHair->color);
-				vgui::surface()->DrawTexturedRect(
-						(wide / 2) - (pTex->iWide / 2),
-						(tall / 2) - (pTex->iTall / 2),
-						(wide / 2) + (pTex->iWide / 2),
-						(tall / 2) + (pTex->iTall / 2)
-						);
+				vgui::surface()->DrawTexturedRect((wide / 2) - (pTex->iWide / 2), (tall / 2) - (pTex->iTall / 2),
+					(wide / 2) + (pTex->iWide / 2), (tall / 2) + (pTex->iTall / 2));
 			}
 
 			m_uiCtx.eButtonTextStyle = tmpButtonTextStyle;
@@ -1317,4 +1249,3 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 	}
 	NeoUI::EndContext();
 }
-

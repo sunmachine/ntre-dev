@@ -41,18 +41,18 @@ using namespace vgui;
 #define concat(first, second) first second
 
 static const char *szButtons[] = {
-    CONTROL_BUTTON1,
-    CONTROL_BUTTON2,
-    CONTROL_BUTTON3,
-    CONTROL_BUTTON4,
-    CONTROL_BUTTON5,
-    CONTROL_BUTTON6,
-    CONTROL_BUTTON7,
-    CONTROL_BUTTON8,
-    CONTROL_BUTTON9,
-    CONTROL_BUTTON10,
-    CONTROL_BUTTON11,
-    CONTROL_BUTTON12,
+	CONTROL_BUTTON1,
+	CONTROL_BUTTON2,
+	CONTROL_BUTTON3,
+	CONTROL_BUTTON4,
+	CONTROL_BUTTON5,
+	CONTROL_BUTTON6,
+	CONTROL_BUTTON7,
+	CONTROL_BUTTON8,
+	CONTROL_BUTTON9,
+	CONTROL_BUTTON10,
+	CONTROL_BUTTON11,
+	CONTROL_BUTTON12,
 };
 
 Panel *NeoLoadout_Factory()
@@ -62,8 +62,7 @@ Panel *NeoLoadout_Factory()
 
 DECLARE_BUILD_FACTORY_CUSTOM(CNeoLoadoutMenu, NeoLoadout_Factory);
 
-CNeoLoadoutMenu::CNeoLoadoutMenu(IViewPort *pViewPort)
-	: BaseClass(NULL, PANEL_NEO_LOADOUT)
+CNeoLoadoutMenu::CNeoLoadoutMenu(IViewPort *pViewPort) : BaseClass(NULL, PANEL_NEO_LOADOUT)
 {
 	Assert(pViewPort);
 	// Quiet "parent not sized yet" spew
@@ -90,9 +89,7 @@ CNeoLoadoutMenu::CNeoLoadoutMenu(IViewPort *pViewPort)
 	FindButtons();
 }
 
-CNeoLoadoutMenu::~CNeoLoadoutMenu()
-{
-}
+CNeoLoadoutMenu::~CNeoLoadoutMenu() {}
 
 void CNeoLoadoutMenu::FindButtons()
 {
@@ -134,9 +131,9 @@ void CNeoLoadoutMenu::FindButtons()
 
 void CNeoLoadoutMenu::CommandCompletion()
 {
-    for (int i = 0; i < MAX_WEAPON_LOADOUTS; i++)
+	for (int i = 0; i < MAX_WEAPON_LOADOUTS; i++)
 	{
-        auto button = FindControl<Button>(szButtons[i]);
+		auto button = FindControl<Button>(szButtons[i]);
 
 		if (!button)
 		{
@@ -147,7 +144,7 @@ void CNeoLoadoutMenu::CommandCompletion()
 
 		button->SetEnabled(false);
 	}
-	
+
 	returnButton->SetEnabled(false);
 
 	SetVisible(false);
@@ -173,7 +170,7 @@ void CNeoLoadoutMenu::ShowPanel(bool bShow)
 	}
 }
 
-void CNeoLoadoutMenu::OnMessage(const KeyValues* params, vgui::VPANEL fromPanel)
+void CNeoLoadoutMenu::OnMessage(const KeyValues *params, vgui::VPANEL fromPanel)
 {
 	BaseClass::OnMessage(params, fromPanel);
 }
@@ -198,7 +195,7 @@ void CNeoLoadoutMenu::OnClose()
 	BaseClass::OnClose();
 }
 
-void CNeoLoadoutMenu::OnCommand(const char* command)
+void CNeoLoadoutMenu::OnCommand(const char *command)
 {
 	BaseClass::OnCommand(command);
 
@@ -218,36 +215,44 @@ void CNeoLoadoutMenu::OnCommand(const char* command)
 		CUtlStringList loadoutArgs;
 		V_SplitString(command, " ", loadoutArgs);
 
-		if (loadoutArgs.Size() != 2) {return;}
+		if (loadoutArgs.Size() != 2)
+		{
+			return;
+		}
 
 		Q_StripPrecedingAndTrailingWhitespace(loadoutArgs[1]);
 		const int choiceNum = atoi(loadoutArgs[1]);
 
 		auto localPlayer = C_NEO_Player::GetLocalNEOPlayer();
-		if (!localPlayer) { return; }
+		if (!localPlayer)
+		{
+			return;
+		}
 
 		int currentXP = CNEOWeaponLoadout::GetEffectiveXP(localPlayer->m_iXP.Get());
-		int currentClass = localPlayer->m_iNextSpawnClassChoice.Get() != NEO_CLASS_RANDOM ? localPlayer->m_iNextSpawnClassChoice.Get() : localPlayer->m_iNeoClass.Get();
-		int numWeapons = CNEOWeaponLoadout::GetNumberOfLoadoutWeapons(currentXP,
-				sv_neo_dev_loadout.GetBool() ? NEO_LOADOUT_DEV : currentClass);
-			
-		if (choiceNum+1 > numWeapons)
+		int currentClass = localPlayer->m_iNextSpawnClassChoice.Get() != NEO_CLASS_RANDOM
+			? localPlayer->m_iNextSpawnClassChoice.Get()
+			: localPlayer->m_iNeoClass.Get();
+		int numWeapons = CNEOWeaponLoadout::GetNumberOfLoadoutWeapons(
+			currentXP, sv_neo_dev_loadout.GetBool() ? NEO_LOADOUT_DEV : currentClass);
+
+		if (choiceNum + 1 > numWeapons)
 		{
 #define INSUFFICIENT_LOADOUT_XP_MSG "Insufficient XP for equipping this loadout!\n"
 			Msg(INSUFFICIENT_LOADOUT_XP_MSG);
 			engine->Con_NPrintf(0, INSUFFICIENT_LOADOUT_XP_MSG);
 			engine->ClientCmd(loadoutmenu.GetName());
-		}else
+		}
+		else
 		{
 			engine->ClientCmd(command);
 		}
-
 	}
 	CommandCompletion();
 }
 
 
-void CNeoLoadoutMenu::ChangeMenu(const char* menuName = NULL)
+void CNeoLoadoutMenu::ChangeMenu(const char *menuName = NULL)
 {
 	CommandCompletion();
 	ShowPanel(false);
@@ -270,7 +275,8 @@ void CNeoLoadoutMenu::OnKeyCodeReleased(vgui::KeyCode code)
 		return;
 	}
 
-	switch (code) {
+	switch (code)
+	{
 	case KEY_SPACE: // Continue with the currently selected weapon
 		ChangeMenu(NULL);
 		break;
@@ -280,9 +286,7 @@ void CNeoLoadoutMenu::OnKeyCodeReleased(vgui::KeyCode code)
 	}
 }
 
-void CNeoLoadoutMenu::OnButtonPressed(KeyValues *data)
-{
-}
+void CNeoLoadoutMenu::OnButtonPressed(KeyValues *data) {}
 
 void CNeoLoadoutMenu::ApplySchemeSettings(vgui::IScheme *pScheme)
 {
@@ -292,10 +296,15 @@ void CNeoLoadoutMenu::ApplySchemeSettings(vgui::IScheme *pScheme)
 	SetPaintBackgroundEnabled(false);
 
 	auto localPlayer = C_NEO_Player::GetLocalNEOPlayer();
-	if (!localPlayer) { return; }
+	if (!localPlayer)
+	{
+		return;
+	}
 
 	const int currentXP = CNEOWeaponLoadout::GetEffectiveXP(localPlayer->m_iXP.Get());
-	const int currentClass = localPlayer->m_iNextSpawnClassChoice.Get() != NEO_CLASS_RANDOM ? localPlayer->m_iNextSpawnClassChoice.Get() : localPlayer->m_iNeoClass.Get();
+	const int currentClass = localPlayer->m_iNextSpawnClassChoice.Get() != NEO_CLASS_RANDOM
+		? localPlayer->m_iNextSpawnClassChoice.Get()
+		: localPlayer->m_iNeoClass.Get();
 
 	int iLoadout = sv_neo_dev_loadout.GetBool() ? NEO_LOADOUT_DEV : currentClass;
 	if (IN_BETWEEN_AR(0, iLoadout, NEO_LOADOUT__COUNT) == false)

@@ -47,7 +47,7 @@ public:
 
 	CNEOGhostCapturePoint();
 	virtual ~CNEOGhostCapturePoint();
-	
+
 	virtual void Precache(void);
 	virtual void Spawn(void);
 

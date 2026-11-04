@@ -19,9 +19,10 @@ class CFuncElevator;
 class CNEOBotPathCost : public IPathCost
 {
 public:
-	CNEOBotPathCost(CNEOBot* me, RouteType routeType);
+	CNEOBotPathCost(CNEOBot *me, RouteType routeType);
 
-	virtual float operator()(CNavArea* baseArea, CNavArea* fromArea, const CNavLadder* ladder, const CFuncElevator* elevator, float length) const override;
+	virtual float operator()(CNavArea *baseArea, CNavArea *fromArea, const CNavLadder *ladder,
+		const CFuncElevator *elevator, float length) const override;
 
 	bool m_bIgnoreReservations;
 	bool m_bIgnoreVisibilityExposure;
@@ -29,7 +30,7 @@ public:
 private:
 	bool m_bIgnoreHazards;
 	bool m_bInAHurry;
-	CNEOBot* m_me;
+	CNEOBot *m_me;
 	RouteType m_routeType;
 	float m_stepHeight;
 	float m_maxJumpHeight;

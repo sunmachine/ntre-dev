@@ -5,5 +5,4 @@
 #endif
 
 
-
 #endif // NEO_WEAPON_PROXMINE_H

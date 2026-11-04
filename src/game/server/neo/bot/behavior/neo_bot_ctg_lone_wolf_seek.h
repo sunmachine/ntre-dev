@@ -12,17 +12,18 @@ class CNEOBotCtgLoneWolfSeek : public CNEOBotCtgLoneWolf
 {
 public:
 	typedef CNEOBotCtgLoneWolf BaseClass;
-	CNEOBotCtgLoneWolfSeek( void );
+	CNEOBotCtgLoneWolfSeek(void);
 	virtual ~CNEOBotCtgLoneWolfSeek();
 
-	virtual ActionResult< CNEOBot > OnStart( CNEOBot *me, Action< CNEOBot > *priorAction ) override;
-	virtual ActionResult< CNEOBot > Update( CNEOBot *me, float interval ) override;
+	virtual ActionResult<CNEOBot> OnStart(CNEOBot *me, Action<CNEOBot> *priorAction) override;
+	virtual ActionResult<CNEOBot> Update(CNEOBot *me, float interval) override;
 
-	virtual EventDesiredResult< CNEOBot > OnStuck( CNEOBot *me ) override;
-	virtual EventDesiredResult< CNEOBot > OnMoveToSuccess( CNEOBot *me, const Path *path ) override;
-	virtual EventDesiredResult< CNEOBot > OnMoveToFailure( CNEOBot *me, const Path *path, MoveToFailureType reason ) override;
+	virtual EventDesiredResult<CNEOBot> OnStuck(CNEOBot *me) override;
+	virtual EventDesiredResult<CNEOBot> OnMoveToSuccess(CNEOBot *me, const Path *path) override;
+	virtual EventDesiredResult<CNEOBot> OnMoveToFailure(
+		CNEOBot *me, const Path *path, MoveToFailureType reason) override;
 
-	virtual const char *GetName( void ) const override { return "ctgLoneWolfSeek"; }
+	virtual const char *GetName(void) const override { return "ctgLoneWolfSeek"; }
 
 private:
 	static constexpr float DEBUG_OVERLAY_DURATION = 3.0f;
@@ -30,8 +31,8 @@ private:
 	static constexpr float PATH_RECOMPUTE_DIST = 64.0f;
 	static constexpr float SEARCH_WAYPOINT_REACHED_DIST = 200.0f;
 
-	Vector m_vecLastGhostPos{ CNEO_Player::VECTOR_INVALID_WAYPOINT };
-	CNavArea *m_pCachedGhostArea{ nullptr };
+	Vector m_vecLastGhostPos{CNEO_Player::VECTOR_INVALID_WAYPOINT};
+	CNavArea *m_pCachedGhostArea{nullptr};
 
 	CUtlMap<int, bool> m_exploredAreaIds;
 	int m_iExplorationTargetId{-1};
@@ -40,5 +41,5 @@ private:
 	std::unique_ptr<CNEOIgnoredWeaponsCache> m_pIgnoredWeapons;
 	CountdownTimer m_scavengeTimer;
 
-	void MarkVisibleAreasAsExplored( CNEOBot *me, CNavArea *currentArea, CNavArea *ghostArea = nullptr );
+	void MarkVisibleAreasAsExplored(CNEOBot *me, CNavArea *currentArea, CNavArea *ghostArea = nullptr);
 };

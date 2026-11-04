@@ -18,7 +18,7 @@
 #include "behavior/neo_bot_behavior.h"
 #include "neo_bot_profile.h"
 
-#define NEO_BOT_TYPE	1338
+#define NEO_BOT_TYPE 1338
 
 class CNEOBotActionPoint;
 class CNEOBotGenerator;
@@ -27,9 +27,9 @@ class CWeaponGhost;
 
 extern ConVar hl2_normspeed;
 
-extern void BotGenerateAndWearItem(CNEO_Player* pBot, const char* itemName);
+extern void BotGenerateAndWearItem(CNEO_Player *pBot, const char *itemName);
 
-extern int Bot_GetTeamByName(const char* string);
+extern int Bot_GetTeamByName(const char *string);
 
 inline int GetEnemyTeam(int team)
 {
@@ -59,7 +59,7 @@ public:
 	INextBotEventResponder *NextContainedResponder(INextBotEventResponder *current) const override;
 
 	void OnStuck() override;
-	void OnMoveToFailure( const Path *path, MoveToFailureType reason ) override;
+	void OnMoveToFailure(const Path *path, MoveToFailureType reason) override;
 
 	QueryResultType ShouldWalk(const CNEOBot *me, const QueryResultType qShouldAimQuery) const final;
 	QueryResultType ShouldAim(const CNEOBot *me, const bool bWepHasClip) const final;
@@ -70,39 +70,43 @@ private:
 
 //----------------------------------------------------------------------------
 
-#define NEOBOT_ALL_BEHAVIOR_FLAGS		0xFFFF
+#define NEOBOT_ALL_BEHAVIOR_FLAGS 0xFFFF
 
 //----------------------------------------------------------------------------
-class CNEOBot : public NextBotPlayer< CNEO_Player >, public CGameEventListener
+class CNEOBot : public NextBotPlayer<CNEO_Player>, public CGameEventListener
 {
 public:
-	DECLARE_CLASS(CNEOBot, NextBotPlayer< CNEO_Player >);
+	DECLARE_CLASS(CNEOBot, NextBotPlayer<CNEO_Player>);
 
 	DECLARE_ENT_SCRIPTDESC();
 
 	CNEOBot();
 	virtual ~CNEOBot();
 
-	virtual void		Spawn();
-	virtual void		FireGameEvent(IGameEvent* event);
-	void				Update() override;
-	virtual void		Event_Killed(const CTakeDamageInfo& info);
-	virtual void		PhysicsSimulate(void);
-	virtual void		Touch(CBaseEntity* pOther);
-	virtual void		AvoidPlayers(CUserCmd* pCmd);				// some game types allow players to pass through each other, this method pushes them apart
-	virtual void		UpdateOnRemove(void);
-	virtual int			ShouldTransmit(const CCheckTransmitInfo* pInfo) OVERRIDE;
+	virtual void Spawn();
+	virtual void FireGameEvent(IGameEvent *event);
+	void Update() override;
+	virtual void Event_Killed(const CTakeDamageInfo &info);
+	virtual void PhysicsSimulate(void);
+	virtual void Touch(CBaseEntity *pOther);
+	virtual void AvoidPlayers(
+		CUserCmd *pCmd); // some game types allow players to pass through each other, this method pushes them apart
+	virtual void UpdateOnRemove(void);
+	virtual int ShouldTransmit(const CCheckTransmitInfo *pInfo) OVERRIDE;
 
-	virtual int			DrawDebugTextOverlays(void);
+	virtual int DrawDebugTextOverlays(void);
 
-	void				ModifyMaxHealth(int nNewMaxHealth, bool bSetCurrentHealth = true);
+	void ModifyMaxHealth(int nNewMaxHealth, bool bSetCurrentHealth = true);
 
-	virtual int GetBotType(void) const;				// return a unique int representing the type of bot instance this is
+	virtual int GetBotType(void) const; // return a unique int representing the type of bot instance this is
 
-	virtual CNavArea* GetLastKnownArea(void) const { return static_cast<CNavArea*>(BaseClass::GetLastKnownArea()); }		// return the last nav area the player occupied - NULL if unknown
+	virtual CNavArea *GetLastKnownArea(void) const
+	{
+		return static_cast<CNavArea *>(BaseClass::GetLastKnownArea());
+	} // return the last nav area the player occupied - NULL if unknown
 
 	// NextBotPlayer
-	static CBasePlayer* AllocatePlayerEntity(edict_t* pEdict, const char* playerName);
+	static CBasePlayer *AllocatePlayerEntity(edict_t *pEdict, const char *playerName);
 
 	virtual void PressFireButton(float duration = -1.0f) OVERRIDE;
 	virtual void PressAltFireButton(float duration = -1.0f) OVERRIDE;
@@ -112,20 +116,24 @@ public:
 	void PressSuperJumpButtons();
 
 	// INextBot
-	virtual CNEOBotLocomotion* GetLocomotionInterface(void) const { return m_locomotor; }
-	virtual CNEOBotBody* GetBodyInterface(void) const { return m_body; }
-	virtual CNEOBotVision* GetVisionInterface(void) const { return m_vision; }
+	virtual CNEOBotLocomotion *GetLocomotionInterface(void) const { return m_locomotor; }
+	virtual CNEOBotBody *GetBodyInterface(void) const { return m_body; }
+	virtual CNEOBotVision *GetVisionInterface(void) const { return m_vision; }
 	CNEOBotIntention *GetIntentionInterface(void) const override { return m_intention; }
 
-	virtual bool IsDormantWhenDead(void) const;			// should this player-bot continue to update itself when dead (respawn logic, etc)
+	virtual bool IsDormantWhenDead(
+		void) const; // should this player-bot continue to update itself when dead (respawn logic, etc)
 
-	virtual void OnWeaponFired(CBaseCombatCharacter* whoFired, CBaseCombatWeapon* weapon);		// when someone fires their weapon
+	virtual void OnWeaponFired(
+		CBaseCombatCharacter *whoFired, CBaseCombatWeapon *weapon); // when someone fires their weapon
 
 	// search outwards from startSearchArea and collect all reachable objects from the given list that pass the given filter
-	void SelectReachableObjects(const CUtlVector< CHandle< CBaseEntity > >& candidateObjectVector, CUtlVector< CHandle< CBaseEntity > >* selectedObjectVector, const INextBotFilter& filter, CNavArea* startSearchArea, float maxRange = 2000.0f) const;
-	CBaseEntity* FindClosestReachableObject(const char* objectName, CNavArea* from, float maxRange = 2000.0f) const;
+	void SelectReachableObjects(const CUtlVector<CHandle<CBaseEntity>> &candidateObjectVector,
+		CUtlVector<CHandle<CBaseEntity>> *selectedObjectVector, const INextBotFilter &filter, CNavArea *startSearchArea,
+		float maxRange = 2000.0f) const;
+	CBaseEntity *FindClosestReachableObject(const char *objectName, CNavArea *from, float maxRange = 2000.0f) const;
 
-	CNavArea* GetSpawnArea(void) const;							// get area where we spawned in
+	CNavArea *GetSpawnArea(void) const; // get area where we spawned in
 	HSCRIPT ScriptGetSpawnArea(void) const { return ToHScript(this->GetSpawnArea()); }
 
 	bool IsAmmoLow(void) const;
@@ -136,34 +144,46 @@ public:
 	void EnableCloak(float threshold);
 	void DisableCloak(void);
 
-	void UpdateLookingAroundForEnemies(void);						// update our view to keep an eye on enemies, and where enemies come from
+	void UpdateLookingAroundForEnemies(void); // update our view to keep an eye on enemies, and where enemies come from
 
 #define LOOK_FOR_FRIENDS false
 #define LOOK_FOR_ENEMIES true
-	void UpdateLookingAroundForIncomingPlayers(bool lookForEnemies);	// update our view to watch where friends or enemies will be coming from
-	void StartLookingAroundForEnemies(void);						// enable updating view for enemy searching
-	void StopLookingAroundForEnemies(void);						// disable updating view for enemy searching
+	void UpdateLookingAroundForIncomingPlayers(
+		bool lookForEnemies);                // update our view to watch where friends or enemies will be coming from
+	void StartLookingAroundForEnemies(void); // enable updating view for enemy searching
+	void StopLookingAroundForEnemies(void);  // disable updating view for enemy searching
 
-	void SetAttentionFocus(CBaseEntity* focusOn);					// restrict bot's attention to only this entity (or radius around this entity) to the exclusion of everything else
-	void ClearAttentionFocus(void);								// remove attention focus restrictions
+	void SetAttentionFocus(CBaseEntity *
+			focusOn); // restrict bot's attention to only this entity (or radius around this entity) to the exclusion of everything else
+	void ClearAttentionFocus(void); // remove attention focus restrictions
 	bool IsAttentionFocused(void) const;
-	bool IsAttentionFocusedOn(CBaseEntity* who) const;
+	bool IsAttentionFocusedOn(CBaseEntity *who) const;
 	void ScriptSetAttentionFocus(HSCRIPT hFocusOn) { this->SetAttentionFocus(ToEnt(hFocusOn)); }
 	bool ScriptIsAttentionFocusedOn(HSCRIPT hWho) const { return this->IsAttentionFocusedOn(ToEnt(hWho)); }
 
-	void DelayedThreatNotice(CHandle< CBaseEntity > who, float noticeDelay);	// notice the given threat after the given number of seconds have elapsed
+	void DelayedThreatNotice(CHandle<CBaseEntity> who,
+		float noticeDelay); // notice the given threat after the given number of seconds have elapsed
 	void UpdateDelayedThreatNotices(void);
-	void ScriptDelayedThreatNotice(HSCRIPT hWho, float flNoticeDelay) { this->DelayedThreatNotice(ToEnt(hWho), flNoticeDelay); }
+	void ScriptDelayedThreatNotice(HSCRIPT hWho, float flNoticeDelay)
+	{
+		this->DelayedThreatNotice(ToEnt(hWho), flNoticeDelay);
+	}
 
-	CNavArea* FindVantagePoint(float maxTravelDistance = 2000.0f) const;	// return a nearby area where we can see a member of the enemy team
-	HSCRIPT ScriptFindVantagePoint(float maxTravelDistance) { return ToHScript(this->FindVantagePoint(maxTravelDistance)); }
+	CNavArea *FindVantagePoint(
+		float maxTravelDistance = 2000.0f) const; // return a nearby area where we can see a member of the enemy team
+	HSCRIPT ScriptFindVantagePoint(float maxTravelDistance)
+	{
+		return ToHScript(this->FindVantagePoint(maxTravelDistance));
+	}
 
-	float GetThreatDanger(CBaseCombatCharacter* who) const;		// return perceived danger of threat (0=none, 1=immediate deadly danger)
-	float GetMaxAttackRange(void) const;							// return the max range at which we can effectively attack
-	float GetDesiredAttackRange(void) const;						// return the ideal range at which we can effectively attack
+	float GetThreatDanger(
+		CBaseCombatCharacter *who) const;    // return perceived danger of threat (0=none, 1=immediate deadly danger)
+	float GetMaxAttackRange(void) const;     // return the max range at which we can effectively attack
+	float GetDesiredAttackRange(void) const; // return the ideal range at which we can effectively attack
 
-	bool EquipRequiredWeapon(void);								// if we're required to equip a specific weapon, do it.
-	void EquipBestWeaponForThreat(const CKnownEntity* threat, const bool bNotPrimary = false);	// equip the best weapon we have to attack the given threat
+	bool EquipRequiredWeapon(void); // if we're required to equip a specific weapon, do it.
+	void EquipBestWeaponForThreat(const CKnownEntity *threat,
+		const bool bNotPrimary = false); // equip the best weapon we have to attack the given threat
 	void ReloadIfLowClip(bool bForceReload = false);
 
 	bool DropGhost();
@@ -172,29 +192,36 @@ public:
 
 	void DropPrimaryWeapon(void);
 
-	void PushRequiredWeapon(CNEOBaseCombatWeapon* weapon);				// force us to equip and use this weapon until popped off the required stack
-	void PopRequiredWeapon(void);									// pop top required weapon off of stack and discard
+	void PushRequiredWeapon(
+		CNEOBaseCombatWeapon *weapon); // force us to equip and use this weapon until popped off the required stack
+	void PopRequiredWeapon(void);      // pop top required weapon off of stack and discard
 
-	bool IsCombatWeapon(CNEOBaseCombatWeapon* weapon) const;				// return true if given weapon can be used to attack
-	bool IsHitScanWeapon(CNEOBaseCombatWeapon* weapon) const;			// return true if given weapon is a "hitscan" weapon (scattered tracelines with instant damage)
-	bool IsContinuousFireWeapon(CNEOBaseCombatWeapon* weapon) const;		// return true if given weapon "sprays" bullets/fire/etc continuously (ie: not individual rockets/etc)
-	bool IsExplosiveProjectileWeapon(CNEOBaseCombatWeapon* weapon) const;// return true if given weapon launches explosive projectiles with splash damage
-	bool IsBarrageAndReloadWeapon(CNEOBaseCombatWeapon* weapon) const;	// return true if given weapon has small clip and long reload cost (ie: rocket launcher, etc)
-	bool IsQuietWeapon(CNEOBaseCombatWeapon* weapon) const;				// return true if given weapon doesn't make much sound when used (ie: spy knife, etc)
+	bool IsCombatWeapon(CNEOBaseCombatWeapon *weapon) const; // return true if given weapon can be used to attack
+	bool IsHitScanWeapon(CNEOBaseCombatWeapon *weapon)
+		const; // return true if given weapon is a "hitscan" weapon (scattered tracelines with instant damage)
+	bool IsContinuousFireWeapon(CNEOBaseCombatWeapon *weapon)
+		const; // return true if given weapon "sprays" bullets/fire/etc continuously (ie: not individual rockets/etc)
+	bool IsExplosiveProjectileWeapon(CNEOBaseCombatWeapon *weapon)
+		const; // return true if given weapon launches explosive projectiles with splash damage
+	bool IsBarrageAndReloadWeapon(CNEOBaseCombatWeapon *weapon)
+		const; // return true if given weapon has small clip and long reload cost (ie: rocket launcher, etc)
+	bool IsQuietWeapon(CNEOBaseCombatWeapon *weapon)
+		const; // return true if given weapon doesn't make much sound when used (ie: spy knife, etc)
 
-	bool IsEnvironmentNoisy(void) const;							// return true if there are/have been loud noises (ie: non-quiet weapons) nearby very recently
+	bool IsEnvironmentNoisy(
+		void) const; // return true if there are/have been loud noises (ie: non-quiet weapons) nearby very recently
 
-	bool IsEnemy(const CBaseEntity* them) const OVERRIDE;
+	bool IsEnemy(const CBaseEntity *them) const OVERRIDE;
 
-	bool IsBotOnLadder( ) const;
-	bool IsOnPreciseArea() const;	// on a NAV_MESH_PRECISE or NAV_MESH_CLIFF area, where the path must be walked exactly
+	bool IsBotOnLadder() const;
+	bool IsOnPreciseArea() const; // on a NAV_MESH_PRECISE or NAV_MESH_CLIFF area, where the path must be walked exactly
 
-	CNEOBaseCombatWeapon* GetBludgeonWeapon(void);
+	CNEOBaseCombatWeapon *GetBludgeonWeapon(void);
 
-	static bool IsBludgeon(CNEOBaseCombatWeapon* pWeapon);
-	static bool IsCloseRange(CNEOBaseCombatWeapon* pWeapon);
-	static bool IsRanged(CNEOBaseCombatWeapon* pWeapon);
-	static bool PrefersLongRange(CNEOBaseCombatWeapon* pWeapon);
+	static bool IsBludgeon(CNEOBaseCombatWeapon *pWeapon);
+	static bool IsCloseRange(CNEOBaseCombatWeapon *pWeapon);
+	static bool IsRanged(CNEOBaseCombatWeapon *pWeapon);
+	static bool PrefersLongRange(CNEOBaseCombatWeapon *pWeapon);
 
 	enum WeaponRestrictionType
 	{
@@ -205,7 +232,7 @@ public:
 	void SetWeaponRestriction(int restrictionFlags);
 	void RemoveWeaponRestriction(int restrictionFlags);
 	bool HasWeaponRestriction(int restrictionFlags) const;
-	bool IsWeaponRestricted(CNEOBaseCombatWeapon* weapon) const;
+	bool IsWeaponRestricted(CNEOBaseCombatWeapon *weapon) const;
 	bool ScriptIsWeaponRestricted(HSCRIPT script) const;
 
 	enum LineOfFireFlags_
@@ -221,43 +248,51 @@ public:
 		LINE_OF_FIRE_PENETRATION_MODE_DEFAULT = 0,
 		LINE_OF_FIRE_PENETRATION_MODE_GLASS,
 	};
-	bool IsLineOfFirePenetrationClear(const trace_t &tr, const Vector &from, const Vector &to,
-			const ELineOfFirePenetrationMode eMode) const;
+	bool IsLineOfFirePenetrationClear(
+		const trace_t &tr, const Vector &from, const Vector &to, const ELineOfFirePenetrationMode eMode) const;
 
 	using BaseClass::IsLineOfSightClear;
 	bool IsLineOfSightClear(CBaseEntity *entity, LineOfSightCheckType checkType = IGNORE_NOTHING) const override;
 
-	bool IsLineOfFireClear(const Vector& where, const LineOfFireFlags flags) const;			// return true if a weapon has no obstructions along the line from our eye to the given position
-	bool IsLineOfFireClear(CBaseEntity* who, const LineOfFireFlags flags) const;				// return true if a weapon has no obstructions along the line from our eye to the given entity
-	bool IsLineOfFireClear(const Vector& from, const Vector& to, const LineOfFireFlags flags) const;			// return true if a weapon has no obstructions along the line between the given points
-	bool IsLineOfFireClear(const Vector& from, CBaseEntity* who, const LineOfFireFlags flags) const;			// return true if a weapon has no obstructions along the line between the given point and entity
-	bool IsLineOfFireClearOfFriendlies(const Vector& from, CBaseEntity* who) const;
-	bool IsFriendlyNearLineOfFire(const Vector& from, const Vector& to) const;	// return true if a teammate is near the line between the given points
-	bool IsFriendlyNearBarrel(float range) const;			// return true if a teammate is near where my weapon points
+	bool IsLineOfFireClear(const Vector &where, const LineOfFireFlags flags)
+		const; // return true if a weapon has no obstructions along the line from our eye to the given position
+	bool IsLineOfFireClear(CBaseEntity *who, const LineOfFireFlags flags)
+		const; // return true if a weapon has no obstructions along the line from our eye to the given entity
+	bool IsLineOfFireClear(const Vector &from, const Vector &to, const LineOfFireFlags flags)
+		const; // return true if a weapon has no obstructions along the line between the given points
+	bool IsLineOfFireClear(const Vector &from, CBaseEntity *who, const LineOfFireFlags flags)
+		const; // return true if a weapon has no obstructions along the line between the given point and entity
+	bool IsLineOfFireClearOfFriendlies(const Vector &from, CBaseEntity *who) const;
+	bool IsFriendlyNearLineOfFire(const Vector &from,
+		const Vector &to) const;                  // return true if a teammate is near the line between the given points
+	bool IsFriendlyNearBarrel(float range) const; // return true if a teammate is near where my weapon points
 
-	Vector FindVisibleThrowPointNear( const Vector &vecPos ) const;
-	bool IsThrowLineClear(const Vector& where) const;
-	bool IsThrowLineClear(const Vector& from, const Vector& to) const;
+	Vector FindVisibleThrowPointNear(const Vector &vecPos) const;
+	bool IsThrowLineClear(const Vector &where) const;
+	bool IsThrowLineClear(const Vector &from, const Vector &to) const;
 
-	bool IsEntityBetweenTargetAndSelf(CBaseEntity* other, CBaseEntity* target);	// return true if "other" is positioned inbetween us and "target"
+	bool IsEntityBetweenTargetAndSelf(
+		CBaseEntity *other, CBaseEntity *target); // return true if "other" is positioned inbetween us and "target"
 
-	CNEO_Player* GetClosestHumanLookingAtMe(int team = TEAM_ANY);	// return the nearest human player on the given team who is looking directly at me
+	CNEO_Player *GetClosestHumanLookingAtMe(
+		int team = TEAM_ANY); // return the nearest human player on the given team who is looking directly at me
 
 	enum AttributeType
 	{
-		REMOVE_ON_DEATH = 1 << 0,					// kick bot from server when killed
-		AGGRESSIVE = 1 << 1,					// in MvM mode, push for the cap point
-		IS_NPC = 1 << 2,					// a non-player support character
+		REMOVE_ON_DEATH = 1 << 0, // kick bot from server when killed
+		AGGRESSIVE = 1 << 1,      // in MvM mode, push for the cap point
+		IS_NPC = 1 << 2,          // a non-player support character
 		SUPPRESS_FIRE = 1 << 3,
 		DISABLE_DODGE = 1 << 4,
-		BECOME_SPECTATOR_ON_DEATH = 1 << 5,					// move bot to spectator team when killed
-		QUOTA_MANANGED = 1 << 6,					// managed by the bot quota in CNEOBotManager 
+		BECOME_SPECTATOR_ON_DEATH = 1 << 5, // move bot to spectator team when killed
+		QUOTA_MANANGED = 1 << 6,            // managed by the bot quota in CNEOBotManager
 		IGNORE_ENEMIES = 1 << 7,
-		HOLD_FIRE_UNTIL_FULL_RELOAD = 1 << 8,				// don't fire our barrage weapon until it is full reloaded (rocket launcher, etc)
-		PRIORITIZE_DEFENSE = 1 << 9,				// bot prioritizes defending when possible
-		ALWAYS_FIRE_WEAPON = 1 << 10,				// constantly fire our weapon
-		TELEPORT_TO_HINT = 1 << 11,				// bot will teleport to hint target instead of walking out from the spawn point
-		AUTO_JUMP = 1 << 12,				// auto jump
+		HOLD_FIRE_UNTIL_FULL_RELOAD =
+			1 << 8,                   // don't fire our barrage weapon until it is full reloaded (rocket launcher, etc)
+		PRIORITIZE_DEFENSE = 1 << 9,  // bot prioritizes defending when possible
+		ALWAYS_FIRE_WEAPON = 1 << 10, // constantly fire our weapon
+		TELEPORT_TO_HINT = 1 << 11,   // bot will teleport to hint target instead of walking out from the spawn point
+		AUTO_JUMP = 1 << 12,          // auto jump
 	};
 	void SetAttribute(int attributeFlag);
 	void ClearAttribute(int attributeFlag);
@@ -281,56 +316,62 @@ public:
 	void ScriptSetDifficulty(int difficulty) { this->SetDifficulty((DifficultyType)difficulty); }
 	bool ScriptIsDifficulty(int difficulty) const { return this->IsDifficulty((DifficultyType)difficulty); }
 
-	void SetHomeArea(CNavArea* area);
-	CNavArea* GetHomeArea(void) const;
+	void SetHomeArea(CNavArea *area);
+	CNavArea *GetHomeArea(void) const;
 	void ScriptSetHomeArea(HSCRIPT hScript) { this->SetHomeArea(ToNavArea(hScript)); }
 	HSCRIPT ScriptGetHomeArea(void) { return ToHScript(this->GetHomeArea()); }
 
-	const Vector& GetSpotWhereEnemySentryLastInjuredMe(void) const;
+	const Vector &GetSpotWhereEnemySentryLastInjuredMe(void) const;
 
-	void SetActionPoint(CNEOBotActionPoint* point);
-	CNEOBotActionPoint* GetActionPoint(void) const;
-	void ScriptSetActionPoint(HSCRIPT hPoint) { SetActionPoint(ScriptToEntClass< CNEOBotActionPoint >(hPoint)); }
+	void SetActionPoint(CNEOBotActionPoint *point);
+	CNEOBotActionPoint *GetActionPoint(void) const;
+	void ScriptSetActionPoint(HSCRIPT hPoint) { SetActionPoint(ScriptToEntClass<CNEOBotActionPoint>(hPoint)); }
 	HSCRIPT ScriptGetActionPoint(void) const { return ToHScript(GetActionPoint()); }
 
 	bool HasProxy(void) const;
-	void SetProxy(CNEOBotProxy* proxy);					// attach this bot to a bot_proxy entity for map I/O communications
-	CNEOBotProxy* GetProxy(void) const;
+	void SetProxy(CNEOBotProxy *proxy); // attach this bot to a bot_proxy entity for map I/O communications
+	CNEOBotProxy *GetProxy(void) const;
 
 	bool HasSpawner(void) const;
-	void SetSpawner(CNEOBotGenerator* spawner);
-	CNEOBotGenerator* GetSpawner(void) const;
+	void SetSpawner(CNEOBotGenerator *spawner);
+	CNEOBotGenerator *GetSpawner(void) const;
 
-	void JoinSquad(CNEOBotSquad* squad);					// become a member of the given squad
-	void LeaveSquad(void);								// leave our current squad
+	void JoinSquad(CNEOBotSquad *squad); // become a member of the given squad
+	void LeaveSquad(void);               // leave our current squad
 	void DeleteSquad(void);
 	bool IsInASquad(void) const;
-	bool IsSquadmate(CNEO_Player* who) const;				// return true if given bot is in my squad
-	CNEOBotSquad* GetSquad(void) const;					// return squad we are in, or NULL
-	float GetSquadFormationError(void) const;				// return normalized error term where 0 = in formation position and 1 = completely out of position
+	bool IsSquadmate(CNEO_Player *who) const; // return true if given bot is in my squad
+	CNEOBotSquad *GetSquad(void) const;       // return squad we are in, or NULL
+	float GetSquadFormationError(
+		void) const; // return normalized error term where 0 = in formation position and 1 = completely out of position
 	void SetSquadFormationError(float error);
-	bool HasBrokenFormation(void) const;					// return true if this bot is far out of formation, or has no path back
+	bool HasBrokenFormation(void) const; // return true if this bot is far out of formation, or has no path back
 	void SetBrokenFormation(bool state);
 
-	void ScriptDisbandCurrentSquad(void) { if (GetSquad()) GetSquad()->DisbandAndDeleteSquad(); }
+	void ScriptDisbandCurrentSquad(void)
+	{
+		if (GetSquad())
+			GetSquad()->DisbandAndDeleteSquad();
+	}
 
-	float TransientlyConsistentRandomValue(float period = 10.0f, int seedValue = 0) const;		// compute a pseudo random value (0-1) that stays consistent for the given period of time, but changes unpredictably each period
+	float TransientlyConsistentRandomValue(float period = 10.0f, int seedValue = 0)
+		const; // compute a pseudo random value (0-1) that stays consistent for the given period of time, but changes unpredictably each period
 
 	void SetBehaviorFlag(unsigned int flags);
 	void ClearBehaviorFlag(unsigned int flags);
 	bool IsBehaviorFlagSet(unsigned int flags) const;
 
-	bool FindSplashTarget(CBaseEntity* target, float maxSplashRadius, Vector* splashTarget) const;
+	bool FindSplashTarget(CBaseEntity *target, float maxSplashRadius, Vector *splashTarget) const;
 
 	enum MissionType
 	{
 		NO_MISSION = 0,
-		MISSION_SEEK_AND_DESTROY,		// focus on finding and killing enemy players
-		MISSION_DESTROY_SENTRIES,		// focus on finding and destroying enemy sentry guns (and buildings)
-		MISSION_SNIPER,					// maintain teams of snipers harassing the enemy
-		MISSION_SPY,					// maintain teams of spies harassing the enemy
-		MISSION_ENGINEER,				// maintain engineer nests for harassing the enemy
-		MISSION_REPROGRAMMED,			// MvM: robot has been hacked and will do bad things to their team
+		MISSION_SEEK_AND_DESTROY, // focus on finding and killing enemy players
+		MISSION_DESTROY_SENTRIES, // focus on finding and destroying enemy sentry guns (and buildings)
+		MISSION_SNIPER,           // maintain teams of snipers harassing the enemy
+		MISSION_SPY,              // maintain teams of spies harassing the enemy
+		MISSION_ENGINEER,         // maintain engineer nests for harassing the enemy
+		MISSION_REPROGRAMMED,     // MvM: robot has been hacked and will do bad things to their team
 	};
 #define MISSION_DOESNT_RESET_BEHAVIOR_SYSTEM false
 	void SetMission(MissionType mission, bool resetBehaviorSystem = true);
@@ -339,11 +380,14 @@ public:
 	MissionType GetPrevMission(void) const;
 	bool HasMission(MissionType mission) const;
 	bool IsOnAnyMission(void) const;
-	void SetMissionTarget(CBaseEntity* target);
-	CBaseEntity* GetMissionTarget(void) const;
+	void SetMissionTarget(CBaseEntity *target);
+	CBaseEntity *GetMissionTarget(void) const;
 	void SetMissionString(CUtlString string);
-	CUtlString* GetMissionString(void);
-	void ScriptSetMission(unsigned int mission, bool resetBehaviorSystem = true) { this->SetMission((MissionType)mission, resetBehaviorSystem); }
+	CUtlString *GetMissionString(void);
+	void ScriptSetMission(unsigned int mission, bool resetBehaviorSystem = true)
+	{
+		this->SetMission((MissionType)mission, resetBehaviorSystem);
+	}
 	void ScriptSetPrevMission(unsigned int mission) { this->SetPrevMission((MissionType)mission); }
 	unsigned int ScriptGetMission(void) const { return (unsigned int)this->GetMission(); }
 	unsigned int ScriptGetPrevMission(void) const { return (unsigned int)this->GetPrevMission(); }
@@ -351,8 +395,8 @@ public:
 	void ScriptSetMissionTarget(HSCRIPT hTarget) { this->SetMissionTarget(ToEnt(hTarget)); }
 	HSCRIPT ScriptGetMissionTarget(void) const { return ToHScript(this->GetMissionTarget()); }
 
-	void SetTeleportWhere(const CUtlStringList& teleportWhereName);
-	const CUtlStringList& GetTeleportWhere();
+	void SetTeleportWhere(const CUtlStringList &teleportWhereName);
+	const CUtlStringList &GetTeleportWhere();
 	void ClearTeleportWhere();
 
 	void SetScaleOverride(float fScale);
@@ -361,21 +405,26 @@ public:
 	float GetMaxVisionRangeOverride(void) const;
 
 	void ClearTags(void);
-	void AddTag(const char* tag);
-	void RemoveTag(const char* tag);
-	bool HasTag(const char* tag);
+	void AddTag(const char *tag);
+	void RemoveTag(const char *tag);
+	bool HasTag(const char *tag);
 	void ScriptGetAllTags(HSCRIPT hTable);
 
-	Action< CNEOBot >* OpportunisticallyUseWeaponAbilities(void);
+	Action<CNEOBot> *OpportunisticallyUseWeaponAbilities(void);
 
-	CNEO_Player* SelectRandomReachableEnemy(void);	// mostly for MvM - pick a random enemy player that is not in their spawn room
+	CNEO_Player *SelectRandomReachableEnemy(
+		void); // mostly for MvM - pick a random enemy player that is not in their spawn room
 
-	float GetDesiredPathLookAheadRange(void) const;	// different sized bots used different lookahead distances
+	float GetDesiredPathLookAheadRange(void) const; // different sized bots used different lookahead distances
 
 	void StartIdleSound(void);
 	void StopIdleSound(void);
 
-	void SetAutoJump(float flAutoJumpMin, float flAutoJumpMax) { m_flAutoJumpMin = flAutoJumpMin; m_flAutoJumpMax = flAutoJumpMax; }
+	void SetAutoJump(float flAutoJumpMin, float flAutoJumpMax)
+	{
+		m_flAutoJumpMin = flAutoJumpMin;
+		m_flAutoJumpMax = flAutoJumpMax;
+	}
 	bool ShouldAutoJump();
 
 	void MarkPhyscannonPickupTime() { m_flPhyscannonPickupTime = gpGlobals->curtime; }
@@ -384,12 +433,9 @@ public:
 
 	struct EventChangeAttributes_t
 	{
-		EventChangeAttributes_t()
-		{
-			Reset();
-		}
+		EventChangeAttributes_t() { Reset(); }
 
-		EventChangeAttributes_t(const EventChangeAttributes_t& copy)
+		EventChangeAttributes_t(const EventChangeAttributes_t &copy)
 		{
 			Reset();
 
@@ -442,9 +488,9 @@ public:
 		CUtlStringList m_tags;
 	};
 	void ClearEventChangeAttributes() { m_eventChangeAttributes.RemoveAll(); }
-	void AddEventChangeAttributes(const EventChangeAttributes_t* newEvent);
-	const EventChangeAttributes_t* GetEventChangeAttributes(const char* pszEventName) const;
-	void OnEventChangeAttributes(const CNEOBot::EventChangeAttributes_t* pEvent);
+	void AddEventChangeAttributes(const EventChangeAttributes_t *newEvent);
+	const EventChangeAttributes_t *GetEventChangeAttributes(const char *pszEventName) const;
+	void OnEventChangeAttributes(const CNEOBot::EventChangeAttributes_t *pEvent);
 
 	static unsigned int LineOfFireMask(const LineOfFireFlags flags);
 
@@ -463,7 +509,7 @@ public:
 	bool m_bWantsRespawn = false;
 	bool m_bRespawnCopyCorpse = false;
 
-	CNEOBotSuppressiveFire *GetSuppressiveFire( void ) { return &m_suppressiveFire; }
+	CNEOBotSuppressiveFire *GetSuppressiveFire(void) { return &m_suppressiveFire; }
 
 private:
 	void ToggleCloak(void);
@@ -477,60 +523,61 @@ private:
 
 	CountdownTimer m_lookAtEnemyInvasionAreasTimer;
 
-	CNavArea* m_spawnArea;			// where we spawned
+	CNavArea *m_spawnArea; // where we spawned
 	CountdownTimer m_justLostPointTimer;
 
 	int m_weaponRestrictionFlags;
 	int m_attributeFlags;
 	DifficultyType m_difficulty;
 
-	CNavArea* m_homeArea;
+	CNavArea *m_homeArea;
 
-	CHandle< CNEOBotActionPoint > m_actionPoint;
-	CHandle< CNEOBotProxy > m_proxy;
-	CHandle< CNEOBotGenerator > m_spawner;
+	CHandle<CNEOBotActionPoint> m_actionPoint;
+	CHandle<CNEOBotProxy> m_proxy;
+	CHandle<CNEOBotGenerator> m_spawner;
 
-	CNEOBotSquad* m_squad;
+	CNEOBotSquad *m_squad;
 	bool m_didReselectClass;
 
-	Vector m_spotWhereEnemySentryLastInjuredMe;			// the last position where I was injured by an enemy sentry
+	Vector m_spotWhereEnemySentryLastInjuredMe; // the last position where I was injured by an enemy sentry
 
 	bool m_isLookingAroundForEnemies;
 
-	unsigned int m_behaviorFlags;						// spawnflags from the bot_generator that spawned us
-	CUtlVector< CFmtStr > m_tags;
+	unsigned int m_behaviorFlags; // spawnflags from the bot_generator that spawned us
+	CUtlVector<CFmtStr> m_tags;
 
-	CHandle< CBaseEntity > m_attentionFocusEntity;
+	CHandle<CBaseEntity> m_attentionFocusEntity;
 
 	float m_fModelScaleOverride;
 
 	MissionType m_mission;
 	MissionType m_prevMission;
 
-	CHandle< CBaseEntity > m_missionTarget;
+	CHandle<CBaseEntity> m_missionTarget;
 	CUtlString m_missionString;
 
-	CUtlStack< CHandle<CBaseHL2MPCombatWeapon> > m_requiredWeaponStack;	// if non-empty, bot must equip the weapon on top of the stack
+	CUtlStack<CHandle<CBaseHL2MPCombatWeapon>>
+		m_requiredWeaponStack; // if non-empty, bot must equip the weapon on top of the stack
 
 	CountdownTimer m_noisyTimer;
 
 	struct DelayedNoticeInfo
 	{
-		CHandle< CBaseEntity > m_who;
+		CHandle<CBaseEntity> m_who;
 		float m_when;
 	};
-	CUtlVector< DelayedNoticeInfo > m_delayedNoticeVector;
+	CUtlVector<DelayedNoticeInfo> m_delayedNoticeVector;
 
 	float m_maxVisionRangeOverride;
 
 	CountdownTimer m_opportunisticTimer;
 
-	CSoundPatch* m_pIdleSound;
+	CSoundPatch *m_pIdleSound;
 
 	float m_squadFormationError;
 	bool m_hasBrokenFormation;
 
-	CUtlStringList m_teleportWhereName;	// spawn name an engineer mission teleporter will override
+	CUtlStringList m_teleportWhereName; // spawn name an engineer mission teleporter will override
 	bool m_bForceQuickBuild;
 
 	float m_flAutoJumpMin;
@@ -541,7 +588,7 @@ private:
 
 	float m_flPhyscannonPickupTime = 0.0f;
 
-	CUtlVector< const EventChangeAttributes_t* > m_eventChangeAttributes;
+	CUtlVector<const EventChangeAttributes_t *> m_eventChangeAttributes;
 };
 
 class CNEOBotBehavior : public Behavior<CNEOBot>, public CNEOBotContextualQueryInterface
@@ -554,7 +601,7 @@ public:
 	QueryResultType ShouldAim(const CNEOBot *me, const bool bWepHasClip) const final;
 };
 
-inline void CNEOBot::SetTeleportWhere(const CUtlStringList& teleportWhereName)
+inline void CNEOBot::SetTeleportWhere(const CUtlStringList &teleportWhereName)
 {
 	// deep copy strings
 	for (int i = 0; i < teleportWhereName.Count(); ++i)
@@ -563,7 +610,7 @@ inline void CNEOBot::SetTeleportWhere(const CUtlStringList& teleportWhereName)
 	}
 }
 
-inline const CUtlStringList& CNEOBot::GetTeleportWhere()
+inline const CUtlStringList &CNEOBot::GetTeleportWhere()
 {
 	return m_teleportWhereName;
 }
@@ -578,17 +625,17 @@ inline void CNEOBot::SetMissionString(CUtlString string)
 	m_missionString = string;
 }
 
-inline CUtlString* CNEOBot::GetMissionString(void)
+inline CUtlString *CNEOBot::GetMissionString(void)
 {
 	return &m_missionString;
 }
 
-inline void CNEOBot::SetMissionTarget(CBaseEntity* target)
+inline void CNEOBot::SetMissionTarget(CBaseEntity *target)
 {
 	m_missionTarget = target;
 }
 
-inline CBaseEntity* CNEOBot::GetMissionTarget(void) const
+inline CBaseEntity *CNEOBot::GetMissionTarget(void) const
 {
 	return m_missionTarget;
 }
@@ -653,7 +700,7 @@ inline int CNEOBot::GetBotType(void) const
 	return NEO_BOT_TYPE;
 }
 
-inline const Vector& CNEOBot::GetSpotWhereEnemySentryLastInjuredMe(void) const
+inline const Vector &CNEOBot::GetSpotWhereEnemySentryLastInjuredMe(void) const
 {
 	return m_spotWhereEnemySentryLastInjuredMe;
 }
@@ -678,12 +725,12 @@ inline bool CNEOBot::HasProxy(void) const
 	return m_proxy == NULL ? false : true;
 }
 
-inline void CNEOBot::SetProxy(CNEOBotProxy* proxy)
+inline void CNEOBot::SetProxy(CNEOBotProxy *proxy)
 {
 	m_proxy = proxy;
 }
 
-inline CNEOBotProxy* CNEOBot::GetProxy(void) const
+inline CNEOBotProxy *CNEOBot::GetProxy(void) const
 {
 	return m_proxy;
 }
@@ -693,22 +740,22 @@ inline bool CNEOBot::HasSpawner(void) const
 	return m_spawner == NULL ? false : true;
 }
 
-inline void CNEOBot::SetSpawner(CNEOBotGenerator* spawner)
+inline void CNEOBot::SetSpawner(CNEOBotGenerator *spawner)
 {
 	m_spawner = spawner;
 }
 
-inline CNEOBotGenerator* CNEOBot::GetSpawner(void) const
+inline CNEOBotGenerator *CNEOBot::GetSpawner(void) const
 {
 	return m_spawner;
 }
 
-inline void CNEOBot::SetActionPoint(CNEOBotActionPoint* point)
+inline void CNEOBot::SetActionPoint(CNEOBotActionPoint *point)
 {
 	m_actionPoint = point;
 }
 
-inline CNEOBotActionPoint* CNEOBot::GetActionPoint(void) const
+inline CNEOBotActionPoint *CNEOBot::GetActionPoint(void) const
 {
 	return m_actionPoint;
 }
@@ -718,17 +765,17 @@ inline bool CNEOBot::IsInASquad(void) const
 	return m_squad == NULL ? false : true;
 }
 
-inline CNEOBotSquad* CNEOBot::GetSquad(void) const
+inline CNEOBotSquad *CNEOBot::GetSquad(void) const
 {
 	return m_squad;
 }
 
-inline void CNEOBot::SetHomeArea(CNavArea* area)
+inline void CNEOBot::SetHomeArea(CNavArea *area)
 {
 	m_homeArea = area;
 }
 
-inline CNavArea* CNEOBot::GetHomeArea(void) const
+inline CNavArea *CNEOBot::GetHomeArea(void) const
 {
 	return m_homeArea;
 }
@@ -773,7 +820,7 @@ inline bool CNEOBot::HasAttribute(int attributeFlag) const
 	return m_attributeFlags & attributeFlag ? true : false;
 }
 
-inline CNavArea* CNEOBot::GetSpawnArea(void) const
+inline CNavArea *CNEOBot::GetSpawnArea(void) const
 {
 	return m_spawnArea;
 }
@@ -816,26 +863,26 @@ inline bool CNEOBot::IsEnvironmentNoisy(void) const
 }
 
 //---------------------------------------------------------------------------------------------
-inline CNEOBot* ToNEOBot(CBaseEntity* pEntity)
+inline CNEOBot *ToNEOBot(CBaseEntity *pEntity)
 {
 	if (!pEntity || !pEntity->IsPlayer() || !ToNEOPlayer(pEntity)->IsBotOfType(NEO_BOT_TYPE))
 		return NULL;
 
-	Assert("***IMPORTANT!!! DONT IGNORE ME!!!***" && dynamic_cast<CNEOBot*>(pEntity) != 0);
+	Assert("***IMPORTANT!!! DONT IGNORE ME!!!***" && dynamic_cast<CNEOBot *>(pEntity) != 0);
 
-	return static_cast<CNEOBot*>(pEntity);
+	return static_cast<CNEOBot *>(pEntity);
 }
 
 
 //---------------------------------------------------------------------------------------------
-inline const CNEOBot* ToNEOBot(const CBaseEntity* pEntity)
+inline const CNEOBot *ToNEOBot(const CBaseEntity *pEntity)
 {
-	if (!pEntity || !pEntity->IsPlayer() || !ToNEOPlayer(const_cast<CBaseEntity*>(pEntity))->IsBotOfType(NEO_BOT_TYPE))
+	if (!pEntity || !pEntity->IsPlayer() || !ToNEOPlayer(const_cast<CBaseEntity *>(pEntity))->IsBotOfType(NEO_BOT_TYPE))
 		return NULL;
 
-	Assert("***IMPORTANT!!! DONT IGNORE ME!!!***" && dynamic_cast<const CNEOBot*>(pEntity) != 0);
+	Assert("***IMPORTANT!!! DONT IGNORE ME!!!***" && dynamic_cast<const CNEOBot *>(pEntity) != 0);
 
-	return static_cast<const CNEOBot*>(pEntity);
+	return static_cast<const CNEOBot *>(pEntity);
 }
 
 
@@ -843,7 +890,7 @@ inline const CNEOBot* ToNEOBot(const CBaseEntity* pEntity)
 class CClosestNEOPlayer
 {
 public:
-	CClosestNEOPlayer(const Vector& where, int team = TEAM_ANY)
+	CClosestNEOPlayer(const Vector &where, int team = TEAM_ANY)
 	{
 		m_where = where;
 		m_closeRangeSq = FLT_MAX;
@@ -851,7 +898,7 @@ public:
 		m_team = team;
 	}
 
-	CClosestNEOPlayer(CBaseEntity* entity, int team = TEAM_ANY)
+	CClosestNEOPlayer(CBaseEntity *entity, int team = TEAM_ANY)
 	{
 		m_where = entity->WorldSpaceCenter();
 		m_closeRangeSq = FLT_MAX;
@@ -859,18 +906,19 @@ public:
 		m_team = team;
 	}
 
-	bool operator() (CBasePlayer* player)
+	bool operator()(CBasePlayer *player)
 	{
 		if (!player->IsAlive())
 			return true;
 
-		if (player->GetTeamNumber() != TEAM_JINRAI && player->GetTeamNumber() != TEAM_NSF && player->GetTeamNumber() != TEAM_UNASSIGNED)
+		if (player->GetTeamNumber() != TEAM_JINRAI && player->GetTeamNumber() != TEAM_NSF &&
+			player->GetTeamNumber() != TEAM_UNASSIGNED)
 			return true;
 
 		if (m_team != TEAM_ANY && player->GetTeamNumber() != m_team)
 			return true;
 
-		CNEOBot* bot = ToNEOBot(player);
+		CNEOBot *bot = ToNEOBot(player);
 		if (bot && bot->HasAttribute(CNEOBot::IS_NPC))
 			return true;
 
@@ -885,7 +933,7 @@ public:
 
 	Vector m_where;
 	float m_closeRangeSq;
-	CBasePlayer* m_closePlayer;
+	CBasePlayer *m_closePlayer;
 	int m_team;
 };
 
@@ -895,15 +943,16 @@ class CTraceFilterIgnoreFriendlyCombatItems : public CTraceFilterSimple
 public:
 	DECLARE_CLASS(CTraceFilterIgnoreFriendlyCombatItems, CTraceFilterSimple);
 
-	CTraceFilterIgnoreFriendlyCombatItems(const CNEOBot* player, int collisionGroup, int iIgnoreTeam, bool bIsProjectile = false)
+	CTraceFilterIgnoreFriendlyCombatItems(
+		const CNEOBot *player, int collisionGroup, int iIgnoreTeam, bool bIsProjectile = false)
 		: CTraceFilterSimple(player, collisionGroup), m_iIgnoreTeam(iIgnoreTeam), m_pPlayer(player)
 	{
 		m_bCallerIsProjectile = bIsProjectile;
 	}
 
-	virtual bool ShouldHitEntity(IHandleEntity* pServerEntity, int contentsMask)
+	virtual bool ShouldHitEntity(IHandleEntity *pServerEntity, int contentsMask)
 	{
-		CBaseEntity* pEntity = EntityFromEntityHandle(pServerEntity);
+		CBaseEntity *pEntity = EntityFromEntityHandle(pServerEntity);
 
 		if (pEntity->IsCombatItem())
 		{
@@ -919,15 +968,14 @@ public:
 		if (!pEntity->BlocksLOS())
 			return false;
 
-		IPhysicsObject* pObject = pEntity->VPhysicsGetObject();
+		IPhysicsObject *pObject = pEntity->VPhysicsGetObject();
 		if (pObject && (pObject->GetGameFlags() & FVPHYSICS_PLAYER_HELD))
 			return false;
 
 		return BaseClass::ShouldHitEntity(pServerEntity, contentsMask);
 	}
 
-	const CNEOBot* m_pPlayer;
+	const CNEOBot *m_pPlayer;
 	int m_iIgnoreTeam;
 	bool m_bCallerIsProjectile;
 };
-

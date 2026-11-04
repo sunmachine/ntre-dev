@@ -72,13 +72,13 @@ extern const ENeoCrosshairWep MAP_WEAPON_TYPE_TO_XHAIR[WEP_TYPE__TOTAL];
 
 enum NeoCrosshairWepFlag_
 {
-	CROSSHAIR_WEP_FLAG_DEFAULT = 0,					// Default
-	CROSSHAIR_WEP_FLAG_SECONDARY = 1 << 0,			// Pistols (Milso, Tachi, Kyla)
-	CROSSHAIR_WEP_FLAG_SHOTGUN = 1 << 1,			// Shotguns (Supa, AA13)
-	CROSSHAIR_WEP_FLAG_DEFAULT_HIPFIRE = 1 << 2,	// Default hipfire
-	CROSSHAIR_WEP_FLAG_SECONDARY_HIPFIRE = 1 << 3,	// Pistols hipfire
-	CROSSHAIR_WEP_FLAG_SHOTGUN_HIPFIRE = 1 << 4,	// Shotguns hipfire
-	CROSSHAIR_WEP_FLAG_THROWABLE_HIPFIRE = 1 << 5,	// Throwables (Grenades, Smokes, NOT detpack)
+	CROSSHAIR_WEP_FLAG_DEFAULT = 0,                // Default
+	CROSSHAIR_WEP_FLAG_SECONDARY = 1 << 0,         // Pistols (Milso, Tachi, Kyla)
+	CROSSHAIR_WEP_FLAG_SHOTGUN = 1 << 1,           // Shotguns (Supa, AA13)
+	CROSSHAIR_WEP_FLAG_DEFAULT_HIPFIRE = 1 << 2,   // Default hipfire
+	CROSSHAIR_WEP_FLAG_SECONDARY_HIPFIRE = 1 << 3, // Pistols hipfire
+	CROSSHAIR_WEP_FLAG_SHOTGUN_HIPFIRE = 1 << 4,   // Shotguns hipfire
+	CROSSHAIR_WEP_FLAG_THROWABLE_HIPFIRE = 1 << 5, // Throwables (Grenades, Smokes, NOT detpack)
 
 	CROSSHAIR_WEP_FLAG__FINALENUM,
 	CROSSHAIR_WEP_FLAG__HIGHESTFLAG = 2 * (CROSSHAIR_WEP_FLAG__FINALENUM - 1),
@@ -96,10 +96,10 @@ typedef int NeoCrosshairWepFlags;
 enum NeoCrosshairHipfireCustomFlag_
 {
 	CROSSHAIR_HIPFIRECUSTOM_FLAG_NIL = 0,
-	CROSSHAIR_HIPFIRECUSTOM_FLAG_DEFAULT = 1 << 0,		// If not set: Fallback to non-hipfire default
-	CROSSHAIR_HIPFIRECUSTOM_FLAG_SECONDARY = 1 << 1,	// If not set: Fallback to hipfire default
-	CROSSHAIR_HIPFIRECUSTOM_FLAG_SHOTGUN = 1 << 2,		// If not set: Fallback to hipfire default
-	CROSSHAIR_HIPFIRECUSTOM_FLAG_THROWABLE = 1 << 3,	// If not set: Fallback to hipfire default
+	CROSSHAIR_HIPFIRECUSTOM_FLAG_DEFAULT = 1 << 0,   // If not set: Fallback to non-hipfire default
+	CROSSHAIR_HIPFIRECUSTOM_FLAG_SECONDARY = 1 << 1, // If not set: Fallback to hipfire default
+	CROSSHAIR_HIPFIRECUSTOM_FLAG_SHOTGUN = 1 << 2,   // If not set: Fallback to hipfire default
+	CROSSHAIR_HIPFIRECUSTOM_FLAG_THROWABLE = 1 << 3, // If not set: Fallback to hipfire default
 
 	CROSSHAIR_HIPFIRECUSTOM_FLAG__FINALENUM,
 	CROSSHAIR_HIPFIRECUSTOM_FLAG__HIGHESTFLAG = 2 * (CROSSHAIR_HIPFIRECUSTOM_FLAG__FINALENUM - 1),
@@ -109,8 +109,8 @@ typedef int NeoCrosshairHipfireCustomFlags;
 enum NeoCrosshairFlag_
 {
 	CROSSHAIR_FLAG_DEFAULT = 0,
-	CROSSHAIR_FLAG_NOTOPLINE = 1 << 0,			// Do not draw top line
-	CROSSHAIR_FLAG_SEPERATEDOTCOLOR = 1 << 1,	// Draw dot as separate color
+	CROSSHAIR_FLAG_NOTOPLINE = 1 << 0,        // Do not draw top line
+	CROSSHAIR_FLAG_SEPERATEDOTCOLOR = 1 << 1, // Draw dot as separate color
 
 	CROSSHAIR_FLAG__FINALENUM,
 	CROSSHAIR_FLAG__HIGHESTFLAG = 2 * (CROSSHAIR_FLAG__FINALENUM - 1),
@@ -138,7 +138,7 @@ extern const wchar_t **CROSSHAIR_DYNAMICTYPE_LABELS;
 
 struct CrosshairWepInfo
 {
-	bool operator==(const CrosshairWepInfo&) const = default;
+	bool operator==(const CrosshairWepInfo &) const = default;
 
 	int iStyle;
 	Color color;
@@ -214,19 +214,18 @@ void NeoConVarCrosshairChangeCallback(IConVar *icvar, const char *pOldVal, float
 
 #endif // CLIENT_DLL
 
-void ResetCrosshairToDefault(CrosshairInfo *xhairInfo,
-		EHipfireOpt (*paeHipfireOpts)[CROSSHAIR_WEP__TOTAL] = nullptr);
+void ResetCrosshairToDefault(CrosshairInfo *xhairInfo, EHipfireOpt (*paeHipfireOpts)[CROSSHAIR_WEP__TOTAL] = nullptr);
 void DefaultCrosshairSerial(char (&szSequence)[NEO_XHAIR_SEQMAX]);
 
 int UseCrosshairIndexFor(const CrosshairInfo *xhairInfo, const int iXHairWep, bool *pbHide = nullptr);
 
-bool ValidateCrosshairSerial(const char* pszSequence, const int ver = NEOXHAIR_SERIAL_CURRENT);
+bool ValidateCrosshairSerial(const char *pszSequence, const int ver = NEOXHAIR_SERIAL_CURRENT);
 
 // NEO NOTE (nullsystem): (*&)[NUM] enforces array size
 // paeHipfireOpts - Maps NeoUI RingBox int <-> NeoCrosshairWepFlags + NeoCrosshairHipfireCustomFlags
 // Only for import as export must have directly already set by flags and managed within UI
-bool ImportCrosshair(CrosshairInfo *xhairInfo, const char *pszSequence,
-		EHipfireOpt (*paeHipfireOpts)[CROSSHAIR_WEP__TOTAL] = nullptr);
+bool ImportCrosshair(
+	CrosshairInfo *xhairInfo, const char *pszSequence, EHipfireOpt (*paeHipfireOpts)[CROSSHAIR_WEP__TOTAL] = nullptr);
 
 // iExportSerialVersion is only used for unit testing purpose, for usage in-game
 // it should always be exporting to NEOXHAIR_SERIAL_CURRENT
@@ -237,4 +236,3 @@ void ExportCrosshair(CrosshairInfo *xhairInfo, char (&szSequence)[NEO_XHAIR_SEQM
 #endif
 		);
 // clang-format on
-

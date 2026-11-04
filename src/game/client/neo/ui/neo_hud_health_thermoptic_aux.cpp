@@ -28,7 +28,7 @@ DECLARE_NAMED_HUDELEMENT(CNEOHud_HTA, NHudHealth);
 
 NEO_HUD_ELEMENT_DECLARE_FREQ_CVAR(HTA, 0.00695);
 
-CNEOHud_HTA::CNEOHud_HTA(const char* pElementName, vgui::Panel* parent)
+CNEOHud_HTA::CNEOHud_HTA(const char *pElementName, vgui::Panel *parent)
 	: CHudElement(pElementName), EditablePanel(parent, pElementName)
 {
 	SetAutoDelete(true);
@@ -71,7 +71,7 @@ void CNEOHud_HTA::UpdateStateForNeoHudElementDraw()
 	Assert(C_NEO_Player::GetLocalNEOPlayer());
 }
 
-void CNEOHud_HTA::ApplySchemeSettings(vgui::IScheme* pScheme)
+void CNEOHud_HTA::ApplySchemeSettings(vgui::IScheme *pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 
@@ -117,13 +117,13 @@ void CNEOHud_HTA::DrawHTA() const
 	const Color textColor = COLOR_WHITE;
 	auto textColorTransparent = Color(textColor.r(), textColor.g(), textColor.b(), 127);
 
-	char value_Integrity[4]{ '\0' };
-	char value_ThermOptic[4]{ '\0' };
-	char value_Aux[4]{ '\0' };
+	char value_Integrity[4]{'\0'};
+	char value_ThermOptic[4]{'\0'};
+	char value_Aux[4]{'\0'};
 
-	wchar_t unicodeValue_Integrity[4]{ L'\0' };
-	wchar_t unicodeValue_ThermOptic[4]{ L'\0' };
-	wchar_t unicodeValue_Aux[4]{ L'\0' };
+	wchar_t unicodeValue_Integrity[4]{L'\0'};
+	wchar_t unicodeValue_ThermOptic[4]{L'\0'};
+	wchar_t unicodeValue_Aux[4]{L'\0'};
 
 	const int healthMode = cl_neo_hud_health_mode.GetInt();
 	const int displayedHealth = player->GetDisplayedHealth(healthMode);
@@ -148,11 +148,13 @@ void CNEOHud_HTA::DrawHTA() const
 	g_pVGuiLocalize->ConvertANSIToUnicode(value_Integrity, unicodeValue_Integrity, sizeof(unicodeValue_Integrity));
 	if (playerIsNotSupport)
 	{
-		g_pVGuiLocalize->ConvertANSIToUnicode(value_ThermOptic, unicodeValue_ThermOptic, sizeof(unicodeValue_ThermOptic));
+		g_pVGuiLocalize->ConvertANSIToUnicode(
+			value_ThermOptic, unicodeValue_ThermOptic, sizeof(unicodeValue_ThermOptic));
 		g_pVGuiLocalize->ConvertANSIToUnicode(value_Aux, unicodeValue_Aux, sizeof(unicodeValue_Aux));
 	}
 
-	DrawNeoHudRoundedBox(xpos, ypos, xpos + wide, ypos + tall, m_boxColor, top_left_corner, top_right_corner, bottom_left_corner, bottom_right_corner);
+	DrawNeoHudRoundedBox(xpos, ypos, xpos + wide, ypos + tall, m_boxColor, top_left_corner, top_right_corner,
+		bottom_left_corner, bottom_right_corner);
 
 	surface()->DrawSetTextFont(m_hFont);
 	surface()->DrawSetTextColor(m_healthTextColor);
@@ -193,11 +195,8 @@ void CNEOHud_HTA::DrawHTA() const
 
 	// Integrity progress bar
 	surface()->DrawSetColor(m_healthColor);
-	surface()->DrawFilledRect(
-		healthbar_xpos + xpos,
-		healthbar_ypos + ypos,
-		healthbar_xpos + xpos + healthbar_w * healthPercent,
-		healthbar_ypos + ypos + healthbar_h);
+	surface()->DrawFilledRect(healthbar_xpos + xpos, healthbar_ypos + ypos,
+		healthbar_xpos + xpos + healthbar_w * healthPercent, healthbar_ypos + ypos + healthbar_h);
 
 	if (playerIsNotSupport)
 	{
@@ -205,41 +204,26 @@ void CNEOHud_HTA::DrawHTA() const
 		{
 			// ThermOptic progress bar
 			surface()->DrawSetColor(m_camoColor);
-			surface()->DrawFilledRect(
-				camobar_xpos + xpos,
-				camobar_ypos + ypos,
-				camobar_xpos + xpos + (camobar_w * (thermopticPercent / 100.0)),
-				camobar_ypos + ypos + camobar_h);
+			surface()->DrawFilledRect(camobar_xpos + xpos, camobar_ypos + ypos,
+				camobar_xpos + xpos + (camobar_w * (thermopticPercent / 100.0)), camobar_ypos + ypos + camobar_h);
 
 			surface()->DrawSetColor(m_camoTextColor);
-			surface()->DrawOutlinedRect(
-				camobar_xpos + xpos,
-				camobar_ypos + ypos,
-				camobar_xpos + xpos + camobar_w,
+			surface()->DrawOutlinedRect(camobar_xpos + xpos, camobar_ypos + ypos, camobar_xpos + xpos + camobar_w,
 				camobar_ypos + ypos + camobar_h);
 		}
 
 		// AUX progress bar
 		surface()->DrawSetColor(m_sprintColor);
-		surface()->DrawFilledRect(
-			sprintbar_xpos + xpos,
-			sprintbar_ypos + ypos,
-			sprintbar_xpos + xpos + (sprintbar_w * (aux / 100.0)),
-			sprintbar_ypos + ypos + sprintbar_h);
+		surface()->DrawFilledRect(sprintbar_xpos + xpos, sprintbar_ypos + ypos,
+			sprintbar_xpos + xpos + (sprintbar_w * (aux / 100.0)), sprintbar_ypos + ypos + sprintbar_h);
 
 		surface()->DrawSetColor(m_sprintTextColor);
-		surface()->DrawOutlinedRect(
-			sprintbar_xpos + xpos,
-			sprintbar_ypos + ypos,
-			sprintbar_xpos + xpos + sprintbar_w,
+		surface()->DrawOutlinedRect(sprintbar_xpos + xpos, sprintbar_ypos + ypos, sprintbar_xpos + xpos + sprintbar_w,
 			sprintbar_ypos + ypos + sprintbar_h);
 	}
 
 	surface()->DrawSetColor(m_healthTextColor);
-	surface()->DrawOutlinedRect(
-		healthbar_xpos + xpos,
-		healthbar_ypos + ypos,
-		healthbar_xpos + xpos + healthbar_w,
+	surface()->DrawOutlinedRect(healthbar_xpos + xpos, healthbar_ypos + ypos, healthbar_xpos + xpos + healthbar_w,
 		healthbar_ypos + ypos + healthbar_h);
 }
 

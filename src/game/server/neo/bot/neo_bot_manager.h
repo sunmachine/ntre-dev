@@ -9,29 +9,24 @@ class CNEOBotSquad;
 class CStuckBotEvent;
 
 
-
 //----------------------------------------------------------------------------------------------
 // For parsing and displaying stuck events from server logs.
 class CStuckBot
 {
 public:
-	CStuckBot( int id, const char *name )
+	CStuckBot(int id, const char *name)
 	{
 		m_id = id;
-		Q_strncpy( m_name, name, MAX_PLAYER_NAME_LENGTH);
+		Q_strncpy(m_name, name, MAX_PLAYER_NAME_LENGTH);
 	}
 
-	bool IsMatch( int id, const char *name )
-	{
-		return ( id == m_id && FStrEq( name, m_name ) );
-	}
+	bool IsMatch(int id, const char *name) { return (id == m_id && FStrEq(name, m_name)); }
 
 	char m_name[MAX_PLAYER_NAME_LENGTH];
 	int m_id;
 
-	CUtlVector< CStuckBotEvent * > m_stuckEventVector;
+	CUtlVector<CStuckBotEvent *> m_stuckEventVector;
 };
-
 
 
 //----------------------------------------------------------------------------------------------
@@ -44,23 +39,23 @@ public:
 	Vector m_goalSpot;
 	bool m_isGoalValid;
 
-	void Draw( float deltaT = 0.1f )
+	void Draw(float deltaT = 0.1f)
 	{
-		NDebugOverlay::Cross3D( m_stuckSpot, 5.0f, 255, 255, 0, true, deltaT );
+		NDebugOverlay::Cross3D(m_stuckSpot, 5.0f, 255, 255, 0, true, deltaT);
 
-		if ( m_isGoalValid )
+		if (m_isGoalValid)
 		{
-			if ( m_stuckDuration > 6.0f )
+			if (m_stuckDuration > 6.0f)
 			{
-				NDebugOverlay::HorzArrow( m_stuckSpot, m_goalSpot, 2.0f, 255, 0, 0, 255, true, deltaT );
+				NDebugOverlay::HorzArrow(m_stuckSpot, m_goalSpot, 2.0f, 255, 0, 0, 255, true, deltaT);
 			}
-			else if ( m_stuckDuration > 3.0f )
+			else if (m_stuckDuration > 3.0f)
 			{
-				NDebugOverlay::HorzArrow( m_stuckSpot, m_goalSpot, 2.0f, 255, 255, 0, 255, true, deltaT );
+				NDebugOverlay::HorzArrow(m_stuckSpot, m_goalSpot, 2.0f, 255, 255, 0, 255, true, deltaT);
 			}
 			else
 			{
-				NDebugOverlay::HorzArrow( m_stuckSpot, m_goalSpot, 2.0f, 0, 255, 0, 255, true, deltaT );
+				NDebugOverlay::HorzArrow(m_stuckSpot, m_goalSpot, 2.0f, 0, 255, 0, 255, true, deltaT);
 			}
 		}
 	}
@@ -77,34 +72,34 @@ public:
 	virtual void Update() override;
 	void LevelShutdown();
 
-	virtual void OnMapLoaded( void ) override;						// when the server has changed maps
+	virtual void OnMapLoaded(void) override; // when the server has changed maps
 
-	bool IsAllBotTeam( int iTeam );
+	bool IsAllBotTeam(int iTeam);
 	bool IsInOfflinePractice() const;
 	bool IsMeleeOnly() const;
 
-	CNEOBot* GetAvailableBotFromPool();
-	
-	void OnForceAddedBots( int iNumAdded );
-	void OnForceKickedBots( int iNumKicked );
+	CNEOBot *GetAvailableBotFromPool();
+
+	void OnForceAddedBots(int iNumAdded);
+	void OnForceKickedBots(int iNumKicked);
 
 	void ClearStuckBotData();
-	CStuckBot *FindOrCreateStuckBot( int id, const char *playerClass );	// for parsing and debugging stuck bot server logs
-	void DrawStuckBotData( float deltaT = 0.1f );
+	CStuckBot *FindOrCreateStuckBot(int id, const char *playerClass); // for parsing and debugging stuck bot server logs
+	void DrawStuckBotData(float deltaT = 0.1f);
 
-	bool RemoveBotFromTeamAndKick( int nTeam );
+	bool RemoveBotFromTeamAndKick(int nTeam);
 
 protected:
 	void MaintainBotQuota();
-	void SetIsInOfflinePractice( bool bIsInOfflinePractice );
+	void SetIsInOfflinePractice(bool bIsInOfflinePractice);
 	void RevertOfflinePracticeConvars();
 
 	float m_flNextPeriodicThink;
 	bool m_bHasWarnedNoNavMesh;
 
-	CUtlVector< CStuckBot * > m_stuckBotVector;
+	CUtlVector<CStuckBot *> m_stuckBotVector;
 	CountdownTimer m_stuckDisplayTimer;
 };
 
 // singleton accessor
-CNEOBotManager &TheNEOBots( void );
+CNEOBotManager &TheNEOBots(void);

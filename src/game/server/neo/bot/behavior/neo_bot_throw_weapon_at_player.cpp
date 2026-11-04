@@ -7,55 +7,56 @@
 #include "tier0/memdbgon.h"
 
 //---------------------------------------------------------------------------------------------
-CNEOBotThrowWeaponAtPlayer::CNEOBotThrowWeaponAtPlayer( CNEO_Player *pTargetPlayer )
+CNEOBotThrowWeaponAtPlayer::CNEOBotThrowWeaponAtPlayer(CNEO_Player *pTargetPlayer)
 {
 	m_hTargetPlayer = pTargetPlayer;
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotThrowWeaponAtPlayer::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotThrowWeaponAtPlayer::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
-	if ( !m_hTargetPlayer )
+	if (!m_hTargetPlayer)
 	{
-		return Done( "No target player to throw weapon at" );
+		return Done("No target player to throw weapon at");
 	}
 
-	m_expirationTimer.Start( 5.0f );
+	m_expirationTimer.Start(5.0f);
 
 	return Continue();
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotThrowWeaponAtPlayer::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotThrowWeaponAtPlayer::Update(CNEOBot *me, float interval)
 {
-	if ( m_expirationTimer.IsElapsed() )
+	if (m_expirationTimer.IsElapsed())
 	{
-		return Done( "Expiration timer elapsed" );
+		return Done("Expiration timer elapsed");
 	}
 
 	CNEO_Player *pTarget = m_hTargetPlayer.Get();
-	if ( !pTarget || !pTarget->IsAlive() )
+	if (!pTarget || !pTarget->IsAlive())
 	{
-		return Done( "Target player lost or died" );
+		return Done("Target player lost or died");
 	}
 
-	me->GetBodyInterface()->AimHeadTowards( pTarget->GetAbsOrigin(), IBody::MANDATORY, 0.1f, NULL, "Aiming at player's feet to throw weapon" );
+	me->GetBodyInterface()->AimHeadTowards(
+		pTarget->GetAbsOrigin(), IBody::MANDATORY, 0.1f, NULL, "Aiming at player's feet to throw weapon");
 
-	CBaseCombatWeapon *pPrimary = me->Weapon_GetSlot( 0 );
-	if ( pPrimary )
+	CBaseCombatWeapon *pPrimary = me->Weapon_GetSlot(0);
+	if (pPrimary)
 	{
-		if ( me->GetActiveWeapon() != pPrimary )
+		if (me->GetActiveWeapon() != pPrimary)
 		{
-			me->Weapon_Switch( pPrimary );
+			me->Weapon_Switch(pPrimary);
 			return Continue(); // Wait for switch
 		}
 	}
 	else
 	{
-		return Done( "No primary weapon to throw" );
+		return Done("No primary weapon to throw");
 	}
 
-	if ( me->GetBodyInterface()->IsHeadAimingOnTarget() )
+	if (me->GetBodyInterface()->IsHeadAimingOnTarget())
 	{
 		me->PressDropButton();
 		return Done("Weapon dropped");
@@ -65,6 +66,4 @@ ActionResult< CNEOBot >	CNEOBotThrowWeaponAtPlayer::Update( CNEOBot *me, float i
 }
 
 //---------------------------------------------------------------------------------------------
-void CNEOBotThrowWeaponAtPlayer::OnEnd( CNEOBot *me, Action< CNEOBot > *nextAction )
-{
-}
+void CNEOBotThrowWeaponAtPlayer::OnEnd(CNEOBot *me, Action<CNEOBot> *nextAction) {}

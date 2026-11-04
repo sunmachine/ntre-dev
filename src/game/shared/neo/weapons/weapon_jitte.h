@@ -23,6 +23,7 @@
 class CWeaponJitte : public CNEOBaseCombatWeapon
 {
 	DECLARE_CLASS(CWeaponJitte, CNEOBaseCombatWeapon);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -40,6 +41,7 @@ public:
 	virtual float GetSpeedScale(void) const OVERRIDE { return 0.8f; }
 
 	bool CanBePickedUpByClass(int classId) OVERRIDE;
+
 protected:
 	virtual float GetFastestDryRefireTime() const OVERRIDE { return 0.2f; }
 

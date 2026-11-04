@@ -12,51 +12,52 @@ class CNEOBotGhostEquipmentHandler
 {
 public:
 	CNEOBotGhostEquipmentHandler();
-	void Update( CNEOBot *me );
+	void Update(CNEOBot *me);
 
 private:
-	void EquipBestWeaponForGhoster( CNEOBot *me );
-	float GetUpdateInterval( CNEOBot *me ) const;
-	bool IsValidFocusEnemy( CNEOBot *me, CBaseEntity *pFocus ) const;
-	void UpdateGhostCarrierCallout( CNEOBot *me, const CUtlVector<CNEO_Player*> &enemies );
+	void EquipBestWeaponForGhoster(CNEOBot *me);
+	float GetUpdateInterval(CNEOBot *me) const;
+	bool IsValidFocusEnemy(CNEOBot *me, CBaseEntity *pFocus) const;
+	void UpdateGhostCarrierCallout(CNEOBot *me, const CUtlVector<CNEO_Player *> &enemies);
 
 	EHANDLE m_hCurrentFocusEnemy{nullptr};
 	CountdownTimer m_enemyUpdateTimer;
 	Vector m_enemyLastPos[MAX_PLAYERS_ARRAY_SAFE];
-	CUtlVector<CNEO_Player*> m_enemies;
+	CUtlVector<CNEO_Player *> m_enemies;
 };
 
 //--------------------------------------------------------------------------------------------------------
-class CNEOBotCtgCarrier : public Action< CNEOBot >
+class CNEOBotCtgCarrier : public Action<CNEOBot>
 {
 public:
-	CNEOBotCtgCarrier( void );
+	CNEOBotCtgCarrier(void);
 
-	virtual ActionResult< CNEOBot > OnStart( CNEOBot *me, Action< CNEOBot > *priorAction ) override;
-	virtual ActionResult< CNEOBot > Update( CNEOBot *me, float interval ) override;
-	virtual ActionResult< CNEOBot > OnResume( CNEOBot *me, Action< CNEOBot > *interruptingAction ) override;
+	virtual ActionResult<CNEOBot> OnStart(CNEOBot *me, Action<CNEOBot> *priorAction) override;
+	virtual ActionResult<CNEOBot> Update(CNEOBot *me, float interval) override;
+	virtual ActionResult<CNEOBot> OnResume(CNEOBot *me, Action<CNEOBot> *interruptingAction) override;
 
-	virtual EventDesiredResult< CNEOBot > OnStuck( CNEOBot *me ) override;
-	virtual EventDesiredResult< CNEOBot > OnMoveToSuccess( CNEOBot *me, const Path *path ) override;
-	virtual EventDesiredResult< CNEOBot > OnMoveToFailure( CNEOBot *me, const Path *path, MoveToFailureType reason ) override;
+	virtual EventDesiredResult<CNEOBot> OnStuck(CNEOBot *me) override;
+	virtual EventDesiredResult<CNEOBot> OnMoveToSuccess(CNEOBot *me, const Path *path) override;
+	virtual EventDesiredResult<CNEOBot> OnMoveToFailure(
+		CNEOBot *me, const Path *path, MoveToFailureType reason) override;
 
-	virtual QueryResultType ShouldHurry( const INextBot *me ) const override;
+	virtual QueryResultType ShouldHurry(const INextBot *me) const override;
 
-	virtual const char *GetName( void ) const override { return "ctgGhostCarrier"; }
+	virtual const char *GetName(void) const override { return "ctgGhostCarrier"; }
 
 private:
 	PathFollower m_path;
 	ChasePath m_chasePath;
 	CountdownTimer m_aloneTimer;
-	
-	CNEOBotGhostEquipmentHandler m_ghostEquipmentHandler;
-	
-	Vector m_closestCapturePoint;
-	CUtlVector<CNEO_Player*> m_teammates;
 
-	bool HasCleanRunToCap( const CNEOBot *me ) const;
-	bool IsCapPotentiallyVisible( const CNEOBot *me ) const;
-	void UpdateFollowPath( CNEOBot *me, const CUtlVector<CNEO_Player*> &teammates );
+	CNEOBotGhostEquipmentHandler m_ghostEquipmentHandler;
+
+	Vector m_closestCapturePoint;
+	CUtlVector<CNEO_Player *> m_teammates;
+
+	bool HasCleanRunToCap(const CNEOBot *me) const;
+	bool IsCapPotentiallyVisible(const CNEOBot *me) const;
+	void UpdateFollowPath(CNEOBot *me, const CUtlVector<CNEO_Player *> &teammates);
 };
 
 #endif // NEO_BOT_CTG_CARRIER_H

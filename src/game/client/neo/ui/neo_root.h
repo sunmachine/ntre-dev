@@ -51,6 +51,7 @@ class CNeoRoot;
 class CNeoRootInput : public vgui::Panel
 {
 	DECLARE_CLASS_SIMPLE(CNeoRootInput, vgui::Panel);
+
 public:
 	CNeoRootInput(CNeoRoot *rootPanel);
 	void PerformLayout() final;
@@ -122,6 +123,7 @@ struct SprayInfo
 class CNeoRoot : public vgui::EditablePanel, public CGameEventListener
 {
 	DECLARE_CLASS_SIMPLE(CNeoRoot, vgui::EditablePanel);
+
 public:
 	CNeoRoot(vgui::VPANEL parent);
 	virtual ~CNeoRoot();

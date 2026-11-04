@@ -67,7 +67,7 @@ class CNEOHud_FriendlyMarker : public CNEOHud_WorldPosMarker
 
 public:
 	CNEOHud_FriendlyMarker(const char *pElemName, vgui::Panel *parent = NULL);
-	
+
 	virtual void ApplySchemeSettings(vgui::IScheme *pScheme) override;
 	virtual void Paint() override;
 
@@ -76,7 +76,7 @@ public:
 protected:
 	virtual void DrawNeoHudElement() override;
 	void DrawPlayerForTeam(C_Team *team, const C_NEO_Player *localPlayer, const C_NEO_Player *pTargetPlayer) const;
-	virtual ConVar* GetUpdateFrequencyConVar() const override;
+	virtual ConVar *GetUpdateFrequencyConVar() const override;
 	virtual void UpdateStateForNeoHudElementDraw() override;
 
 private:
@@ -91,5 +91,5 @@ private:
 	static Color GetTeamColour(int team);
 };
 
-bool ImportMarker(FriendlyMarkerInfo* crh, const char* pszSequence);
-void ExportMarker(const FriendlyMarkerInfo* crh, char(&szSequence)[NEO_IFFMARKER_SEQMAX]);
+bool ImportMarker(FriendlyMarkerInfo *crh, const char *pszSequence);
+void ExportMarker(const FriendlyMarkerInfo *crh, char (&szSequence)[NEO_IFFMARKER_SEQMAX]);

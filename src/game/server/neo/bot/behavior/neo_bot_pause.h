@@ -6,14 +6,14 @@
 
 #include "bot/neo_bot.h"
 
-class CNEOBotPause : public Action< CNEOBot >
+class CNEOBotPause : public Action<CNEOBot>
 {
 public:
-	virtual ActionResult< CNEOBot >	OnStart( CNEOBot *me, Action< CNEOBot > *priorAction ) override;
-	virtual ActionResult< CNEOBot >	Update( CNEOBot* me, float interval ) override;
-	virtual void					OnEnd( CNEOBot *me, Action< CNEOBot > *nextAction ) override;
+	virtual ActionResult<CNEOBot> OnStart(CNEOBot *me, Action<CNEOBot> *priorAction) override;
+	virtual ActionResult<CNEOBot> Update(CNEOBot *me, float interval) override;
+	virtual void OnEnd(CNEOBot *me, Action<CNEOBot> *nextAction) override;
 
-	virtual const char* GetName( void ) const override { return "Pause"; };
+	virtual const char *GetName(void) const override { return "Pause"; };
 };
 
 #endif // NEO_BOT_PAUSE_H

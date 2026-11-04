@@ -30,62 +30,66 @@ public:
 	C_NEO_Player();
 	virtual ~C_NEO_Player();
 
-	static C_NEO_Player *GetLocalNEOPlayer() { return static_cast<C_NEO_Player*>(C_BasePlayer::GetLocalPlayer()); }
+	static C_NEO_Player *GetLocalNEOPlayer() { return static_cast<C_NEO_Player *>(C_BasePlayer::GetLocalPlayer()); }
 	static C_NEO_Player *GetVisionTargetNEOPlayer()
 	{ // Returns the player we are spectating if in first person mode, or local player
 		auto localNeoPlayer = GetLocalNEOPlayer();
 		if (localNeoPlayer->IsObserver() && localNeoPlayer->GetObserverMode() == OBS_MODE_IN_EYE)
 		{ // NEOTODO (Adam) clear m_hObserverTarget instead when exiting observer mode?
-			auto targetNeoPlayer = static_cast<C_NEO_Player*>(localNeoPlayer->GetObserverTarget());
-			if (targetNeoPlayer) { return targetNeoPlayer; }
+			auto targetNeoPlayer = static_cast<C_NEO_Player *>(localNeoPlayer->GetObserverTarget());
+			if (targetNeoPlayer)
+			{
+				return targetNeoPlayer;
+			}
 		}
 		return localNeoPlayer;
 	}
 
-	virtual int DrawModel( int flags );
-	virtual void AddEntity( void );
+	virtual int DrawModel(int flags);
+	virtual void AddEntity(void);
 	virtual void AddPoints(int score, bool bAllowNegativeScore, bool bIgnorePlayerTakeover = false);
 
 	// Should this object cast shadows?
-	virtual ShadowType_t		ShadowCastType( void );
+	virtual ShadowType_t ShadowCastType(void);
 
 	virtual C_BaseAnimating *BecomeRagdollOnClient();
-	virtual const QAngle& GetRenderAngles();
+	virtual const QAngle &GetRenderAngles();
 	virtual RenderGroup_t GetRenderGroup() override;
 	virtual bool UsesPowerOfTwoFrameBufferTexture() override;
-	virtual bool ShouldDraw( void );
+	virtual bool ShouldDraw(void);
 	//virtual bool ShouldInterpolate() { return true; }
-	virtual void OnDataChanged( DataUpdateType_t type );
-	virtual float GetFOV( void );
-	virtual CStudioHdr *OnNewModel( void );
-	virtual void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
+	virtual void OnDataChanged(DataUpdateType_t type);
+	virtual float GetFOV(void);
+	virtual CStudioHdr *OnNewModel(void);
+	virtual void TraceAttack(
+		const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator);
 	virtual bool TestHitboxes(const Ray_t &ray, unsigned int fContentsMask, trace_t &tr) override;
-	virtual void ItemPreFrame( void );
-	virtual void ItemPostFrame( void );
-	virtual float GetMinFOV()	const;
-	virtual Vector GetAutoaimVector( float flDelta );
-	virtual void NotifyShouldTransmit( ShouldTransmitState_t state );
-	virtual void CreateLightEffects( void );
-	virtual bool ShouldReceiveProjectedTextures( int flags );
-	virtual void PostDataUpdate( DataUpdateType_t updateType );
-	virtual void PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force );
-	const char* GetOverrideStepSound(const char* pBaseStepSound) override;
+	virtual void ItemPreFrame(void);
+	virtual void ItemPostFrame(void);
+	virtual float GetMinFOV() const;
+	virtual Vector GetAutoaimVector(float flDelta);
+	virtual void NotifyShouldTransmit(ShouldTransmitState_t state);
+	virtual void CreateLightEffects(void);
+	virtual bool ShouldReceiveProjectedTextures(int flags);
+	virtual void PostDataUpdate(DataUpdateType_t updateType);
+	virtual void PlayStepSound(Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force);
+	const char *GetOverrideStepSound(const char *pBaseStepSound) override;
 	virtual void Splash() override;
-	virtual void DoImpactEffect( trace_t &tr, int nDamageType );
-	IRagdoll* GetRepresentativeRagdoll() const;
-	virtual void CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNear, float &zFar, float &fov );
-	virtual const QAngle& EyeAngles( void );
-	
-	virtual bool IsUseableEntity( CBaseEntity *pEntity, unsigned int requiredCaps ) override final;
-	virtual CBaseEntity* FindUseEntity() override final;
+	virtual void DoImpactEffect(trace_t &tr, int nDamageType);
+	IRagdoll *GetRepresentativeRagdoll() const;
+	virtual void CalcView(Vector &eyeOrigin, QAngle &eyeAngles, float &zNear, float &zFar, float &fov);
+	virtual const QAngle &EyeAngles(void);
 
-	virtual void ModifyFireBulletsDamage(CTakeDamageInfo* dmgInfo) OVERRIDE;
+	virtual bool IsUseableEntity(CBaseEntity *pEntity, unsigned int requiredCaps) override final;
+	virtual CBaseEntity *FindUseEntity() override final;
 
-	virtual void ClientThink( void );
-	virtual void PreThink( void );
-	virtual void CalculateSpeed( void );
-	virtual void PostThink( void );
-	virtual void Spawn( void );
+	virtual void ModifyFireBulletsDamage(CTakeDamageInfo *dmgInfo) OVERRIDE;
+
+	virtual void ClientThink(void);
+	virtual void PreThink(void);
+	virtual void CalculateSpeed(void);
+	virtual void PostThink(void);
+	virtual void Spawn(void);
 
 	virtual void StartSprinting(void);
 	virtual void StopSprinting(void);
@@ -93,7 +97,7 @@ public:
 
 	virtual void StartWalking(void);
 	virtual void StopWalking(void);
-	bool IsMakingFootstepSounds(float* pVelRun={}, float* pSpeed={}, int* fLadder={}) const;
+	bool IsMakingFootstepSounds(float *pVelRun = {}, float *pSpeed = {}, int *fLadder = {}) const;
 	bool IsInSilentMoveMode() const;
 	int GetSilentMoveKeys(bool bCrouchFromPress) const;
 	bool IsOnFootstepGround() const;
@@ -107,15 +111,9 @@ public:
 
 	void Lean(void);
 
-	void AddNeoFlag(int flags)
-	{
-		m_NeoFlags = (GetNeoFlags() | flags);
-	}
+	void AddNeoFlag(int flags) { m_NeoFlags = (GetNeoFlags() | flags); }
 
-	void RemoveNeoFlag(int flags)
-	{
-		m_NeoFlags = (GetNeoFlags() & ~flags);
-	}
+	void RemoveNeoFlag(int flags) { m_NeoFlags = (GetNeoFlags() & ~flags); }
 
 	int GetNeoFlags() const { return m_NeoFlags; }
 
@@ -129,9 +127,9 @@ public:
 	float GetNormSpeed_WithActiveWepEncumberment(void) const;
 	float GetCrouchSpeed_WithActiveWepEncumberment(void) const;
 	float GetSprintSpeed_WithActiveWepEncumberment(void) const;
-	float GetNormSpeed_WithWepEncumberment(CNEOBaseCombatWeapon* pNeoWep) const;
-	float GetCrouchSpeed_WithWepEncumberment(CNEOBaseCombatWeapon* pNeoWep) const;
-	float GetSprintSpeed_WithWepEncumberment(CNEOBaseCombatWeapon* pNeoWep) const;
+	float GetNormSpeed_WithWepEncumberment(CNEOBaseCombatWeapon *pNeoWep) const;
+	float GetCrouchSpeed_WithWepEncumberment(CNEOBaseCombatWeapon *pNeoWep) const;
+	float GetSprintSpeed_WithWepEncumberment(CNEOBaseCombatWeapon *pNeoWep) const;
 	float GetNormSpeed(void) const;
 	float GetCrouchSpeed(void) const;
 	float GetSprintSpeed(void) const;
@@ -146,7 +144,7 @@ private:
 
 public:
 	float m_flSpecFOV = 0.0f;
-	bool ShouldDrawHL2StyleQuickHud( void );
+	bool ShouldDrawHL2StyleQuickHud(void);
 
 	int GetClass() const { return m_iNeoClass; }
 	int GetStar() const { return m_iNeoStar; }
@@ -155,14 +153,8 @@ public:
 	bool IsCarryingGhost(void) const;
 	bool IsObjective(void) const;
 
-	virtual void SetLocalViewAngles( const QAngle &viewAngles ) OVERRIDE
-	{
-		BaseClass::SetLocalViewAngles(viewAngles);
-	}
-	virtual void SetViewAngles( const QAngle& ang ) OVERRIDE
-	{
-		BaseClass::SetViewAngles(ang);
-	}
+	virtual void SetLocalViewAngles(const QAngle &viewAngles) OVERRIDE { BaseClass::SetLocalViewAngles(viewAngles); }
+	virtual void SetViewAngles(const QAngle &ang) OVERRIDE { BaseClass::SetViewAngles(ang); }
 
 	void SuperJump(void);
 
@@ -173,7 +165,7 @@ public:
 
 	void Weapon_Drop(C_NEOBaseCombatWeapon *pWeapon);
 
-	C_NEOPredictedViewModel *GetNEOViewModel() { return static_cast<C_NEOPredictedViewModel*>(GetViewModel()); }
+	C_NEOPredictedViewModel *GetNEOViewModel() { return static_cast<C_NEOPredictedViewModel *>(GetViewModel()); }
 
 	inline bool IsCloaked() const { return m_bInThermOpticCamo; }
 	bool IsDrawnTransparent() const;
@@ -187,26 +179,29 @@ public:
 	bool ClientWantNeoName() const;
 	const char *GetNeoClantag() const;
 
-	virtual void CalcDeathCamView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov ) override;
+	virtual void CalcDeathCamView(Vector &eyeOrigin, QAngle &eyeAngles, float &fov) override;
 	virtual void TeamChange(int iNewTeam) override;
 
 	// Spectator takeover
-	bool m_bCopyOverTakeoverPlayerDetails{ false };
+	bool m_bCopyOverTakeoverPlayerDetails{false};
 	CNetworkHandle(C_NEO_Player, m_hSpectatorTakeoverPlayerTarget);
 	CNetworkHandle(C_NEO_Player, m_hSpectatorTakeoverPlayerImpersonatingMe);
-	C_NEO_Player* GetSpectatorTakeoverPlayerTarget() const { return m_hSpectatorTakeoverPlayerTarget.Get(); }
-	C_NEO_Player* GetSpectatorTakeoverPlayerImpersonatingMe() const { return m_hSpectatorTakeoverPlayerImpersonatingMe.Get(); }
+	C_NEO_Player *GetSpectatorTakeoverPlayerTarget() const { return m_hSpectatorTakeoverPlayerTarget.Get(); }
+	C_NEO_Player *GetSpectatorTakeoverPlayerImpersonatingMe() const
+	{
+		return m_hSpectatorTakeoverPlayerImpersonatingMe.Get();
+	}
 
 	void CSpectatorTakeoverPlayerUpdateOnDataChanged();
-	void CSpectatorTakeoverPlayerUpdate(C_NEO_Player* pPlayerTakeoverTarget);
-	const char* GetPlayerNameWithTakeoverContext(int player_index);
+	void CSpectatorTakeoverPlayerUpdate(C_NEO_Player *pPlayerTakeoverTarget);
+	const char *GetPlayerNameWithTakeoverContext(int player_index);
 #ifdef GLOWS_ENABLE
 	void UpdateGlowEffects(int iNewTeam);
 #endif // GLOWS_ENABLE
-	C_NEO_Player* PlayerUseTraceLine();
+	C_NEO_Player *PlayerUseTraceLine();
 	virtual void PlayerUse() override;
-	
-	bool ValidTakeoverTargetFor(CNEO_Player* pPlayerTakingOver);
+
+	bool ValidTakeoverTargetFor(CNEO_Player *pPlayerTakingOver);
 
 	void AimPunch(float amount);
 
@@ -277,7 +272,8 @@ private:
 	bool m_bPreviouslyReloading;
 	bool m_bSpecRefreshedStates;
 
-	float m_flTocFactor; // Cloak strength, controls tint, refraction amount. Lower values make player more difficult to spot
+	float
+		m_flTocFactor; // Cloak strength, controls tint, refraction amount. Lower values make player more difficult to spot
 
 	// Non-network version of m_szNeoName with dupe checker index
 	mutable char m_szNeoNameWDupeIdx[MAX_PLAYER_NAME_LENGTH + 10];
@@ -314,9 +310,9 @@ inline C_NEO_Player *ToNEOPlayer(C_BaseEntity *pEntity)
 		return NULL;
 	}
 #if _DEBUG
-	Assert(dynamic_cast<C_NEO_Player*>(pEntity));
+	Assert(dynamic_cast<C_NEO_Player *>(pEntity));
 #endif
-	return static_cast<C_NEO_Player*>(pEntity);
+	return static_cast<C_NEO_Player *>(pEntity);
 }
 
 extern ConVar cl_drawhud_quickinfo;

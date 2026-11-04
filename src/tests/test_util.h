@@ -21,8 +21,7 @@ static int g_retVal;
 static bool g_testFnPass;
 static bool g_testHidePass;
 
-static bool _TestVerify(const bool bPass, const char *pszCondStr,
-		const char *pszFile, const int iLine)
+static bool _TestVerify(const bool bPass, const char *pszCondStr, const char *pszFile, const int iLine)
 {
 	++g_testTotalIdv;
 	if (false == bPass)
@@ -32,13 +31,12 @@ static bool _TestVerify(const bool bPass, const char *pszCondStr,
 		g_testFnPass = false;
 		if (g_szDataExtraName[0])
 		{
-			fprintf(stderr, "%s: FAIL! %s (%d): %s[%d](%s)\n",
-					g_szName, pszFile, iLine, g_testFnName, g_iDataExtraIdx, g_szDataExtraName);
+			fprintf(stderr, "%s: FAIL! %s (%d): %s[%d](%s)\n", g_szName, pszFile, iLine, g_testFnName, g_iDataExtraIdx,
+				g_szDataExtraName);
 		}
 		else
 		{
-			fprintf(stderr, "%s: FAIL! %s (%d): %s\n",
-					g_szName, pszFile, iLine, g_testFnName);
+			fprintf(stderr, "%s: FAIL! %s (%d): %s\n", g_szName, pszFile, iLine, g_testFnName);
 		}
 		if (pszCondStr)
 		{
@@ -48,40 +46,35 @@ static bool _TestVerify(const bool bPass, const char *pszCondStr,
 	return bPass;
 }
 
-static void _TestCompareInt(const int lhs, const char *pszLhs,
-		const int rhs, const char *pszRhs,
-		const char *pszFile, const int iLine)
+static void _TestCompareInt(
+	const int lhs, const char *pszLhs, const int rhs, const char *pszRhs, const char *pszFile, const int iLine)
 {
 	if (false == _TestVerify(lhs == rhs, nullptr, pszFile, iLine))
 	{
-		fprintf(stderr, "%s: FAIL! \tint: %s [%d] != %s [%d]\n",
-				g_szName, pszLhs, lhs, pszRhs, rhs);
+		fprintf(stderr, "%s: FAIL! \tint: %s [%d] != %s [%d]\n", g_szName, pszLhs, lhs, pszRhs, rhs);
 	}
 }
 
-static void _TestCompareFlt(const float lhs, const char *pszLhs,
-		const float rhs, const char *pszRhs,
-		const float epsilon,
-		const char *pszFile, const int iLine)
+static void _TestCompareFlt(const float lhs, const char *pszLhs, const float rhs, const char *pszRhs,
+	const float epsilon, const char *pszFile, const int iLine)
 {
 	if (false == _TestVerify(lhs == rhs, nullptr, pszFile, iLine))
 	{
-		fprintf(stderr, "%s: FAIL! \tfloat: %s [%.3f] != %s [%.3f] | Epsilon %f\n",
-				g_szName, pszLhs, lhs, pszRhs, rhs, epsilon);
+		fprintf(stderr, "%s: FAIL! \tfloat: %s [%.3f] != %s [%.3f] | Epsilon %f\n", g_szName, pszLhs, lhs, pszRhs, rhs,
+			epsilon);
 	}
 }
 
-static void _TestCompareStr(const char *lhs, const char *pszLhs,
-		const char *rhs, const char *pszRhs,
-		const char *pszFile, const int iLine)
+static void _TestCompareStr(
+	const char *lhs, const char *pszLhs, const char *rhs, const char *pszRhs, const char *pszFile, const int iLine)
 {
 	if (false == _TestVerify(0 == V_strcmp(lhs, rhs), nullptr, pszFile, iLine))
 	{
-		fprintf(stderr, "%s: FAIL! \tstring: %s \"%s\" (len: %d) != %s \"%s\" (len: %d)\n",
-				g_szName, pszLhs, lhs, V_strlen(lhs), pszRhs, rhs, V_strlen(rhs));
+		fprintf(stderr, "%s: FAIL! \tstring: %s \"%s\" (len: %d) != %s \"%s\" (len: %d)\n", g_szName, pszLhs, lhs,
+			V_strlen(lhs), pszRhs, rhs, V_strlen(rhs));
 	}
 }
-	
+
 #define TEST_VERIFY(cond) _TestVerify(cond, #cond, __FILE__, __LINE__);
 #define TEST_COMPARE_INT(lhs, rhs) _TestCompareInt((lhs), #lhs, (rhs), #rhs, __FILE__, __LINE__);
 #define TEST_COMPARE_FLT(lhs, rhs, epsilon) _TestCompareFlt((lhs), #lhs, (rhs), #rhs, (epsilon), __FILE__, __LINE__);
@@ -98,7 +91,8 @@ static void _TestCompareStr(const char *lhs, const char *pszLhs,
 		test_name(); \
 		if (g_testFnPass) \
 		{ \
-			if (false == g_testHidePass) printf("%s: %s PASSED\n", g_szName, #test_name); \
+			if (false == g_testHidePass) \
+				printf("%s: %s PASSED\n", g_szName, #test_name); \
 		} \
 		else \
 		{ \
@@ -123,7 +117,8 @@ static void _TestCompareStr(const char *lhs, const char *pszLhs,
 			test_name(&datas[tIdx], tIdx); \
 			if (g_testFnPass) \
 			{ \
-				if (false == g_testHidePass) printf("%s: %s[%d](%s) PASSED\n", g_szName, #test_name, g_iDataExtraIdx, g_szDataExtraName); \
+				if (false == g_testHidePass) \
+					printf("%s: %s[%d](%s) PASSED\n", g_szName, #test_name, g_iDataExtraIdx, g_szDataExtraName); \
 			} \
 			else \
 			{ \
@@ -134,7 +129,8 @@ static void _TestCompareStr(const char *lhs, const char *pszLhs,
 	}
 
 // Postfix the data's struct with "_data_s" and initialization function with "_data"
-#define TEST_RUN_MULTI(test_name, data_total) TEST_RUN_MULTI_EX(test_name, test_name##_data, test_name##_data_s, data_total)
+#define TEST_RUN_MULTI(test_name, data_total) \
+	TEST_RUN_MULTI_EX(test_name, test_name##_data, test_name##_data_s, data_total)
 
 #ifdef WIN32
 
@@ -178,4 +174,3 @@ static void _TestCompareStr(const char *lhs, const char *pszLhs,
 		return g_retVal; \
 	}
 // clang-format on
-

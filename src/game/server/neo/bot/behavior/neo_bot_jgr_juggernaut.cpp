@@ -8,11 +8,11 @@
 #include "weapon_balc.h"
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotJgrJuggernaut::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotJgrJuggernaut::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
 	m_jgrSpawns.RemoveAll();
 
-	CBaseEntity* pSearch = NULL;
+	CBaseEntity *pSearch = NULL;
 	while ((pSearch = gEntList.FindEntityByClassname(pSearch, "neo_juggernautspawnpoint")) != NULL)
 	{
 		m_jgrSpawns.AddToTail(pSearch);
@@ -25,38 +25,38 @@ ActionResult< CNEOBot > CNEOBotJgrJuggernaut::OnStart( CNEOBot *me, Action< CNEO
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotJgrJuggernaut::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotJgrJuggernaut::Update(CNEOBot *me, float interval)
 {
 	CBaseCombatWeapon *pWeapon = me->GetActiveWeapon();
-	if ( pWeapon )
+	if (pWeapon)
 	{
-		CNEOBaseCombatWeapon *pNeoWep = dynamic_cast< CNEOBaseCombatWeapon * >( pWeapon );
-		if ( pNeoWep && ( pNeoWep->GetNeoWepBits() & NEO_WEP_BALC ) )
+		CNEOBaseCombatWeapon *pNeoWep = dynamic_cast<CNEOBaseCombatWeapon *>(pWeapon);
+		if (pNeoWep && (pNeoWep->GetNeoWepBits() & NEO_WEP_BALC))
 		{
-			CWeaponBALC *pBalc = static_cast< CWeaponBALC * >( pNeoWep );
-			if ( pBalc->m_bOverheated )
+			CWeaponBALC *pBalc = static_cast<CWeaponBALC *>(pNeoWep);
+			if (pBalc->m_bOverheated)
 			{
-				return SuspendFor( new CNEOBotRetreatToCover(), "BALC overheated - retreating to cover!" );
+				return SuspendFor(new CNEOBotRetreatToCover(), "BALC overheated - retreating to cover!");
 			}
 		}
 	}
 
-	ActionResult< CNEOBot > result = UpdateCommon( me, interval );
-	if ( result.IsRequestingChange() || result.IsDone() )
+	ActionResult<CNEOBot> result = UpdateCommon(me, interval);
+	if (result.IsRequestingChange() || result.IsDone())
 		return result;
 
 	return Continue();
 }
 
 //---------------------------------------------------------------------------------------------
-void CNEOBotJgrJuggernaut::RecomputeSeekPath( CNEOBot *me )
+void CNEOBotJgrJuggernaut::RecomputeSeekPath(CNEOBot *me)
 {
 	m_hTargetEntity = NULL;
 	m_bGoingToTargetEntity = false;
 	m_vGoalPos = vec3_origin;
 
 	// Listen for combat sounds
-	if ( TryPathToCombatSound( me ) )
+	if (TryPathToCombatSound(me))
 	{
 		return;
 	}
@@ -64,57 +64,53 @@ void CNEOBotJgrJuggernaut::RecomputeSeekPath( CNEOBot *me )
 	// If unaware of combat noises, patrol spawn points
 	if (m_jgrSpawns.Count() > 0)
 	{
-		CBaseEntity* pTargetSpawn = m_jgrSpawns[ RandomInt(0, m_jgrSpawns.Count() - 1) ];
+		CBaseEntity *pTargetSpawn = m_jgrSpawns[RandomInt(0, m_jgrSpawns.Count() - 1)];
 		if (pTargetSpawn)
 		{
 			m_vGoalPos = pTargetSpawn->GetAbsOrigin();
 			m_bGoingToTargetEntity = false;
 
-			if (CNEOBotPathCompute(me, m_path, m_vGoalPos, DEFAULT_ROUTE) && m_path.IsValid() && m_path.GetResult() == Path::COMPLETE_PATH)
+			if (CNEOBotPathCompute(me, m_path, m_vGoalPos, DEFAULT_ROUTE) && m_path.IsValid() &&
+				m_path.GetResult() == Path::COMPLETE_PATH)
 			{
 				return;
 			}
 		}
 	}
-	
+
 	// Fallback to base behavior
-	CNEOBotSeekAndDestroy::RecomputeSeekPath( me );
+	CNEOBotSeekAndDestroy::RecomputeSeekPath(me);
 }
 
 
 //---------------------------------------------------------------------------------------------
 // Adds a periodic crouch attempt on top of CNEOBotMainAction::OnStuck for height clearance,
 // and a new route when crouching does not help
-EventDesiredResult< CNEOBot > CNEOBotJgrJuggernaut::OnStuck( CNEOBot *me )
+EventDesiredResult<CNEOBot> CNEOBotJgrJuggernaut::OnStuck(CNEOBot *me)
 {
-	UTIL_LogPrintf( "\"%s<%i><%s>\" stuck (position \"%3.2f %3.2f %3.2f\") (duration \"%3.2f\") ",
-			me->GetNeoPlayerName(),
-			me->GetUserID(),
-			me->GetNetworkIDString(),
-			me->GetAbsOrigin().x, me->GetAbsOrigin().y, me->GetAbsOrigin().z,
-			me->GetLocomotionInterface()->GetStuckDuration() );
+	UTIL_LogPrintf("\"%s<%i><%s>\" stuck (position \"%3.2f %3.2f %3.2f\") (duration \"%3.2f\") ",
+		me->GetNeoPlayerName(), me->GetUserID(), me->GetNetworkIDString(), me->GetAbsOrigin().x, me->GetAbsOrigin().y,
+		me->GetAbsOrigin().z, me->GetLocomotionInterface()->GetStuckDuration());
 
 	const PathFollower *path = me->GetCurrentPath();
-	if ( path && path->GetCurrentGoal() )
+	if (path && path->GetCurrentGoal())
 	{
-		UTIL_LogPrintf( "   path_goal ( \"%3.2f %3.2f %3.2f\" )\n",
-				path->GetCurrentGoal()->pos.x, 
-				path->GetCurrentGoal()->pos.y, 
-				path->GetCurrentGoal()->pos.z );
+		UTIL_LogPrintf("   path_goal ( \"%3.2f %3.2f %3.2f\" )\n", path->GetCurrentGoal()->pos.x,
+			path->GetCurrentGoal()->pos.y, path->GetCurrentGoal()->pos.z);
 	}
 	else
 	{
-		UTIL_LogPrintf( "   path_goal ( \"NULL\" )\n" );
+		UTIL_LogPrintf("   path_goal ( \"NULL\" )\n");
 	}
 
-	if ( !m_stuckTimer.HasStarted() || m_stuckTimer.IsElapsed() )
+	if (!m_stuckTimer.HasStarted() || m_stuckTimer.IsElapsed())
 	{
-		m_stuckTimer.Start( 1.0f );
+		m_stuckTimer.Start(1.0f);
 		m_bStuckCrouchPhase = !m_bStuckCrouchPhase;
 	}
 
 	// Try to crouch under doorways/gates
-	if ( m_bStuckCrouchPhase )
+	if (m_bStuckCrouchPhase)
 	{
 		me->PressCrouchButton();
 	}
@@ -126,12 +122,12 @@ EventDesiredResult< CNEOBot > CNEOBotJgrJuggernaut::OnStuck( CNEOBot *me )
 		// Crouching did not get us through, so pick a new route as CNEOBotSeekAndDestroy::OnStuck does.
 		// Avoid pathing to gunfire for a short break, as sometimes the attraction to gunfire led to the problematic area.
 		constexpr float flStuckGunfireSearchPause = 10.0f;
-		m_soundSearchTimer.Start( flStuckGunfireSearchPause );
+		m_soundSearchTimer.Start(flStuckGunfireSearchPause);
 		m_combatSoundCommitTimer.Invalidate();
-		RecomputeSeekPath( me );
+		RecomputeSeekPath(me);
 	}
 
-	if ( RandomInt( 0, 1 ) )
+	if (RandomInt(0, 1))
 	{
 		me->PressLeftButton();
 	}
@@ -142,4 +138,3 @@ EventDesiredResult< CNEOBot > CNEOBotJgrJuggernaut::OnStuck( CNEOBot *me )
 
 	return TryContinue();
 }
-

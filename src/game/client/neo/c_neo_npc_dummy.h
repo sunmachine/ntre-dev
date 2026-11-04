@@ -5,17 +5,18 @@
 
 class C_NEO_NPCDummy : public C_AI_BaseNPC
 {
-    DECLARE_CLASS(C_NEO_NPCDummy, C_AI_BaseNPC);
-public:
-    DECLARE_CLIENTCLASS();
+	DECLARE_CLASS(C_NEO_NPCDummy, C_AI_BaseNPC);
 
-    C_NEO_NPCDummy();
-    virtual ~C_NEO_NPCDummy();
-    static C_NEO_NPCDummy* GetList();
+public:
+	DECLARE_CLIENTCLASS();
+
+	C_NEO_NPCDummy();
+	virtual ~C_NEO_NPCDummy();
+	static C_NEO_NPCDummy *GetList();
 
 private:
-    friend class C_EntityClassList<C_NEO_NPCDummy>;
-    friend class CNEOHud_GhostBeacons;
-    friend class C_WeaponGhost;
-    C_NEO_NPCDummy* m_pNext = nullptr;
+	friend class C_EntityClassList<C_NEO_NPCDummy>;
+	friend class CNEOHud_GhostBeacons;
+	friend class C_WeaponGhost;
+	C_NEO_NPCDummy *m_pNext = nullptr;
 };

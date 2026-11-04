@@ -18,17 +18,17 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar cl_neo_hud_context_hint_enabled("cl_neo_hud_context_hint_enabled", "1",
-	FCVAR_ARCHIVE, "Whether to show contextual hud hints. 0: Disabled, 1: Enabled.", false, 0, true, 1);
+ConVar cl_neo_hud_context_hint_enabled("cl_neo_hud_context_hint_enabled", "1", FCVAR_ARCHIVE,
+	"Whether to show contextual hud hints. 0: Disabled, 1: Enabled.", false, 0, true, 1);
 
-ConVar cl_neo_spec_takeover_player_hint_time_sec("cl_neo_spec_takeover_player_hint_time_sec", "3.0",
-	FCVAR_ARCHIVE, "Duration in seconds to display the spectator bot takeover hint.", true, 0, true, 9999);
+ConVar cl_neo_spec_takeover_player_hint_time_sec("cl_neo_spec_takeover_player_hint_time_sec", "3.0", FCVAR_ARCHIVE,
+	"Duration in seconds to display the spectator bot takeover hint.", true, 0, true, 9999);
 
 DECLARE_HUDELEMENT(CNEOHud_ContextHint);
 
 NEO_HUD_ELEMENT_DECLARE_FREQ_CVAR(ContextHint, 0.1);
 
-CNEOHud_ContextHint::CNEOHud_ContextHint(const char* pElementName)
+CNEOHud_ContextHint::CNEOHud_ContextHint(const char *pElementName)
 	: CNEOHud_ChildElement(), CHudElement(pElementName), vgui::EditablePanel(NULL, "neo_context_hint")
 {
 	SetParent(g_pClientMode->GetViewport());
@@ -38,17 +38,11 @@ CNEOHud_ContextHint::CNEOHud_ContextHint(const char* pElementName)
 	m_hLastSpecTarget = nullptr;
 }
 
-CNEOHud_ContextHint::~CNEOHud_ContextHint()
-{
-}
+CNEOHud_ContextHint::~CNEOHud_ContextHint() {}
 
-void CNEOHud_ContextHint::Init()
-{
-}
+void CNEOHud_ContextHint::Init() {}
 
-void CNEOHud_ContextHint::VidInit()
-{
-}
+void CNEOHud_ContextHint::VidInit() {}
 
 void CNEOHud_ContextHint::Reset()
 {
@@ -57,7 +51,7 @@ void CNEOHud_ContextHint::Reset()
 	SetVisible(false);
 }
 
-void CNEOHud_ContextHint::ApplySchemeSettings(vgui::IScheme* pScheme)
+void CNEOHud_ContextHint::ApplySchemeSettings(vgui::IScheme *pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 
@@ -83,21 +77,24 @@ bool CNEOHud_ContextHint::ShouldDraw()
 extern ConVar sv_neo_spec_replace_player_bot_enable;
 extern ConVar sv_neo_spec_replace_player_min_exp;
 extern ConVar sv_neo_bot_cmdr_enable;
-ConVar cl_neo_hud_context_hint_show_player_takeover_hint("cl_neo_hud_context_hint_show_player_takeover_hint", "1", FCVAR_ARCHIVE, "Show player takeover hint", true, 0.f, true, 1.f);
-ConVar cl_neo_hud_context_hint_show_object_interact_hint("cl_neo_hud_context_hint_show_object_interact_hint", "1", FCVAR_ARCHIVE, "Show object interact hint", true, 0.f, true, 1.f);
-ConVar cl_neo_hud_context_hint_show_bot_interact_hint("cl_neo_hud_context_hint_show_bot_interact_hint", "1", FCVAR_ARCHIVE, "Show bot command and weapon request hint", true, 0.f, true, 1.f);
+ConVar cl_neo_hud_context_hint_show_player_takeover_hint("cl_neo_hud_context_hint_show_player_takeover_hint", "1",
+	FCVAR_ARCHIVE, "Show player takeover hint", true, 0.f, true, 1.f);
+ConVar cl_neo_hud_context_hint_show_object_interact_hint("cl_neo_hud_context_hint_show_object_interact_hint", "1",
+	FCVAR_ARCHIVE, "Show object interact hint", true, 0.f, true, 1.f);
+ConVar cl_neo_hud_context_hint_show_bot_interact_hint("cl_neo_hud_context_hint_show_bot_interact_hint", "1",
+	FCVAR_ARCHIVE, "Show bot command and weapon request hint", true, 0.f, true, 1.f);
 void CNEOHud_ContextHint::UpdateStateForNeoHudElementDraw()
 {
 	g_GlowObjectManager.ClearUseItem();
 	m_hUseEntity = INVALID_EHANDLE;
 	ClearUseEntityListEntry();
 
-	C_NEO_Player* pLocalNeoPlayer = C_NEO_Player::GetLocalNEOPlayer();
+	C_NEO_Player *pLocalNeoPlayer = C_NEO_Player::GetLocalNEOPlayer();
 	if (!pLocalNeoPlayer)
 		return;
 
 	char szUppercaseKeyBinding[16]; // Assuming keybinds won't exceed 15 characters + null terminator
-	const char* useKeyBinding = engine->Key_LookupBinding("+use");
+	const char *useKeyBinding = engine->Key_LookupBinding("+use");
 	if (useKeyBinding && useKeyBinding[0] != '\0')
 	{
 		V_strncpy(szUppercaseKeyBinding, useKeyBinding, sizeof(szUppercaseKeyBinding));
@@ -126,17 +123,18 @@ void CNEOHud_ContextHint::UpdateStateForNeoHudElementDraw()
 			if (auto eObserverMode = pLocalNeoPlayer->GetObserverMode();
 				(eObserverMode == OBS_MODE_CHASE || eObserverMode == OBS_MODE_IN_EYE))
 			{
-				if (C_NEO_Player* pObserverTargetPlayer = ToNEOPlayer(pLocalNeoPlayer->GetObserverTarget());
+				if (C_NEO_Player *pObserverTargetPlayer = ToNEOPlayer(pLocalNeoPlayer->GetObserverTarget());
 					pObserverTargetPlayer && pObserverTargetPlayer->ValidTakeoverTargetFor(pLocalNeoPlayer))
 				{
 					// update hint duration
 					if (pObserverTargetPlayer != m_hLastSpecTarget.Get())
 					{
 						m_hLastSpecTarget = pObserverTargetPlayer;
-						V_snwprintf(m_wszHintText, ARRAYSIZE(m_wszHintText), L"[%hs] Takeover player", szUppercaseKeyBinding);
+						V_snwprintf(
+							m_wszHintText, ARRAYSIZE(m_wszHintText), L"[%hs] Takeover player", szUppercaseKeyBinding);
 						m_flDisplayEndTime = gpGlobals->curtime + cl_neo_spec_takeover_player_hint_time_sec.GetFloat();
 					}
-					
+
 					showTakeOverHint = true;
 				}
 			}
@@ -155,29 +153,32 @@ void CNEOHud_ContextHint::UpdateStateForNeoHudElementDraw()
 		if (CBaseEntity *pUseEntity = pLocalNeoPlayer->FindUseEntity();
 			pUseEntity && (g_SmokeFogOverlayThermalOverride || g_SmokeFogOverlayAlpha < ITEM_DISCOVERY_SMOKE_THRESHOLD))
 		{
-			g_GlowObjectManager.SetUseItem(pUseEntity, Vector( 1.0f, 1.0f, 1.0f ), g_SmokeFogOverlayThermalOverride ? 1.0f : Max( 0.0f, 1.0f - g_SmokeFogOverlayAlpha), true, false);
+			g_GlowObjectManager.SetUseItem(pUseEntity, Vector(1.0f, 1.0f, 1.0f),
+				g_SmokeFogOverlayThermalOverride ? 1.0f : Max(0.0f, 1.0f - g_SmokeFogOverlayAlpha), true, false);
 			m_hUseEntity = pUseEntity;
-			
+
 			if (!cl_neo_hud_context_hint_show_object_interact_hint.GetBool())
 				return;
-			
+
 			// Weapon pickup hint
 			static bool bPreviouslyCouldPickupWeapon = false;
 			if (pUseEntity->IsBaseCombatWeapon())
 			{
-				C_NEOBaseCombatWeapon* pNeoWeapon = static_cast<C_NEOBaseCombatWeapon*>(pUseEntity);
+				C_NEOBaseCombatWeapon *pNeoWeapon = static_cast<C_NEOBaseCombatWeapon *>(pUseEntity);
 
 				// Ghost pickup hint
 				if (pNeoWeapon->GetNeoWepBits() & NEO_WEP_GHOST)
 				{
-					V_snwprintf(m_wszHintText, ARRAYSIZE(m_wszHintText), L"[%hs] Pick up the Ghost", szUppercaseKeyBinding);
+					V_snwprintf(
+						m_wszHintText, ARRAYSIZE(m_wszHintText), L"[%hs] Pick up the Ghost", szUppercaseKeyBinding);
 					m_flDisplayEndTime = gpGlobals->curtime + 1.f;
 					bPreviouslyCouldPickupWeapon = true;
 				}
 				// Weapon pickup hint
 				else if (pNeoWeapon->CanBePickedUpByClass(pLocalNeoPlayer->GetClass()))
 				{
-					V_snwprintf(m_wszHintText, ARRAYSIZE(m_wszHintText), L"[%hs] Pick up %hs", szUppercaseKeyBinding, pNeoWeapon->GetPrintName());
+					V_snwprintf(m_wszHintText, ARRAYSIZE(m_wszHintText), L"[%hs] Pick up %hs", szUppercaseKeyBinding,
+						pNeoWeapon->GetPrintName());
 					m_flDisplayEndTime = gpGlobals->curtime + 1.f;
 					bPreviouslyCouldPickupWeapon = true;
 				}
@@ -203,14 +204,14 @@ void CNEOHud_ContextHint::UpdateStateForNeoHudElementDraw()
 				}
 			}
 			// Juggernaut hint
-			else if (CNEO_Juggernaut* pJuggernaut = dynamic_cast<CNEO_Juggernaut*>(pUseEntity))
+			else if (CNEO_Juggernaut *pJuggernaut = dynamic_cast<CNEO_Juggernaut *>(pUseEntity))
 			{
 				m_flDisplayEndTime = gpGlobals->curtime + 1.f;
 				if (pJuggernaut->m_bLocked)
 				{
 					V_snwprintf(m_wszHintText, ARRAYSIZE(m_wszHintText), L"JGR56 is locked");
 				}
-				else if (C_NEO_Player* pNeoJuggernautPlayer = pJuggernaut->m_hHoldingPlayer.Get();
+				else if (C_NEO_Player *pNeoJuggernautPlayer = pJuggernaut->m_hHoldingPlayer.Get();
 					pNeoJuggernautPlayer && pJuggernaut->m_bIsHolding)
 				{
 					g_GlowObjectManager.ClearUseItemPlayer();
@@ -218,17 +219,19 @@ void CNEOHud_ContextHint::UpdateStateForNeoHudElementDraw()
 				}
 				else
 				{
-					V_snwprintf(m_wszHintText, ARRAYSIZE(m_wszHintText), L"Hold [%hs] Boot into JGR56", szUppercaseKeyBinding);
+					V_snwprintf(
+						m_wszHintText, ARRAYSIZE(m_wszHintText), L"Hold [%hs] Boot into JGR56", szUppercaseKeyBinding);
 				}
 			}
 			// Buttons
-			else if (C_BaseButton* pButton = dynamic_cast<C_BaseButton*>(pUseEntity))
+			else if (C_BaseButton *pButton = dynamic_cast<C_BaseButton *>(pUseEntity))
 			{
 				if (pButton->m_bUseHint)
 				{
 					if (pButton->m_szUseHintText[0] != '\0')
 					{
-						V_snwprintf(m_wszHintText, ARRAYSIZE(m_wszHintText), L"[%hs] %hs", szUppercaseKeyBinding, pButton->m_szUseHintText);
+						V_snwprintf(m_wszHintText, ARRAYSIZE(m_wszHintText), L"[%hs] %hs", szUppercaseKeyBinding,
+							pButton->m_szUseHintText);
 						m_flDisplayEndTime = gpGlobals->curtime + 1.f;
 					}
 					else
@@ -261,23 +264,28 @@ void CNEOHud_ContextHint::UpdateStateForNeoHudElementDraw()
 
 			// Bot command hint
 			{
-				if (C_NEO_Player* pTargetPlayer = pLocalNeoPlayer->PlayerUseTraceLine();
-					pTargetPlayer
-					&& GameResources()->IsFakePlayer(pTargetPlayer->entindex())
-					&& NEORules()->IsTeamplay()	&& pTargetPlayer->GetTeamNumber() == pLocalNeoPlayer->GetTeamNumber())
+				if (C_NEO_Player *pTargetPlayer = pLocalNeoPlayer->PlayerUseTraceLine(); pTargetPlayer &&
+					GameResources()->IsFakePlayer(pTargetPlayer->entindex()) && NEORules()->IsTeamplay() &&
+					pTargetPlayer->GetTeamNumber() == pLocalNeoPlayer->GetTeamNumber())
 				{
-					Vector teamGlowColor { 1.f, 1.f, 1.f };
-					NEORules()->GetTeamGlowColor(pTargetPlayer->GetTeamNumber(), teamGlowColor[0], teamGlowColor[1], teamGlowColor[2]);
-					g_GlowObjectManager.SetUseItem(pTargetPlayer, teamGlowColor, g_SmokeFogOverlayThermalOverride ? 1.0f : Max(0.0f, 1.0f - g_SmokeFogOverlayAlpha), false, true);
-			
+					Vector teamGlowColor{1.f, 1.f, 1.f};
+					NEORules()->GetTeamGlowColor(
+						pTargetPlayer->GetTeamNumber(), teamGlowColor[0], teamGlowColor[1], teamGlowColor[2]);
+					g_GlowObjectManager.SetUseItem(pTargetPlayer, teamGlowColor,
+						g_SmokeFogOverlayThermalOverride ? 1.0f : Max(0.0f, 1.0f - g_SmokeFogOverlayAlpha), false,
+						true);
+
 					m_flDisplayEndTime = gpGlobals->curtime + 1.f;
 					if (sv_neo_bot_cmdr_enable.GetBool())
 					{
-						V_snwprintf(m_wszHintText, ARRAYSIZE(m_wszHintText), L"[%hs] %hs %hs", szUppercaseKeyBinding, pTargetPlayer->m_hCommandingPlayer.Get() == pLocalNeoPlayer ? "Release" : "Command", pTargetPlayer->GetNeoPlayerName());
+						V_snwprintf(m_wszHintText, ARRAYSIZE(m_wszHintText), L"[%hs] %hs %hs", szUppercaseKeyBinding,
+							pTargetPlayer->m_hCommandingPlayer.Get() == pLocalNeoPlayer ? "Release" : "Command",
+							pTargetPlayer->GetNeoPlayerName());
 					}
 					else
 					{
-						V_snwprintf(m_wszHintText, ARRAYSIZE(m_wszHintText), L"[%hs] Request primary weapon", szUppercaseKeyBinding); // NEO TODO (Adam) network primary weapon so can print its name here?
+						V_snwprintf(m_wszHintText, ARRAYSIZE(m_wszHintText), L"[%hs] Request primary weapon",
+							szUppercaseKeyBinding); // NEO TODO (Adam) network primary weapon so can print its name here?
 					}
 				}
 			}
@@ -294,7 +302,7 @@ struct UseEntity
 UseEntity useEntityList[MAX_SPHERE_QUERY] = {};
 int useEntityListLastIndex = -1;
 
-void SetUseEntityListEntry(int index, CBaseEntity* entity)
+void SetUseEntityListEntry(int index, CBaseEntity *entity)
 {
 	if (index < 0 || index >= ARRAYSIZE(useEntityList))
 		return;
@@ -308,7 +316,9 @@ void ClearUseEntityListEntry()
 	useEntityListLastIndex = -1;
 };
 
-ConVar cl_neo_hud_context_hint_show_object_interact_hint_in_world("cl_neo_hud_context_hint_show_object_interact_hint_in_world", "1", FCVAR_ARCHIVE, "Draw the object interact hint next to the interactable object", true, 0.f, true, 1.f);
+ConVar cl_neo_hud_context_hint_show_object_interact_hint_in_world(
+	"cl_neo_hud_context_hint_show_object_interact_hint_in_world", "1", FCVAR_ARCHIVE,
+	"Draw the object interact hint next to the interactable object", true, 0.f, true, 1.f);
 void CNEOHud_ContextHint::DrawNeoHudElement()
 {
 	if (m_wszHintText[0] == L'\0')
@@ -325,7 +335,7 @@ void CNEOHud_ContextHint::DrawNeoHudElement()
 
 	int iBoxX = (iScrWide - iBoxWide) / 2;
 	int iBoxY = iScrTall * m_flBoxYFactor - iBoxTall / 2;
-	
+
 	int textX = iBoxX + m_iPaddingX;
 	int textY = iBoxY + m_iPaddingY;
 	const int size = iTextTall / 8;
@@ -333,7 +343,7 @@ void CNEOHud_ContextHint::DrawNeoHudElement()
 	vgui::surface()->DrawSetColor(m_TextColor);
 	for (int i = 0; i <= useEntityListLastIndex; i++)
 	{
-		if (C_BaseEntity* entity = useEntityList[i].entity.Get())
+		if (C_BaseEntity *entity = useEntityList[i].entity.Get())
 		{
 			int x = 0;
 			int y = 0;
@@ -346,13 +356,13 @@ void CNEOHud_ContextHint::DrawNeoHudElement()
 			vgui::surface()->DrawOutlinedCircle(x, y, size, 12);
 		}
 	}
-	
+
 	if (m_flDisplayEndTime <= gpGlobals->curtime)
 		return;
 
 	if (cl_neo_hud_context_hint_show_object_interact_hint_in_world.GetBool())
 	{
-		if (C_BaseEntity* useEntity = m_hUseEntity.Get())
+		if (C_BaseEntity *useEntity = m_hUseEntity.Get())
 		{
 			GetVectorInScreenSpace(useEntity->CollisionProp()->WorldSpaceCenter(), textX, textY);
 
@@ -377,6 +387,4 @@ void CNEOHud_ContextHint::Paint()
 	BaseClass::Paint();
 }
 
-void CNEOHud_ContextHint::FireGameEvent(IGameEvent* event)
-{
-}
+void CNEOHud_ContextHint::FireGameEvent(IGameEvent *event) {}

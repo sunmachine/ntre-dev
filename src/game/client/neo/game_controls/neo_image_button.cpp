@@ -12,10 +12,10 @@ DECLARE_BUILD_FACTORY_DEFAULT_TEXT(CNeoImageButton, NeoImageButton);
 //-----------------------------------------------------------------------------
 // Purpose:	override default button borders
 //-----------------------------------------------------------------------------
-void CNeoImageButton::ApplySchemeSettings(IScheme* pScheme)
+void CNeoImageButton::ApplySchemeSettings(IScheme *pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
-	
+
 	_defaultBorder = pScheme->GetBorder("NeoImageButtonBorder");
 	_depressedBorder = pScheme->GetBorder("NeoImageButtonDepressedBorder");
 	_keyFocusBorder = pScheme->GetBorder("NeoImageButtonKeyFocusBorder");
@@ -42,7 +42,7 @@ void CNeoImageButton::Paint()
 
 	if (IsArmed() && !IsDepressed())
 	{
-		surface()->DrawOutlinedRect(3, 3, wide -3, tall -3);
+		surface()->DrawOutlinedRect(3, 3, wide - 3, tall - 3);
 	}
 }
 
@@ -51,7 +51,7 @@ void CNeoImageButton::SetButtonTextureID(int textureID)
 	m_iTextureID = textureID;
 }
 
-void CNeoImageButton::SetButtonTexture(const char* texture)
+void CNeoImageButton::SetButtonTexture(const char *texture)
 {
 	m_iTextureID = surface()->DrawGetTextureId(texture);
 	if (m_iTextureID == -1)

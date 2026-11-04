@@ -70,9 +70,9 @@ static HUDCommonRet CheckCommonSpecOverlayErrors(const char *pszFuncName)
 CON_COMMAND_F(spec_player_by_hud_position, "Spectate player by position in the hud", FCVAR_CLIENTCMD_CAN_EXECUTE)
 {
 	static constexpr const char HELP_MSG_OL[] =
-			"Usage: spec_player_by_hud_position { player position in overlay hud, from first of Jinrai to last of NSF, 0 indexed }\n";
+		"Usage: spec_player_by_hud_position { player position in overlay hud, from first of Jinrai to last of NSF, 0 indexed }\n";
 	static constexpr const char HELP_MSG_RS[] =
-			"Usage: spec_player_by_hud_position { player position in top hud, 0 indexed }\n";
+		"Usage: spec_player_by_hud_position { player position in top hud, 0 indexed }\n";
 
 	auto [pOverlay, pRoundState, pNeoPlayer] = CheckCommonSpecOverlayErrors(__FUNCTION__);
 
@@ -112,19 +112,16 @@ CON_COMMAND_F(spec_next_entity_in_hud, "Spectate the next valid player in the hu
 	{
 		pOverlay->m_iEntIndexSelect = 0;
 		SetPlayerEntityTarget(pOverlay->SpecTargetNextEntIdx(
-					CNEOHud_SpectatorOverlay::SPECTYPE_DIRECT,
-					CNEOHud_SpectatorOverlay::DIRECTION_NEXT));
+			CNEOHud_SpectatorOverlay::SPECTYPE_DIRECT, CNEOHud_SpectatorOverlay::DIRECTION_NEXT));
 	}
 	else if (pRoundState)
 	{
 		C_BaseEntity *pSpectateTarget = pNeoPlayer->GetObserverTarget();
 		const int iSpecTargetMinusIdxPos = (pSpectateTarget)
-				? g_pNeoHudRoundState->GetMinusIndexedPositionOfPlayerInHud(pSpectateTarget->entindex())
-				: 0;
-		SetPlayerEntityTarget(
-				g_pNeoHudRoundState->GetEntityIndexAtPositionInHud(
-					g_pNeoHudRoundState->GetNextAlivePlayerInHud(
-						iSpecTargetMinusIdxPos, false)));
+			? g_pNeoHudRoundState->GetMinusIndexedPositionOfPlayerInHud(pSpectateTarget->entindex())
+			: 0;
+		SetPlayerEntityTarget(g_pNeoHudRoundState->GetEntityIndexAtPositionInHud(
+			g_pNeoHudRoundState->GetNextAlivePlayerInHud(iSpecTargetMinusIdxPos, false)));
 	}
 }
 
@@ -136,19 +133,15 @@ CON_COMMAND_F(spec_previous_entity_in_hud, "Spectate the previous valid player i
 	{
 		pOverlay->m_iEntIndexSelect = 0;
 		SetPlayerEntityTarget(pOverlay->SpecTargetNextEntIdx(
-					CNEOHud_SpectatorOverlay::SPECTYPE_DIRECT,
-					CNEOHud_SpectatorOverlay::DIRECTION_PREV));
+			CNEOHud_SpectatorOverlay::SPECTYPE_DIRECT, CNEOHud_SpectatorOverlay::DIRECTION_PREV));
 	}
 	else if (pRoundState)
 	{
 		C_BaseEntity *pSpectateTarget = pNeoPlayer->GetObserverTarget();
-		const int iSpecTargetMinusIdxPos = (pSpectateTarget)
-				? pRoundState->GetMinusIndexedPositionOfPlayerInHud(pSpectateTarget->entindex())
-				: 0;
-		SetPlayerEntityTarget(
-				pRoundState->GetEntityIndexAtPositionInHud(
-					pRoundState->GetNextAlivePlayerInHud(
-						iSpecTargetMinusIdxPos, true)));
+		const int iSpecTargetMinusIdxPos =
+			(pSpectateTarget) ? pRoundState->GetMinusIndexedPositionOfPlayerInHud(pSpectateTarget->entindex()) : 0;
+		SetPlayerEntityTarget(pRoundState->GetEntityIndexAtPositionInHud(
+			pRoundState->GetNextAlivePlayerInHud(iSpecTargetMinusIdxPos, true)));
 	}
 }
 
@@ -159,8 +152,7 @@ CON_COMMAND_F(select_next_alive_player_in_hud, "Select the next alive player in 
 	if (pOverlay)
 	{
 		pOverlay->m_iEntIndexSelect = pOverlay->SpecTargetNextEntIdx(
-				CNEOHud_SpectatorOverlay::SPECTYPE_SELECT,
-				CNEOHud_SpectatorOverlay::DIRECTION_NEXT);
+			CNEOHud_SpectatorOverlay::SPECTYPE_SELECT, CNEOHud_SpectatorOverlay::DIRECTION_NEXT);
 	}
 	else if (pRoundState)
 	{
@@ -168,15 +160,15 @@ CON_COMMAND_F(select_next_alive_player_in_hud, "Select the next alive player in 
 	}
 }
 
-CON_COMMAND_F(select_previous_alive_player_in_hud, "Select the previous alive player in the hud", FCVAR_CLIENTCMD_CAN_EXECUTE)
+CON_COMMAND_F(
+	select_previous_alive_player_in_hud, "Select the previous alive player in the hud", FCVAR_CLIENTCMD_CAN_EXECUTE)
 {
 	auto [pOverlay, pRoundState, pNeoPlayer] = CheckCommonSpecOverlayErrors(__FUNCTION__);
 
 	if (pOverlay)
 	{
 		pOverlay->m_iEntIndexSelect = pOverlay->SpecTargetNextEntIdx(
-				CNEOHud_SpectatorOverlay::SPECTYPE_SELECT,
-				CNEOHud_SpectatorOverlay::DIRECTION_PREV);
+			CNEOHud_SpectatorOverlay::SPECTYPE_SELECT, CNEOHud_SpectatorOverlay::DIRECTION_PREV);
 	}
 	else if (pRoundState)
 	{
@@ -198,4 +190,3 @@ CON_COMMAND_F(spectate_player_selected_in_hud, "Spectate entity selected in the 
 		SetPlayerEntityTarget(g_pNeoHudRoundState->GetSelectedPlayerInHud());
 	}
 }
-

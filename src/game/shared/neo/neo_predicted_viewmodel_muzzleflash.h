@@ -15,20 +15,21 @@
 class CNEOPredictedViewModelMuzzleFlash : public CPredictedViewModel
 {
 	DECLARE_CLASS(CNEOPredictedViewModelMuzzleFlash, CPredictedViewModel);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
 	CNEOPredictedViewModelMuzzleFlash();
 	virtual ~CNEOPredictedViewModelMuzzleFlash();
-	virtual void CalcViewModelView(CBasePlayer* pOwner,	const Vector& eyePosition, const QAngle& eyeAngles) override;
-	void UpdateMuzzleFlashProperties(CBaseCombatWeapon* pWeapon, bool repeat = true);
+	virtual void CalcViewModelView(CBasePlayer *pOwner, const Vector &eyePosition, const QAngle &eyeAngles) override;
+	void UpdateMuzzleFlashProperties(CBaseCombatWeapon *pWeapon, bool repeat = true);
 	virtual void Spawn(void) override;
 	virtual void Precache(void) override;
 #ifdef CLIENT_DLL
-	virtual ShadowType_t	ShadowCastType() final override { return SHADOWS_NONE; };
-	virtual RenderGroup_t	GetRenderGroup() final override { return RENDER_GROUP_VIEW_MODEL_TRANSLUCENT; };
-	virtual int				DrawModel(int flags) final override;
-	virtual void			ProcessMuzzleFlashEvent() final override
+	virtual ShadowType_t ShadowCastType() final override { return SHADOWS_NONE; };
+	virtual RenderGroup_t GetRenderGroup() final override { return RENDER_GROUP_VIEW_MODEL_TRANSLUCENT; };
+	virtual int DrawModel(int flags) final override;
+	virtual void ProcessMuzzleFlashEvent() final override
 	{
 		if (!m_bActive)
 			return;
@@ -36,19 +37,19 @@ public:
 		m_flTimeSwitchOffMuzzleFlash = gpGlobals->curtime + 0.01f;
 		BaseClass::ProcessMuzzleFlashEvent();
 	}
-	virtual void			ClientThink() override;
+	virtual void ClientThink() override;
 #endif
 
 #ifdef CLIENT_DLL
-	bool	m_bActive;
-	int		m_iAngleZ;
-	int		m_iAngleZIncrement;
-	bool	m_bScaleChangeFlag;
+	bool m_bActive;
+	int m_iAngleZ;
+	int m_iAngleZIncrement;
+	bool m_bScaleChangeFlag;
 #else
 	CNetworkVar(bool, m_bActive);
 	CNetworkVar(bool, m_bScaleChangeFlag);
 #endif // CLIENT_DLL
-	float	m_flTimeSwitchOffMuzzleFlash;
+	float m_flTimeSwitchOffMuzzleFlash;
 };
 
 #endif // NEO_PREDICTED_VIEWMODEL_MUZZLEFLASH_H

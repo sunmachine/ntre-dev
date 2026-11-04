@@ -11,18 +11,19 @@
 class CNEOHud_HTA : public CNEOHud_ChildElement, public CHudElement, public vgui::EditablePanel
 {
 	DECLARE_CLASS_SIMPLE(CNEOHud_HTA, EditablePanel);
+
 public:
 	CNEOHud_HTA(const char *pElementName, vgui::Panel *parent = nullptr);
 
-	virtual ~CNEOHud_HTA() { }
+	virtual ~CNEOHud_HTA() {}
 
-	virtual void ApplySchemeSettings(vgui::IScheme* pScheme);
+	virtual void ApplySchemeSettings(vgui::IScheme *pScheme);
 	virtual void Paint();
 
 protected:
 	virtual void UpdateStateForNeoHudElementDraw();
 	virtual void DrawNeoHudElement();
-	virtual ConVar* GetUpdateFrequencyConVar() const;
+	virtual ConVar *GetUpdateFrequencyConVar() const;
 
 private:
 	void DrawBuildInfo() const;
@@ -83,7 +84,7 @@ private:
 	CPanelAnimationVar(Color, m_sprintColor, "sprint_color", "255 255 255 150");
 
 private:
-	CNEOHud_HTA(const CNEOHud_HTA& other);
+	CNEOHud_HTA(const CNEOHud_HTA &other);
 };
 
 #endif // NEO_HUD_HEALTH_THERMOPTIC_AUX_H

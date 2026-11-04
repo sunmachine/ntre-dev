@@ -44,43 +44,62 @@
 extern ConVar weaponstay;
 #endif
 
-ConVar sv_neo_loopback_warmup_round("sv_neo_loopback_warmup_round", "0", FCVAR_REPLICATED, "Allow loopback server to do warmup rounds.", true, 0.0f, true, 1.0f);
-ConVar sv_neo_botsonly_warmup_round("sv_neo_botsonly_warmup_round", "0", FCVAR_REPLICATED, "Allow bots-only match to do warmup rounds.", true, 0.0f, true, 1.0f);
-ConVar sv_neo_warmup_round_time("sv_neo_warmup_round_time", "45", FCVAR_REPLICATED, "The warmup round time, in seconds.", true, 0.0f, false, 0.0f);
-ConVar sv_neo_preround_freeze_time("sv_neo_preround_freeze_time", "15", FCVAR_REPLICATED, "The pre-round freeze time, in seconds.", true, 0.0, false, 0);
-ConVar sv_neo_latespawn_max_time("sv_neo_latespawn_max_time", "15", FCVAR_REPLICATED, "How many seconds late are players still allowed to spawn.", true, 0.0, false, 0);
+ConVar sv_neo_loopback_warmup_round("sv_neo_loopback_warmup_round", "0", FCVAR_REPLICATED,
+	"Allow loopback server to do warmup rounds.", true, 0.0f, true, 1.0f);
+ConVar sv_neo_botsonly_warmup_round("sv_neo_botsonly_warmup_round", "0", FCVAR_REPLICATED,
+	"Allow bots-only match to do warmup rounds.", true, 0.0f, true, 1.0f);
+ConVar sv_neo_warmup_round_time(
+	"sv_neo_warmup_round_time", "45", FCVAR_REPLICATED, "The warmup round time, in seconds.", true, 0.0f, false, 0.0f);
+ConVar sv_neo_preround_freeze_time("sv_neo_preround_freeze_time", "15", FCVAR_REPLICATED,
+	"The pre-round freeze time, in seconds.", true, 0.0, false, 0);
+ConVar sv_neo_latespawn_max_time("sv_neo_latespawn_max_time", "15", FCVAR_REPLICATED,
+	"How many seconds late are players still allowed to spawn.", true, 0.0, false, 0);
 
-ConVar sv_neo_wep_dmg_modifier("sv_neo_wep_dmg_modifier", "1.485", FCVAR_REPLICATED, "Weapon damage modifier.", true, 0.0, true, 100.0);
-ConVar sv_neo_exp_dmg_modifier("sv_neo_exp_dmg_modifier", "1.485", FCVAR_REPLICATED, "Explosive damage modifier", true, 0.0, true, 100.0);
+ConVar sv_neo_wep_dmg_modifier(
+	"sv_neo_wep_dmg_modifier", "1.485", FCVAR_REPLICATED, "Weapon damage modifier.", true, 0.0, true, 100.0);
+ConVar sv_neo_exp_dmg_modifier(
+	"sv_neo_exp_dmg_modifier", "1.485", FCVAR_REPLICATED, "Explosive damage modifier", true, 0.0, true, 100.0);
 
-ConVar sv_neo_player_restore("sv_neo_player_restore", "1", FCVAR_REPLICATED, "If enabled, the server will save players XP and deaths per match session and restore them if they reconnect.", true, 0.0f, true, 1.0f);
+ConVar sv_neo_player_restore("sv_neo_player_restore", "1", FCVAR_REPLICATED,
+	"If enabled, the server will save players XP and deaths per match session and restore them if they reconnect.",
+	true, 0.0f, true, 1.0f);
 
-ConVar sv_neo_spraydisable("sv_neo_spraydisable", "0", FCVAR_REPLICATED, "If enabled, disables the players ability to spray.", true, 0.0f, true, 1.0f);
+ConVar sv_neo_spraydisable("sv_neo_spraydisable", "0", FCVAR_REPLICATED,
+	"If enabled, disables the players ability to spray.", true, 0.0f, true, 1.0f);
 
-ConVar sv_neo_class_limit_recon("sv_neo_class_limit_recon", "-1", FCVAR_REPLICATED, "Maximum number of Recon class players per team (-1 = no limit, 0 = banned).", true, -1, true, 32);
-ConVar sv_neo_class_limit_assault("sv_neo_class_limit_assault", "-1", FCVAR_REPLICATED, "Maximum number of Assault class players per team (-1 = no limit, 0 = banned).", true, -1, true, 32);
-ConVar sv_neo_class_limit_support("sv_neo_class_limit_support", "-1", FCVAR_REPLICATED, "Maximum number of Support class players per team (-1 = no limit, 0 = banned).", true, -1, true, 32);
+ConVar sv_neo_class_limit_recon("sv_neo_class_limit_recon", "-1", FCVAR_REPLICATED,
+	"Maximum number of Recon class players per team (-1 = no limit, 0 = banned).", true, -1, true, 32);
+ConVar sv_neo_class_limit_assault("sv_neo_class_limit_assault", "-1", FCVAR_REPLICATED,
+	"Maximum number of Assault class players per team (-1 = no limit, 0 = banned).", true, -1, true, 32);
+ConVar sv_neo_class_limit_support("sv_neo_class_limit_support", "-1", FCVAR_REPLICATED,
+	"Maximum number of Support class players per team (-1 = no limit, 0 = banned).", true, -1, true, 32);
 
 #ifdef CLIENT_DLL
-ConVar neo_name("neo_name", "", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_PRINTABLEONLY, "The nickname to set instead of the steam profile name.");
-ConVar cl_onlysteamnick("cl_onlysteamnick", "0", FCVAR_USERINFO | FCVAR_ARCHIVE, "Only show players Steam names, otherwise show player set names.", true, 0.0f, true, 1.0f);
+ConVar neo_name("neo_name", "", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_PRINTABLEONLY,
+	"The nickname to set instead of the steam profile name.");
+ConVar cl_onlysteamnick("cl_onlysteamnick", "0", FCVAR_USERINFO | FCVAR_ARCHIVE,
+	"Only show players Steam names, otherwise show player set names.", true, 0.0f, true, 1.0f);
 
 ConVar neo_clantag("neo_clantag", "", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_PRINTABLEONLY, "The clantag to set.");
 #endif
 ConVar sv_neo_clantag_allow("sv_neo_clantag_allow", "1", FCVAR_REPLICATED, "", true, 0.0f, true, 1.0f);
 #ifdef DEBUG
-ConVar sv_neo_dev_test_clantag("sv_neo_dev_test_clantag", "", FCVAR_REPLICATED | FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY, "Debug-mode only - Override all clantags with this value.");
+ConVar sv_neo_dev_test_clantag("sv_neo_dev_test_clantag", "", FCVAR_REPLICATED | FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY,
+	"Debug-mode only - Override all clantags with this value.");
 #endif
 
 #define STR_GAMEOPTS "TDM=0, CTG=1, VIP=2, DM=3"
 #define STR_GAMEBWOPTS "TDM=1, CTG=2, VIP=4, DM=8"
 #ifdef CLIENT_DLL
-ConVar neo_vote_game_mode("neo_vote_game_mode", "1", FCVAR_USERINFO, "Vote on game mode to play. " STR_GAMEOPTS, true, 0, true, NEO_GAME_TYPE__TOTAL - 1);
+ConVar neo_vote_game_mode("neo_vote_game_mode", "1", FCVAR_USERINFO, "Vote on game mode to play. " STR_GAMEOPTS, true,
+	0, true, NEO_GAME_TYPE__TOTAL - 1);
 ConVar neo_vip_eligible("cl_neo_vip_eligible", "1", FCVAR_ARCHIVE, "Eligible for VIP", true, 0, true, 1);
 #endif // CLIENT_DLL
 #ifdef GAME_DLL
-ConVar sv_neo_vip_ctg_on_death("sv_neo_vip_ctg_on_death", "0", FCVAR_ARCHIVE, "Spawn Ghost when VIP dies, continue the game", true, 0, true, 1);
-ConVar sv_neo_jgr_max_points("sv_neo_jgr_max_points", "20", FCVAR_GAMEDLL, "Maximum points required for a team to win in JGR", true, 1, false, 0);
+ConVar sv_neo_vip_ctg_on_death(
+	"sv_neo_vip_ctg_on_death", "0", FCVAR_ARCHIVE, "Spawn Ghost when VIP dies, continue the game", true, 0, true, 1);
+ConVar sv_neo_jgr_max_points("sv_neo_jgr_max_points", "20", FCVAR_GAMEDLL,
+	"Maximum points required for a team to win in JGR", true, 1, false, 0);
 
 void ReadyToggleCB(const CCommand &command)
 {
@@ -105,21 +124,21 @@ ConCommand readytoggle("readytoggle", ReadyToggleCB, "Toggle ready state", FCVAR
 // NEO TODO (nullsystem): Change how voting done from convar to menu selection
 enum eGamemodeEnforcement
 {
-	GAMEMODE_ENFORCEMENT_MAP = 0,	// Only use the gamemode enforced by the map
-	GAMEMODE_ENFORCEMENT_SINGLE,	// Only use the single gamemode enforced by the server
-	GAMEMODE_ENFORCEMENT_RAND,		// Randomly choose a gamemode on each map initialization based on a list
-	GAMEMODE_ENFORCEMENT_VOTE,		// Allow vote by players on pre-match
+	GAMEMODE_ENFORCEMENT_MAP = 0, // Only use the gamemode enforced by the map
+	GAMEMODE_ENFORCEMENT_SINGLE,  // Only use the single gamemode enforced by the server
+	GAMEMODE_ENFORCEMENT_RAND,    // Randomly choose a gamemode on each map initialization based on a list
+	GAMEMODE_ENFORCEMENT_VOTE,    // Allow vote by players on pre-match
 
 	GAMEMODE_ENFORCEMENT__TOTAL,
 };
 ConVar sv_neo_gamemode_enforcement("sv_neo_gamemode_enforcement", "0", FCVAR_REPLICATED,
-								   "How the gamemode are determined. 0 = By map, 1 = By sv_neo_gamemode_single, 2 = Random, 3 = Pre-match voting",
-								   true, 0.0f, true, GAMEMODE_ENFORCEMENT__TOTAL - 1);
-ConVar sv_neo_gamemode_single("sv_neo_gamemode_single", "3", FCVAR_REPLICATED, "The gamemode that is enforced by the server. " STR_GAMEOPTS,
-							  true, 0.0f, true, NEO_GAME_TYPE__TOTAL - 1);
+	"How the gamemode are determined. 0 = By map, 1 = By sv_neo_gamemode_single, 2 = Random, 3 = Pre-match voting",
+	true, 0.0f, true, GAMEMODE_ENFORCEMENT__TOTAL - 1);
+ConVar sv_neo_gamemode_single("sv_neo_gamemode_single", "3", FCVAR_REPLICATED,
+	"The gamemode that is enforced by the server. " STR_GAMEOPTS, true, 0.0f, true, NEO_GAME_TYPE__TOTAL - 1);
 ConVar sv_neo_gamemode_random_allow("sv_neo_gamemode_random_allow", "11", FCVAR_REPLICATED,
-									"In bitwise, the gamemodes that are allowed for random selection. Default = TDM+CTG+DM. " STR_GAMEBWOPTS,
-									true, 1.0f, true, (1 << NEO_GAME_TYPE__TOTAL)); // Can't be zero, minimum has to set to a bitwise value
+	"In bitwise, the gamemodes that are allowed for random selection. Default = TDM+CTG+DM. " STR_GAMEBWOPTS, true,
+	1.0f, true, (1 << NEO_GAME_TYPE__TOTAL)); // Can't be zero, minimum has to set to a bitwise value
 #endif
 
 #ifdef GAME_DLL
@@ -130,60 +149,92 @@ static constexpr char INTEGRITY_CHECK_DBG[] = "1";
 static constexpr char INTEGRITY_CHECK_DBG[] = "0";
 #endif // DEBUG
 ConVar sv_neo_build_integrity_check("sv_neo_build_integrity_check", "1", FCVAR_GAMEDLL | FCVAR_REPLICATED,
-									"If enabled, the server checks the build's Git hash between the client and"
-									" the server. If it doesn't match, the server rejects and disconnects the client.",
-									true, 0.0f, true, 1.0f);
-ConVar sv_neo_build_integrity_check_allow_debug("sv_neo_build_integrity_check_allow_debug", INTEGRITY_CHECK_DBG, FCVAR_GAMEDLL | FCVAR_REPLICATED,
-									"If enabled, when the server checks the client hashes, it'll also allow debug"
-									" builds which has a given special bit to bypass the check.",
-									true, 0.0f, true, 1.0f);
+	"If enabled, the server checks the build's Git hash between the client and"
+	" the server. If it doesn't match, the server rejects and disconnects the client.",
+	true, 0.0f, true, 1.0f);
+ConVar sv_neo_build_integrity_check_allow_debug("sv_neo_build_integrity_check_allow_debug", INTEGRITY_CHECK_DBG,
+	FCVAR_GAMEDLL | FCVAR_REPLICATED,
+	"If enabled, when the server checks the client hashes, it'll also allow debug"
+	" builds which has a given special bit to bypass the check.",
+	true, 0.0f, true, 1.0f);
 
 #ifdef DEBUG
 static constexpr char TEAMDMG_MULTI[] = "0";
 #else
 static constexpr char TEAMDMG_MULTI[] = "2";
 #endif // DEBUG
-ConVar sv_neo_mirror_teamdamage_multiplier("sv_neo_mirror_teamdamage_multiplier", TEAMDMG_MULTI, FCVAR_REPLICATED, "The damage multiplier given to the friendly-firing individual. Set value to 0 to disable mirror team damage.", true, 0.0f, true, 100.0f);
-ConVar sv_neo_mirror_teamdamage_duration("sv_neo_mirror_teamdamage_duration", "7", FCVAR_REPLICATED, "How long in seconds the mirror damage is active for the start of each round. Set to 0 for the entire round.", true, 0.0f, true, 10000.0f);
-ConVar sv_neo_mirror_teamdamage_immunity("sv_neo_mirror_teamdamage_immunity", "1", FCVAR_REPLICATED, "If enabled, the victim will not take damage from a teammate during the mirror team damage duration.", true, 0.0f, true, 1.0f);
+ConVar sv_neo_mirror_teamdamage_multiplier("sv_neo_mirror_teamdamage_multiplier", TEAMDMG_MULTI, FCVAR_REPLICATED,
+	"The damage multiplier given to the friendly-firing individual. Set value to 0 to disable mirror team damage.",
+	true, 0.0f, true, 100.0f);
+ConVar sv_neo_mirror_teamdamage_duration("sv_neo_mirror_teamdamage_duration", "7", FCVAR_REPLICATED,
+	"How long in seconds the mirror damage is active for the start of each round. Set to 0 for the entire round.", true,
+	0.0f, true, 10000.0f);
+ConVar sv_neo_mirror_teamdamage_immunity("sv_neo_mirror_teamdamage_immunity", "1", FCVAR_REPLICATED,
+	"If enabled, the victim will not take damage from a teammate during the mirror team damage duration.", true, 0.0f,
+	true, 1.0f);
 
-ConVar sv_neo_teamdamage_kick("sv_neo_teamdamage_kick", "0", FCVAR_REPLICATED, "If enabled, the friendly-firing individual will be kicked if damage is received during the sv_neo_mirror_teamdamage_duration, exceeds the sv_neo_teamdamage_kick_hp value, or executes a teammate.", true, 0.0f, true, 1.0f);
-ConVar sv_neo_teamdamage_kick_hp("sv_neo_teamdamage_kick_hp", "900", FCVAR_REPLICATED, "The threshold for the amount of HP damage inflicted on teammates before the client is kicked.", true, 100.0f, false, 0.0f);
-ConVar sv_neo_teamdamage_kick_kills("sv_neo_teamdamage_kick_kills", "6", FCVAR_REPLICATED, "The threshold for the amount of team kills before the client is kicked.", true, 1.0f, false, 0.0f);
+ConVar sv_neo_teamdamage_kick("sv_neo_teamdamage_kick", "0", FCVAR_REPLICATED,
+	"If enabled, the friendly-firing individual will be kicked if damage is received during the sv_neo_mirror_teamdamage_duration, exceeds the sv_neo_teamdamage_kick_hp value, or executes a teammate.",
+	true, 0.0f, true, 1.0f);
+ConVar sv_neo_teamdamage_kick_hp("sv_neo_teamdamage_kick_hp", "900", FCVAR_REPLICATED,
+	"The threshold for the amount of HP damage inflicted on teammates before the client is kicked.", true, 100.0f,
+	false, 0.0f);
+ConVar sv_neo_teamdamage_kick_kills("sv_neo_teamdamage_kick_kills", "6", FCVAR_REPLICATED,
+	"The threshold for the amount of team kills before the client is kicked.", true, 1.0f, false, 0.0f);
 ConVar sv_neo_suicide_prevent_cap_punish("sv_neo_suicide_prevent_cap_punish", "1", FCVAR_REPLICATED,
-										 "If enabled, if a player suicides and is the only one alive in their team, "
-										 "while the other team is holding the ghost, reward the ghost holder team "
-										 "a rank up.",
-										 true, 0.0f, true, 1.0f);
+	"If enabled, if a player suicides and is the only one alive in their team, "
+	"while the other team is holding the ghost, reward the ghost holder team "
+	"a rank up.",
+	true, 0.0f, true, 1.0f);
 
 #define DEF_TEAMPLAYERTHRES 5
 static_assert(DEF_TEAMPLAYERTHRES <= ((MAX_PLAYERS - 1) / 2));
-ConVar sv_neo_readyup_teamplayersthres("sv_neo_readyup_teamplayersthres", V_STRINGIFY(DEF_TEAMPLAYERTHRES), FCVAR_REPLICATED, "The exact total players per team to be in and ready up to start a game.", true, 0.0f, true, (MAX_PLAYERS - 1) / 2);
-ConVar sv_neo_readyup_skipwarmup("sv_neo_readyup_skipwarmup", "1", FCVAR_REPLICATED, "Skip the warmup round when already using ready up.", true, 0.0f, true, 1.0f);
-ConVar sv_neo_readyup_autointermission("sv_neo_readyup_autointermission", "0", FCVAR_REPLICATED, "If disabled, skips the automatic intermission at the end of the match.", true, 0.0f, true, 1.0f);
-ConVar sv_neo_cap_reward("sv_neo_cap_reward", "0", FCVAR_REPLICATED, "How much XP to reward for capturing the ghost or escaping as VIP. 0 = Rank up.", true, 0.0f, false, 0.0f);
-ConVar sv_neo_cap_reward_dead("sv_neo_cap_reward_dead", "0", FCVAR_REPLICATED, "Whether dead players should receive the ghost capture or escape reward.", true, 0.0f, true, 1.0f);
-ConVar sv_neo_survivor_bonus("sv_neo_survivor_bonus", "1", FCVAR_REPLICATED, "Whether surviving players on the winning team in CTG and VIP should receive extra XP.", true, 0.0f, true, 1.0f);
-ConVar sv_neo_ghost_carrier_bonus("sv_neo_ghost_carrier_bonus", "1", FCVAR_REPLICATED, "Whether the ghost carrier on the winning team should receive extra XP.", true, 0.0f, true, 1.0f);
-ConVar sv_neo_server_autorecord("sv_neo_server_autorecord", "0", FCVAR_NONE, "Automatically record demos serverside", true, 0, true, 1);
+ConVar sv_neo_readyup_teamplayersthres("sv_neo_readyup_teamplayersthres", V_STRINGIFY(DEF_TEAMPLAYERTHRES),
+	FCVAR_REPLICATED, "The exact total players per team to be in and ready up to start a game.", true, 0.0f, true,
+	(MAX_PLAYERS - 1) / 2);
+ConVar sv_neo_readyup_skipwarmup("sv_neo_readyup_skipwarmup", "1", FCVAR_REPLICATED,
+	"Skip the warmup round when already using ready up.", true, 0.0f, true, 1.0f);
+ConVar sv_neo_readyup_autointermission("sv_neo_readyup_autointermission", "0", FCVAR_REPLICATED,
+	"If disabled, skips the automatic intermission at the end of the match.", true, 0.0f, true, 1.0f);
+ConVar sv_neo_cap_reward("sv_neo_cap_reward", "0", FCVAR_REPLICATED,
+	"How much XP to reward for capturing the ghost or escaping as VIP. 0 = Rank up.", true, 0.0f, false, 0.0f);
+ConVar sv_neo_cap_reward_dead("sv_neo_cap_reward_dead", "0", FCVAR_REPLICATED,
+	"Whether dead players should receive the ghost capture or escape reward.", true, 0.0f, true, 1.0f);
+ConVar sv_neo_survivor_bonus("sv_neo_survivor_bonus", "1", FCVAR_REPLICATED,
+	"Whether surviving players on the winning team in CTG and VIP should receive extra XP.", true, 0.0f, true, 1.0f);
+ConVar sv_neo_ghost_carrier_bonus("sv_neo_ghost_carrier_bonus", "1", FCVAR_REPLICATED,
+	"Whether the ghost carrier on the winning team should receive extra XP.", true, 0.0f, true, 1.0f);
+ConVar sv_neo_server_autorecord(
+	"sv_neo_server_autorecord", "0", FCVAR_NONE, "Automatically record demos serverside", true, 0, true, 1);
 #endif // GAME_DLL
 
 // Both CLIENT_DLL + GAME_DLL, but server-side setting so it's replicated onto client to read the values
-ConVar sv_neo_readyup_lobby("sv_neo_readyup_lobby", "0", FCVAR_REPLICATED, "If enabled, players would need to ready up and match the players total requirements to start a game.", true, 0.0f, true, 1.0f);
-ConVar sv_neo_pausematch_enabled("sv_neo_pausematch_enabled", "0", FCVAR_REPLICATED, "If enabled, players will be able to pause the match mid-game.", true, 0.0f, true, 1.0f);
-ConVar sv_neo_pausematch_unpauseimmediate("sv_neo_pausematch_unpauseimmediate", "0", FCVAR_REPLICATED | FCVAR_CHEAT, "Testing only - If enabled, unpause will be immediate.", true, 0.0f, true, 1.0f);
-ConVar sv_neo_readyup_countdown("sv_neo_readyup_countdown", "5", FCVAR_REPLICATED, "Set the countdown from fully ready to start of match in seconds.", true, 0.0f, true, 120.0f);
-ConVar sv_neo_ghost_spawn_bias("sv_neo_ghost_spawn_bias", "0", FCVAR_REPLICATED, "Spawn ghost in the same location as the previous round on odd-indexed rounds (Round 1 = index 0)", true, 0, true, 1);
+ConVar sv_neo_readyup_lobby("sv_neo_readyup_lobby", "0", FCVAR_REPLICATED,
+	"If enabled, players would need to ready up and match the players total requirements to start a game.", true, 0.0f,
+	true, 1.0f);
+ConVar sv_neo_pausematch_enabled("sv_neo_pausematch_enabled", "0", FCVAR_REPLICATED,
+	"If enabled, players will be able to pause the match mid-game.", true, 0.0f, true, 1.0f);
+ConVar sv_neo_pausematch_unpauseimmediate("sv_neo_pausematch_unpauseimmediate", "0", FCVAR_REPLICATED | FCVAR_CHEAT,
+	"Testing only - If enabled, unpause will be immediate.", true, 0.0f, true, 1.0f);
+ConVar sv_neo_readyup_countdown("sv_neo_readyup_countdown", "5", FCVAR_REPLICATED,
+	"Set the countdown from fully ready to start of match in seconds.", true, 0.0f, true, 120.0f);
+ConVar sv_neo_ghost_spawn_bias("sv_neo_ghost_spawn_bias", "0", FCVAR_REPLICATED,
+	"Spawn ghost in the same location as the previous round on odd-indexed rounds (Round 1 = index 0)", true, 0, true,
+	1);
 ConVar sv_neo_ghost_spawn_force("sv_neo_ghost_spawn_force", "-1", FCVAR_REPLICATED | FCVAR_CHEAT,
 	"Pin the ghost to a fixed neo_ghostspawnpoint every round. -1 uses default random selection.", true, -1, false, 0);
 ConVar sv_neo_ghost_spawn_pos("sv_neo_ghost_spawn_pos", "", FCVAR_REPLICATED | FCVAR_CHEAT,
 	"Spawn the ghost at \"x y z\" every round instead of at a neo_ghostspawnpoint. Overrides sv_neo_ghost_spawn_force. Empty uses the spawn points.");
 ConVar sv_neo_jgr_spawn_force("sv_neo_jgr_spawn_force", "-1", FCVAR_REPLICATED | FCVAR_CHEAT,
-	"Pin the juggernaut to a fixed neo_juggernautspawnpoint every round. -1 uses default random selection.", true, -1, false, 0);
-ConVar sv_neo_teamdamage_assists("sv_neo_teamdamage_assists", "0", FCVAR_REPLICATED, "Whether to drain XP when assisting the death of a teammate.", true, 0.0f, true, 1.0f);
-ConVar sv_neo_client_autorecord("sv_neo_client_autorecord", "0", FCVAR_REPLICATED | FCVAR_DONTRECORD, "Record demos clientside", true, 0, true, 1);
+	"Pin the juggernaut to a fixed neo_juggernautspawnpoint every round. -1 uses default random selection.", true, -1,
+	false, 0);
+ConVar sv_neo_teamdamage_assists("sv_neo_teamdamage_assists", "0", FCVAR_REPLICATED,
+	"Whether to drain XP when assisting the death of a teammate.", true, 0.0f, true, 1.0f);
+ConVar sv_neo_client_autorecord(
+	"sv_neo_client_autorecord", "0", FCVAR_REPLICATED | FCVAR_DONTRECORD, "Record demos clientside", true, 0, true, 1);
 #ifdef CLIENT_DLL
-ConVar cl_neo_client_autorecord_allow("cl_neo_client_autorecord_allow", "1", FCVAR_ARCHIVE, "Allow servers to automatically record demos on the client", true, 0, true, 1);
+ConVar cl_neo_client_autorecord_allow("cl_neo_client_autorecord_allow", "1", FCVAR_ARCHIVE,
+	"Allow servers to automatically record demos on the client", true, 0, true, 1);
 #endif
 
 #ifdef GAME_DLL
@@ -198,17 +249,19 @@ ConVar sv_neo_reject_opengl_mesa_check("sv_neo_reject_opengl_mesa_check", "0", 0
 #endif
 
 extern ConVar sv_neo_comp;
-static void neoSvCompCallback(IConVar* var, const char* pOldValue, float flOldValue)
+static void neoSvCompCallback(IConVar *var, const char *pOldValue, float flOldValue)
 {
 	const bool bCurrentValue = sv_neo_comp.GetBool();
 	sv_neo_readyup_lobby.SetValue(bCurrentValue);
-	mp_forcecamera.SetValue(bCurrentValue); // 0 = OBS_ALLOWS_ALL, 1 = OBS_ALLOW_TEAM. For strictly original neotokyo spectator experience, 2 = OBS_ALLOW_NONE
+	mp_forcecamera.SetValue(
+		bCurrentValue); // 0 = OBS_ALLOWS_ALL, 1 = OBS_ALLOW_TEAM. For strictly original neotokyo spectator experience, 2 = OBS_ALLOW_NONE
 	sv_neo_spraydisable.SetValue(bCurrentValue);
 	sv_neo_pausematch_enabled.SetValue(bCurrentValue);
 	sv_neo_ghost_spawn_bias.SetValue(bCurrentValue);
 	sv_neo_client_autorecord.SetValue(bCurrentValue);
 #ifdef GAME_DLL
-	sv_neo_reject_opengl_mesa_check.SetValue(bCurrentValue); // NEO NOTE (nullsystem): See comment above variable declaration for reason
+	sv_neo_reject_opengl_mesa_check.SetValue(
+		bCurrentValue); // NEO NOTE (nullsystem): See comment above variable declaration for reason
 #endif
 }
 
@@ -224,7 +277,8 @@ ConVar sv_neo_comp_name("sv_neo_comp_name", "", FCVAR_REPLICATED, "Name of the c
 
 #ifdef CLIENT_DLL
 extern ConVar snd_victory_volume;
-void sndVictoryVolumeChangeCallback(IConVar* cvar [[maybe_unused]], const char* pOldVal [[maybe_unused]], float flOldVal [[maybe_unused]])
+void sndVictoryVolumeChangeCallback(
+	IConVar *cvar [[maybe_unused]], const char *pOldVal [[maybe_unused]], float flOldVal [[maybe_unused]])
 {
 	if (!g_pFullFileSystem)
 	{
@@ -239,10 +293,10 @@ void sndVictoryVolumeChangeCallback(IConVar* cvar [[maybe_unused]], const char* 
 #else
 #error Unimplemented!
 #endif
-	const char* jingles[] = {
-		"gameplay"	DIR_SLASH "draw.mp3",
-		"gameplay"	DIR_SLASH "jinrai.mp3",
-		"gameplay"	DIR_SLASH "nsf.mp3",
+	const char *jingles[] = {
+		"gameplay" DIR_SLASH "draw.mp3",
+		"gameplay" DIR_SLASH "jinrai.mp3",
+		"gameplay" DIR_SLASH "nsf.mp3",
 	};
 
 	CUtlVector<SndInfo_t> sounds;
@@ -272,7 +326,8 @@ void sndVictoryVolumeChangeCallback(IConVar* cvar [[maybe_unused]], const char* 
 	}
 }
 
-ConVar snd_victory_volume("snd_victory_volume", "0.33", FCVAR_ARCHIVE | FCVAR_DONTRECORD | FCVAR_USERINFO, "Loudness of the victory jingle (0-1).", true, 0.0, true, 1.0, sndVictoryVolumeChangeCallback);
+ConVar snd_victory_volume("snd_victory_volume", "0.33", FCVAR_ARCHIVE | FCVAR_DONTRECORD | FCVAR_USERINFO,
+	"Loudness of the victory jingle (0-1).", true, 0.0, true, 1.0, sndVictoryVolumeChangeCallback);
 #endif // CLIENT_DLL
 
 #ifdef CLIENT_DLL
@@ -284,13 +339,13 @@ void CNEOGameRulesProxy::OnDataChanged(DataUpdateType_t updateType)
 	if (NEORules()->GetGameType() != oldGameType)
 	{
 		oldGameType = NEORules()->GetGameType();
-		C_NEO_Player* pLocalNeoPlayer = C_NEO_Player::GetLocalNEOPlayer();
+		C_NEO_Player *pLocalNeoPlayer = C_NEO_Player::GetLocalNEOPlayer();
 		pLocalNeoPlayer->UpdateGlowEffects(pLocalNeoPlayer->GetTeamNumber());
 	}
 }
 #endif // CLIENT_DLL
 
-REGISTER_GAMERULES_CLASS( CNEORules );
+REGISTER_GAMERULES_CLASS(CNEORules);
 
 // clang-format off
 BEGIN_NETWORK_TABLE_NOBASE( CNEORules, DT_NEORules )
@@ -385,30 +440,29 @@ BEGIN_NETWORK_TABLE_NOBASE( CNEORules, DT_NEORules )
 END_NETWORK_TABLE()
 // clang-format on
 
-LINK_ENTITY_TO_CLASS( neo_gamerules, CNEOGameRulesProxy );
-IMPLEMENT_NETWORKCLASS_ALIASED( NEOGameRulesProxy, DT_NEOGameRulesProxy );
+LINK_ENTITY_TO_CLASS(neo_gamerules, CNEOGameRulesProxy);
+IMPLEMENT_NETWORKCLASS_ALIASED(NEOGameRulesProxy, DT_NEOGameRulesProxy);
 
 extern bool RespawnWithRet(CBaseEntity *pEdict, bool fCopyCorpse);
 
 // The defaults are the numbers for Support, check macros in shareddefs.h for
 // how the other classes are derived.
-static NEOViewVectors g_NEOViewVectors(
-	Vector( 0, 0, 60 ),	   //VEC_VIEW (m_vView)
+static NEOViewVectors g_NEOViewVectors(Vector(0, 0, 60), //VEC_VIEW (m_vView)
 
-	Vector(-16, -16, 0 ),	  //VEC_HULL_MIN (m_vHullMin)
-	Vector(16, 16, 70 ),	  //VEC_HULL_MAX (m_vHullMax)
+	Vector(-16, -16, 0), //VEC_HULL_MIN (m_vHullMin)
+	Vector(16, 16, 70),  //VEC_HULL_MAX (m_vHullMax)
 
-	Vector(-16, -16, 0 ),	  //VEC_DUCK_HULL_MIN (m_vDuckHullMin)
-	Vector( 16,  16, 59 ),	  //VEC_DUCK_HULL_MAX	(m_vDuckHullMax)
-	Vector( 0, 0, 50 ),		  //VEC_DUCK_VIEW		(m_vDuckView)
+	Vector(-16, -16, 0), //VEC_DUCK_HULL_MIN (m_vDuckHullMin)
+	Vector(16, 16, 59),  //VEC_DUCK_HULL_MAX	(m_vDuckHullMax)
+	Vector(0, 0, 50),    //VEC_DUCK_VIEW		(m_vDuckView)
 
-	Vector(-10, -10, -10 ),	  //VEC_OBS_HULL_MIN	(m_vObsHullMin)
-	Vector( 10,  10,  10 ),	  //VEC_OBS_HULL_MAX	(m_vObsHullMax)
+	Vector(-10, -10, -10), //VEC_OBS_HULL_MIN	(m_vObsHullMin)
+	Vector(10, 10, 10),    //VEC_OBS_HULL_MAX	(m_vObsHullMax)
 
-	Vector( 0, 0, 14 ),		  //VEC_DEAD_VIEWHEIGHT (m_vDeadViewHeight)
+	Vector(0, 0, 14), //VEC_DEAD_VIEWHEIGHT (m_vDeadViewHeight)
 
-	Vector(-16, -16, 0 ),	  //VEC_CROUCH_TRACE_MIN (m_vCrouchTraceMin)
-	Vector(16, 16, 60)	  //VEC_CROUCH_TRACE_MAX (m_vCrouchTraceMax)
+	Vector(-16, -16, 0), //VEC_CROUCH_TRACE_MIN (m_vCrouchTraceMin)
+	Vector(16, 16, 60)   //VEC_CROUCH_TRACE_MAX (m_vCrouchTraceMax)
 );
 
 // clang-format off
@@ -426,15 +480,14 @@ const NeoGameTypeSettings NEO_GAME_TYPE_SETTINGS[NEO_GAME_TYPE__TOTAL] = {
 // clang-format on
 
 #ifdef CLIENT_DLL
-	void RecvProxy_NEORules( const RecvProp *pProp, void **pOut,
-		void *pData, int objectID )
-	{
-		CNEORules *pRules = NEORules();
-		Assert( pRules );
-		*pOut = pRules;
-	}
+void RecvProxy_NEORules(const RecvProp *pProp, void **pOut, void *pData, int objectID)
+{
+	CNEORules *pRules = NEORules();
+	Assert(pRules);
+	*pOut = pRules;
+}
 
-	// clang-format off
+// clang-format off
 	BEGIN_RECV_TABLE( CNEOGameRulesProxy, DT_NEOGameRulesProxy )
 		RecvPropDataTable( "neo_gamerules_data", 0, 0,
 			&REFERENCE_RECV_TABLE( DT_NEORules ),
@@ -442,16 +495,15 @@ const NeoGameTypeSettings NEO_GAME_TYPE_SETTINGS[NEO_GAME_TYPE__TOTAL] = {
 	END_RECV_TABLE()
 	// clang-format on
 #else
-	void *SendProxy_NEORules( const SendProp *pProp,
-		const void *pStructBase, const void *pData,
-		CSendProxyRecipients *pRecipients, int objectID )
-	{
-		CNEORules *pRules = NEORules();
-		Assert( pRules );
-		return pRules;
-	}
+void *SendProxy_NEORules(
+	const SendProp *pProp, const void *pStructBase, const void *pData, CSendProxyRecipients *pRecipients, int objectID)
+{
+	CNEORules *pRules = NEORules();
+	Assert(pRules);
+	return pRules;
+}
 
-	// clang-format off
+// clang-format off
 	BEGIN_SEND_TABLE(CNEOGameRulesProxy, DT_NEOGameRulesProxy)
 		SendPropDataTable("neo_gamerules_data", 0,
 			&REFERENCE_SEND_TABLE(DT_NEORules),
@@ -460,30 +512,31 @@ const NeoGameTypeSettings NEO_GAME_TYPE_SETTINGS[NEO_GAME_TYPE__TOTAL] = {
 	// clang-format on
 #endif
 
-		// NEO NOTE (Rain): These are copied over from hl2mp gamerules implementation.
-		//
-		// shared ammo definition
-		// JAY: Trying to make a more physical bullet response
-#define BULLET_MASS_GRAINS_TO_LB(grains)	(0.002285*(grains)/16.0f)
-#define BULLET_MASS_GRAINS_TO_KG(grains)	lbs2kg(BULLET_MASS_GRAINS_TO_LB(grains))
+	// NEO NOTE (Rain): These are copied over from hl2mp gamerules implementation.
+	//
+	// shared ammo definition
+	// JAY: Trying to make a more physical bullet response
+#define BULLET_MASS_GRAINS_TO_LB(grains) (0.002285 * (grains) / 16.0f)
+#define BULLET_MASS_GRAINS_TO_KG(grains) lbs2kg(BULLET_MASS_GRAINS_TO_LB(grains))
 
-		// exaggerate all of the forces, but use real numbers to keep them consistent
-#define BULLET_IMPULSE_EXAGGERATION			3.5
-		// convert a velocity in ft/sec and a mass in grains to an impulse in kg in/s
-#define BULLET_IMPULSE(grains, ftpersec)	((ftpersec)*12*BULLET_MASS_GRAINS_TO_KG(grains)*BULLET_IMPULSE_EXAGGERATION)
+	// exaggerate all of the forces, but use real numbers to keep them consistent
+#define BULLET_IMPULSE_EXAGGERATION 3.5
+	// convert a velocity in ft/sec and a mass in grains to an impulse in kg in/s
+#define BULLET_IMPULSE(grains, ftpersec) \
+	((ftpersec) * 12 * BULLET_MASS_GRAINS_TO_KG(grains) * BULLET_IMPULSE_EXAGGERATION)
 
 extern ConVar neo_score_limit;
 extern ConVar neo_round_limit;
 extern ConVar sv_neo_ctg_score_limit;
 extern ConVar sv_neo_ctg_round_limit;
 
-static void neoScoreLimitLegacyCallback(IConVar* var, const char* pOldValue, float flOldValue)
+static void neoScoreLimitLegacyCallback(IConVar *var, const char *pOldValue, float flOldValue)
 {
 	Warning("Using legacy neo_score_limit cvar. Use sv_neo_[gamemode]_score_limit instead!\n");
 	sv_neo_ctg_score_limit.SetValue(neo_score_limit.GetInt());
 }
 
-static void neoRoundLimitLegacyCallback(IConVar* var, const char* pOldValue, float flOldValue)
+static void neoRoundLimitLegacyCallback(IConVar *var, const char *pOldValue, float flOldValue)
 {
 	Warning("Using legacy neo_round_limit cvar. Use sv_neo_[gamemode]_round_limit instead!\n");
 	sv_neo_ctg_round_limit.SetValue(neo_round_limit.GetInt());
@@ -502,68 +555,89 @@ ConVar neo_round_limit("neo_round_limit", "0", FCVAR_REPLICATED | FCVAR_HIDDEN, 
 );
 // clang-format on
 
-ConVar neo_round_sudden_death("neo_round_sudden_death", "1", FCVAR_REPLICATED, "If neo_round_limit is not 0 and round is past "
-	"neo_round_limit, go into sudden death where match won't end until a team won.", true, 0.0f, true, 1.0f);
+ConVar neo_round_sudden_death("neo_round_sudden_death", "1", FCVAR_REPLICATED,
+	"If neo_round_limit is not 0 and round is past "
+	"neo_round_limit, go into sudden death where match won't end until a team won.",
+	true, 0.0f, true, 1.0f);
 
 // Score Limit
-ConVar sv_neo_tdm_score_limit("sv_neo_tdm_score_limit", "1", FCVAR_REPLICATED, "TDM score limit", true, 0.0f, true, 99.0f);
+ConVar sv_neo_tdm_score_limit(
+	"sv_neo_tdm_score_limit", "1", FCVAR_REPLICATED, "TDM score limit", true, 0.0f, true, 99.0f);
 
-ConVar sv_neo_ctg_score_limit("sv_neo_ctg_score_limit", "7", FCVAR_REPLICATED, "CTG score limit", true, 0.0f, true, 99.0f);
+ConVar sv_neo_ctg_score_limit(
+	"sv_neo_ctg_score_limit", "7", FCVAR_REPLICATED, "CTG score limit", true, 0.0f, true, 99.0f);
 
-ConVar sv_neo_vip_score_limit("sv_neo_vip_score_limit", "7", FCVAR_REPLICATED, "VIP score limit", true, 0.0f, true, 99.0f);
+ConVar sv_neo_vip_score_limit(
+	"sv_neo_vip_score_limit", "7", FCVAR_REPLICATED, "VIP score limit", true, 0.0f, true, 99.0f);
 
 ConVar sv_neo_dm_score_limit("sv_neo_dm_score_limit", "7", FCVAR_REPLICATED, "DM score limit", true, 0.0f, true, 99.0f);
 
-ConVar sv_neo_jgr_score_limit("sv_neo_jgr_score_limit", "0", FCVAR_REPLICATED, "JGR score limit", true, 0.0f, true, 99.0f);
+ConVar sv_neo_jgr_score_limit(
+	"sv_neo_jgr_score_limit", "0", FCVAR_REPLICATED, "JGR score limit", true, 0.0f, true, 99.0f);
 
-ConVar sv_neo_atk_score_limit("sv_neo_atk_score_limit", "7", FCVAR_REPLICATED, "ATK score limit", true, 0.0f, true, 99.0f);
+ConVar sv_neo_atk_score_limit(
+	"sv_neo_atk_score_limit", "7", FCVAR_REPLICATED, "ATK score limit", true, 0.0f, true, 99.0f);
 
 // Round Limit
-ConVar sv_neo_tdm_round_limit("sv_neo_tdm_round_limit", "0", FCVAR_REPLICATED, "TDM max amount of rounds, 0 for no limit.", true, 0.0f, false, 0.0f);
+ConVar sv_neo_tdm_round_limit("sv_neo_tdm_round_limit", "0", FCVAR_REPLICATED,
+	"TDM max amount of rounds, 0 for no limit.", true, 0.0f, false, 0.0f);
 
-ConVar sv_neo_ctg_round_limit("sv_neo_ctg_round_limit", "0", FCVAR_REPLICATED, "CTG max amount of rounds, 0 for no limit.", true, 0.0f, false, 0.0f);
+ConVar sv_neo_ctg_round_limit("sv_neo_ctg_round_limit", "0", FCVAR_REPLICATED,
+	"CTG max amount of rounds, 0 for no limit.", true, 0.0f, false, 0.0f);
 
-ConVar sv_neo_vip_round_limit("sv_neo_vip_round_limit", "0", FCVAR_REPLICATED, "VIP max amount of rounds, 0 for no limit.", true, 0.0f, false, 0.0f);
+ConVar sv_neo_vip_round_limit("sv_neo_vip_round_limit", "0", FCVAR_REPLICATED,
+	"VIP max amount of rounds, 0 for no limit.", true, 0.0f, false, 0.0f);
 
-ConVar sv_neo_dm_round_limit("sv_neo_dm_round_limit", "0", FCVAR_REPLICATED, "DM max amount of rounds, 0 for no limit.", true, 0.0f, false, 0.0f);
+ConVar sv_neo_dm_round_limit("sv_neo_dm_round_limit", "0", FCVAR_REPLICATED, "DM max amount of rounds, 0 for no limit.",
+	true, 0.0f, false, 0.0f);
 
-ConVar sv_neo_jgr_round_limit("sv_neo_jgr_round_limit", "5", FCVAR_REPLICATED, "JGR max amount of rounds, 0 for no limit.", true, 0.0f, false, 0.0f);
+ConVar sv_neo_jgr_round_limit("sv_neo_jgr_round_limit", "5", FCVAR_REPLICATED,
+	"JGR max amount of rounds, 0 for no limit.", true, 0.0f, false, 0.0f);
 
-ConVar sv_neo_atk_round_limit("sv_neo_atk_round_limit", "0", FCVAR_REPLICATED, "ATK max amount of rounds, 0 for no limit.", true, 0.0f, false, 0.0f);
+ConVar sv_neo_atk_round_limit("sv_neo_atk_round_limit", "0", FCVAR_REPLICATED,
+	"ATK max amount of rounds, 0 for no limit.", true, 0.0f, false, 0.0f);
 
 // Round Time Limit (make these sv_neo at some point)
 ConVar neo_tdm_round_timelimit("neo_tdm_round_timelimit", "10.25", FCVAR_REPLICATED, "TDM round timelimit, in minutes.",
 	true, 0.0f, false, 600.0f);
 
-ConVar neo_ctg_round_timelimit("neo_ctg_round_timelimit", "3.25", FCVAR_REPLICATED, "CTG round timelimit, in minutes.",
-	true, 0.0f, false, 600.0f);
+ConVar neo_ctg_round_timelimit(
+	"neo_ctg_round_timelimit", "3.25", FCVAR_REPLICATED, "CTG round timelimit, in minutes.", true, 0.0f, false, 600.0f);
 
-ConVar neo_vip_round_timelimit("neo_vip_round_timelimit", "3.25", FCVAR_REPLICATED, "VIP round timelimit, in minutes.",
-	true, 0.0f, false, 600.0f);
+ConVar neo_vip_round_timelimit(
+	"neo_vip_round_timelimit", "3.25", FCVAR_REPLICATED, "VIP round timelimit, in minutes.", true, 0.0f, false, 600.0f);
 
-ConVar neo_dm_round_timelimit("neo_dm_round_timelimit", "10.25", FCVAR_REPLICATED, "DM round timelimit, in minutes.",
-	true, 0.0f, false, 600.0f);
+ConVar neo_dm_round_timelimit(
+	"neo_dm_round_timelimit", "10.25", FCVAR_REPLICATED, "DM round timelimit, in minutes.", true, 0.0f, false, 600.0f);
 
-ConVar neo_jgr_round_timelimit("neo_jgr_round_timelimit", "4.25", FCVAR_REPLICATED, "JGR round timelimit, in minutes.",
-	true, 0.0f, false, 600.0f);
+ConVar neo_jgr_round_timelimit(
+	"neo_jgr_round_timelimit", "4.25", FCVAR_REPLICATED, "JGR round timelimit, in minutes.", true, 0.0f, false, 600.0f);
 
-ConVar neo_atk_round_timelimit("neo_atk_round_timelimit", "3.25", FCVAR_REPLICATED, "ATK round timelimit, in minutes.",
-	true, 0.0f, false, 600.0f);
+ConVar neo_atk_round_timelimit(
+	"neo_atk_round_timelimit", "3.25", FCVAR_REPLICATED, "ATK round timelimit, in minutes.", true, 0.0f, false, 600.0f);
 
-ConVar sv_neo_ignore_wep_xp_limit("sv_neo_ignore_wep_xp_limit", "0", FCVAR_CHEAT | FCVAR_REPLICATED, "If true, allow equipping any loadout regardless of player XP.",
-	true, 0.0f, true, 1.0f);
+ConVar sv_neo_ignore_wep_xp_limit("sv_neo_ignore_wep_xp_limit", "0", FCVAR_CHEAT | FCVAR_REPLICATED,
+	"If true, allow equipping any loadout regardless of player XP.", true, 0.0f, true, 1.0f);
 
-ConVar sv_neo_dm_win_xp("sv_neo_dm_win_xp", "50", FCVAR_REPLICATED, "The XP limit to win the match.",
-	true, 0.0f, true, 1000.0f);
+ConVar sv_neo_dm_win_xp(
+	"sv_neo_dm_win_xp", "50", FCVAR_REPLICATED, "The XP limit to win the match.", true, 0.0f, true, 1000.0f);
 
-ConVar sv_neo_ctg_ghost_overtime_enabled("sv_neo_ctg_ghost_overtime_enabled", "0", FCVAR_REPLICATED, "Enable ghost overtime.", true, 0, true, 1);
-ConVar sv_neo_ctg_ghost_overtime("sv_neo_ctg_ghost_overtime", "45", FCVAR_REPLICATED, "Adds up to this many seconds to the round while the ghost is held.", true, 0, true, 120);
-ConVar sv_neo_ctg_ghost_overtime_grace("sv_neo_ctg_ghost_overtime_grace", "10", FCVAR_REPLICATED, "Number of seconds left in the round when the ghost is dropped in overtime.", true, 0, true, 30);
-ConVar sv_neo_ctg_ghost_overtime_grace_decay("sv_neo_ctg_ghost_overtime_grace_decay", "0", FCVAR_REPLICATED, "Slowly reduce the grace time as overtime goes on.", true, 0, true, 1);
-ConVar sv_neo_atk_ghost_overtime_enabled("sv_neo_atk_ghost_overtime_enabled", "0", FCVAR_REPLICATED, "Enable ghost overtime in the ATK mode.", true, 0, true, 1);
-ConVar sv_neo_atk_ghost_overtime("sv_neo_atk_ghost_overtime", "45", FCVAR_REPLICATED, "Adds up to this many seconds to the round while the ghost is held.", true, 0, true, 120);
-ConVar sv_neo_atk_ghost_overtime_grace("sv_neo_atk_ghost_overtime_grace", "10", FCVAR_REPLICATED, "Number of seconds left in the round when the ghost is dropped in overtime.", true, 0, true, 30);
-ConVar sv_neo_atk_ghost_overtime_grace_decay("sv_neo_atk_ghost_overtime_grace_decay", "0", FCVAR_REPLICATED, "Slowly reduce the grace time as overtime goes on.", true, 0, true, 1);
+ConVar sv_neo_ctg_ghost_overtime_enabled(
+	"sv_neo_ctg_ghost_overtime_enabled", "0", FCVAR_REPLICATED, "Enable ghost overtime.", true, 0, true, 1);
+ConVar sv_neo_ctg_ghost_overtime("sv_neo_ctg_ghost_overtime", "45", FCVAR_REPLICATED,
+	"Adds up to this many seconds to the round while the ghost is held.", true, 0, true, 120);
+ConVar sv_neo_ctg_ghost_overtime_grace("sv_neo_ctg_ghost_overtime_grace", "10", FCVAR_REPLICATED,
+	"Number of seconds left in the round when the ghost is dropped in overtime.", true, 0, true, 30);
+ConVar sv_neo_ctg_ghost_overtime_grace_decay("sv_neo_ctg_ghost_overtime_grace_decay", "0", FCVAR_REPLICATED,
+	"Slowly reduce the grace time as overtime goes on.", true, 0, true, 1);
+ConVar sv_neo_atk_ghost_overtime_enabled("sv_neo_atk_ghost_overtime_enabled", "0", FCVAR_REPLICATED,
+	"Enable ghost overtime in the ATK mode.", true, 0, true, 1);
+ConVar sv_neo_atk_ghost_overtime("sv_neo_atk_ghost_overtime", "45", FCVAR_REPLICATED,
+	"Adds up to this many seconds to the round while the ghost is held.", true, 0, true, 120);
+ConVar sv_neo_atk_ghost_overtime_grace("sv_neo_atk_ghost_overtime_grace", "10", FCVAR_REPLICATED,
+	"Number of seconds left in the round when the ghost is dropped in overtime.", true, 0, true, 30);
+ConVar sv_neo_atk_ghost_overtime_grace_decay("sv_neo_atk_ghost_overtime_grace_decay", "0", FCVAR_REPLICATED,
+	"Slowly reduce the grace time as overtime goes on.", true, 0, true, 1);
 
 #ifdef CLIENT_DLL
 extern ConVar neo_fov;
@@ -571,62 +645,19 @@ extern ConVar neo_fov;
 
 extern CBaseEntity *g_pLastJinraiSpawn, *g_pLastNSFSpawn;
 
-static const char *s_NeoPreserveEnts[] =
-{
-	"neo_gamerules",
-	"neo_game_config",
-	"info_hint",
-	"info_node_air",
-	"info_node_air_hint",
-	"info_node_climb",
-	"info_player_attacker",
-	"info_player_defender",
-	"info_player_start",
-	"neo_predicted_viewmodel",
-	"neo_predicted_viewmodel_muzzleflash",
-	"neo_ghost_retrieval_point",
-	"neo_ghostspawnpoint",
+static const char *s_NeoPreserveEnts[] = {
+	"neo_gamerules", "neo_game_config", "info_hint", "info_node_air", "info_node_air_hint", "info_node_climb",
+	"info_player_attacker", "info_player_defender", "info_player_start", "neo_predicted_viewmodel",
+	"neo_predicted_viewmodel_muzzleflash", "neo_ghost_retrieval_point", "neo_ghostspawnpoint",
 	"neo_juggernautspawnpoint",
 
 	// HL2MP inherited below
-	"ambient_generic",
-	"ai_network",
-	"ai_hint",
-	"hl2mp_gamerules",
-	"team_manager",
-	"player_manager",
-	"env_soundscape",
-	"env_soundscape_proxy",
-	"env_soundscape_triggerable",
-	"env_sun",
-	"env_wind",
-	"env_fog_controller",
-	"func_brush",
-	"func_wall",
-	"func_buyzone",
-	"func_illusionary",
-	"infodecal",
-	"info_projecteddecal",
-	"info_node",
-	"info_target",
-	"info_node_hint",
-	"info_player_deathmatch",
-	"info_player_combine",
-	"info_player_rebel",
-	"info_map_parameters",
-	"keyframe_rope",
-	"move_rope",
-	"info_ladder",
-	"player",
-	"point_viewcontrol",
-	"scene_manager",
-	"shadow_control",
-	"sky_camera",
-	"soundent",
-	"trigger_soundscape",
-	"viewmodel",
-	"predicted_viewmodel",
-	"worldspawn",
+	"ambient_generic", "ai_network", "ai_hint", "hl2mp_gamerules", "team_manager", "player_manager", "env_soundscape",
+	"env_soundscape_proxy", "env_soundscape_triggerable", "env_sun", "env_wind", "env_fog_controller", "func_brush",
+	"func_wall", "func_buyzone", "func_illusionary", "infodecal", "info_projecteddecal", "info_node", "info_target",
+	"info_node_hint", "info_player_deathmatch", "info_player_combine", "info_player_rebel", "info_map_parameters",
+	"keyframe_rope", "move_rope", "info_ladder", "player", "point_viewcontrol", "scene_manager", "shadow_control",
+	"sky_camera", "soundent", "trigger_soundscape", "viewmodel", "predicted_viewmodel", "worldspawn",
 	"point_devshot_camera",
 	"", // END Marker
 };
@@ -636,7 +667,7 @@ static const char *s_NeoPreserveEnts[] =
 // https://wiki.alliedmods.net/Neotokyo_Events
 static inline void FireLegacyEvent_NeoRoundStart()
 {
-#if(0) // NEO TODO (Rain): unimplemented
+#if (0) // NEO TODO (Rain): unimplemented
 	IGameEvent *neoLegacy = gameeventmanager->CreateEvent("game_round_start");
 	if (neoLegacy)
 	{
@@ -654,7 +685,7 @@ static inline void FireLegacyEvent_NeoRoundStart()
 // https://wiki.alliedmods.net/Neotokyo_Events
 static inline void FireLegacyEvent_NeoRoundEnd()
 {
-#if(0) // NEO TODO (Rain): unimplemented
+#if (0) // NEO TODO (Rain): unimplemented
 	IGameEvent *neoLegacy = gameeventmanager->CreateEvent("game_round_end");
 	if (neoLegacy)
 	{
@@ -668,9 +699,9 @@ static inline void FireLegacyEvent_NeoRoundEnd()
 }
 
 #ifdef GAME_DLL
-static void CvarChanged_WeaponStay(IConVar* convar, const char* pOldVal, float flOldVal)
+static void CvarChanged_WeaponStay(IConVar *convar, const char *pOldVal, float flOldVal)
 {
-	auto wep = gEntList.NextEntByClass((CNEOBaseCombatWeapon*)NULL);
+	auto wep = gEntList.NextEntByClass((CNEOBaseCombatWeapon *)NULL);
 	while (wep)
 	{
 		// Don't schedule removal for guns currently held by someone
@@ -684,7 +715,7 @@ static void CvarChanged_WeaponStay(IConVar* convar, const char* pOldVal, float f
 
 static CNEOGameConfig *GetActiveGameConfig()
 {
-	return static_cast<CNEOGameConfig*>(gEntList.FindEntityByClassname(nullptr, "neo_game_config"));
+	return static_cast<CNEOGameConfig *>(gEntList.FindEntityByClassname(nullptr, "neo_game_config"));
 }
 #endif
 
@@ -695,11 +726,9 @@ CNEORules::CNEORules()
 	m_ghostSpawns.EnsureCapacity(10);
 	m_jgrSpawns.EnsureCapacity(10);
 
-	Q_strncpy(g_Teams[TEAM_JINRAI]->m_szTeamname.GetForModify(),
-		TEAM_STR_JINRAI, MAX_TEAM_NAME_LENGTH);
+	Q_strncpy(g_Teams[TEAM_JINRAI]->m_szTeamname.GetForModify(), TEAM_STR_JINRAI, MAX_TEAM_NAME_LENGTH);
 
-	Q_strncpy(g_Teams[TEAM_NSF]->m_szTeamname.GetForModify(),
-		TEAM_STR_NSF, MAX_TEAM_NAME_LENGTH);
+	Q_strncpy(g_Teams[TEAM_NSF]->m_szTeamname.GetForModify(), TEAM_STR_NSF, MAX_TEAM_NAME_LENGTH);
 
 	for (int i = 1; i <= gpGlobals->maxClients; i++)
 	{
@@ -754,9 +783,9 @@ void CNEORules::Precache()
 }
 #endif // GAME_DLL
 
-ConVar	sk_max_neo_ammo("sk_max_neo_ammo", "10000", FCVAR_REPLICATED);
-ConVar	sk_plr_dmg_neo("sk_plr_dmg_neo", "0", FCVAR_REPLICATED);
-ConVar	sk_npc_dmg_neo("sk_npc_dmg_neo", "0", FCVAR_REPLICATED);
+ConVar sk_max_neo_ammo("sk_max_neo_ammo", "10000", FCVAR_REPLICATED);
+ConVar sk_plr_dmg_neo("sk_plr_dmg_neo", "0", FCVAR_REPLICATED);
+ConVar sk_npc_dmg_neo("sk_npc_dmg_neo", "0", FCVAR_REPLICATED);
 
 // This is the HL2MP gamerules GetAmmoDef() global scope function copied over,
 // because we want to implement it ourselves. This can be refactored out if/when
@@ -770,17 +799,28 @@ CAmmoDef *GetAmmoDef_HL2MP()
 	{
 		bInitted = true;
 
-		def.AddAmmoType("AR2", DMG_BULLET, TRACER_LINE_AND_WHIZ, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(), sk_max_neo_ammo.GetName(), BULLET_IMPULSE(200, 1225), 0);
-		def.AddAmmoType("AR2AltFire", DMG_DISSOLVE, TRACER_NONE, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(), sk_max_neo_ammo.GetName(), 0, 0);
-		def.AddAmmoType("Pistol", DMG_BULLET, TRACER_LINE_AND_WHIZ, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(), sk_max_neo_ammo.GetName(), BULLET_IMPULSE(200, 1225), 0);
-		def.AddAmmoType("SMG1", DMG_BULLET, TRACER_LINE_AND_WHIZ, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(), sk_max_neo_ammo.GetName(), BULLET_IMPULSE(200, 1225), 0);
-		def.AddAmmoType("357", DMG_BULLET, TRACER_LINE_AND_WHIZ, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(), sk_max_neo_ammo.GetName(), BULLET_IMPULSE(800, 5000), 0);
-		def.AddAmmoType("XBowBolt", DMG_BULLET, TRACER_LINE, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(), sk_max_neo_ammo.GetName(), BULLET_IMPULSE(800, 8000), 0);
-		def.AddAmmoType("Buckshot", DMG_BULLET | DMG_BUCKSHOT, TRACER_LINE, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(), sk_max_neo_ammo.GetName(), BULLET_IMPULSE(400, 1200), 0);
-		def.AddAmmoType("RPG_Round", DMG_BURN, TRACER_NONE, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(), sk_max_neo_ammo.GetName(), 0, 0);
-		def.AddAmmoType("SMG1_Grenade", DMG_BURN, TRACER_NONE, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(), sk_max_neo_ammo.GetName(), 0, 0);
-		def.AddAmmoType("Grenade", DMG_BURN, TRACER_NONE, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(), sk_max_neo_ammo.GetName(), 0, 0);
-		def.AddAmmoType("slam", DMG_BURN, TRACER_NONE, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(), sk_max_neo_ammo.GetName(), 0, 0);
+		def.AddAmmoType("AR2", DMG_BULLET, TRACER_LINE_AND_WHIZ, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(),
+			sk_max_neo_ammo.GetName(), BULLET_IMPULSE(200, 1225), 0);
+		def.AddAmmoType("AR2AltFire", DMG_DISSOLVE, TRACER_NONE, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(),
+			sk_max_neo_ammo.GetName(), 0, 0);
+		def.AddAmmoType("Pistol", DMG_BULLET, TRACER_LINE_AND_WHIZ, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(),
+			sk_max_neo_ammo.GetName(), BULLET_IMPULSE(200, 1225), 0);
+		def.AddAmmoType("SMG1", DMG_BULLET, TRACER_LINE_AND_WHIZ, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(),
+			sk_max_neo_ammo.GetName(), BULLET_IMPULSE(200, 1225), 0);
+		def.AddAmmoType("357", DMG_BULLET, TRACER_LINE_AND_WHIZ, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(),
+			sk_max_neo_ammo.GetName(), BULLET_IMPULSE(800, 5000), 0);
+		def.AddAmmoType("XBowBolt", DMG_BULLET, TRACER_LINE, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(),
+			sk_max_neo_ammo.GetName(), BULLET_IMPULSE(800, 8000), 0);
+		def.AddAmmoType("Buckshot", DMG_BULLET | DMG_BUCKSHOT, TRACER_LINE, sk_plr_dmg_neo.GetName(),
+			sk_npc_dmg_neo.GetName(), sk_max_neo_ammo.GetName(), BULLET_IMPULSE(400, 1200), 0);
+		def.AddAmmoType("RPG_Round", DMG_BURN, TRACER_NONE, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(),
+			sk_max_neo_ammo.GetName(), 0, 0);
+		def.AddAmmoType("SMG1_Grenade", DMG_BURN, TRACER_NONE, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(),
+			sk_max_neo_ammo.GetName(), 0, 0);
+		def.AddAmmoType("Grenade", DMG_BURN, TRACER_NONE, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(),
+			sk_max_neo_ammo.GetName(), 0, 0);
+		def.AddAmmoType("slam", DMG_BURN, TRACER_NONE, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(),
+			sk_max_neo_ammo.GetName(), 0, 0);
 	}
 
 	return &def;
@@ -788,29 +828,45 @@ CAmmoDef *GetAmmoDef_HL2MP()
 
 // This set of macros initializes a static CAmmoDef, and asserts its size stays within range. See usage in the GetAmmoDef() below.
 #ifndef DEBUG
-#define NEO_AMMO_DEF_START() static CAmmoDef *def; static bool bInitted = false; if (!bInitted) \
-{ \
-	bInitted = true; \
-	def = GetAmmoDef_HL2MP()
+#define NEO_AMMO_DEF_START() \
+	static CAmmoDef *def; \
+	static bool bInitted = false; \
+	if (!bInitted) \
+	{ \
+		bInitted = true; \
+		def = GetAmmoDef_HL2MP()
 #else
-#define NEO_AMMO_DEF_START() static CAmmoDef *def; static bool bInitted = false; if (!bInitted) \
-{ \
-	bInitted = true; \
-	def = GetAmmoDef_HL2MP(); \
-	size_t numAmmos = def->m_nAmmoIndex;\
-	Assert(numAmmos <= MAX_AMMO_TYPES)
+#define NEO_AMMO_DEF_START() \
+	static CAmmoDef *def; \
+	static bool bInitted = false; \
+	if (!bInitted) \
+	{ \
+		bInitted = true; \
+		def = GetAmmoDef_HL2MP(); \
+		size_t numAmmos = def->m_nAmmoIndex; \
+		Assert(numAmmos <= MAX_AMMO_TYPES)
 #endif
 
 #ifndef DEBUG
-#define ADD_NEO_AMMO_TYPE(TypeName, DmgFlags, TracerEnum, PhysForceImpulse) def->AddAmmoType(#TypeName, DmgFlags, TracerEnum, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(), sk_max_neo_ammo.GetName(), PhysForceImpulse, 0)
+#define ADD_NEO_AMMO_TYPE(TypeName, DmgFlags, TracerEnum, PhysForceImpulse) \
+	def->AddAmmoType(#TypeName, DmgFlags, TracerEnum, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(), \
+		sk_max_neo_ammo.GetName(), PhysForceImpulse, 0)
 #else
-#define ADD_NEO_AMMO_TYPE(TypeName, DmgFlags, TracerEnum, PhysForceImpulse) def->AddAmmoType(#TypeName, DmgFlags, TracerEnum, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(), sk_max_neo_ammo.GetName(), PhysForceImpulse, 0);++numAmmos
+#define ADD_NEO_AMMO_TYPE(TypeName, DmgFlags, TracerEnum, PhysForceImpulse) \
+	def->AddAmmoType(#TypeName, DmgFlags, TracerEnum, sk_plr_dmg_neo.GetName(), sk_npc_dmg_neo.GetName(), \
+		sk_max_neo_ammo.GetName(), PhysForceImpulse, 0); \
+	++numAmmos
 #endif
 
 #ifndef DEBUG
-#define NEO_AMMO_DEF_END(); }
+#define NEO_AMMO_DEF_END() \
+	; \
+	}
 #else
-#define NEO_AMMO_DEF_END(); Assert(numAmmos <= MAX_AMMO_TYPES); }
+#define NEO_AMMO_DEF_END() \
+	; \
+	Assert(numAmmos <= MAX_AMMO_TYPES); \
+	}
 #endif
 
 #define NEO_AMMO_DEF_RETURNVAL() def
@@ -818,24 +874,24 @@ CAmmoDef *GetAmmoDef_HL2MP()
 CAmmoDef *GetAmmoDef()
 {
 	NEO_AMMO_DEF_START();
-        // NEO TODO (brekiy/Rain): add specific ammo types
-		ADD_NEO_AMMO_TYPE(AMMO_10G_SHELL, DMG_BULLET | DMG_BUCKSHOT, TRACER_NONE, BULLET_IMPULSE(400, 1200));
-		ADD_NEO_AMMO_TYPE(AMMO_10G_SLUG, DMG_BULLET, TRACER_NONE, BULLET_IMPULSE(400, 1500));
-		ADD_NEO_AMMO_TYPE(AMMO_GRENADE, DMG_BLAST, TRACER_NONE, 0);
-		ADD_NEO_AMMO_TYPE(AMMO_SMOKEGRENADE, DMG_BLAST, TRACER_NONE, 0);
-		ADD_NEO_AMMO_TYPE(AMMO_DETPACK, DMG_BLAST, TRACER_NONE, 0);
-		ADD_NEO_AMMO_TYPE(AMMO_PRI, DMG_BULLET, TRACER_LINE_AND_WHIZ, BULLET_IMPULSE(400, 1200));
-		ADD_NEO_AMMO_TYPE(AMMO_PZ, DMG_BULLET, TRACER_LINE_AND_WHIZ, BULLET_IMPULSE(400, 1200));
-		ADD_NEO_AMMO_TYPE(AMMO_SNIPER, DMG_BULLET, TRACER_LINE_AND_WHIZ, BULLET_IMPULSE(400, 1200));
-		ADD_NEO_AMMO_TYPE(AMMO_SMAC, DMG_BULLET, TRACER_LINE_AND_WHIZ, BULLET_IMPULSE(400, 1200));
+	// NEO TODO (brekiy/Rain): add specific ammo types
+	ADD_NEO_AMMO_TYPE(AMMO_10G_SHELL, DMG_BULLET | DMG_BUCKSHOT, TRACER_NONE, BULLET_IMPULSE(400, 1200));
+	ADD_NEO_AMMO_TYPE(AMMO_10G_SLUG, DMG_BULLET, TRACER_NONE, BULLET_IMPULSE(400, 1500));
+	ADD_NEO_AMMO_TYPE(AMMO_GRENADE, DMG_BLAST, TRACER_NONE, 0);
+	ADD_NEO_AMMO_TYPE(AMMO_SMOKEGRENADE, DMG_BLAST, TRACER_NONE, 0);
+	ADD_NEO_AMMO_TYPE(AMMO_DETPACK, DMG_BLAST, TRACER_NONE, 0);
+	ADD_NEO_AMMO_TYPE(AMMO_PRI, DMG_BULLET, TRACER_LINE_AND_WHIZ, BULLET_IMPULSE(400, 1200));
+	ADD_NEO_AMMO_TYPE(AMMO_PZ, DMG_BULLET, TRACER_LINE_AND_WHIZ, BULLET_IMPULSE(400, 1200));
+	ADD_NEO_AMMO_TYPE(AMMO_SNIPER, DMG_BULLET, TRACER_LINE_AND_WHIZ, BULLET_IMPULSE(400, 1200));
+	ADD_NEO_AMMO_TYPE(AMMO_SMAC, DMG_BULLET, TRACER_LINE_AND_WHIZ, BULLET_IMPULSE(400, 1200));
 	NEO_AMMO_DEF_END();
 
 	return NEO_AMMO_DEF_RETURNVAL();
 }
 
-void CNEORules::ClientSpawned(edict_t* pPlayer)
+void CNEORules::ClientSpawned(edict_t *pPlayer)
 {
-#if(0)
+#if (0)
 #ifdef CLIENT_DLL
 	C_NEO_Player *player = C_NEO_Player::GetLocalNEOPlayer();
 	if (player)
@@ -878,7 +934,7 @@ bool CNEORules::ShouldCollide(int collisionGroup0, int collisionGroup1)
 
 	if ((collisionGroup0 == COLLISION_GROUP_PLAYER || collisionGroup0 == COLLISION_GROUP_PLAYER_MOVEMENT) &&
 		(collisionGroup1 == COLLISION_GROUP_PROJECTILE || collisionGroup1 == COLLISION_GROUP_WEAPON ||
-		 collisionGroup1 == COLLISION_GROUP_PLAYER || collisionGroup1 == COLLISION_GROUP_PLAYER_MOVEMENT))
+			collisionGroup1 == COLLISION_GROUP_PLAYER || collisionGroup1 == COLLISION_GROUP_PLAYER_MOVEMENT))
 	{
 		return false;
 	}
@@ -975,10 +1031,9 @@ bool CNEORules::CheckGameOver(void)
 
 void CNEORules::GetDMHighestScorers(
 #ifdef GAME_DLL
-		CNEO_Player *(*pHighestPlayers)[MAX_PLAYERS + 1],
+	CNEO_Player *(*pHighestPlayers)[MAX_PLAYERS + 1],
 #endif
-		int *iHighestPlayersTotal,
-		int *iHighestXP) const
+	int *iHighestPlayersTotal, int *iHighestXP) const
 {
 	*iHighestPlayersTotal = 0;
 	*iHighestXP = 0;
@@ -1049,7 +1104,7 @@ void CNEORules::CheckGameType()
 	const int iGamemodeRandAllow = sv_neo_gamemode_random_allow.GetInt();
 	// Update on what to select on first map load or server operator changes sv_neo_gamemode_enforcement
 	const bool bCheckOnGameType = (!m_bGamemodeTypeBeenInitialized || iGamemodeEnforce != iStaticInitOnCmd ||
-			iGamemodeRandAllow != iStaticInitOnRandAllow);
+		iGamemodeRandAllow != iStaticInitOnRandAllow);
 	if (!bCheckOnGameType)
 	{
 		return;
@@ -1062,7 +1117,8 @@ void CNEORules::CheckGameType()
 	case GAMEMODE_ENFORCEMENT_SINGLE:
 	{
 		m_nGameTypeSelected = sv_neo_gamemode_single.GetInt();
-	} break;
+	}
+	break;
 	case GAMEMODE_ENFORCEMENT_RAND:
 	{
 		const int iBWAllow = sv_neo_gamemode_random_allow.GetInt(); // Min of 1, cannot be zero
@@ -1096,10 +1152,9 @@ void CNEORules::CheckGameType()
 		}
 
 		m_nGameTypeSelected = RandomInt(0, NEO_GAME_TYPE__TOTAL - 1);
-		for (int iWalk = 0;
-			 (!staticGamemodesCanPick[m_nGameTypeSelected] || m_nGameTypeSelected == iStaticLastPick) &&
-			 iWalk < NEO_GAME_TYPE__TOTAL;
-			 ++iWalk)
+		for (int iWalk = 0; (!staticGamemodesCanPick[m_nGameTypeSelected] || m_nGameTypeSelected == iStaticLastPick) &&
+			iWalk < NEO_GAME_TYPE__TOTAL;
+			++iWalk)
 		{
 			m_nGameTypeSelected = LoopAroundInArray(m_nGameTypeSelected + 1, NEO_GAME_TYPE__TOTAL);
 		}
@@ -1107,19 +1162,22 @@ void CNEORules::CheckGameType()
 #ifdef DEBUG
 		for (int i = 0; i < NEO_GAME_TYPE__TOTAL; ++i)
 		{
-			DevMsg("%d | %s: %s\n", i, NEO_GAME_TYPE_DESC_STRS[i].szStr, staticGamemodesCanPick[i] ? "Allowed" : "Not allowed");
+			DevMsg("%d | %s: %s\n", i, NEO_GAME_TYPE_DESC_STRS[i].szStr,
+				staticGamemodesCanPick[i] ? "Allowed" : "Not allowed");
 		}
 		DevMsg("Pick: %d | Prev: %d\n", m_nGameTypeSelected.Get(), iStaticLastPick);
 #endif
 
 		staticGamemodesCanPick[m_nGameTypeSelected] = false;
 		iStaticLastPick = m_nGameTypeSelected;
-	} break;
+	}
+	break;
 	default:
 	{
 		const auto pEntGameCfg = GetActiveGameConfig();
 		m_nGameTypeSelected = (pEntGameCfg) ? pEntGameCfg->m_GameType : NEO_GAME_TYPE_EMT;
-	} break;
+	}
+	break;
 	}
 	m_bGamemodeTypeBeenInitialized = true;
 	iStaticInitOnCmd = iGamemodeEnforce;
@@ -1146,7 +1204,7 @@ bool CNEORules::CheckShouldNotThink()
 {
 #ifdef GAME_DLL
 	if (gpGlobals->eLoadType == MapLoad_Background || !NEO_GAME_TYPE_SETTINGS[m_nGameTypeSelected].neoRulesThink)
-#else // CLIENT_DLL
+#else  // CLIENT_DLL
 	if (engine->IsLevelMainMenuBackground() || !NEO_GAME_TYPE_SETTINGS[m_nGameTypeSelected].neoRulesThink)
 #endif // GAME_DLL || CLIENT_DLL
 	{
@@ -1167,22 +1225,22 @@ void CNEORules::Think(void)
 			auto pEnt = gEntList.FirstEnt();
 			while (pEnt)
 			{
-				if (dynamic_cast<CWeaponGhost*>(pEnt))
+				if (dynamic_cast<CWeaponGhost *>(pEnt))
 				{
-					m_pGhost = static_cast<CWeaponGhost*>(pEnt);
+					m_pGhost = static_cast<CWeaponGhost *>(pEnt);
 					m_hGhost = m_pGhost;
 					return;
 				}
 				pEnt = gEntList.NextEnt(pEnt);
 			}
 		}
-		if (m_pGhost) m_pGhost->UpdateNearestGhostBeaconDist();
+		if (m_pGhost)
+			m_pGhost->UpdateNearestGhostBeaconDist();
 		return;
 	}
 
-	const bool bIsIdleState = m_nRoundStatus == NeoRoundStatus::Idle
-			|| m_nRoundStatus == NeoRoundStatus::Warmup
-			|| m_nRoundStatus == NeoRoundStatus::Countdown;
+	const bool bIsIdleState = m_nRoundStatus == NeoRoundStatus::Idle || m_nRoundStatus == NeoRoundStatus::Warmup ||
+		m_nRoundStatus == NeoRoundStatus::Countdown;
 	bool bIsPause = m_nRoundStatus == NeoRoundStatus::Pause;
 	if (bIsIdleState && gpGlobals->curtime > m_flNeoNextRoundStartTime)
 	{
@@ -1192,7 +1250,7 @@ void CNEORules::Think(void)
 
 	// Make the pause instant if we're still in freeze time
 	if (m_nRoundStatus == NeoRoundStatus::PreRoundFreeze && m_flPauseDur > 0.0f &&
-			m_iRoundNumber == (m_iPausingRound - 1))
+		m_iRoundNumber == (m_iPausingRound - 1))
 	{
 		SetRoundStatus(NeoRoundStatus::Pause);
 		bIsPause = true;
@@ -1228,7 +1286,8 @@ void CNEORules::Think(void)
 	}
 
 	// Allow respawn if it's an idle, warmup round, pausing, or deathmatch-type gamemode
-	const bool bIsDMType = (m_nGameTypeSelected == NEO_GAME_TYPE_DM || m_nGameTypeSelected == NEO_GAME_TYPE_TDM || m_nGameTypeSelected == NEO_GAME_TYPE_JGR);
+	const bool bIsDMType = (m_nGameTypeSelected == NEO_GAME_TYPE_DM || m_nGameTypeSelected == NEO_GAME_TYPE_TDM ||
+		m_nGameTypeSelected == NEO_GAME_TYPE_JGR);
 	if (bIsDMType || bIsIdleState || bIsPause)
 	{
 		CRecipientFilter filter;
@@ -1276,15 +1335,14 @@ void CNEORules::Think(void)
 		char szTeamClantags[TEAM__TOTAL][NEO_MAX_CLANTAG_LENGTH] = {};
 		for (int i = 1; i <= gpGlobals->maxClients; ++i)
 		{
-			auto pNeoPlayer = static_cast<CNEO_Player*>(UTIL_PlayerByIndex(i));
+			auto pNeoPlayer = static_cast<CNEO_Player *>(UTIL_PlayerByIndex(i));
 			if (pNeoPlayer)
 			{
 				const int iTeam = pNeoPlayer->GetTeamNumber();
 				if (!bClantagSet[iTeam])
 				{
 					bClantagSet[iTeam] = true;
-					V_strcpy_safe(szTeamClantags[iTeam], pNeoPlayer->GetNeoClantag()),
-					++iHasClantags[iTeam];
+					V_strcpy_safe(szTeamClantags[iTeam], pNeoPlayer->GetNeoClantag()), ++iHasClantags[iTeam];
 				}
 				else
 				{
@@ -1298,8 +1356,8 @@ void CNEORules::Think(void)
 		pszClantagMod[TEAM_NSF] = m_szNeoNSFClantag.GetForModify();
 		for (const int i : {TEAM_JINRAI, TEAM_NSF})
 		{
-			V_strncpy(pszClantagMod[i], (iHasClantags[i] == GetGlobalTeam(i)->GetNumPlayers()) ?
-						  szTeamClantags[i] : "", NEO_MAX_CLANTAG_LENGTH);
+			V_strncpy(pszClantagMod[i], (iHasClantags[i] == GetGlobalTeam(i)->GetNumPlayers()) ? szTeamClantags[i] : "",
+				NEO_MAX_CLANTAG_LENGTH);
 		}
 	}
 
@@ -1310,7 +1368,7 @@ void CNEORules::Think(void)
 
 	CheckOvertime();
 
-	if (g_fGameOver)   // someone else quit the game already
+	if (g_fGameOver) // someone else quit the game already
 	{
 		// check to see if we should change levels now
 		if (m_flIntermissionEndTime < gpGlobals->curtime)
@@ -1329,12 +1387,11 @@ void CNEORules::Think(void)
 	BaseClass::Think();
 
 #ifdef GAME_DLL
-	if (MirrorDamageMultiplier() > 0.0f &&
-			gpGlobals->curtime > (m_flPrevThinkMirrorDmg + 0.25f))
+	if (MirrorDamageMultiplier() > 0.0f && gpGlobals->curtime > (m_flPrevThinkMirrorDmg + 0.25f))
 	{
 		for (int i = 1; i <= gpGlobals->maxClients; ++i)
 		{
-			auto player = static_cast<CNEO_Player*>(UTIL_PlayerByIndex(i));
+			auto player = static_cast<CNEO_Player *>(UTIL_PlayerByIndex(i));
 			if (player && player->IsAlive() && player->m_bKilledInflicted && player->m_iHealth <= 0)
 			{
 				player->CommitSuicide(false, true);
@@ -1344,8 +1401,7 @@ void CNEORules::Think(void)
 		m_flPrevThinkMirrorDmg = gpGlobals->curtime;
 	}
 
-	if (sv_neo_teamdamage_kick.GetBool() && IsRoundLive() &&
-			gpGlobals->curtime > (m_flPrevThinkKick + 0.5f))
+	if (sv_neo_teamdamage_kick.GetBool() && IsRoundLive() && gpGlobals->curtime > (m_flPrevThinkKick + 0.5f))
 	{
 		const int iThresKickHp = sv_neo_teamdamage_kick_hp.GetInt();
 		const int iThresKickKills = sv_neo_teamdamage_kick_kills.GetInt();
@@ -1355,10 +1411,10 @@ void CNEORules::Think(void)
 		int userIDsToKickSize = 0;
 		for (int i = 1; i <= gpGlobals->maxClients; ++i)
 		{
-			auto player = static_cast<CNEO_Player*>(UTIL_PlayerByIndex(i));
-			if (player && (player->m_iTeamDamageInflicted >= iThresKickHp ||
-						   player->m_iTeamKillsInflicted >= iThresKickKills) &&
-					!player->m_bIsPendingTKKick)
+			auto player = static_cast<CNEO_Player *>(UTIL_PlayerByIndex(i));
+			if (player &&
+				(player->m_iTeamDamageInflicted >= iThresKickHp || player->m_iTeamKillsInflicted >= iThresKickKills) &&
+				!player->m_bIsPendingTKKick)
 			{
 				userIDsToKick[userIDsToKickSize++] = player->GetUserID();
 				player->m_bIsPendingTKKick = true;
@@ -1367,8 +1423,8 @@ void CNEORules::Think(void)
 
 		for (int i = 0; i < userIDsToKickSize; ++i)
 		{
-			engine->ServerCommand(UTIL_VarArgs("kickid %d \"%s\"\n", userIDsToKick[i],
-											   "Too much friendly-fire damage inflicted."));
+			engine->ServerCommand(
+				UTIL_VarArgs("kickid %d \"%s\"\n", userIDsToKick[i], "Too much friendly-fire damage inflicted."));
 		}
 
 		m_flPrevThinkKick = gpGlobals->curtime;
@@ -1446,9 +1502,11 @@ void CNEORules::Think(void)
 		if (m_pGhost->GetAbsOrigin().IsValid())
 		{
 			// Someone's carrying it
-			m_vecGhostMarkerPos = (nextGhosterTeam == TEAM_JINRAI || nextGhosterTeam == TEAM_NSF) ?
-			// NEO NOTE (Adam) GetGhostMarkerPos() can return m_vecGhostMarkerPos if m_pGhost is invalid, but we've checked for m_pGhost above so should be fine?
-						GetGhostMarkerPos() : m_pGhost->GetAbsOrigin();
+			m_vecGhostMarkerPos = (nextGhosterTeam == TEAM_JINRAI || nextGhosterTeam == TEAM_NSF)
+				?
+				// NEO NOTE (Adam) GetGhostMarkerPos() can return m_vecGhostMarkerPos if m_pGhost is invalid, but we've checked for m_pGhost above so should be fine?
+				GetGhostMarkerPos()
+				: m_pGhost->GetAbsOrigin();
 		}
 		else
 		{
@@ -1459,7 +1517,7 @@ void CNEORules::Think(void)
 		int captorTeam, captorClient;
 		for (int i = 0; i < m_pGhostCaps.Count(); i++)
 		{
-			auto pGhostCap = dynamic_cast<CNEOGhostCapturePoint*>(UTIL_EntityByIndex(m_pGhostCaps[i]));
+			auto pGhostCap = dynamic_cast<CNEOGhostCapturePoint *>(UTIL_EntityByIndex(m_pGhostCaps[i]));
 			if (!pGhostCap)
 			{
 				Assert(false);
@@ -1472,7 +1530,7 @@ void CNEORules::Think(void)
 				// Turn off all capzones
 				for (int i = 0; i < m_pGhostCaps.Count(); i++)
 				{
-					auto pGhostCap = dynamic_cast<CNEOGhostCapturePoint*>(UTIL_EntityByIndex(m_pGhostCaps[i]));
+					auto pGhostCap = dynamic_cast<CNEOGhostCapturePoint *>(UTIL_EntityByIndex(m_pGhostCaps[i]));
 					if (!pGhostCap)
 					{
 						Assert(false);
@@ -1481,10 +1539,10 @@ void CNEORules::Think(void)
 					pGhostCap->SetActive(false);
 				}
 
-				IGameEvent* event = gameeventmanager->CreateEvent("ghost_capture");
+				IGameEvent *event = gameeventmanager->CreateEvent("ghost_capture");
 				if (event)
 				{
-					CBasePlayer* pCaptorClient = UTIL_PlayerByIndex(captorClient);
+					CBasePlayer *pCaptorClient = UTIL_PlayerByIndex(captorClient);
 					event->SetInt("userid", pCaptorClient ? pCaptorClient->GetUserID() : INVALID_USER_ID);
 					gameeventmanager->FireEvent(event);
 				}
@@ -1498,7 +1556,9 @@ void CNEORules::Think(void)
 	}
 	else if (m_pJuggernautItem)
 	{
-		if (IsRoundLive() && (gpGlobals->curtime > (m_flNeoRoundStartTime + sv_neo_preround_freeze_time.GetFloat()) + 20.0f) && IsJuggernautLocked())
+		if (IsRoundLive() &&
+			(gpGlobals->curtime > (m_flNeoRoundStartTime + sv_neo_preround_freeze_time.GetFloat()) + 20.0f) &&
+			IsJuggernautLocked())
 		{
 			UTIL_CenterPrintAll("- JUGGERNAUT ENABLED -\n");
 
@@ -1546,7 +1606,7 @@ void CNEORules::Think(void)
 				// Assume vip player disconnected, forfeit round
 				SetWinningTeam(GetOpposingTeam(m_iEscortingTeam), NEO_VICTORY_FORFEIT, false, true, false, false);
 			}
-			IGameEvent* event = gameeventmanager->CreateEvent("vip_death");
+			IGameEvent *event = gameeventmanager->CreateEvent("vip_death");
 			if (event)
 			{
 				gameeventmanager->FireEvent(event);
@@ -1562,9 +1622,10 @@ void CNEORules::Think(void)
 			else
 			{
 				// VIP was killed, end round
-				SetWinningTeam(GetOpposingTeam(m_iEscortingTeam), NEO_VICTORY_VIP_ELIMINATION, false, true, false, false);
+				SetWinningTeam(
+					GetOpposingTeam(m_iEscortingTeam), NEO_VICTORY_VIP_ELIMINATION, false, true, false, false);
 			}
-			IGameEvent* event = gameeventmanager->CreateEvent("vip_death");
+			IGameEvent *event = gameeventmanager->CreateEvent("vip_death");
 			if (event)
 			{
 				event->SetInt("userid", m_pVIP->GetUserID());
@@ -1576,7 +1637,7 @@ void CNEORules::Think(void)
 		int captorTeam, captorClient;
 		for (int i = 0; i < m_pGhostCaps.Count(); i++)
 		{
-			auto pGhostCap = dynamic_cast<CNEOGhostCapturePoint*>(UTIL_EntityByIndex(m_pGhostCaps[i]));
+			auto pGhostCap = dynamic_cast<CNEOGhostCapturePoint *>(UTIL_EntityByIndex(m_pGhostCaps[i]));
 			if (!pGhostCap)
 			{
 				Assert(false);
@@ -1589,7 +1650,7 @@ void CNEORules::Think(void)
 				// Turn off all capzones
 				for (int i = 0; i < m_pGhostCaps.Count(); i++)
 				{
-					auto pGhostCap = dynamic_cast<CNEOGhostCapturePoint*>(UTIL_EntityByIndex(m_pGhostCaps[i]));
+					auto pGhostCap = dynamic_cast<CNEOGhostCapturePoint *>(UTIL_EntityByIndex(m_pGhostCaps[i]));
 					if (!pGhostCap)
 					{
 						Assert(false);
@@ -1601,10 +1662,10 @@ void CNEORules::Think(void)
 				// And then announce team victory
 				SetWinningTeam(captorTeam, NEO_VICTORY_VIP_ESCORT, false, true, false, false);
 
-				IGameEvent* event = gameeventmanager->CreateEvent("vip_extract");
+				IGameEvent *event = gameeventmanager->CreateEvent("vip_extract");
 				if (event)
 				{
-					CBasePlayer* pCaptorClient = UTIL_PlayerByIndex(captorClient);
+					CBasePlayer *pCaptorClient = UTIL_PlayerByIndex(captorClient);
 					event->SetInt("userid", pCaptorClient ? pCaptorClient->GetUserID() : INVALID_USER_ID);
 					gameeventmanager->FireEvent(event);
 				}
@@ -1631,15 +1692,18 @@ void CNEORules::Think(void)
 	else if (IsRoundLive())
 	{
 		COMPILE_TIME_ASSERT(TEAM_JINRAI == 2 && TEAM_NSF == 3);
-		if (GetGameType() != NEO_GAME_TYPE_TDM && GetGameType() != NEO_GAME_TYPE_DM && GetGameType() != NEO_GAME_TYPE_JGR)
+		if (GetGameType() != NEO_GAME_TYPE_TDM && GetGameType() != NEO_GAME_TYPE_DM &&
+			GetGameType() != NEO_GAME_TYPE_JGR)
 		{
 			auto jinraiAlive = GetGlobalTeam(TEAM_JINRAI)->GetAliveMembers();
 			auto nsfAlive = GetGlobalTeam(TEAM_NSF)->GetAliveMembers();
 
-			if (jinraiAlive == 0 && nsfAlive == 0) {
+			if (jinraiAlive == 0 && nsfAlive == 0)
+			{
 				SetWinningTeam(TEAM_SPECTATOR, NEO_VICTORY_STALEMATE, false, false, true, false);
 			}
-			else if(jinraiAlive == 0 || nsfAlive == 0) {
+			else if (jinraiAlive == 0 || nsfAlive == 0)
+			{
 				auto winningTeam = jinraiAlive > nsfAlive ? TEAM_JINRAI : TEAM_NSF;
 				SetWinningTeam(winningTeam, NEO_VICTORY_TEAM_ELIMINATION, false, true, false, false);
 			}
@@ -1692,19 +1756,21 @@ void CNEORules::SetWinningDMPlayer(CNEO_Player *pWinner)
 	soundParams.m_flVolume = 0.33f;
 	// Differing between Jinrai/NSF only as a sound cosmetic (no affect on DM)
 	const int team = pWinner->GetTeamNumber();
-	soundParams.m_pSoundName = (team == TEAM_JINRAI) ? "gameplay/jinrai.mp3" : (team == TEAM_NSF) ? "gameplay/nsf.mp3" : "gameplay/draw.mp3";
+	soundParams.m_pSoundName = (team == TEAM_JINRAI) ? "gameplay/jinrai.mp3"
+		: (team == TEAM_NSF)                         ? "gameplay/nsf.mp3"
+													 : "gameplay/draw.mp3";
 	soundParams.m_bWarnOnDirectWaveReference = false;
 	soundParams.m_bEmitCloseCaption = false;
 
 	for (int i = 1; i <= gpGlobals->maxClients; ++i)
 	{
-		CBasePlayer* basePlayer = UTIL_PlayerByIndex(i);
-		auto player = static_cast<CNEO_Player*>(basePlayer);
+		CBasePlayer *basePlayer = UTIL_PlayerByIndex(i);
+		auto player = static_cast<CNEO_Player *>(basePlayer);
 		if (player)
 		{
 			if (!player->IsBot() || player->IsHLTV())
 			{
-				const char* volStr = engine->GetClientConVarValue(i, "snd_victory_volume");
+				const char *volStr = engine->GetClientConVarValue(i, "snd_victory_volume");
 				const float jingleVolume = volStr ? atof(volStr) : 0.33f;
 				soundParams.m_flVolume = jingleVolume;
 
@@ -1732,7 +1798,7 @@ void CNEORules::AwardRankUp(int client)
 	auto player = UTIL_PlayerByIndex(client);
 	if (player)
 	{
-		AwardRankUp(static_cast<CNEO_Player*>(player));
+		AwardRankUp(static_cast<CNEO_Player *>(player));
 	}
 }
 
@@ -1753,7 +1819,7 @@ void CNEORules::AwardRankUp(CNEO_Player *pClient)
 		return;
 	}
 
-	const int ranks[] = { 0, 4, 10, 20 };
+	const int ranks[] = {0, 4, 10, 20};
 	for (int i = 0; i < ARRAYSIZE(ranks); i++)
 	{
 		if (pClient->m_iXP.Get() < ranks[i])
@@ -1790,7 +1856,8 @@ void CNEORules::CheckOvertime()
 	}
 
 	if (overtimeEnabled && m_nRoundStatus == NeoRoundStatus::RoundLive && m_iGhosterPlayer &&
-		(m_nGameTypeSelected != NEO_GAME_TYPE_ATK || m_iGhosterTeam == GetAttackingTeam()) && // only the attacking team gets overtime in ATK
+		(m_nGameTypeSelected != NEO_GAME_TYPE_ATK ||
+			m_iGhosterTeam == GetAttackingTeam()) && // only the attacking team gets overtime in ATK
 		(m_flNeoRoundStartTime + roundTimeLimit - overtimeGrace) < gpGlobals->curtime)
 	{
 		m_nRoundStatus = NeoRoundStatus::Overtime;
@@ -1826,35 +1893,36 @@ float CNEORules::GetRoundRemainingTime() const
 	}
 	else
 	{
-		switch (m_nGameTypeSelected) {
-			case NEO_GAME_TYPE_TDM:
-				roundTimeLimit = neo_tdm_round_timelimit.GetFloat() * 60.f;
-				break;
-			case NEO_GAME_TYPE_CTG:
-				roundTimeLimit = neo_ctg_round_timelimit.GetFloat() * 60.f;
-				if (m_nRoundStatus == NeoRoundStatus::Overtime)
-				{
-					return GetOverTime(NEO_GAME_TYPE_CTG);
-				}
-				break;
-			case NEO_GAME_TYPE_VIP:
-				roundTimeLimit = neo_vip_round_timelimit.GetFloat() * 60.f;
-				break;
-			case NEO_GAME_TYPE_DM:
-				roundTimeLimit = neo_dm_round_timelimit.GetFloat() * 60.f;
-				break;
-			case NEO_GAME_TYPE_JGR:
-				roundTimeLimit = neo_jgr_round_timelimit.GetFloat() * 60.f;
-				break;
-			case NEO_GAME_TYPE_ATK:
-				roundTimeLimit = neo_atk_round_timelimit.GetFloat() * 60.f;
-				if (m_nRoundStatus == NeoRoundStatus::Overtime)
-				{
-					return GetOverTime(NEO_GAME_TYPE_ATK);
-				}
-				break;
-			default:
-				break;
+		switch (m_nGameTypeSelected)
+		{
+		case NEO_GAME_TYPE_TDM:
+			roundTimeLimit = neo_tdm_round_timelimit.GetFloat() * 60.f;
+			break;
+		case NEO_GAME_TYPE_CTG:
+			roundTimeLimit = neo_ctg_round_timelimit.GetFloat() * 60.f;
+			if (m_nRoundStatus == NeoRoundStatus::Overtime)
+			{
+				return GetOverTime(NEO_GAME_TYPE_CTG);
+			}
+			break;
+		case NEO_GAME_TYPE_VIP:
+			roundTimeLimit = neo_vip_round_timelimit.GetFloat() * 60.f;
+			break;
+		case NEO_GAME_TYPE_DM:
+			roundTimeLimit = neo_dm_round_timelimit.GetFloat() * 60.f;
+			break;
+		case NEO_GAME_TYPE_JGR:
+			roundTimeLimit = neo_jgr_round_timelimit.GetFloat() * 60.f;
+			break;
+		case NEO_GAME_TYPE_ATK:
+			roundTimeLimit = neo_atk_round_timelimit.GetFloat() * 60.f;
+			if (m_nRoundStatus == NeoRoundStatus::Overtime)
+			{
+				return GetOverTime(NEO_GAME_TYPE_ATK);
+			}
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -1897,8 +1965,10 @@ float CNEORules::GetOverTime(NeoGameType eGameType) const
 		}
 		else
 		{
-			float overtimeAtGhostDrop = (m_flNeoRoundStartTime + roundTimeLimit + overtimeBaseAmount) - m_flGhostLastHeld;
-			return (overtimeAtGhostDrop * overtimeGrace / (overtimeBaseAmount + overtimeGrace)) - (gpGlobals->curtime - m_flGhostLastHeld);
+			float overtimeAtGhostDrop =
+				(m_flNeoRoundStartTime + roundTimeLimit + overtimeBaseAmount) - m_flGhostLastHeld;
+			return (overtimeAtGhostDrop * overtimeGrace / (overtimeBaseAmount + overtimeGrace)) -
+				(gpGlobals->curtime - m_flGhostLastHeld);
 		}
 	}
 	else
@@ -1934,7 +2004,7 @@ float CNEORules::MirrorDamageMultiplier() const
 }
 #endif
 
-void CNEORules::FireGameEvent(IGameEvent* event)
+void CNEORules::FireGameEvent(IGameEvent *event)
 {
 	const char *type = event->GetName();
 
@@ -1944,7 +2014,8 @@ void CNEORules::FireGameEvent(IGameEvent* event)
 		engine->ClientCmd("r_cleardecals");
 		engine->ClientCmd("classmenu");
 
-		if (!engine->IsRecordingDemo() && sv_neo_client_autorecord.GetBool() && cl_neo_client_autorecord_allow.GetBool())
+		if (!engine->IsRecordingDemo() && sv_neo_client_autorecord.GetBool() &&
+			cl_neo_client_autorecord_allow.GetBool())
 		{
 			StartAutoRecording();
 		}
@@ -2008,7 +2079,7 @@ void CNEORules::SpawnTheGhost(const Vector *origin)
 		return;
 	}
 
-	auto* pEnt = gEntList.FirstEnt();
+	auto *pEnt = gEntList.FirstEnt();
 	while (pEnt)
 	{
 		if (auto *ghost = dynamic_cast<CWeaponGhost *>(pEnt))
@@ -2088,7 +2159,7 @@ void CNEORules::SpawnTheGhost(const Vector *origin)
 			// Parity behaviour is to not spawn a ghost at all, but it's more useful to just spawn it somewhere.
 			if (!sv_neo_ghost_spawn_bias.GetBool() || roundNumber() == 0)
 			{
-				desiredSpawn = RandomInt(0, m_ghostSpawns.Count()-1);
+				desiredSpawn = RandomInt(0, m_ghostSpawns.Count() - 1);
 			}
 			else
 			{
@@ -2108,8 +2179,8 @@ void CNEORules::SpawnTheGhost(const Vector *origin)
 			if (sv_neo_ghost_spawn_force.GetInt() >= 0)
 			{
 				desiredSpawn = sv_neo_ghost_spawn_force.GetInt() % m_ghostSpawns.Count();
-				Msg("sv_neo_ghost_spawn_force: pinned ghost spawn %d of %d for this map\n",
-					desiredSpawn, m_ghostSpawns.Count());
+				Msg("sv_neo_ghost_spawn_force: pinned ghost spawn %d of %d for this map\n", desiredSpawn,
+					m_ghostSpawns.Count());
 			}
 		}
 
@@ -2153,15 +2224,12 @@ void CNEORules::SpawnTheGhost(const Vector *origin)
 	}
 
 	m_vecPreviousGhostSpawn = m_pGhost->GetAbsOrigin();
-	DevMsg("%s ghost at coords:\n\t%.1f %.1f %.1f\n",
-			spawnedGhostNow ? "Spawned" : "Moved",
-			m_vecPreviousGhostSpawn.x,
-			m_vecPreviousGhostSpawn.y,
-			m_vecPreviousGhostSpawn.z);
+	DevMsg("%s ghost at coords:\n\t%.1f %.1f %.1f\n", spawnedGhostNow ? "Spawned" : "Moved", m_vecPreviousGhostSpawn.x,
+		m_vecPreviousGhostSpawn.y, m_vecPreviousGhostSpawn.z);
 }
 
 // Very similar to above.
-void CNEORules::SpawnTheJuggernaut(const Vector* origin)
+void CNEORules::SpawnTheJuggernaut(const Vector *origin)
 {
 	// No Juggernaut spawns and this map isn't named "_jgr". Probably not a JGR map.
 	if (m_jgrSpawns.IsEmpty() && (V_stristr(GameRules()->MapName(), "_jgr") == 0))
@@ -2174,7 +2242,7 @@ void CNEORules::SpawnTheJuggernaut(const Vector* origin)
 
 	if (!m_pJuggernautItem)
 	{
-		m_pJuggernautItem = dynamic_cast<CNEO_Juggernaut*>(CreateEntityByName("neo_juggernaut"));
+		m_pJuggernautItem = dynamic_cast<CNEO_Juggernaut *>(CreateEntityByName("neo_juggernaut"));
 		if (!m_pJuggernautItem)
 		{
 			Assert(false);
@@ -2215,7 +2283,7 @@ void CNEORules::SpawnTheJuggernaut(const Vector* origin)
 
 		if (roundNumber() == 0)
 		{
-			desiredSpawn = RandomInt(0, m_jgrSpawns.Count()-1);
+			desiredSpawn = RandomInt(0, m_jgrSpawns.Count() - 1);
 		}
 		else
 		{
@@ -2233,8 +2301,8 @@ void CNEORules::SpawnTheJuggernaut(const Vector* origin)
 		if (sv_neo_jgr_spawn_force.GetInt() >= 0)
 		{
 			desiredSpawn = sv_neo_jgr_spawn_force.GetInt() % m_jgrSpawns.Count();
-			Msg("sv_neo_jgr_spawn_force: pinned juggernaut spawn %d of %d for this map\n",
-				desiredSpawn, m_jgrSpawns.Count());
+			Msg("sv_neo_jgr_spawn_force: pinned juggernaut spawn %d of %d for this map\n", desiredSpawn,
+				m_jgrSpawns.Count());
 		}
 
 		Assert(desiredSpawn >= 0);
@@ -2263,10 +2331,8 @@ void CNEORules::SpawnTheJuggernaut(const Vector* origin)
 	}
 
 	m_vecPreviousJuggernautSpawn = m_pJuggernautItem->GetAbsOrigin();
-	DevMsg("Spawned Juggernaut at coords:\n\t%.1f %.1f %.1f\n",
-			m_vecPreviousJuggernautSpawn.x,
-			m_vecPreviousJuggernautSpawn.y,
-			m_vecPreviousJuggernautSpawn.z);
+	DevMsg("Spawned Juggernaut at coords:\n\t%.1f %.1f %.1f\n", m_vecPreviousJuggernautSpawn.x,
+		m_vecPreviousJuggernautSpawn.y, m_vecPreviousJuggernautSpawn.z);
 }
 
 void CNEORules::SelectTheVIP()
@@ -2278,14 +2344,15 @@ void CNEORules::SelectTheVIP()
 
 	for (int i = 1; i <= gpGlobals->maxClients; i++)
 	{
-		if (CBasePlayer* pPlayer = static_cast<CBasePlayer*>(UTIL_EntityByIndex(i)))
+		if (CBasePlayer *pPlayer = static_cast<CBasePlayer *>(UTIL_EntityByIndex(i)))
 		{
 			if (pPlayer->GetTeamNumber() != m_iEscortingTeam)
 				continue;
 			sameTeamAsVIPTop++;
 			sameTeamAsVIP[sameTeamAsVIPTop] = pPlayer->entindex();
 
-			const bool clientWantsToBeVIP = engine->GetClientConVarValue(sameTeamAsVIP[sameTeamAsVIPTop], "cl_neo_vip_eligible");
+			const bool clientWantsToBeVIP =
+				engine->GetClientConVarValue(sameTeamAsVIP[sameTeamAsVIPTop], "cl_neo_vip_eligible");
 			if (!clientWantsToBeVIP)
 				continue;
 			eligibleForVIPTop++;
@@ -2299,12 +2366,14 @@ void CNEORules::SelectTheVIP()
 	}
 	else if (sameTeamAsVIPTop >= 0)
 	{
-		m_pVIP = static_cast<CNEO_Player*>(UTIL_PlayerByIndex(sameTeamAsVIP[RandomInt(0, sameTeamAsVIPTop)]));
+		m_pVIP = static_cast<CNEO_Player *>(UTIL_PlayerByIndex(sameTeamAsVIP[RandomInt(0, sameTeamAsVIPTop)]));
 	}
 
 	if (m_pVIP)
 	{
-		m_iVIPPreviousClass = m_pVIP->m_iNextSpawnClassChoice.Get() != NEO_CLASS_RANDOM ? m_pVIP->m_iNextSpawnClassChoice.Get() : m_pVIP->m_iNeoClass.Get();
+		m_iVIPPreviousClass = m_pVIP->m_iNextSpawnClassChoice.Get() != NEO_CLASS_RANDOM
+			? m_pVIP->m_iNextSpawnClassChoice.Get()
+			: m_pVIP->m_iNeoClass.Get();
 		m_pVIP->m_iNeoClass.Set(NEO_CLASS_VIP);
 		m_pVIP->m_iNextSpawnClassChoice.Set(NEO_CLASS_VIP);
 		m_pVIP->RequestSetClass(NEO_CLASS_VIP);
@@ -2331,7 +2400,8 @@ void CNEORules::JuggernautActivated(CNEO_Player *pPlayer)
 		for (int i = 1; i <= gpGlobals->maxClients; i++)
 		{
 			CBasePlayer *pTargetPlayer = UTIL_PlayerByIndex(i);
-			if (pTargetPlayer && pTargetPlayer->IsDead() && pTargetPlayer->DeathCount() > 0 && pTargetPlayer->GetTeamNumber() == pPlayer->GetTeamNumber())
+			if (pTargetPlayer && pTargetPlayer->IsDead() && pTargetPlayer->DeathCount() > 0 &&
+				pTargetPlayer->GetTeamNumber() == pPlayer->GetTeamNumber())
 			{
 				pTargetPlayer->ForceRespawn();
 			}
@@ -2369,7 +2439,7 @@ void CNEORules::GatherGameTypeVotes()
 
 	for (int i = 1; i <= gpGlobals->maxClients; i++)
 	{
-		if (CBasePlayer* pPlayer = static_cast<CBasePlayer*>(UTIL_PlayerByIndex(i)))
+		if (CBasePlayer *pPlayer = static_cast<CBasePlayer *>(UTIL_PlayerByIndex(i)))
 		{
 			if (pPlayer->IsBot())
 				continue;
@@ -2399,7 +2469,8 @@ void CNEORules::GatherGameTypeVotes()
 
 bool CNEORules::ReadyUpPlayerIsReady(CNEO_Player *pNeoPlayer) const
 {
-	if (!pNeoPlayer) return false;
+	if (!pNeoPlayer)
+		return false;
 
 	const CSteamID steamID = GetSteamIDForPlayerIndex(pNeoPlayer->entindex());
 	return pNeoPlayer->IsBot() || (steamID.IsValid() && m_readyAccIDs.HasElement(steamID.GetAccountID()));
@@ -2408,7 +2479,8 @@ bool CNEORules::ReadyUpPlayerIsReady(CNEO_Player *pNeoPlayer) const
 void CNEORules::CheckChatCommand(CNEO_Player *pNeoCmdPlayer, const char *pSzChat)
 {
 	const bool bHasCmds = sv_neo_readyup_lobby.GetBool() || sv_neo_pausematch_enabled.GetBool();
-	if (!bHasCmds || !pNeoCmdPlayer || !pSzChat || pSzChat[0] != '.') return;
+	if (!bHasCmds || !pNeoCmdPlayer || !pSzChat || pSzChat[0] != '.')
+		return;
 	++pSzChat;
 
 	if (V_strcmp(pSzChat, "help") == 0)
@@ -2419,19 +2491,19 @@ void CNEORules::CheckChatCommand(CNEO_Player *pNeoCmdPlayer, const char *pSzChat
 		if (sv_neo_readyup_lobby.GetBool())
 		{
 			V_strcpy_safe(szHelpText,
-					"Ready up commands (only available while waiting for players):\n"
-					".ready - Ready up yourself\n"
-					".unready - Unready yourself\n"
-					".forcelive - Override players amount restriction and force live match\n"
-					".readylist - List players that are not ready\n");
+				"Ready up commands (only available while waiting for players):\n"
+				".ready - Ready up yourself\n"
+				".unready - Unready yourself\n"
+				".forcelive - Override players amount restriction and force live match\n"
+				".readylist - List players that are not ready\n");
 			ClientPrint(pNeoCmdPlayer, HUD_PRINTTALK, szHelpText);
 		}
 		if (sv_neo_pausematch_enabled.GetBool())
 		{
 			V_strcpy_safe(szHelpText,
-					"Pause commands (only available during a match):\n"
-					".pause - Pause the match\n"
-					".unpause - Unpause the match\n");
+				"Pause commands (only available during a match):\n"
+				".pause - Pause the match\n"
+				".unpause - Unpause the match\n");
 			ClientPrint(pNeoCmdPlayer, HUD_PRINTTALK, szHelpText);
 		}
 		ClientPrint(pNeoCmdPlayer, HUD_PRINTTALK, ".coin - Flip a coin\n");
@@ -2447,9 +2519,8 @@ void CNEORules::CheckChatCommand(CNEO_Player *pNeoCmdPlayer, const char *pSzChat
 			if (V_strcmp(pSzChat, pSzCheck) == 0)
 			{
 				ClientPrint(pNeoCmdPlayer, HUD_PRINTTALK,
-							(bNonCmdGameType) ?
-								"You cannot use this command in DM/TDM." :
-								"You cannot use this command during a match.");
+					(bNonCmdGameType) ? "You cannot use this command in DM/TDM."
+									  : "You cannot use this command during a match.");
 				break;
 			}
 		}
@@ -2487,29 +2558,33 @@ void CNEORules::CheckChatCommand(CNEO_Player *pNeoCmdPlayer, const char *pSzChat
 				{
 					auto *pNeoOtherPlayer = static_cast<CNEO_Player *>(UTIL_PlayerByIndex(i));
 					if (pNeoOtherPlayer &&
-							(pNeoOtherPlayer->GetTeamNumber() == TEAM_JINRAI ||
-							 pNeoOtherPlayer->GetTeamNumber() == TEAM_NSF) &&
-							!pNeoOtherPlayer->IsHLTV())
+						(pNeoOtherPlayer->GetTeamNumber() == TEAM_JINRAI ||
+							pNeoOtherPlayer->GetTeamNumber() == TEAM_NSF) &&
+						!pNeoOtherPlayer->IsHLTV())
 					{
 						const bool bPlayerReady = ReadyUpPlayerIsReady(pNeoOtherPlayer);
 						readyPlayers.array[pNeoOtherPlayer->GetTeamNumber()] += bPlayerReady;
 						if (!bHasPlayersInList)
 						{
-							if (!bIsStreamer) V_strcat_safe(szPrintText, "Ready list:\n");
+							if (!bIsStreamer)
+								V_strcat_safe(szPrintText, "Ready list:\n");
 							bHasPlayersInList = true;
 						}
 
 						V_strcat_safe(szPrintText, pNeoOtherPlayer->GetNeoPlayerName(pNeoCmdPlayer));
 						if (bPlayerReady)
 						{
-							if (!bIsStreamer) V_strcat_safe(szPrintText, " [READY]");
+							if (!bIsStreamer)
+								V_strcat_safe(szPrintText, " [READY]");
 						}
 						else
 						{
-							if (!bIsStreamer) V_strcat_safe(szPrintText, " [NOT READY]");
+							if (!bIsStreamer)
+								V_strcat_safe(szPrintText, " [NOT READY]");
 							bHasUnreadyPlayers = true;
 						}
-						if (!bIsStreamer) V_strcat_safe(szPrintText, "\n");
+						if (!bIsStreamer)
+							V_strcat_safe(szPrintText, "\n");
 					}
 				}
 				if (!bIsStreamer && bHasPlayersInList)
@@ -2528,8 +2603,10 @@ void CNEORules::CheckChatCommand(CNEO_Player *pNeoCmdPlayer, const char *pSzChat
 						const int iNeedJin = Max(0, iThres - readyPlayers.array[TEAM_JINRAI]);
 						const int iNeedNSF = Max(0, iThres - readyPlayers.array[TEAM_NSF]);
 						char szPrintNeed[100];
-						V_sprintf_safe(szPrintNeed, "Jinrai need %d players and NSF need %d players "
-													"to ready up to start.", iNeedJin, iNeedNSF);
+						V_sprintf_safe(szPrintNeed,
+							"Jinrai need %d players and NSF need %d players "
+							"to ready up to start.",
+							iNeedJin, iNeedNSF);
 						ClientPrint(pNeoCmdPlayer, HUD_PRINTTALK, szPrintNeed);
 					}
 					else if (readyPlayers.array[TEAM_JINRAI] > iThres || readyPlayers.array[TEAM_NSF] > iThres)
@@ -2537,8 +2614,10 @@ void CNEORules::CheckChatCommand(CNEO_Player *pNeoCmdPlayer, const char *pSzChat
 						const int iExtraJin = Max(0, readyPlayers.array[TEAM_JINRAI] - iThres);
 						const int iExtraNSF = Max(0, readyPlayers.array[TEAM_NSF] - iThres);
 						char szPrintNeed[100];
-						V_sprintf_safe(szPrintNeed, "Jinrai have %d extra players and NSF have %d extra players "
-													"over the %d per team threshold.", iExtraJin, iExtraNSF, iThres);
+						V_sprintf_safe(szPrintNeed,
+							"Jinrai have %d extra players and NSF have %d extra players "
+							"over the %d per team threshold.",
+							iExtraJin, iExtraNSF, iThres);
 						ClientPrint(pNeoCmdPlayer, HUD_PRINTTALK, szPrintNeed);
 					}
 				}
@@ -2555,9 +2634,8 @@ void CNEORules::CheckChatCommand(CNEO_Player *pNeoCmdPlayer, const char *pSzChat
 				if (V_strcmp(pSzChat, pSzCheck) == 0)
 				{
 					ClientPrint(pNeoCmdPlayer, HUD_PRINTTALK,
-								(bNonCmdGameType) ?
-									"You cannot use this command in DM/TDM." :
-									"You cannot use this command outside a match.");
+						(bNonCmdGameType) ? "You cannot use this command in DM/TDM."
+										  : "You cannot use this command outside a match.");
 					break;
 				}
 			}
@@ -2580,7 +2658,8 @@ void CNEORules::CheckChatCommand(CNEO_Player *pNeoCmdPlayer, const char *pSzChat
 						}
 						else
 						{
-							ClientPrint(pNeoCmdPlayer, HUD_PRINTTALK, "Already started unpause request, waiting for non-pausing team.");
+							ClientPrint(pNeoCmdPlayer, HUD_PRINTTALK,
+								"Already started unpause request, waiting for non-pausing team.");
 						}
 					}
 					else
@@ -2598,7 +2677,8 @@ void CNEORules::CheckChatCommand(CNEO_Player *pNeoCmdPlayer, const char *pSzChat
 							else
 							{
 								m_bPausingTeamRequestedUnpause = true;
-								UTIL_ClientPrintAll(HUD_PRINTTALK, "An unpause request has started, waiting for non-pausing team to respond.");
+								UTIL_ClientPrintAll(HUD_PRINTTALK,
+									"An unpause request has started, waiting for non-pausing team to respond.");
 							}
 						}
 						else
@@ -2625,7 +2705,8 @@ void CNEORules::CheckChatCommand(CNEO_Player *pNeoCmdPlayer, const char *pSzChat
 						}
 						else
 						{
-							ClientPrint(pNeoCmdPlayer, HUD_PRINTTALK, "Non-pausing team cannot cancel unpause request.");
+							ClientPrint(
+								pNeoCmdPlayer, HUD_PRINTTALK, "Non-pausing team cannot cancel unpause request.");
 						}
 					}
 					else
@@ -2642,10 +2723,8 @@ void CNEORules::CheckChatCommand(CNEO_Player *pNeoCmdPlayer, const char *pSzChat
 					UserMessageBegin(filter, "ShowMenu");
 					{
 						// The key options available in bitwise (EX: 1 -> 1 << 0, 9 -> 1 << 8)
-						const short sBitwiseOpts =
-								  1 << (PAUSE_MENU_SELECT_SHORT - 1)
-								| 1 << (PAUSE_MENU_SELECT_LONG - 1)
-								| 1 << (PAUSE_MENU_SELECT_DISMISS - 1);
+						const short sBitwiseOpts = 1 << (PAUSE_MENU_SELECT_SHORT - 1) |
+							1 << (PAUSE_MENU_SELECT_LONG - 1) | 1 << (PAUSE_MENU_SELECT_DISMISS - 1);
 						WRITE_SHORT(sBitwiseOpts);
 						WRITE_CHAR(static_cast<char>(15)); // 15s timeout
 						WRITE_BYTE(static_cast<unsigned int>(0));
@@ -2761,16 +2840,18 @@ void CNEORules::StartNextRound()
 	// Only check ready-up on idle state
 	const bool bLobby = InReadyUpState();
 	const int iThres = sv_neo_readyup_teamplayersthres.GetInt();
-	const bool bEqualThres = (iThres == GetGlobalTeam(TEAM_JINRAI)->GetNumPlayers()) && (iThres == GetGlobalTeam(TEAM_NSF)->GetNumPlayers());
+	const bool bEqualThres =
+		(iThres == GetGlobalTeam(TEAM_JINRAI)->GetNumPlayers()) && (iThres == GetGlobalTeam(TEAM_NSF)->GetNumPlayers());
 	const auto readyPlayers = FetchReadyPlayers();
 	// Handle case where everyone joins same team in DM
 	const bool bTooFewToStart = IsTeamplay()
-			? (GetGlobalTeam(TEAM_JINRAI)->GetNumPlayers() == 0 || GetGlobalTeam(TEAM_NSF)->GetNumPlayers() == 0)
-			: ((GetGlobalTeam(TEAM_JINRAI)->GetNumPlayers() + GetGlobalTeam(TEAM_NSF)->GetNumPlayers()) < 2);
+		? (GetGlobalTeam(TEAM_JINRAI)->GetNumPlayers() == 0 || GetGlobalTeam(TEAM_NSF)->GetNumPlayers() == 0)
+		: ((GetGlobalTeam(TEAM_JINRAI)->GetNumPlayers() + GetGlobalTeam(TEAM_NSF)->GetNumPlayers()) < 2);
 	// Do not start if: Non-ready-up mode, no players in either teams
 	if ((!bLobby && bTooFewToStart)
-			// If ready-up mode and doesn't exactly match the threshold on ready-up or players
-			|| (bLobby && !m_bForceLive && (!bEqualThres || (readyPlayers.array[TEAM_JINRAI] != iThres || readyPlayers.array[TEAM_NSF] != iThres))))
+		// If ready-up mode and doesn't exactly match the threshold on ready-up or players
+		|| (bLobby && !m_bForceLive &&
+			   (!bEqualThres || (readyPlayers.array[TEAM_JINRAI] != iThres || readyPlayers.array[TEAM_NSF] != iThres))))
 	{
 		if (bLobby)
 		{
@@ -2779,16 +2860,14 @@ void CNEORules::StartNextRound()
 			{
 				char szPrint[128];
 				V_sprintf_safe(szPrint, "More players than %dv%d! Type \".forcelive\" to allow more players to start!",
-							   iThres, iThres);
+					iThres, iThres);
 				UTIL_ClientPrintAll(HUD_PRINTTALK, szPrint);
 				bPrintHelpInfo = false;
 			}
 
 			char szPrint[64];
 			int needed = Max(2 * iThres - (readyPlayers.array[TEAM_JINRAI] + readyPlayers.array[TEAM_NSF]), 0);
-			V_sprintf_safe(szPrint, "- WAITING FOR %d %s TO READY UP -\n",
-				needed,
-				needed == 1 ? "PLAYER" : "PLAYERS");
+			V_sprintf_safe(szPrint, "- WAITING FOR %d %s TO READY UP -\n", needed, needed == 1 ? "PLAYER" : "PLAYERS");
 			UTIL_CenterPrintAll(szPrint);
 
 			if (bPrintHelpInfo)
@@ -2833,7 +2912,7 @@ void CNEORules::StartNextRound()
 
 				for (int i = 1; i <= gpGlobals->maxClients; i++)
 				{
-					auto* pPlayer = static_cast<CNEO_Player*>(UTIL_PlayerByIndex(i));
+					auto *pPlayer = static_cast<CNEO_Player *>(UTIL_PlayerByIndex(i));
 					if (!pPlayer)
 						continue;
 
@@ -2849,7 +2928,7 @@ void CNEORules::StartNextRound()
 					if (!bIsHuman)
 						continue;
 
-					if (auto* nci = engine->GetPlayerNetInfo(i))
+					if (auto *nci = engine->GetPlayerNetInfo(i))
 						iCountLoopback += nci->IsLoopback();
 					else
 						Assert(false);
@@ -2890,7 +2969,7 @@ void CNEORules::StartNextRound()
 
 	m_flNeoRoundStartTime = gpGlobals->curtime;
 
-	IGameEvent* event = gameeventmanager->CreateEvent("round_start");
+	IGameEvent *event = gameeventmanager->CreateEvent("round_start");
 	if (event)
 	{
 		event->SetInt("fraglimit", 0);
@@ -2910,8 +2989,8 @@ void CNEORules::StartNextRound()
 #endif
 
 	CleanUpMap();
-	const bool bFromStarting = (m_nRoundStatus == NeoRoundStatus::Warmup
-								|| m_nRoundStatus == NeoRoundStatus::Countdown);
+	const bool bFromStarting =
+		(m_nRoundStatus == NeoRoundStatus::Warmup || m_nRoundStatus == NeoRoundStatus::Countdown);
 
 	if (sv_neo_gamemode_enforcement.GetInt() == GAMEMODE_ENFORCEMENT_VOTE && bFromStarting)
 	{
@@ -2964,7 +3043,7 @@ void CNEORules::StartNextRound()
 
 	for (int i = 1; i <= gpGlobals->maxClients; i++)
 	{
-		CNEO_Player *pPlayer = (CNEO_Player*)UTIL_PlayerByIndex(i);
+		CNEO_Player *pPlayer = (CNEO_Player *)UTIL_PlayerByIndex(i);
 
 		if (!pPlayer)
 		{
@@ -3041,7 +3120,8 @@ void CNEORules::StartNextRound()
 	FireLegacyEvent_NeoRoundEnd();
 
 	char RoundMsg[27];
-	static_assert(sizeof(RoundMsg) == sizeof("- CTG ROUND 99 STARTED -\n\0"), "RoundMsg requires to fit round numbers up to 2 digits");
+	static_assert(sizeof(RoundMsg) == sizeof("- CTG ROUND 99 STARTED -\n\0"),
+		"RoundMsg requires to fit round numbers up to 2 digits");
 	V_sprintf_safe(RoundMsg, "- %s ROUND %d STARTED -\n", GetGameTypeName(), Min(99, m_iRoundNumber.Get()));
 	UTIL_CenterPrintAll(RoundMsg);
 
@@ -3056,13 +3136,17 @@ void CNEORules::RoundTimeout()
 	bool winnerDetermined = false;
 	switch (GetGameType())
 	{
-	case NEO_GAME_TYPE_TDM: winnerDetermined = RoundTimeoutTDM();
+	case NEO_GAME_TYPE_TDM:
+		winnerDetermined = RoundTimeoutTDM();
 		break;
-	case NEO_GAME_TYPE_DM: winnerDetermined = RoundTimeoutDM();
+	case NEO_GAME_TYPE_DM:
+		winnerDetermined = RoundTimeoutDM();
 		break;
-	case NEO_GAME_TYPE_JGR: winnerDetermined = RoundTimeoutJGR();
+	case NEO_GAME_TYPE_JGR:
+		winnerDetermined = RoundTimeoutJGR();
 		break;
-	case NEO_GAME_TYPE_ATK: winnerDetermined = RoundTimeoutATK();
+	case NEO_GAME_TYPE_ATK:
+		winnerDetermined = RoundTimeoutATK();
 		break;
 	default:
 		break;
@@ -3091,7 +3175,7 @@ bool CNEORules::RoundTimeoutTDM()
 bool CNEORules::RoundTimeoutDM()
 {
 	// Winning player
-	CNEO_Player* pWinners[MAX_PLAYERS + 1] = {};
+	CNEO_Player *pWinners[MAX_PLAYERS + 1] = {};
 	int iWinnersTotal = 0;
 	int iWinnerXP = 0;
 	GetDMHighestScorers(&pWinners, &iWinnersTotal, &iWinnerXP);
@@ -3188,7 +3272,8 @@ bool CNEORules::IsRoundLive() const
 
 bool CNEORules::IsRoundOn() const
 {
-	return (m_nRoundStatus == NeoRoundStatus::PreRoundFreeze) || IsRoundLive() || (m_nRoundStatus == NeoRoundStatus::PostRound);
+	return (m_nRoundStatus == NeoRoundStatus::PreRoundFreeze) || IsRoundLive() ||
+		(m_nRoundStatus == NeoRoundStatus::PostRound);
 }
 
 void CNEORules::CreateStandardEntities(void)
@@ -3228,7 +3313,7 @@ const CViewVectors *CNEORules::GetViewVectors() const
 	return &g_NEOViewVectors;
 }
 
-const NEOViewVectors* CNEORules::GetNEOViewVectors() const
+const NEOViewVectors *CNEORules::GetNEOViewVectors() const
 {
 	return &g_NEOViewVectors;
 }
@@ -3239,7 +3324,7 @@ float CNEORules::GetMapRemainingTime()
 }
 
 #ifndef CLIENT_DLL
-#if(0)
+#if (0)
 static inline void RemoveGhosts()
 {
 	Assert(false);
@@ -3248,7 +3333,7 @@ static inline void RemoveGhosts()
 	CBaseEntity *pEnt = gEntList.FirstEnt();
 	while (pEnt)
 	{
-		auto ghost = dynamic_cast<CWeaponGhost*>(pEnt);
+		auto ghost = dynamic_cast<CWeaponGhost *>(pEnt);
 
 		if (ghost)
 		{
@@ -3279,7 +3364,7 @@ void CNEORules::CleanUpMap()
 	CBaseEntity *pCur = gEntList.FirstEnt();
 	while (pCur)
 	{
-		CNEOBaseCombatWeapon *pWeapon = dynamic_cast<CNEOBaseCombatWeapon*>(pCur);
+		CNEOBaseCombatWeapon *pWeapon = dynamic_cast<CNEOBaseCombatWeapon *>(pCur);
 		if (pWeapon)
 		{
 			UTIL_Remove(pCur);
@@ -3327,7 +3412,7 @@ void CNEORules::CleanUpMap()
 		}
 
 
-		virtual CBaseEntity* CreateNextEntity(const char *pClassname)
+		virtual CBaseEntity *CreateNextEntity(const char *pClassname)
 		{
 			if (m_iIterator == g_MapEntityRefs.InvalidIndex())
 			{
@@ -3340,7 +3425,7 @@ void CNEORules::CleanUpMap()
 			else
 			{
 				CMapEntityRef &ref = g_MapEntityRefs[m_iIterator];
-				m_iIterator = g_MapEntityRefs.Next(m_iIterator);	// Seek to the next entity.
+				m_iIterator = g_MapEntityRefs.Next(m_iIterator); // Seek to the next entity.
 
 				if (ref.m_iEdict == -1 || engine->PEntityOfEntIndex(ref.m_iEdict))
 				{
@@ -3398,7 +3483,7 @@ void CNEORules::ResetGhostCapPoints()
 	// First iteration, pre-size our dynamic array to avoid extra copies
 	while (pEnt)
 	{
-		auto ghostCap = dynamic_cast<CNEOGhostCapturePoint*>(pEnt);
+		auto ghostCap = dynamic_cast<CNEOGhostCapturePoint *>(pEnt);
 
 		if (ghostCap)
 		{
@@ -3416,7 +3501,7 @@ void CNEORules::ResetGhostCapPoints()
 		pEnt = gEntList.FirstEnt();
 		while (pEnt)
 		{
-			auto ghostCap = dynamic_cast<CNEOGhostCapturePoint*>(pEnt);
+			auto ghostCap = dynamic_cast<CNEOGhostCapturePoint *>(pEnt);
 
 			if (ghostCap)
 			{
@@ -3438,7 +3523,7 @@ Vector CNEORules::GetNearestGhostCapPoint(const int iTeam, const Vector &vecFrom
 
 	for (int i = 0; i < m_pGhostCaps.Count(); i++)
 	{
-		auto pGhostCap = dynamic_cast<CNEOGhostCapturePoint*>(UTIL_EntityByIndex(m_pGhostCaps[i]));
+		auto pGhostCap = dynamic_cast<CNEOGhostCapturePoint *>(UTIL_EntityByIndex(m_pGhostCaps[i]));
 		if (!pGhostCap || !pGhostCap->GetActive())
 		{
 			continue;
@@ -3571,7 +3656,7 @@ void CNEORules::RestartGame()
 {
 	m_flGameStartTime = gpGlobals->curtime;
 
-	IGameEvent* event = gameeventmanager->CreateEvent("round_start");
+	IGameEvent *event = gameeventmanager->CreateEvent("round_start");
 	if (event)
 	{
 		event->SetInt("fraglimit", 0);
@@ -3588,7 +3673,7 @@ void CNEORules::RestartGame()
 	// now respawn all players
 	for (int i = 1; i <= gpGlobals->maxClients; i++)
 	{
-		CNEO_Player *pPlayer = (CNEO_Player*)UTIL_PlayerByIndex(i);
+		CNEO_Player *pPlayer = (CNEO_Player *)UTIL_PlayerByIndex(i);
 
 		if (!pPlayer)
 			continue;
@@ -3631,8 +3716,8 @@ void CNEORules::RestartGame()
 	// without prompting for some kind of a vote. So the most likely result
 	// is the map just switching to the "neo_vote_game_mode" default value (CTG),
 	// which may not be appropriate for the map.
-	const bool bFromStarting = (m_nRoundStatus == NeoRoundStatus::Warmup
-		|| m_nRoundStatus == NeoRoundStatus::Countdown);
+	const bool bFromStarting =
+		(m_nRoundStatus == NeoRoundStatus::Warmup || m_nRoundStatus == NeoRoundStatus::Countdown);
 	if (sv_neo_gamemode_enforcement.GetInt() == GAMEMODE_ENFORCEMENT_VOTE && bFromStarting)
 	{
 		GatherGameTypeVotes();
@@ -3643,16 +3728,19 @@ void CNEORules::RestartGame()
 #endif
 
 #ifdef GAME_DLL
-bool CNEORules::ClientConnected(edict_t *pEntity, const char *pszName, const char *pszAddress, char *reject, int maxrejectlen)
+bool CNEORules::ClientConnected(
+	edict_t *pEntity, const char *pszName, const char *pszAddress, char *reject, int maxrejectlen)
 {
 	if (sv_neo_build_integrity_check.GetBool())
 	{
 		const char *clientGitHash = engine->GetClientConVarValue(engine->IndexOfEdict(pEntity), "__cl_neo_git_hash");
 		const char *clientGitTag = engine->GetClientConVarValue(engine->IndexOfEdict(pEntity), "__cl_neo_version_tag");
-		const bool dbgBuildSkip = (sv_neo_build_integrity_check_allow_debug.GetBool()) ? (clientGitHash[0] & 0b1000'0000) : false;
+		const bool dbgBuildSkip =
+			(sv_neo_build_integrity_check_allow_debug.GetBool()) ? (clientGitHash[0] & 0b1000'0000) : false;
 		if (dbgBuildSkip)
 		{
-			DevWarning("Client debug build integrity check bypass! Client: %s | Server: %s\n", clientGitHash, GIT_LONGHASH);
+			DevWarning(
+				"Client debug build integrity check bypass! Client: %s | Server: %s\n", clientGitHash, GIT_LONGHASH);
 		}
 		// NEO NOTE (nullsystem): Due to debug builds, if we're to match exactly, we'll have to mask out final bit first
 		char cmpClientGitHash[GIT_LONGHASH_SIZE + 1];
@@ -3663,35 +3751,36 @@ bool CNEORules::ClientConnected(edict_t *pEntity, const char *pszName, const cha
 			// Truncate the git hash so it's short hash and doesn't make message too long
 			static constexpr int MAX_GITHASH_SHOW = 7;
 			static constexpr int MAX_GITTAG_SHOW = 12;
-			V_snprintf(reject, maxrejectlen, "Build integrity failed! Client-server mismatch: Check neo_version. "
-											 "Client: %.*s %.*s | Server: %.*s %.*s",
-					   MAX_GITHASH_SHOW, cmpClientGitHash, MAX_GITTAG_SHOW, clientGitTag,
-					   MAX_GITHASH_SHOW, GIT_LONGHASH, MAX_GITTAG_SHOW, GIT_LATESTTAG);
+			V_snprintf(reject, maxrejectlen,
+				"Build integrity failed! Client-server mismatch: Check neo_version. "
+				"Client: %.*s %.*s | Server: %.*s %.*s",
+				MAX_GITHASH_SHOW, cmpClientGitHash, MAX_GITTAG_SHOW, clientGitTag, MAX_GITHASH_SHOW, GIT_LONGHASH,
+				MAX_GITTAG_SHOW, GIT_LATESTTAG);
 			return false;
 		}
 	}
 	if (sv_neo_reject_opengl_mesa_check.GetBool())
 	{
 		static const char *pszOpenGLName = GetRenderBackendName(RENDER_BACKEND_TOGL);
-		const char *pwszClientRendererName = engine->GetClientConVarValue(engine->IndexOfEdict(pEntity), "__cl_neo_renderer");
+		const char *pwszClientRendererName =
+			engine->GetClientConVarValue(engine->IndexOfEdict(pEntity), "__cl_neo_renderer");
 		if (0 == V_strcmp(pwszClientRendererName, pszOpenGLName))
 		{
-			const char *pwszClientOpenglVersionStr = engine->GetClientConVarValue(engine->IndexOfEdict(pEntity), "__cl_neo_opengl_version");
+			const char *pwszClientOpenglVersionStr =
+				engine->GetClientConVarValue(engine->IndexOfEdict(pEntity), "__cl_neo_opengl_version");
 			if (V_strstr(pwszClientOpenglVersionStr, " Mesa "))
 			{
 				V_snprintf(reject, maxrejectlen,
-						"Server does not allow OpenGL + Mesa clients! "
-						"Make sure -gl is not set in startup args and switch to Vulkan. "
-						"Check neo_version");
+					"Server does not allow OpenGL + Mesa clients! "
+					"Make sure -gl is not set in startup args and switch to Vulkan. "
+					"Check neo_version");
 				return false;
 			}
 		}
 	}
-	return BaseClass::ClientConnected(pEntity, pszName, pszAddress,
-		reject, maxrejectlen);
-#if(0)
-	const bool canJoin = BaseClass::ClientConnected(pEntity, pszName, pszAddress,
-		reject, maxrejectlen);
+	return BaseClass::ClientConnected(pEntity, pszName, pszAddress, reject, maxrejectlen);
+#if (0)
+	const bool canJoin = BaseClass::ClientConnected(pEntity, pszName, pszAddress, reject, maxrejectlen);
 
 	if (canJoin)
 	{
@@ -3701,9 +3790,9 @@ bool CNEORules::ClientConnected(edict_t *pEntity, const char *pszName, const cha
 #endif
 }
 
-bool CNEORules::ClientCommand(CBaseEntity* pEdict, const CCommand& args)
+bool CNEORules::ClientCommand(CBaseEntity *pEdict, const CCommand &args)
 {
-	if (auto* neoPlayer = dynamic_cast<CNEO_Player*>(pEdict))
+	if (auto *neoPlayer = dynamic_cast<CNEO_Player *>(pEdict))
 	{
 		if (neoPlayer->ClientCommand(args))
 		{
@@ -3734,9 +3823,7 @@ void CNEORules::ClientSettingsChanged(CBasePlayer *pPlayer)
 
 	const char *pCurrentModel = modelinfo->GetModelName(pNEOPlayer->GetModel());
 	const char *pTargetModel = mm->GetPlayerModel(
-		(NeoSkin)pNEOPlayer->GetSkin(),
-		(NeoClass)pNEOPlayer->GetClass(),
-		pNEOPlayer->GetTeamNumber());
+		(NeoSkin)pNEOPlayer->GetSkin(), (NeoClass)pNEOPlayer->GetClass(), pNEOPlayer->GetTeamNumber());
 
 	if (V_stricmp(pCurrentModel, pTargetModel))
 	{
@@ -3748,16 +3835,17 @@ void CNEORules::ClientSettingsChanged(CBasePlayer *pPlayer)
 		pNEOPlayer->Weapon_SetZoom(pNEOPlayer->m_bInAim);
 	}
 
-	const bool clientAllowsNeoName = (0 == StrToInt(engine->GetClientConVarValue(engine->IndexOfEdict(pNEOPlayer->edict()), "cl_onlysteamnick")));
+	const bool clientAllowsNeoName =
+		(0 == StrToInt(engine->GetClientConVarValue(engine->IndexOfEdict(pNEOPlayer->edict()), "cl_onlysteamnick")));
 
 	char szSteamName[MAX_PLAYER_NAME_LENGTH] = "";
-	const char* pszSteamName = &szSteamName[0];
+	const char *pszSteamName = &szSteamName[0];
 	V_strcpy_safe(szSteamName, engine->GetClientConVarValue(pPlayer->entindex(), "name"));
 	V_StripTrailingWhitespace(&szSteamName[0]);
 	V_StripLeadingWhitespace(&szSteamName[0]);
 
 	char szNeoName[MAX_PLAYER_NAME_LENGTH] = "";
-	const char* pszNeoName = &szNeoName[0];
+	const char *pszNeoName = &szNeoName[0];
 	V_strcpy_safe(szNeoName, engine->GetClientConVarValue(pNEOPlayer->entindex(), "neo_name"));
 	V_StripTrailingWhitespace(&szNeoName[0]);
 	V_StripLeadingWhitespace(&szNeoName[0]);
@@ -3786,19 +3874,19 @@ void CNEORules::ClientSettingsChanged(CBasePlayer *pPlayer)
 			updateDupeCheck = true;
 	}
 	pNEOPlayer->SetClientWantNeoName(clientAllowsNeoName);
-	const auto optClStreamerMode = StrToInt(engine->GetClientConVarValue(engine->IndexOfEdict(pNEOPlayer->edict()), "cl_neo_streamermode"));
+	const auto optClStreamerMode =
+		StrToInt(engine->GetClientConVarValue(engine->IndexOfEdict(pNEOPlayer->edict()), "cl_neo_streamermode"));
 	pNEOPlayer->m_bClientStreamermode = (optClStreamerMode && *optClStreamerMode);
 
 	char szNeoClanTag[NEO_MAX_CLANTAG_LENGTH] = "";
-	const char* pszNeoClantag = &szNeoClanTag[0];
+	const char *pszNeoClantag = &szNeoClanTag[0];
 	V_strcpy_safe(szNeoClanTag, engine->GetClientConVarValue(pNEOPlayer->entindex(), "neo_clantag"));
 	V_StripTrailingWhitespace(&szNeoClanTag[0]);
 	V_StripLeadingWhitespace(&szNeoClanTag[0]);
 	const char *pszOldNeoClantag = pNEOPlayer->GetNeoClantag();
 	if (V_strcmp(pszOldNeoClantag, pszNeoClantag) != 0)
 	{
-		V_strncpy(pNEOPlayer->m_szNeoClantag.GetForModify(),
-			(FStrEq(pszNeoClantag, "#empty") ? "" : pszNeoClantag),
+		V_strncpy(pNEOPlayer->m_szNeoClantag.GetForModify(), (FStrEq(pszNeoClantag, "#empty") ? "" : pszNeoClantag),
 			NEO_MAX_CLANTAG_LENGTH);
 		m_bThinkCheckClantags = true;
 	}
@@ -3893,7 +3981,8 @@ bool CNEORules::RoundIsInSuddenDeath() const
 	auto teamNSF = GetGlobalTeam(TEAM_NSF);
 	if (teamJinrai && teamNSF)
 	{
-		return (GetRoundLimit() != 0 && (m_iRoundNumber > GetRoundLimit()) && teamJinrai->GetRoundsWon() == teamNSF->GetRoundsWon());
+		return (GetRoundLimit() != 0 && (m_iRoundNumber > GetRoundLimit()) &&
+			teamJinrai->GetRoundsWon() == teamNSF->GetRoundsWon());
 	}
 	return false;
 #endif
@@ -3913,10 +4002,13 @@ bool CNEORules::RoundIsMatchPoint() const
 	auto teamNSF = GetGlobalTeam(TEAM_NSF);
 	if (teamJinrai && teamNSF && GetRoundLimit() != 0)
 	{
-		if (RoundIsInSuddenDeath()) return false;
+		if (RoundIsInSuddenDeath())
+			return false;
 		const int roundDiff = GetRoundLimit() - m_iRoundNumber;
-		if ((teamJinrai->GetRoundsWon() + 1) > (teamNSF->GetRoundsWon() + roundDiff)) return true;
-		if ((teamNSF->GetRoundsWon() + 1) > (teamJinrai->GetRoundsWon() + roundDiff)) return true;
+		if ((teamJinrai->GetRoundsWon() + 1) > (teamNSF->GetRoundsWon() + roundDiff))
+			return true;
+		if ((teamNSF->GetRoundsWon() + 1) > (teamJinrai->GetRoundsWon() + roundDiff))
+			return true;
 		return false;
 	}
 	return false;
@@ -3938,8 +4030,10 @@ bool CNEORules::RoundIsDoOrDie() const
 	if (teamJinrai && teamNSF && GetRoundLimit() != 0)
 	{
 		const int roundsLeft = GetRoundLimit() - m_iRoundNumber + 1;
-		if ((teamJinrai->GetRoundsWon() + roundsLeft) == teamNSF->GetRoundsWon()) return true;
-		if ((teamNSF->GetRoundsWon() + roundsLeft) == teamJinrai->GetRoundsWon()) return true;
+		if ((teamJinrai->GetRoundsWon() + roundsLeft) == teamNSF->GetRoundsWon())
+			return true;
+		if ((teamNSF->GetRoundsWon() + roundsLeft) == teamJinrai->GetRoundsWon())
+			return true;
 		return false;
 	}
 	return false;
@@ -3947,7 +4041,8 @@ bool CNEORules::RoundIsDoOrDie() const
 }
 
 #ifdef GAME_DLL
-void CNEORules::SetWinningTeam(int team, int iWinReason, bool bForceMapReset, bool bSwitchTeams, bool bDontAddScore, bool bFinal)
+void CNEORules::SetWinningTeam(
+	int team, int iWinReason, bool bForceMapReset, bool bSwitchTeams, bool bDontAddScore, bool bFinal)
 {
 	if (IsRoundOver())
 	{
@@ -3980,7 +4075,7 @@ void CNEORules::SetWinningTeam(int team, int iWinReason, bool bForceMapReset, bo
 		if (!bDontAddScore)
 		{
 			winningTeam->IncrementRoundsWon();
-			IGameEvent* event = gameeventmanager->CreateEvent("team_score");
+			IGameEvent *event = gameeventmanager->CreateEvent("team_score");
 			if (event)
 			{
 				event->SetInt("teamid", winningTeam->GetTeamNumber());
@@ -4024,7 +4119,7 @@ void CNEORules::SetWinningTeam(int team, int iWinReason, bool bForceMapReset, bo
 			if (earlyWin)
 			{
 				V_sprintf_safe(victoryMsg, "Team %s wins the match!\n",
-						((teamJinrai->GetRoundsWon() > teamNSF->GetRoundsWon()) ? "Jinrai" : "NSF"));
+					((teamJinrai->GetRoundsWon() > teamNSF->GetRoundsWon()) ? "Jinrai" : "NSF"));
 				gotMatchWinner = true;
 			}
 			else if (m_iRoundNumber >= GetRoundLimit())
@@ -4045,7 +4140,8 @@ void CNEORules::SetWinningTeam(int team, int iWinReason, bool bForceMapReset, bo
 				}
 				else
 				{
-					V_sprintf_safe(victoryMsg, "Team %s wins the match!\n", ((teamJinrai->GetRoundsWon() > teamNSF->GetRoundsWon()) ? "Jinrai" : "NSF"));
+					V_sprintf_safe(victoryMsg, "Team %s wins the match!\n",
+						((teamJinrai->GetRoundsWon() > teamNSF->GetRoundsWon()) ? "Jinrai" : "NSF"));
 					gotMatchWinner = true;
 				}
 			}
@@ -4054,24 +4150,30 @@ void CNEORules::SetWinningTeam(int team, int iWinReason, bool bForceMapReset, bo
 
 	if (!gotMatchWinner && !isSuddenDeath)
 	{
-		switch (iWinReason) {
+		switch (iWinReason)
+		{
 		case NEO_VICTORY_GHOST_CAPTURE:
-			V_sprintf_safe(victoryMsg, "Team %s wins by capturing the ghost!\n", (team == TEAM_JINRAI ? "Jinrai" : "NSF"));
+			V_sprintf_safe(
+				victoryMsg, "Team %s wins by capturing the ghost!\n", (team == TEAM_JINRAI ? "Jinrai" : "NSF"));
 			break;
 		case NEO_VICTORY_VIP_ESCORT:
-			V_sprintf_safe(victoryMsg, "Team %s wins by escorting the vip!\n", (team == TEAM_JINRAI ? "Jinrai" : "NSF"));
+			V_sprintf_safe(
+				victoryMsg, "Team %s wins by escorting the vip!\n", (team == TEAM_JINRAI ? "Jinrai" : "NSF"));
 			break;
 		case NEO_VICTORY_VIP_ELIMINATION:
-			V_sprintf_safe(victoryMsg, "Team %s wins by eliminating the vip!\n", (team == TEAM_JINRAI ? "Jinrai" : "NSF"));
+			V_sprintf_safe(
+				victoryMsg, "Team %s wins by eliminating the vip!\n", (team == TEAM_JINRAI ? "Jinrai" : "NSF"));
 			break;
 		case NEO_VICTORY_TEAM_ELIMINATION:
-			V_sprintf_safe(victoryMsg, "Team %s wins by eliminating the other team!\n", (team == TEAM_JINRAI ? "Jinrai" : "NSF"));
+			V_sprintf_safe(
+				victoryMsg, "Team %s wins by eliminating the other team!\n", (team == TEAM_JINRAI ? "Jinrai" : "NSF"));
 			break;
 		case NEO_VICTORY_TIMEOUT_WIN_BY_NUMBERS:
 			V_sprintf_safe(victoryMsg, "Team %s wins by numbers!\n", (team == TEAM_JINRAI ? "Jinrai" : "NSF"));
 			break;
 		case NEO_VICTORY_ATK_TIMEOUT:
-			V_sprintf_safe(victoryMsg, "Team %s wins by defending the ghost!\n", (team == TEAM_JINRAI ? "Jinrai" : "NSF"));
+			V_sprintf_safe(
+				victoryMsg, "Team %s wins by defending the ghost!\n", (team == TEAM_JINRAI ? "Jinrai" : "NSF"));
 			break;
 		case NEO_VICTORY_POINTS:
 			V_sprintf_safe(victoryMsg, "Team %s wins by highest score!\n", (team == TEAM_JINRAI ? "Jinrai" : "NSF"));
@@ -4095,11 +4197,11 @@ void CNEORules::SetWinningTeam(int team, int iWinReason, bool bForceMapReset, bo
 	CRecipientFilter filter;
 	filter.AddAllPlayers();
 	UserMessageBegin(filter, "RoundResult");
-	WRITE_STRING(team == TEAM_JINRAI ? "jinrai" : team == TEAM_NSF ? "nsf" : "tie");	// which team won
-	WRITE_FLOAT(gpGlobals->curtime);													// when did they win
-	if(iWinReason != NEO_VICTORY_MAPIO)
+	WRITE_STRING(team == TEAM_JINRAI ? "jinrai" : team == TEAM_NSF ? "nsf" : "tie"); // which team won
+	WRITE_FLOAT(gpGlobals->curtime);                                                 // when did they win
+	if (iWinReason != NEO_VICTORY_MAPIO)
 	{
-		WRITE_STRING(victoryMsg);															// extra message (who capped or last kill or who got the most points or whatever)
+		WRITE_STRING(victoryMsg); // extra message (who capped or last kill or who got the most points or whatever)
 	}
 	MessageEnd();
 
@@ -4108,7 +4210,9 @@ void CNEORules::SetWinningTeam(int team, int iWinReason, bool bForceMapReset, bo
 	soundParams.m_SoundLevel = SNDLVL_NONE;
 	soundParams.m_flVolume = 0.33f;
 	// Referencing sounds directly because we can't override the soundscript volume level otherwise
-	soundParams.m_pSoundName = (team == TEAM_JINRAI) ? "gameplay/jinrai.mp3" : (team == TEAM_NSF) ? "gameplay/nsf.mp3" : "gameplay/draw.mp3";
+	soundParams.m_pSoundName = (team == TEAM_JINRAI) ? "gameplay/jinrai.mp3"
+		: (team == TEAM_NSF)                         ? "gameplay/nsf.mp3"
+													 : "gameplay/draw.mp3";
 	soundParams.m_bWarnOnDirectWaveReference = false;
 	soundParams.m_bEmitCloseCaption = false;
 
@@ -4116,8 +4220,8 @@ void CNEORules::SetWinningTeam(int team, int iWinReason, bool bForceMapReset, bo
 
 	for (int i = 1; i <= gpGlobals->maxClients; ++i)
 	{
-		CBasePlayer* basePlayer = UTIL_PlayerByIndex(i);
-		auto player = static_cast<CNEO_Player*>(basePlayer);
+		CBasePlayer *basePlayer = UTIL_PlayerByIndex(i);
+		auto player = static_cast<CNEO_Player *>(basePlayer);
 		if (player)
 		{
 			if (!player->IsBot() || player->IsHLTV())
@@ -4125,7 +4229,7 @@ void CNEORules::SetWinningTeam(int team, int iWinReason, bool bForceMapReset, bo
 				/*engine->ClientPrintf(player->edict(), victoryMsg);
 				UTIL_ClientPrintAll((gotMatchWinner ? HUD_PRINTTALK : HUD_PRINTCENTER), victoryMsg);*/
 
-				const char* volStr = engine->GetClientConVarValue(i, "snd_victory_volume");
+				const char *volStr = engine->GetClientConVarValue(i, "snd_victory_volume");
 				const float jingleVolume = volStr ? atof(volStr) : 0.33f;
 				soundParams.m_flVolume = jingleVolume;
 
@@ -4137,8 +4241,9 @@ void CNEORules::SetWinningTeam(int team, int iWinReason, bool bForceMapReset, bo
 
 			if (winningTeamNum != TEAM_SPECTATOR && player->GetTeamNumber() == winningTeamNum)
 			{
-				int xpAward = 1;	// Base reward for being on winning team
-				if (iWinReason == NEO_VICTORY_GHOST_CAPTURE || iWinReason == NEO_VICTORY_VIP_ESCORT || m_bTeamBeenAwardedDueToCapPrevent)
+				int xpAward = 1; // Base reward for being on winning team
+				if (iWinReason == NEO_VICTORY_GHOST_CAPTURE || iWinReason == NEO_VICTORY_VIP_ESCORT ||
+					m_bTeamBeenAwardedDueToCapPrevent)
 				{
 					auto cap_reward = sv_neo_cap_reward.GetInt();
 					if (!cap_reward) // Rank up
@@ -4165,7 +4270,8 @@ void CNEORules::SetWinningTeam(int team, int iWinReason, bool bForceMapReset, bo
 						}
 					}
 				}
-				else if (GetGameType() == NEO_GAME_TYPE_CTG || GetGameType() == NEO_GAME_TYPE_VIP || GetGameType() == NEO_GAME_TYPE_ATK)
+				else if (GetGameType() == NEO_GAME_TYPE_CTG || GetGameType() == NEO_GAME_TYPE_VIP ||
+					GetGameType() == NEO_GAME_TYPE_ATK)
 				{
 					if (sv_neo_survivor_bonus.GetBool() && player->IsAlive())
 					{
@@ -4194,8 +4300,9 @@ void CNEORules::SetWinningTeam(int team, int iWinReason, bool bForceMapReset, bo
 
 	if (m_bTeamBeenAwardedDueToCapPrevent && iWinReason != NEO_VICTORY_GHOST_CAPTURE)
 	{
-		UTIL_ClientPrintAll(HUD_PRINTTALK, "Last player of %s1 suicided vs. ghost carrier; awarding capture to team %s2.",
-							(team == TEAM_JINRAI ? "NSF" : "Jinrai"), (team == TEAM_JINRAI ? "Jinrai" : "NSF"));
+		UTIL_ClientPrintAll(HUD_PRINTTALK,
+			"Last player of %s1 suicided vs. ghost carrier; awarding capture to team %s2.",
+			(team == TEAM_JINRAI ? "NSF" : "Jinrai"), (team == TEAM_JINRAI ? "Jinrai" : "NSF"));
 	}
 
 	m_bGotMatchWinner = gotMatchWinner;
@@ -4204,7 +4311,7 @@ void CNEORules::SetWinningTeam(int team, int iWinReason, bool bForceMapReset, bo
 
 // NEO JANK (nullsystem): Dont like how this is fetched twice (PlayerKilled, DeathNotice),
 // but blame the structure of the base classes
-static CNEO_Player* FetchAssists(CNEO_Player* attacker, CNEO_Player* victim)
+static CNEO_Player *FetchAssists(CNEO_Player *attacker, CNEO_Player *victim)
 {
 	// Non-CNEO_Player, return NULL
 	if (!victim)
@@ -4216,7 +4323,7 @@ static CNEO_Player* FetchAssists(CNEO_Player* attacker, CNEO_Player* victim)
 	attacker = attacker ? attacker : victim;
 
 	// Check for assistance (> 50 dmg, not final attacker)
-	CNEO_Player* pImpersonated = attacker->GetSpectatorTakeoverPlayerTarget();
+	CNEO_Player *pImpersonated = attacker->GetSpectatorTakeoverPlayerTarget();
 	const int attackerIdx = pImpersonated ? pImpersonated->entindex() : attacker->entindex();
 
 	for (int assistIdx = 1; assistIdx <= gpGlobals->maxClients; ++assistIdx)
@@ -4236,7 +4343,7 @@ static CNEO_Player* FetchAssists(CNEO_Player* attacker, CNEO_Player* victim)
 		static const float MIN_DMG_QUALIFY_ASSIST = 0.5f;
 		if ((float)assistDmg / victim->GetMaxHealth() >= MIN_DMG_QUALIFY_ASSIST)
 		{
-			return static_cast<CNEO_Player*>(UTIL_PlayerByIndex(assistIdx));
+			return static_cast<CNEO_Player *>(UTIL_PlayerByIndex(assistIdx));
 		}
 	}
 	return NULL;
@@ -4251,9 +4358,8 @@ void CNEORules::CheckIfCapPrevent(CNEO_Player *capPreventerPlayer)
 
 	// If this is the only player alive left before the suicide/disconnect and the other team was holding
 	// the ghost, reward the other team an XP to the next rank as a ghost cap was prevented.
-	const bool bShouldCheck = (sv_neo_suicide_prevent_cap_punish.GetBool()
-							   && IsRoundLive()
-							   && !m_bTeamBeenAwardedDueToCapPrevent);
+	const bool bShouldCheck =
+		(sv_neo_suicide_prevent_cap_punish.GetBool() && IsRoundLive() && !m_bTeamBeenAwardedDueToCapPrevent);
 	if (!bShouldCheck)
 	{
 		return;
@@ -4278,11 +4384,12 @@ void CNEORules::CheckIfCapPrevent(CNEO_Player *capPreventerPlayer)
 	{
 		bContainsEntIdx = (m_arrayiEntPrevCap[i] == iCapPreventerEntIdx);
 	}
-	if (!bContainsEntIdx) m_arrayiEntPrevCap[m_iEntPrevCapSize++] = iCapPreventerEntIdx;
+	if (!bContainsEntIdx)
+		m_arrayiEntPrevCap[m_iEntPrevCapSize++] = iCapPreventerEntIdx;
 
 	for (int i = 1; i <= gpGlobals->maxClients; ++i)
 	{
-		auto *player = static_cast<CNEO_Player*>(UTIL_PlayerByIndex(i));
+		auto *player = static_cast<CNEO_Player *>(UTIL_PlayerByIndex(i));
 		if (!player || player->entindex() == iCapPreventerEntIdx)
 		{
 			continue;
@@ -4297,8 +4404,8 @@ void CNEORules::CheckIfCapPrevent(CNEO_Player *capPreventerPlayer)
 	}
 
 	const int iOppositeTeam = (iPreventerTeam == TEAM_JINRAI) ? TEAM_NSF : TEAM_JINRAI;
-	m_bTeamBeenAwardedDueToCapPrevent = (bOtherTeamPlayingGhost &&
-										 iTallyAlive[iPreventerTeam] == 0 && iTallyAlive[iOppositeTeam] > 0);
+	m_bTeamBeenAwardedDueToCapPrevent =
+		(bOtherTeamPlayingGhost && iTallyAlive[iPreventerTeam] == 0 && iTallyAlive[iOppositeTeam] > 0);
 }
 #endif
 
@@ -4307,8 +4414,8 @@ void CNEORules::PlayerKilled(CBasePlayer *pVictim, const CTakeDamageInfo &info)
 	BaseClass::PlayerKilled(pVictim, info);
 
 #ifdef GAME_DLL
-	auto attacker = dynamic_cast<CNEO_Player*>(info.GetAttacker());
-	auto victim = dynamic_cast<CNEO_Player*>(pVictim);
+	auto attacker = dynamic_cast<CNEO_Player *>(info.GetAttacker());
+	auto victim = dynamic_cast<CNEO_Player *>(pVictim);
 	auto grenade = dynamic_cast<CBaseGrenade *>(info.GetInflictor());
 
 	if (!victim)
@@ -4392,8 +4499,8 @@ void CNEORules::PlayerKilled(CBasePlayer *pVictim, const CTakeDamageInfo &info)
 			if (sv_neo_teamdamage_assists.GetBool())
 			{
 				// If a bot is being taken over, penalize the impersonator.
-				CNEO_Player* pImpersonator = assister->GetSpectatorTakeoverPlayerImpersonatingMe();
-				CNEO_Player* pPenalized = pImpersonator ? pImpersonator : assister;
+				CNEO_Player *pImpersonator = assister->GetSpectatorTakeoverPlayerImpersonatingMe();
+				CNEO_Player *pPenalized = pImpersonator ? pImpersonator : assister;
 				// bIgnorePlayerTakeover = true to penalize the impersonator
 				pPenalized->AddPoints(-1, true, true);
 			}
@@ -4410,8 +4517,9 @@ void CNEORules::PlayerKilled(CBasePlayer *pVictim, const CTakeDamageInfo &info)
 
 #ifdef GAME_DLL
 extern ConVar falldamage;
-ConVar sv_neo_falldmg_scale("sv_neo_falldmg_scale", "0.25", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY, "Scale factor for NEO fall damage.");
-float CNEORules::FlPlayerFallDamage(CBasePlayer* pPlayer)
+ConVar sv_neo_falldmg_scale(
+	"sv_neo_falldmg_scale", "0.25", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY, "Scale factor for NEO fall damage.");
+float CNEORules::FlPlayerFallDamage(CBasePlayer *pPlayer)
 {
 	// Is player fall damage disabled?
 	if (!falldamage.GetBool())
@@ -4425,9 +4533,9 @@ float CNEORules::FlPlayerFallDamage(CBasePlayer* pPlayer)
 	return pPlayer->m_Local.m_flFallVelocity * DAMAGE_FOR_FALL_SPEED * sv_neo_falldmg_scale.GetFloat();
 }
 
-const char* CNEORules::GetChatFormat(bool bTeamOnly, CBasePlayer* pPlayer)
+const char *CNEORules::GetChatFormat(bool bTeamOnly, CBasePlayer *pPlayer)
 {
-	if (!pPlayer)  // dedicated server output
+	if (!pPlayer) // dedicated server output
 	{
 		return NULL;
 	}
@@ -4447,20 +4555,28 @@ const char* CNEORules::GetChatFormat(bool bTeamOnly, CBasePlayer* pPlayer)
 		{
 			switch (pPlayer->GetTeamNumber())
 			{
-			case TEAM_JINRAI: return FMT_TEAM_JINRAI " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
-			case TEAM_NSF: return FMT_TEAM_NSF " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
-			case TEAM_SPECTATOR: return FMT_TEAM_SPECTATOR " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
-			default: return FMT_TEAM_UNASSIGNED " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
+			case TEAM_JINRAI:
+				return FMT_TEAM_JINRAI " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
+			case TEAM_NSF:
+				return FMT_TEAM_NSF " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
+			case TEAM_SPECTATOR:
+				return FMT_TEAM_SPECTATOR " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
+			default:
+				return FMT_TEAM_UNASSIGNED " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
 			}
 		}
 		else
 		{
 			switch (pPlayer->GetTeamNumber())
 			{
-			case TEAM_JINRAI: return FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
-			case TEAM_NSF: return FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
-			case TEAM_SPECTATOR: return FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
-			default: return FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
+			case TEAM_JINRAI:
+				return FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
+			case TEAM_NSF:
+				return FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
+			case TEAM_SPECTATOR:
+				return FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
+			default:
+				return FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
 			}
 		}
 	}
@@ -4470,20 +4586,28 @@ const char* CNEORules::GetChatFormat(bool bTeamOnly, CBasePlayer* pPlayer)
 		{
 			switch (pPlayer->GetTeamNumber())
 			{
-			case TEAM_JINRAI: return FMT_DEAD FMT_TEAM_JINRAI " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
-			case TEAM_NSF: return FMT_DEAD FMT_TEAM_NSF " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
-			case TEAM_SPECTATOR: return FMT_TEAM_SPECTATOR " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
-			default: return FMT_TEAM_UNASSIGNED " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
+			case TEAM_JINRAI:
+				return FMT_DEAD FMT_TEAM_JINRAI " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
+			case TEAM_NSF:
+				return FMT_DEAD FMT_TEAM_NSF " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
+			case TEAM_SPECTATOR:
+				return FMT_TEAM_SPECTATOR " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
+			default:
+				return FMT_TEAM_UNASSIGNED " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
 			}
 		}
 		else
 		{
 			switch (pPlayer->GetTeamNumber())
 			{
-			case TEAM_JINRAI: return FMT_DEAD " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
-			case TEAM_NSF: return FMT_DEAD " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
-			case TEAM_SPECTATOR: return FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
-			default: return FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
+			case TEAM_JINRAI:
+				return FMT_DEAD " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
+			case TEAM_NSF:
+				return FMT_DEAD " " FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
+			case TEAM_SPECTATOR:
+				return FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
+			default:
+				return FMT_PLAYERNAME ": " FMT_CHATMESSAGE;
 			}
 		}
 	}
@@ -4493,22 +4617,22 @@ const char* CNEORules::GetChatFormat(bool bTeamOnly, CBasePlayer* pPlayer)
 #endif
 
 #ifdef GAME_DLL
-void CNEORules::DeathNotice(CBasePlayer* pVictim, const CTakeDamageInfo& info)
+void CNEORules::DeathNotice(CBasePlayer *pVictim, const CTakeDamageInfo &info)
 {
 	// Work out what killed the player, and send a message to all clients about it
-	const char* killer_weapon_name = "world";		// by default, the player is killed by the world
+	const char *killer_weapon_name = "world"; // by default, the player is killed by the world
 	int killer_ID = 0;
 
 	// Find the killer & the scorer
-	CBaseEntity* pInflictor = info.GetInflictor();
-	CBaseEntity* pKiller = info.GetAttacker();
-	CBasePlayer* pScorer = GetDeathScorer(pKiller, pInflictor);
-	CBasePlayer* pAssister = FetchAssists(dynamic_cast<CNEO_Player*>(pKiller), dynamic_cast<CNEO_Player*>(pVictim));
+	CBaseEntity *pInflictor = info.GetInflictor();
+	CBaseEntity *pKiller = info.GetAttacker();
+	CBasePlayer *pScorer = GetDeathScorer(pKiller, pInflictor);
+	CBasePlayer *pAssister = FetchAssists(dynamic_cast<CNEO_Player *>(pKiller), dynamic_cast<CNEO_Player *>(pVictim));
 	const int assists_ID = (pAssister) ? pAssister->GetUserID() : 0;
 
 	bool isGrenade = false;
 	bool isRemoteDetpack = false;
-	CNEOBaseCombatWeapon* neoWep = pScorer ? static_cast<CNEOBaseCombatWeapon*>(pScorer->GetActiveWeapon()) : nullptr;
+	CNEOBaseCombatWeapon *neoWep = pScorer ? static_cast<CNEOBaseCombatWeapon *>(pScorer->GetActiveWeapon()) : nullptr;
 
 	// Custom kill type?
 	if (info.GetDamageCustom())
@@ -4538,7 +4662,7 @@ void CNEORules::DeathNotice(CBasePlayer* pVictim, const CTakeDamageInfo& info)
 				}
 				else
 				{
-					killer_weapon_name = pInflictor->GetClassname();  // it's just that easy
+					killer_weapon_name = pInflictor->GetClassname(); // it's just that easy
 					isGrenade = !Q_strnicmp(killer_weapon_name, "neo_gre", 7);
 					isRemoteDetpack = !Q_strnicmp(killer_weapon_name, "neo_dep", 7);
 				}
@@ -4566,7 +4690,7 @@ void CNEORules::DeathNotice(CBasePlayer* pVictim, const CTakeDamageInfo& info)
 		{
 			killer_weapon_name = "physics";
 		}
-#if(0)
+#if (0)
 		if (strcmp(killer_weapon_name, "prop_combine_ball") == 0)
 		{
 			killer_weapon_name = "combine_ball";
@@ -4582,7 +4706,7 @@ void CNEORules::DeathNotice(CBasePlayer* pVictim, const CTakeDamageInfo& info)
 #endif
 	}
 
-	IGameEvent* event = gameeventmanager->CreateEvent("player_death");
+	IGameEvent *event = gameeventmanager->CreateEvent("player_death");
 	if (event)
 	{
 		event->SetInt("userid", pVictim->GetUserID());
@@ -4593,9 +4717,8 @@ void CNEORules::DeathNotice(CBasePlayer* pVictim, const CTakeDamageInfo& info)
 		event->SetInt("priority", 7);
 		event->SetBool("headshot", pVictim->LastHitGroup() == HITGROUP_HEAD);
 		event->SetBool("suicide", pKiller == pVictim || !pKiller->IsPlayer());
-		event->SetString("deathIcon",
-				CNEOBaseCombatWeapon::GetDeathIcon(
-					neoWep, DEATHICONTYPE_BOOLS, isGrenade, isRemoteDetpack));
+		event->SetString(
+			"deathIcon", CNEOBaseCombatWeapon::GetDeathIcon(neoWep, DEATHICONTYPE_BOOLS, isGrenade, isRemoteDetpack));
 		event->SetBool("explosive", isGrenade || isRemoteDetpack);
 		event->SetBool("ghoster", m_iGhosterPlayer == pVictim->entindex());
 
@@ -4605,9 +4728,9 @@ void CNEORules::DeathNotice(CBasePlayer* pVictim, const CTakeDamageInfo& info)
 #endif
 
 #ifdef GAME_DLL
-void CNEORules::ClientDisconnected(edict_t* pClient)
+void CNEORules::ClientDisconnected(edict_t *pClient)
 {
-	auto pNeoPlayer = static_cast<CNEO_Player*>(CBaseEntity::Instance(pClient));
+	auto pNeoPlayer = static_cast<CNEO_Player *>(CBaseEntity::Instance(pClient));
 	Assert(pNeoPlayer);
 	if (pNeoPlayer)
 	{
@@ -4643,10 +4766,14 @@ void CNEORules::ClientDisconnected(edict_t* pClient)
 					.xp = pNeoPlayer->m_iXP.Get(),
 					.deaths = pNeoPlayer->DeathCount(),
 					.spawnedThisRound = pNeoPlayer->m_bSpawnedThisRound,
-					.deathTime = pNeoPlayer->IsAlive() ? gpGlobals->curtime : pNeoPlayer->GetDeathTime(), // NEOTODO (Adam) prevent players abusing retry command to save themselves in games with respawns. Should award xp to whoever did most damage to disconnecting player, for now simply ensure they can't respawn too quickly
+					.deathTime = pNeoPlayer->IsAlive()
+						? gpGlobals->curtime
+						: pNeoPlayer
+							  ->GetDeathTime(), // NEOTODO (Adam) prevent players abusing retry command to save themselves in games with respawns. Should award xp to whoever did most damage to disconnecting player, for now simply ensure they can't respawn too quickly
 				};
 
-				if (restoreInfo.xp == 0 && restoreInfo.deaths == 0 && restoreInfo.deathTime == 0.f && restoreInfo.spawnedThisRound == false)
+				if (restoreInfo.xp == 0 && restoreInfo.deaths == 0 && restoreInfo.deathTime == 0.f &&
+					restoreInfo.spawnedThisRound == false)
 				{
 					m_pRestoredInfos.Remove(accountID);
 				}
@@ -4677,10 +4804,10 @@ bool CNEORules::GetTeamPlayEnabled() const
 }
 
 #ifdef GAME_DLL
-bool CNEORules::FPlayerCanRespawn(CBasePlayer* pPlayer)
+bool CNEORules::FPlayerCanRespawn(CBasePlayer *pPlayer)
 {
 	// Special case for spectator player takeover
-	CNEO_Player* pNeoPlayer = ToNEOPlayer(pPlayer);
+	CNEO_Player *pNeoPlayer = ToNEOPlayer(pPlayer);
 	Assert(pNeoPlayer);
 	if (pNeoPlayer->GetSpectatorTakeoverPlayerPending())
 	{
@@ -4759,7 +4886,7 @@ CBaseEntity *CNEORules::GetPlayerSpawnSpot(CBasePlayer *pPlayer)
 	{
 		const auto spawn = DMSpawn::GiveNextSpawn();
 		const QAngle spawnAngle{0, spawn.lookY, 0};
-		pPlayer->SetLocalOrigin(spawn.pos + Vector(0,0,1));
+		pPlayer->SetLocalOrigin(spawn.pos + Vector(0, 0, 1));
 		pPlayer->SetAbsVelocity(vec3_origin);
 		pPlayer->SetLocalAngles(spawnAngle);
 		pPlayer->m_Local.m_vecPunchAngle = vec3_angle;
@@ -4779,7 +4906,7 @@ void CNEORules::SetRoundStatus(NeoRoundStatus status)
 	{
 		for (int i = 1; i <= gpGlobals->maxClients; ++i)
 		{
-			auto player = static_cast<CNEO_Player*>(UTIL_PlayerByIndex(i));
+			auto player = static_cast<CNEO_Player *>(UTIL_PlayerByIndex(i));
 			if (player)
 			{
 				player->RemoveFlag(FL_GODMODE);
@@ -4802,7 +4929,7 @@ void CNEORules::SetRoundStatus(NeoRoundStatus status)
 #ifdef GAME_DLL
 	if (status == NeoRoundStatus::PreRoundFreeze)
 	{ // we clear these so people who rejoin on a different round to the round when they left aren't prevented from spawning. This is done before all players are
-	  // spawned on the new round so these values will be overwritten for those players who are still in the game
+		// spawned on the new round so these values will be overwritten for those players who are still in the game
 		auto currentHandle = m_pRestoredInfos.FirstHandle();
 		while (m_pRestoredInfos.IsValidHandle(currentHandle))
 		{
@@ -4860,7 +4987,7 @@ bool CNEORules::IsCyberspace()
 	return m_bCyberspaceLevel;
 }
 
-inline const char* CNEORules::GetGameTypeName(void)
+inline const char *CNEORules::GetGameTypeName(void)
 {
 	return NEO_GAME_TYPE_SETTINGS[GetGameType()].gameTypeName;
 }
@@ -4889,13 +5016,12 @@ float CNEORules::GetRemainingPreRoundFreezeTime(const bool clampToZero) const
 	}
 }
 
-const Vector& CNEORules::GetGhostPos() const
+const Vector &CNEORules::GetGhostPos() const
 {
 #ifdef GAME_DLL
 	return m_pGhost ? m_pGhost->GetAbsOrigin() : m_vecGhostMarkerPos;
 #else
-	if (auto pGhost = static_cast<CWeaponGhost*>(m_hGhost.Get());
-		pGhost)
+	if (auto pGhost = static_cast<CWeaponGhost *>(m_hGhost.Get()); pGhost)
 	{
 		return pGhost->GetAbsOrigin();
 	}
@@ -4905,19 +5031,21 @@ const Vector& CNEORules::GetGhostPos() const
 
 Vector CNEORules::GetGhostMarkerPos() const
 {
-	if (auto pGhosterPlayer = static_cast<CNEO_Player*>(UTIL_PlayerByIndex(GetGhosterPlayer()));
-		pGhosterPlayer
+	if (auto pGhosterPlayer = static_cast<CNEO_Player *>(UTIL_PlayerByIndex(GetGhosterPlayer())); pGhosterPlayer
 #ifdef CLIENT_DLL
 		&& pGhosterPlayer->IsVisible()
 #endif // CLIENT_DLL
-		)
+	)
 	{
-		if (auto pWeapon = static_cast<CNEOBaseCombatWeapon*>(pGhosterPlayer->GetActiveWeapon());
+		if (auto pWeapon = static_cast<CNEOBaseCombatWeapon *>(pGhosterPlayer->GetActiveWeapon());
 			pWeapon && pWeapon->GetNeoWepBits() & NEO_WEP_GHOST)
 		{
 			constexpr const int GHOST_MARKER_STANDING_PLAYER_OFFSET = 32;
 			constexpr const int GHOST_MARKER_CROUCHING_PLAYER_OFFSET = 24;
-			return pGhosterPlayer->GetAbsOrigin() + Vector(0, 0, pGhosterPlayer->GetFlags() & FL_DUCKING ? GHOST_MARKER_CROUCHING_PLAYER_OFFSET : GHOST_MARKER_STANDING_PLAYER_OFFSET);
+			return pGhosterPlayer->GetAbsOrigin() +
+				Vector(0, 0,
+					pGhosterPlayer->GetFlags() & FL_DUCKING ? GHOST_MARKER_CROUCHING_PLAYER_OFFSET
+															: GHOST_MARKER_STANDING_PLAYER_OFFSET);
 		}
 	}
 	return GetGhostPos();
@@ -4928,14 +5056,14 @@ bool CNEORules::JuggernautItemExists() const
 #ifdef DEBUG
 	if (m_bJuggernautItemExists)
 	{
-		auto jgr = assert_cast<CNEO_Juggernaut*>(m_hJuggernaut.Get());
+		auto jgr = assert_cast<CNEO_Juggernaut *>(m_hJuggernaut.Get());
 		return jgr;
 	}
 #endif
 	return m_bJuggernautItemExists;
 }
 
-const Vector& CNEORules::GetJuggernautMarkerPos() const
+const Vector &CNEORules::GetJuggernautMarkerPos() const
 {
 	auto jgr = m_hJuggernaut.Get();
 	if (jgr)
@@ -4952,7 +5080,7 @@ bool CNEORules::IsJuggernautLocked() const
 {
 	if (JuggernautItemExists())
 	{
-		auto jgr = assert_cast<CNEO_Juggernaut*>(m_hJuggernaut.Get());
+		auto jgr = assert_cast<CNEO_Juggernaut *>(m_hJuggernaut.Get());
 		if (jgr)
 		{
 			return jgr->m_bLocked;
@@ -4974,8 +5102,7 @@ int CNEORules::GetDefendingTeam() const
 
 bool CNEORules::IsReadyUpEnabled() const
 {
-	return (sv_neo_readyup_lobby.GetBool()
-		&& NEO_GAME_TYPE_SETTINGS[m_nGameTypeSelected].comp);
+	return (sv_neo_readyup_lobby.GetBool() && NEO_GAME_TYPE_SETTINGS[m_nGameTypeSelected].comp);
 }
 
 bool CNEORules::InReadyUpState() const
@@ -4992,9 +5119,12 @@ const char *CNEORules::GetTeamClantag(const int iTeamNum) const
 {
 	switch (iTeamNum)
 	{
-	case TEAM_JINRAI: return m_szNeoJinraiClantag.Get();
-	case TEAM_NSF: return m_szNeoNSFClantag.Get();
-	default: return "";
+	case TEAM_JINRAI:
+		return m_szNeoJinraiClantag.Get();
+	case TEAM_NSF:
+		return m_szNeoNSFClantag.Get();
+	default:
+		return "";
 	}
 }
 
@@ -5015,8 +5145,7 @@ void CNEORules::OnNavMeshLoad(void)
 
 bool CNEORules::IsOfficialMap(void)
 {
-	static const char *s_OfficialMaps[] =
-	{
+	static const char *s_OfficialMaps[] = {
 		"background_alley",
 		"background_door",
 		"ntre_ballistrade_ctg",
@@ -5052,11 +5181,11 @@ bool CNEORules::IsOfficialMap(void)
 	};
 
 	char szCurrentMap[MAX_MAP_NAME];
-	Q_strncpy( szCurrentMap, STRING( gpGlobals->mapname ), sizeof( szCurrentMap ) );
+	Q_strncpy(szCurrentMap, STRING(gpGlobals->mapname), sizeof(szCurrentMap));
 
-	for ( int i = 0; i < ARRAYSIZE( s_OfficialMaps ); ++i )
+	for (int i = 0; i < ARRAYSIZE(s_OfficialMaps); ++i)
 	{
-		if ( !Q_stricmp( s_OfficialMaps[i], szCurrentMap ) )
+		if (!Q_stricmp(s_OfficialMaps[i], szCurrentMap))
 		{
 			return true;
 		}
@@ -5065,33 +5194,33 @@ bool CNEORules::IsOfficialMap(void)
 	return false;
 }
 
-void CNEORules::MarkAchievement( IRecipientFilter& filter, char const *pchAchievementName )
+void CNEORules::MarkAchievement(IRecipientFilter &filter, char const *pchAchievementName)
 {
-	UserMessageBegin( filter, "AchievementMark" );
-		WRITE_STRING( pchAchievementName );
+	UserMessageBegin(filter, "AchievementMark");
+	WRITE_STRING(pchAchievementName);
 	MessageEnd();
 }
 
-void CNEORules::InitDefaultAIRelationships( void )
+void CNEORules::InitDefaultAIRelationships(void)
 {
-		int i, j;
+	int i, j;
 
-		//  Allocate memory for default relationships
-		CBaseCombatCharacter::AllocateDefaultRelationships();
+	//  Allocate memory for default relationships
+	CBaseCombatCharacter::AllocateDefaultRelationships();
 
-		// --------------------------------------------------------------
-		// First initialize table so we can report missing relationships
-		// --------------------------------------------------------------
-		for (i=0;i<NUM_AI_CLASSES;i++)
+	// --------------------------------------------------------------
+	// First initialize table so we can report missing relationships
+	// --------------------------------------------------------------
+	for (i = 0; i < NUM_AI_CLASSES; i++)
+	{
+		for (j = 0; j < NUM_AI_CLASSES; j++)
 		{
-			for (j=0;j<NUM_AI_CLASSES;j++)
-			{
-				// By default all relationships are neutral of priority zero
-				CBaseCombatCharacter::SetDefaultRelationship( (Class_T)i, (Class_T)j, D_NU, 0 );
-			}
+			// By default all relationships are neutral of priority zero
+			CBaseCombatCharacter::SetDefaultRelationship((Class_T)i, (Class_T)j, D_NU, 0);
 		}
+	}
 
-		// clang-format off
+	// clang-format off
 		// ------------------------------------------------------------
 		//	> CLASS_BULLSEYE
 		// ------------------------------------------------------------
@@ -5259,7 +5388,7 @@ void CNEORules::InitDefaultAIRelationships( void )
 		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_EARTH_FAUNA,		D_NU, 0);
 		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_PLAYER_ALLY,		D_HT, 0);
 		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
-		// clang-format on
+	// clang-format on
 }
 
 void CNEORules::ReadyToggle(CNEO_Player *pNeoPlayer, const ReadyToggleFlags flags)
@@ -5294,7 +5423,8 @@ void CNEORules::ReadyToggle(CNEO_Player *pNeoPlayer, const ReadyToggleFlags flag
 		ClientPrint(pNeoPlayer, HUD_PRINTTALK, "You are now marked as unready.");
 		char szReadyText[32];
 		const auto readyPlayers = FetchReadyPlayers();
-		V_sprintf_safe(szReadyText, "%d/%d players are ready.", readyPlayers.array[TEAM_JINRAI] + readyPlayers.array[TEAM_NSF], iThres * 2);
+		V_sprintf_safe(szReadyText, "%d/%d players are ready.",
+			readyPlayers.array[TEAM_JINRAI] + readyPlayers.array[TEAM_NSF], iThres * 2);
 		UTIL_ClientPrintAll(HUD_PRINTTALK, szReadyText);
 	}
 	else
@@ -5309,7 +5439,8 @@ void CNEORules::ReadyToggle(CNEO_Player *pNeoPlayer, const ReadyToggleFlags flag
 		else
 		{
 			char szReadyText[32];
-			V_sprintf_safe(szReadyText, "%d/%d players are ready.", readyPlayers.array[TEAM_JINRAI] + readyPlayers.array[TEAM_NSF], iThres * 2);
+			V_sprintf_safe(szReadyText, "%d/%d players are ready.",
+				readyPlayers.array[TEAM_JINRAI] + readyPlayers.array[TEAM_NSF], iThres * 2);
 			UTIL_ClientPrintAll(HUD_PRINTTALK, szReadyText);
 		}
 	}
@@ -5318,66 +5449,72 @@ void CNEORules::ReadyToggle(CNEO_Player *pNeoPlayer, const ReadyToggleFlags flag
 #endif
 
 #ifdef CLIENT_DLL
-auto spectateChecks = []() {
+auto spectateChecks = []()
+{
 	if (engine->IsHLTV() && HLTVCamera()->IsPVSLocked())
 	{
 		ConMsg("%s: HLTV Camera is PVS locked\n", __FUNCTION__);
 		return false;
 	}
 
-	C_NEO_Player* pNeoPlayer = C_NEO_Player::GetLocalNEOPlayer();
+	C_NEO_Player *pNeoPlayer = C_NEO_Player::GetLocalNEOPlayer();
 	if (!pNeoPlayer || !pNeoPlayer->IsObserver())
 		return false;
 
 	return true;
-
 };
 
-CON_COMMAND_F( spec_last_hurt, "Spectate the last hurt player", FCVAR_CLIENTCMD_CAN_EXECUTE )
+CON_COMMAND_F(spec_last_hurt, "Spectate the last hurt player", FCVAR_CLIENTCMD_CAN_EXECUTE)
 {
 	if (!spectateChecks())
 		return;
 
-	engine->IsHLTV() ? HLTVCamera()->SpectateEvent(NEO_SPECTATE_EVENT_LAST_HURT) : engine->ClientCmd(VarArgs("spectate_last_hurt"));
+	engine->IsHLTV() ? HLTVCamera()->SpectateEvent(NEO_SPECTATE_EVENT_LAST_HURT)
+					 : engine->ClientCmd(VarArgs("spectate_last_hurt"));
 }
 
-CON_COMMAND_F( spec_last_shooter, "Spectate the last shooter", FCVAR_CLIENTCMD_CAN_EXECUTE )
+CON_COMMAND_F(spec_last_shooter, "Spectate the last shooter", FCVAR_CLIENTCMD_CAN_EXECUTE)
 {
 	if (!spectateChecks())
 		return;
 
-	engine->IsHLTV() ? HLTVCamera()->SpectateEvent(NEO_SPECTATE_EVENT_LAST_SHOOTER) : engine->ClientCmd(VarArgs("spectate_last_shooter"));
+	engine->IsHLTV() ? HLTVCamera()->SpectateEvent(NEO_SPECTATE_EVENT_LAST_SHOOTER)
+					 : engine->ClientCmd(VarArgs("spectate_last_shooter"));
 }
 
-CON_COMMAND_F( spec_last_event, "Spectate the last attacker, killer or ghoster", FCVAR_CLIENTCMD_CAN_EXECUTE )
+CON_COMMAND_F(spec_last_event, "Spectate the last attacker, killer or ghoster", FCVAR_CLIENTCMD_CAN_EXECUTE)
 {
 	if (!spectateChecks())
 		return;
 
-	engine->IsHLTV() ? HLTVCamera()->SpectateEvent(NEO_SPECTATE_EVENT_LAST_EVENT) : engine->ClientCmd(VarArgs("spectate_last_event"));
+	engine->IsHLTV() ? HLTVCamera()->SpectateEvent(NEO_SPECTATE_EVENT_LAST_EVENT)
+					 : engine->ClientCmd(VarArgs("spectate_last_event"));
 }
 
-CON_COMMAND_F( spec_last_attacker, "Spectate the last attacker", FCVAR_CLIENTCMD_CAN_EXECUTE )
+CON_COMMAND_F(spec_last_attacker, "Spectate the last attacker", FCVAR_CLIENTCMD_CAN_EXECUTE)
 {
 	if (!spectateChecks())
 		return;
 
-	engine->IsHLTV() ? HLTVCamera()->SpectateEvent(NEO_SPECTATE_EVENT_LAST_ATTACKER) : engine->ClientCmd(VarArgs("spectate_last_attacker"));
+	engine->IsHLTV() ? HLTVCamera()->SpectateEvent(NEO_SPECTATE_EVENT_LAST_ATTACKER)
+					 : engine->ClientCmd(VarArgs("spectate_last_attacker"));
 }
 
-CON_COMMAND_F( spec_last_killer, "Spectate the last killer", FCVAR_CLIENTCMD_CAN_EXECUTE )
+CON_COMMAND_F(spec_last_killer, "Spectate the last killer", FCVAR_CLIENTCMD_CAN_EXECUTE)
 {
 	if (!spectateChecks())
 		return;
 
-	engine->IsHLTV() ? HLTVCamera()->SpectateEvent(NEO_SPECTATE_EVENT_LAST_KILLER) : engine->ClientCmd(VarArgs("spectate_last_killer"));
+	engine->IsHLTV() ? HLTVCamera()->SpectateEvent(NEO_SPECTATE_EVENT_LAST_KILLER)
+					 : engine->ClientCmd(VarArgs("spectate_last_killer"));
 }
 
-CON_COMMAND_F( spec_last_ghoster, "Spectate the last ghoster", FCVAR_CLIENTCMD_CAN_EXECUTE )
+CON_COMMAND_F(spec_last_ghoster, "Spectate the last ghoster", FCVAR_CLIENTCMD_CAN_EXECUTE)
 {
 	if (!spectateChecks())
 		return;
 
-	engine->IsHLTV() ? HLTVCamera()->SpectateEvent(NEO_SPECTATE_EVENT_LAST_GHOSTER) : engine->ClientCmd(VarArgs("spectate_last_ghoster"));
+	engine->IsHLTV() ? HLTVCamera()->SpectateEvent(NEO_SPECTATE_EVENT_LAST_GHOSTER)
+					 : engine->ClientCmd(VarArgs("spectate_last_ghoster"));
 }
 #endif // CLIENT_DLL

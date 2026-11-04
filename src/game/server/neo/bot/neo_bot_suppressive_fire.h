@@ -1,6 +1,6 @@
 #pragma once
 
-#include "util_shared.h"   // CountdownTimer
+#include "util_shared.h" // CountdownTimer
 
 class CNEOBot;
 class CNEOBaseCombatWeapon;
@@ -13,19 +13,20 @@ class CNEOBotSuppressiveFire
 {
 public:
 	void Reset();
-	void OnInjured( CNEOBot *me, const CTakeDamageInfo &info );
-	void OnHeardGunfire( CNEOBot *me, CBaseEntity *shooter );
-	bool Update( CNEOBot *me, const CKnownEntity *threat );
+	void OnInjured(CNEOBot *me, const CTakeDamageInfo &info);
+	void OnHeardGunfire(CNEOBot *me, CBaseEntity *shooter);
+	bool Update(CNEOBot *me, const CKnownEntity *threat);
 
 private:
-	static Vector RotateBearing( const Vector &from, const Vector &to, float degrees, float rangeScale = 1.0f );
-	static bool IsSmokeOrEnemyOnLine( CNEOBot *me, const Vector &from, const Vector &to );
-	static bool IsLineWorthFiring( CNEOBot *me, const Vector &from, const Vector &to );
-	static bool IsBarrelOnWorthwhileLine( CNEOBot *me, const Vector &aimSpot, const Vector &believedSpot, float sweepHalfAngle );
-	static CNEOBaseCombatWeapon *GetLoadedFirearm( CNEOBot *me );
+	static Vector RotateBearing(const Vector &from, const Vector &to, float degrees, float rangeScale = 1.0f);
+	static bool IsSmokeOrEnemyOnLine(CNEOBot *me, const Vector &from, const Vector &to);
+	static bool IsLineWorthFiring(CNEOBot *me, const Vector &from, const Vector &to);
+	static bool IsBarrelOnWorthwhileLine(
+		CNEOBot *me, const Vector &aimSpot, const Vector &believedSpot, float sweepHalfAngle);
+	static CNEOBaseCombatWeapon *GetLoadedFirearm(CNEOBot *me);
 
-	void OpenFireWindow( CNEOBot *me, CBaseEntity *target, const Vector &pos, bool bSeen );
-	Vector GetSweptAimSpot( const Vector &from, const Vector &center, float *halfAngle ) const;
+	void OpenFireWindow(CNEOBot *me, CBaseEntity *target, const Vector &pos, bool bSeen);
+	Vector GetSweptAimSpot(const Vector &from, const Vector &center, float *halfAngle) const;
 
 	EHANDLE m_hTarget;
 	Vector m_vecBelievedPos;

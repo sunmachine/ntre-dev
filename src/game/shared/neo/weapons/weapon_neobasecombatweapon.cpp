@@ -32,7 +32,7 @@ extern ConVar weaponstay;
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-IMPLEMENT_NETWORKCLASS_ALIASED( NEOBaseCombatWeapon, DT_NEOBaseCombatWeapon )
+IMPLEMENT_NETWORKCLASS_ALIASED(NEOBaseCombatWeapon, DT_NEOBaseCombatWeapon)
 
 // clang-format off
 BEGIN_NETWORK_TABLE( CNEOBaseCombatWeapon, DT_NEOBaseCombatWeapon )
@@ -55,7 +55,7 @@ BEGIN_NETWORK_TABLE( CNEOBaseCombatWeapon, DT_NEOBaseCombatWeapon )
 	SendPropExclude("DT_BaseAnimating", "m_nSequence"),
 #endif
 END_NETWORK_TABLE()
-// clang-format on
+	// clang-format on
 
 #ifdef CLIENT_DLL
 // clang-format off
@@ -85,8 +85,10 @@ END_DATADESC()
 // clang-format on
 #endif
 
-ConVar sv_neo_accuracy_penalty_scale("sv_neo_accuracy_penalty_scale", "1.0", FCVAR_REPLICATED, "Scales the accuracy penalty per shot.", true, 0.0f, true, 2.0f);
-ConVar sv_neo_dynamic_viewkick("sv_neo_dynamic_viewkick", "0", FCVAR_REPLICATED, "Enables view kick scaling based on current inaccuracy.", true, 0.0f, true, 1.0f);
+ConVar sv_neo_accuracy_penalty_scale("sv_neo_accuracy_penalty_scale", "1.0", FCVAR_REPLICATED,
+	"Scales the accuracy penalty per shot.", true, 0.0f, true, 2.0f);
+ConVar sv_neo_dynamic_viewkick("sv_neo_dynamic_viewkick", "0", FCVAR_REPLICATED,
+	"Enables view kick scaling based on current inaccuracy.", true, 0.0f, true, 1.0f);
 
 const char *GetWeaponByLoadoutId(int id)
 {
@@ -96,7 +98,7 @@ const char *GetWeaponByLoadoutId(int id)
 		return "";
 	}
 
-	const char* weps[] = {
+	const char *weps[] = {
 		"weapon_mpn",
 		"weapon_srm",
 		"weapon_srm_s",
@@ -121,122 +123,139 @@ const char *GetWeaponByLoadoutId(int id)
 // but we'll probably move this stuff to the weapon scripts anyway.
 static const WeaponHandlingInfo_t handlingTable[] = {
 	// NOTE: NEO_WEP_INVALID must be the first item!
-	{NEO_WEP_INVALID,
+	{
+		NEO_WEP_INVALID,
 		{{vec3_invalid, vec3_invalid, vec3_invalid, vec3_invalid}},
 		{0.0, 0.0, 0.0, 0.0},
 	},
 
-	{NEO_WEP_AA13,
+	{
+		NEO_WEP_AA13,
 		{{VECTOR_CONE_5DEGREES, VECTOR_CONE_5DEGREES, VECTOR_CONE_5DEGREES, VECTOR_CONE_5DEGREES}},
 		{0.25, 0.5, -0.6, 0.6},
 	},
-	{NEO_WEP_BALC,
+	{
+		NEO_WEP_BALC,
 		{{VECTOR_CONE_2DEGREES, VECTOR_CONE_6DEGREES, VECTOR_CONE_1DEGREES, VECTOR_CONE_3DEGREES}},
 		{0.25, 0.5, -0.6, 0.6},
 		{1.0, 0.0, -0.25, -0.75, -0.6, 0.6},
 	},
-	{NEO_WEP_JITTE,
+	{
+		NEO_WEP_JITTE,
 		{{VECTOR_CONE_3DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_1DEGREES, VECTOR_CONE_3DEGREES}},
 		{-0.5, -0.25, -0.6, 0.6},
 	},
-	{NEO_WEP_JITTE_S,
+	{
+		NEO_WEP_JITTE_S,
 		{{VECTOR_CONE_3DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_1DEGREES, VECTOR_CONE_3DEGREES}},
 		{-0.5, -0.25, -0.6, 0.6},
 	},
-	{NEO_WEP_KYLA,
+	{
+		NEO_WEP_KYLA,
 		{{VECTOR_CONE_5DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_2DEGREES, VECTOR_CONE_4DEGREES}},
 		{0.0, 0.0, 0.0, 0.0},
 		{10.5, 6.0, -0.75, 0.0, -0.5, 0.5},
 	},
-	{NEO_WEP_M41,
-		{{VECTOR_CONE_4DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_PRECALCULATED, VECTOR_CONE_3DEGREES}}
-	},
-	{NEO_WEP_M41_L,
+	{NEO_WEP_M41, {{VECTOR_CONE_4DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_PRECALCULATED, VECTOR_CONE_3DEGREES}}},
+	{
+		NEO_WEP_M41_L,
 		{{VECTOR_CONE_4DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_PRECALCULATED, VECTOR_CONE_3DEGREES}},
 		{0.0, 0.0, 0.0, 0.0},
 		{1.0, 2.5, -0.5, 0.0, -0.5, 0.5},
 	},
-	{NEO_WEP_M41_S,
-		{{VECTOR_CONE_4DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_PRECALCULATED, VECTOR_CONE_3DEGREES}}
-	},
-	{NEO_WEP_MILSO,
+	{NEO_WEP_M41_S, {{VECTOR_CONE_4DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_PRECALCULATED, VECTOR_CONE_3DEGREES}}},
+	{
+		NEO_WEP_MILSO,
 		{{VECTOR_CONE_4DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_2DEGREES, VECTOR_CONE_4DEGREES}},
 		{0.25, 0.5, -0.6, 0.6},
 	},
-	{NEO_WEP_MPN,
+	{
+		NEO_WEP_MPN,
 		{{VECTOR_CONE_4DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_1DEGREES, VECTOR_CONE_4DEGREES}},
 		{0.0, 0.0, 0.0, 0.0},
 		{1.0, 1.0, -0.5, -0.25, -0.6, 0.6},
 	},
-	{NEO_WEP_MPN_S,
+	{
+		NEO_WEP_MPN_S,
 		{{VECTOR_CONE_4DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_1DEGREES, VECTOR_CONE_4DEGREES}},
 		{0.0, 0.0, 0.0, 0.0},
 		{1.0, 1.0, -0.5, -0.25, -0.6, 0.6},
 	},
-	{NEO_WEP_MX,
+	{
+		NEO_WEP_MX,
 		{{VECTOR_CONE_4DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_PRECALCULATED, VECTOR_CONE_3DEGREES}},
 		{0.25, 0.5, -0.6, 0.6},
 	},
-	{NEO_WEP_MX_S,
+	{
+		NEO_WEP_MX_S,
 		{{VECTOR_CONE_4DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_PRECALCULATED, VECTOR_CONE_3DEGREES}},
 		{0.25, 0.5, -0.6, 0.6},
 	},
-	{NEO_WEP_PZ,
+	{
+		NEO_WEP_PZ,
 		{{VECTOR_CONE_2DEGREES, VECTOR_CONE_5DEGREES, VECTOR_CONE_1DEGREES / 2, VECTOR_CONE_2DEGREES}},
 		{0.25, 0.5, -0.6, 0.6},
 		{1.0, 0.0, -0.25, -0.75, -0.6, 0.6},
 	},
 #ifdef INCLUDE_WEP_PBK
-	{NEO_WEP_PBK56S,
+	{
+		NEO_WEP_PBK56S,
 		{{VECTOR_CONE_2DEGREES, VECTOR_CONE_5DEGREES, VECTOR_CONE_1DEGREES / 2, VECTOR_CONE_2DEGREES}},
 		{0.25, 0.5, -0.6, 0.6},
 		{1.0, 0.0, -0.25, -0.75, -0.6, 0.6},
 	},
 #endif
-	{NEO_WEP_SMAC,
+	{
+		NEO_WEP_SMAC,
 		{{VECTOR_CONE_4DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_1DEGREES, VECTOR_CONE_4DEGREES}},
 		{0.25, 0.5, -0.6, 0.6},
 	},
-	{NEO_WEP_SRM,
+	{
+		NEO_WEP_SRM,
 		{{VECTOR_CONE_4DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_1DEGREES, VECTOR_CONE_4DEGREES}},
 		{0.25, 0.5, -0.6, 0.6},
 	},
-	{NEO_WEP_SRM_S,
+	{
+		NEO_WEP_SRM_S,
 		{{VECTOR_CONE_4DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_1DEGREES, VECTOR_CONE_4DEGREES}},
 		{0.25, 0.5, -0.6, 0.6},
 	},
-	{NEO_WEP_SRS,
+	{
+		NEO_WEP_SRS,
 		{{VECTOR_CONE_7DEGREES, VECTOR_CONE_20DEGREES, VECTOR_CONE_PRECALCULATED, VECTOR_CONE_7DEGREES}},
 		{0.0, 0.0, 0.0, 0.0},
 		{1.0, 1.5, -0.5, 0.0, -0.5, 0.5},
 	},
-	{NEO_WEP_SUPA7,
-		{
-			{VECTOR_CONE_5DEGREES, VECTOR_CONE_5DEGREES, VECTOR_CONE_5DEGREES, VECTOR_CONE_5DEGREES},
-			{VECTOR_CONE_4DEGREES, VECTOR_CONE_10DEGREES, VECTOR_CONE_1DEGREES, VECTOR_CONE_3DEGREES}
-		},
+	{
+		NEO_WEP_SUPA7,
+		{{VECTOR_CONE_5DEGREES, VECTOR_CONE_5DEGREES, VECTOR_CONE_5DEGREES, VECTOR_CONE_5DEGREES},
+			{VECTOR_CONE_4DEGREES, VECTOR_CONE_10DEGREES, VECTOR_CONE_1DEGREES, VECTOR_CONE_3DEGREES}},
 		{0.25, 0.5, -0.6, 0.6},
 	},
-	{NEO_WEP_TACHI,
+	{
+		NEO_WEP_TACHI,
 		{{VECTOR_CONE_5DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_1DEGREES, VECTOR_CONE_4DEGREES}},
 		{0.25, 0.5, -0.6, 0.6},
 	},
-	{NEO_WEP_ZR68_C,
+	{
+		NEO_WEP_ZR68_C,
 		{{VECTOR_CONE_4DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_PRECALCULATED, VECTOR_CONE_3DEGREES}},
 		{0.25, 0.5, -0.6, 0.6},
 	},
-	{NEO_WEP_ZR68_L,
+	{
+		NEO_WEP_ZR68_L,
 		{{VECTOR_CONE_4DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_PRECALCULATED, VECTOR_CONE_2DEGREES}},
 		{0.0, 0.0, 0.0, 0.0},
 		{1.0, 2.5, -0.5, 0.0, -0.5, 0.5},
 	},
-	{NEO_WEP_ZR68_S,
+	{
+		NEO_WEP_ZR68_S,
 		{{VECTOR_CONE_4DEGREES, VECTOR_CONE_7DEGREES, VECTOR_CONE_PRECALCULATED, VECTOR_CONE_3DEGREES}},
 		{0.15, 0.25, -0.4, 0.4},
 	},
 };
 
-CNEOBaseCombatWeapon::CNEOBaseCombatWeapon( void )
+CNEOBaseCombatWeapon::CNEOBaseCombatWeapon(void)
 {
 	m_bTriggerReset = true;
 }
@@ -247,10 +266,10 @@ const CNEOWeaponInfo &CNEOBaseCombatWeapon::GetNEOWpnData() const
 	const CNEOWeaponInfo *pNEOInfo;
 
 #ifdef _DEBUG
-	pNEOInfo = dynamic_cast< const CNEOWeaponInfo* >( pWeaponInfo );
-	Assert( pNEOInfo );
+	pNEOInfo = dynamic_cast<const CNEOWeaponInfo *>(pWeaponInfo);
+	Assert(pNEOInfo);
 #else
-	pNEOInfo = static_cast< const CNEOWeaponInfo* >( pWeaponInfo );
+	pNEOInfo = static_cast<const CNEOWeaponInfo *>(pWeaponInfo);
 #endif
 
 	return *pNEOInfo;
@@ -261,7 +280,7 @@ void CNEOBaseCombatWeapon::Precache()
 	BaseClass::Precache();
 }
 
-const char *CNEOBaseCombatWeapon::GetViewModel( int ) const
+const char *CNEOBaseCombatWeapon::GetViewModel(int) const
 {
 	auto owner = GetOwner();
 
@@ -270,8 +289,7 @@ const char *CNEOBaseCombatWeapon::GetViewModel( int ) const
 		return GetWpnData().szViewModel;
 	}
 
-	return owner->GetTeamNumber() == TEAM_JINRAI ?
-			   GetWpnData().szViewModel : GetNEOWpnData().szViewModel2;
+	return owner->GetTeamNumber() == TEAM_JINRAI ? GetWpnData().szViewModel : GetNEOWpnData().szViewModel2;
 }
 
 void CNEOBaseCombatWeapon::Spawn()
@@ -293,9 +311,10 @@ void CNEOBaseCombatWeapon::Spawn()
 	// for example the ghost, knife, grenades... Typically it is not used but the bot logic
 	// way want to know the spread of the ghost etc, so the invalid first slot is used to handle those.
 	m_weaponHandling = handlingTable[0];
-	AssertMsg(m_weaponHandling.weaponID == NEO_WEP_INVALID, "Expected the first m_weaponHandling item to be NEO_WEP_INVALID");
+	AssertMsg(
+		m_weaponHandling.weaponID == NEO_WEP_INVALID, "Expected the first m_weaponHandling item to be NEO_WEP_INVALID");
 	// Assuming this wasn't one of the above-mentioned "invalid" weapon handling entries, this is where we get the real one.
-	for (const auto& handling: handlingTable)
+	for (const auto &handling : handlingTable)
 	{
 		if (handling.weaponID & GetNeoWepBits())
 		{
@@ -320,7 +339,7 @@ void CNEOBaseCombatWeapon::Spawn()
 void CNEOBaseCombatWeapon::Activate(void)
 {
 #ifdef CLIENT_DLL
-	BaseClass::Activate();	// Not being called client side atm, just call baseclass in case it does
+	BaseClass::Activate(); // Not being called client side atm, just call baseclass in case it does
 #else
 	CBaseAnimating::Activate(); // Skip CBaseCombatWeapon::Activate();
 
@@ -338,7 +357,7 @@ void CNEOBaseCombatWeapon::Activate(void)
 	if (HasSpawnFlags(SF_ITEM_START_CONSTRAINED))
 	{
 		//Constrain the weapon in place (copied from CItem::Spawn )
-		IPhysicsObject* pReferenceObject, * pAttachedObject;
+		IPhysicsObject *pReferenceObject, *pAttachedObject;
 
 		pReferenceObject = g_PhysWorldObject;
 		pAttachedObject = VPhysicsGetObject();
@@ -354,7 +373,7 @@ void CNEOBaseCombatWeapon::Activate(void)
 
 			m_pConstraint = physenv->CreateFixedConstraint(pReferenceObject, pAttachedObject, NULL, fixed);
 
-			m_pConstraint->SetGameData((void*)this);
+			m_pConstraint->SetGameData((void *)this);
 		}
 	}
 #endif
@@ -376,18 +395,21 @@ void CNEOBaseCombatWeapon::Detach()
 #ifdef CLIENT_DLL
 void CNEOBaseCombatWeapon::ClientThink()
 {
-	const float temperatureChange = GetOwner() && m_flTemperature < THERMALS_OBJECT_TEMPERATURE_HELD ? TICK_INTERVAL * THERMALS_OBJECT_COOL_RATE : -TICK_INTERVAL * THERMALS_OBJECT_COOL_RATE;
-	m_flTemperature = Max(THERMALS_OBJECT_MIN_TEMPERATURE, Min(THERMALS_OBJECT_MAX_TEMPERATURE, m_flTemperature + temperatureChange));
+	const float temperatureChange = GetOwner() && m_flTemperature < THERMALS_OBJECT_TEMPERATURE_HELD
+		? TICK_INTERVAL * THERMALS_OBJECT_COOL_RATE
+		: -TICK_INTERVAL * THERMALS_OBJECT_COOL_RATE;
+	m_flTemperature =
+		Max(THERMALS_OBJECT_MIN_TEMPERATURE, Min(THERMALS_OBJECT_MAX_TEMPERATURE, m_flTemperature + temperatureChange));
 
 	SetNextClientThink(gpGlobals->curtime + TICK_INTERVAL);
 }
 #endif // CLIENT_DLL
 
 
-void CNEOBaseCombatWeapon::Equip(CBaseCombatCharacter* pOwner)
+void CNEOBaseCombatWeapon::Equip(CBaseCombatCharacter *pOwner)
 {
 	BaseClass::Equip(pOwner);
-	auto neoOwner = static_cast<CNEO_Player*>(pOwner);
+	auto neoOwner = static_cast<CNEO_Player *>(pOwner);
 	if (neoOwner->m_bInThermOpticCamo)
 	{
 		AddEffects(EF_NOSHADOW);
@@ -424,7 +446,7 @@ void CNEOBaseCombatWeapon::Equip(CBaseCombatCharacter* pOwner)
 }
 
 
-bool CNEOBaseCombatWeapon::Reload( void )
+bool CNEOBaseCombatWeapon::Reload(void)
 {
 	if (!BaseClass::Reload())
 	{
@@ -437,8 +459,8 @@ bool CNEOBaseCombatWeapon::Reload( void )
 
 	return true;
 
-#if(0)
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+#if (0)
+	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 	if (!pOwner)
 	{
 		return false;
@@ -446,7 +468,7 @@ bool CNEOBaseCombatWeapon::Reload( void )
 
 	if (pOwner->m_afButtonPressed & IN_RELOAD)
 	{
-		return DefaultReload( GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD );
+		return DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD);
 	}
 
 #ifdef CLIENT_DLL
@@ -461,7 +483,7 @@ bool CNEOBaseCombatWeapon::Reload( void )
 	}
 #endif
 
-	return DefaultReload( GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD );
+	return DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD);
 #endif
 }
 
@@ -478,7 +500,7 @@ void CNEOBaseCombatWeapon::FinishReload(void)
 	}
 	m_flReloadReadyTime = 0.0f;
 
-	CBaseCombatCharacter* pOwner = GetOwner();
+	CBaseCombatCharacter *pOwner = GetOwner();
 
 	if (pOwner)
 	{
@@ -525,14 +547,14 @@ bool CNEOBaseCombatWeapon::Deploy(void)
 		m_bTriggerReset = true;
 
 #ifdef DEBUG
-		CNEO_Player* pOwner = NULL;
+		CNEO_Player *pOwner = NULL;
 		if (GetOwner())
 		{
-			pOwner = dynamic_cast<CNEO_Player*>(GetOwner());
+			pOwner = dynamic_cast<CNEO_Player *>(GetOwner());
 			Assert(pOwner);
 		}
 #else
-		auto pOwner = static_cast<CNEO_Player*>(GetOwner());
+		auto pOwner = static_cast<CNEO_Player *>(GetOwner());
 #endif
 
 		if (pOwner)
@@ -582,7 +604,7 @@ float CNEOBaseCombatWeapon::GetPenetration() const
 	return GetNEOWpnData().m_flPenetration;
 }
 
-bool CNEOBaseCombatWeapon::Holster(CBaseCombatWeapon* pSwitchingTo)
+bool CNEOBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 {
 	return BaseClass::Holster(pSwitchingTo);
 }
@@ -660,13 +682,14 @@ void CNEOBaseCombatWeapon::ProcessAnimationEvents()
 		return;
 	}
 
-	CNEO_Player* pOwner = static_cast<CNEO_Player*>(ToBasePlayer(GetOwner()));
+	CNEO_Player *pOwner = static_cast<CNEO_Player *>(ToBasePlayer(GetOwner()));
 	if (!pOwner)
 	{
 		return;
 	}
 
-	const auto next = [this](const int activity, const float nextAttackDelay = 0.2) {
+	const auto next = [this](const int activity, const float nextAttackDelay = 0.2)
+	{
 		SendWeaponAnim(activity);
 		if (GetNeoWepBits() & NEO_WEP_THROWABLE)
 		{
@@ -678,8 +701,7 @@ void CNEOBaseCombatWeapon::ProcessAnimationEvents()
 
 	// NEO JANK (Adam) Why do we have to bombard the zr68l viewmodel with SendWeaponAnim(ACT_VM_IDLE_LOWERED) during sprint to make it act normally? Breakpoint in SendWeaponAnim isn't triggered by anything else after this animation is sent while sprinting
 	const bool loweredCheck = GetNeoWepBits() & NEO_WEP_ZR68_L ? true : !m_bLowered;
-	if (loweredCheck && !m_bInReload &&
-		(pOwner->IsSprinting() || pOwner->GetMoveType() == MOVETYPE_LADDER))
+	if (loweredCheck && !m_bInReload && (pOwner->IsSprinting() || pOwner->GetMoveType() == MOVETYPE_LADDER))
 	{
 		m_bLowered = true;
 		next(ACT_VM_IDLE_LOWERED);
@@ -699,7 +721,7 @@ void CNEOBaseCombatWeapon::ProcessAnimationEvents()
 
 void CNEOBaseCombatWeapon::ItemPostFrame(void)
 {
-	CNEO_Player* pOwner = static_cast<CNEO_Player*>(ToBasePlayer(GetOwner()));
+	CNEO_Player *pOwner = static_cast<CNEO_Player *>(ToBasePlayer(GetOwner()));
 	if (!pOwner)
 		return;
 
@@ -846,7 +868,8 @@ void CNEOBaseCombatWeapon::ItemPostFrame(void)
 	// -----------------------
 	//  No buttons down
 	// -----------------------
-	if (!(((pOwner->m_nButtons & IN_ATTACK) && !(pOwner->IsSprinting())) || (pOwner->m_nButtons & IN_ATTACK2) || (CanReload() && pOwner->m_nButtons & IN_RELOAD)))
+	if (!(((pOwner->m_nButtons & IN_ATTACK) && !(pOwner->IsSprinting())) || (pOwner->m_nButtons & IN_ATTACK2) ||
+			(CanReload() && pOwner->m_nButtons & IN_RELOAD)))
 	{
 		// no fire buttons down or reloading
 		if (m_flTimeWeaponIdle <= gpGlobals->curtime)
@@ -870,8 +893,7 @@ const WeaponSpreadInfo_t &CNEOBaseCombatWeapon::GetSpreadInfo()
 		// Bits for all of the non-invalid guns which are allowed to use the invalid weaponhandling entry.
 		// These are the guns for which concepts like "spread" make no sense.
 		// Or more accurately, guns for which there is no entry in the global handlingTable.
-		const auto allowedInvalidSpreadInfoGuns = (
-			NEO_WEP_GHOST | NEO_WEP_KNIFE | NEO_WEP_EXPLOSIVE);
+		const auto allowedInvalidSpreadInfoGuns = (NEO_WEP_GHOST | NEO_WEP_KNIFE | NEO_WEP_EXPLOSIVE);
 		Assert(GetNeoWepBits() & allowedInvalidSpreadInfoGuns);
 	}
 	else
@@ -889,22 +911,14 @@ const Vector &CNEOBaseCombatWeapon::GetBulletSpread(void)
 
 	// We lerp from very accurate to inaccurate over time
 	static Vector cone;
-	const auto& weaponSpread = GetSpreadInfo();
+	const auto &weaponSpread = GetSpreadInfo();
 	if (pOwner && pOwner->IsInAim())
 	{
-		VectorLerp(
-			weaponSpread.minSpreadAim,
-			weaponSpread.maxSpreadAim,
-			m_flAccuracyPenalty,
-			cone);
+		VectorLerp(weaponSpread.minSpreadAim, weaponSpread.maxSpreadAim, m_flAccuracyPenalty, cone);
 	}
 	else
 	{
-		VectorLerp(
-			weaponSpread.minSpreadHip,
-			weaponSpread.maxSpreadHip,
-			m_flAccuracyPenalty,
-			cone);
+		VectorLerp(weaponSpread.minSpreadHip, weaponSpread.maxSpreadHip, m_flAccuracyPenalty, cone);
 	}
 
 	return cone;
@@ -924,7 +938,8 @@ void CNEOBaseCombatWeapon::AddViewKick()
 	// Reset any existing viewkick so it doesn't accumulate
 	// TODO: Resetting viewpunch here doesn't just affect viewkick, but also aimpunch.
 	// This if-check is a temporary workaround until we can separate the two.
-	if (!sv_suppress_viewpunch.GetBool()) {
+	if (!sv_suppress_viewpunch.GetBool())
+	{
 		owner->ViewPunchReset();
 	}
 
@@ -938,7 +953,7 @@ void CNEOBaseCombatWeapon::AddViewKick()
 
 	owner->ViewPunch(viewPunch);
 
-	#ifdef CLIENT_DLL
+#ifdef CLIENT_DLL
 
 	if (!prediction->IsFirstTimePredicted())
 	{
@@ -955,19 +970,22 @@ void CNEOBaseCombatWeapon::AddViewKick()
 	QAngle viewAngles;
 	engine->GetViewAngles(viewAngles);
 
-	viewAngles.x += SharedRandomFloat(m_weaponSeeds.recoilX, recoilInfo.minX * recoilScale, recoilInfo.maxX * recoilScale);
-	viewAngles.y += SharedRandomFloat(m_weaponSeeds.recoilY, recoilInfo.minY * recoilScale, recoilInfo.maxY * recoilScale);
+	viewAngles.x +=
+		SharedRandomFloat(m_weaponSeeds.recoilX, recoilInfo.minX * recoilScale, recoilInfo.maxX * recoilScale);
+	viewAngles.y +=
+		SharedRandomFloat(m_weaponSeeds.recoilY, recoilInfo.minY * recoilScale, recoilInfo.maxY * recoilScale);
 
 	engine->SetViewAngles(viewAngles);
 
-	#endif
+#endif
 }
 
 void CNEOBaseCombatWeapon::DryFire()
 {
 	WeaponSound(EMPTY);
 #ifdef GAME_DLL
-	CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_EMPTY, 0.2, GetOwner(), SOUNDENT_CHANNEL_WEAPON);
+	CSoundEnt::InsertSound(
+		SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_EMPTY, 0.2, GetOwner(), SOUNDENT_CHANNEL_WEAPON);
 #endif
 	SendWeaponAnim(ACT_VM_DRYFIRE);
 	m_flNextPrimaryAttack = gpGlobals->curtime + GetFastestDryRefireTime(); // SequenceDuration();
@@ -1034,7 +1052,7 @@ void CNEOBaseCombatWeapon::PrimaryAttack(void)
 	}
 
 	// Only the player fires this way so we can cast
-	auto pPlayer = static_cast<CNEO_Player*>(GetOwner());
+	auto pPlayer = static_cast<CNEO_Player *>(GetOwner());
 	if (!pPlayer)
 	{
 		return;
@@ -1076,7 +1094,9 @@ void CNEOBaseCombatWeapon::PrimaryAttack(void)
 		// MUST call sound before removing a round from the clip of a CMachineGun
 		WeaponSound(SINGLE, m_flNextPrimaryAttack);
 #ifdef GAME_DLL
-		CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), (GetNeoWepBits() & NEO_WEP_SUPPRESSED) ? SOUNDENT_VOLUME_NEO_SUPPRESSED : SOUNDENT_VOLUME_PISTOL, 0.2, GetOwner(), SOUNDENT_CHANNEL_WEAPON);
+		CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(),
+			(GetNeoWepBits() & NEO_WEP_SUPPRESSED) ? SOUNDENT_VOLUME_NEO_SUPPRESSED : SOUNDENT_VOLUME_PISTOL, 0.2,
+			GetOwner(), SOUNDENT_CHANNEL_WEAPON);
 #endif
 		m_flNextPrimaryAttack = m_flNextPrimaryAttack + fireRate;
 		info.m_iShots++;
@@ -1100,7 +1120,7 @@ void CNEOBaseCombatWeapon::PrimaryAttack(void)
 	info.m_iAmmoType = m_iPrimaryAmmoType;
 	info.m_iTracerFreq = UsesTracers() ? 1 : 0;
 
-#if !defined( CLIENT_DLL )
+#if !defined(CLIENT_DLL)
 	// Fire the bullets
 	info.m_vecSpread = pPlayer->GetAttackSpread(this);
 #else
@@ -1119,9 +1139,7 @@ void CNEOBaseCombatWeapon::PrimaryAttack(void)
 	}
 
 	m_flAccuracyPenalty = Min(
-		GetMaxAccuracyPenalty(),
-		m_flAccuracyPenalty + GetAccuracyPenalty() * sv_neo_accuracy_penalty_scale.GetFloat()
-	);
+		GetMaxAccuracyPenalty(), m_flAccuracyPenalty + GetAccuracyPenalty() * sv_neo_accuracy_penalty_scale.GetFloat());
 
 	//Add our view kick in
 	AddViewKick();
@@ -1166,7 +1184,8 @@ void CNEOBaseCombatWeapon::ProcessMuzzleFlashEvent()
 		return;
 
 	// bIsVisible in function calling ProcessMuzzleFlashEvent is set to true even though this weapon may not be drawn? Probably same reason for the same check in C_BaseCombatWeapon::DrawModel
-	if (localPlayer->IsObserver() && localPlayer->GetObserverMode() == OBS_MODE_IN_EYE && localPlayer->GetObserverTarget() == owner)
+	if (localPlayer->IsObserver() && localPlayer->GetObserverMode() == OBS_MODE_IN_EYE &&
+		localPlayer->GetObserverTarget() == owner)
 		return;
 
 	if ((GetNeoWepBits() & NEO_WEP_SUPPRESSED))
@@ -1191,7 +1210,7 @@ void CNEOBaseCombatWeapon::ProcessMuzzleFlashEvent()
 		return;
 
 	// environment light
-	dlight_t* el = effects->CL_AllocDlight(LIGHT_INDEX_MUZZLEFLASH + index);
+	dlight_t *el = effects->CL_AllocDlight(LIGHT_INDEX_MUZZLEFLASH + index);
 	el->origin = vAttachment;
 	el->radius = random->RandomInt(32, 64);
 	el->decay = el->radius / 0.05f;
@@ -1200,9 +1219,9 @@ void CNEOBaseCombatWeapon::ProcessMuzzleFlashEvent()
 	el->color.g = 192;
 	el->color.b = 64;
 	el->color.exponent = 5;
-	
+
 	// Muzzle flash particle
-	FX_MuzzleEffect( vAttachment, angles, 0.5f, GetRefEHandle(), NULL, true );
+	FX_MuzzleEffect(vAttachment, angles, 0.5f, GetRefEHandle(), NULL, true);
 }
 
 void CNEOBaseCombatWeapon::DrawCrosshair()
@@ -1225,7 +1244,8 @@ void CNEOBaseCombatWeapon::DrawCrosshair()
 
 	if (GetWpnData().iconCrosshair)
 	{
-		crosshair->SetCrosshair(GetWpnData().iconCrosshair, crosshair->m_crosshairInfo.wep[CROSSHAIR_WEP_DEFAULT].color);
+		crosshair->SetCrosshair(
+			GetWpnData().iconCrosshair, crosshair->m_crosshairInfo.wep[CROSSHAIR_WEP_DEFAULT].color);
 	}
 	else
 	{
@@ -1253,7 +1273,7 @@ bool CNEOBaseCombatWeapon::ShouldDraw(void)
 	if (IsEffectActive(EF_NODRAW))
 		return false;
 
-	C_BaseCombatCharacter* pOwner = GetOwner();
+	C_BaseCombatCharacter *pOwner = GetOwner();
 
 	// weapon has no owner, always draw it
 	if (!pOwner)
@@ -1265,7 +1285,8 @@ bool CNEOBaseCombatWeapon::ShouldDraw(void)
 #if DEBUG
 		static int deathTicks[MAX_PLAYERS_ARRAY_SAFE]{};
 		if (!*deathTicks)
-			for (int i = 0; i < ARRAYSIZE(deathTicks); ++i) deathTicks[i] = -1;
+			for (int i = 0; i < ARRAYSIZE(deathTicks); ++i)
+				deathTicks[i] = -1;
 		const int ownerIdx = pOwner->entindex();
 		Assert(pOwner->IsPlayer()); // player index guaranteed within array range
 		const int deathTick = deathTicks[ownerIdx];
@@ -1279,7 +1300,7 @@ bool CNEOBaseCombatWeapon::ShouldDraw(void)
 		return false;
 	}
 
-	C_BasePlayer* pLocalPlayer = C_BasePlayer::GetLocalPlayer();
+	C_BasePlayer *pLocalPlayer = C_BasePlayer::GetLocalPlayer();
 
 	// carried by local player?
 	if (pOwner == pLocalPlayer)
@@ -1314,7 +1335,7 @@ void CNEOBaseCombatWeapon::ThirdPersonSwitch(bool bThirdPerson)
 }
 
 
-int CNEOBaseCombatWeapon::RestoreData(const char* context, int slot, int type)
+int CNEOBaseCombatWeapon::RestoreData(const char *context, int slot, int type)
 {
 	int val = BaseClass::RestoreData(context, slot, type);
 	if (ShouldDrawLocalPlayerViewModel() && GetModelIndex() != modelinfo->GetModelIndex(STRING(GetModelName())))
@@ -1350,7 +1371,7 @@ int CNEOBaseCombatWeapon::DrawModel(int flags)
 
 	if (inThermalVision && (!pOwner || (pOwner && !pOwner->IsCloaked())))
 	{
-		IMaterial* pass = materials->FindMaterial("dev/thermal_weapon_model", TEXTURE_GROUP_MODEL);
+		IMaterial *pass = materials->FindMaterial("dev/thermal_weapon_model", TEXTURE_GROUP_MODEL);
 		modelrender->ForcedMaterialOverride(pass);
 		ret |= BaseClass::DrawModel(flags);
 		modelrender->ForcedMaterialOverride(nullptr);
@@ -1359,7 +1380,7 @@ int CNEOBaseCombatWeapon::DrawModel(int flags)
 
 	if ((pOwner && pOwner->IsCloaked()) && !inThermalVision)
 	{
-		IMaterial* pass = materials->FindMaterial("models/player/toc", TEXTURE_GROUP_CLIENT_EFFECTS);
+		IMaterial *pass = materials->FindMaterial("models/player/toc", TEXTURE_GROUP_CLIENT_EFFECTS);
 		modelrender->ForcedMaterialOverride(pass);
 		ret |= BaseClass::DrawModel(flags);
 		modelrender->ForcedMaterialOverride(nullptr);
@@ -1373,7 +1394,7 @@ int CNEOBaseCombatWeapon::DrawModel(int flags)
 
 RenderGroup_t CNEOBaseCombatWeapon::GetRenderGroup()
 {
-	if (auto pPlayer = static_cast<C_NEO_Player*>(GetOwner()))
+	if (auto pPlayer = static_cast<C_NEO_Player *>(GetOwner()))
 	{
 		return pPlayer->IsDrawnTransparent() ? RENDER_GROUP_TRANSLUCENT_ENTITY : RENDER_GROUP_OPAQUE_ENTITY;
 	}
@@ -1383,7 +1404,7 @@ RenderGroup_t CNEOBaseCombatWeapon::GetRenderGroup()
 
 bool CNEOBaseCombatWeapon::UsesPowerOfTwoFrameBufferTexture()
 {
-	if (auto pPlayer = static_cast<C_NEO_Player*>(GetOwner()))
+	if (auto pPlayer = static_cast<C_NEO_Player *>(GetOwner()))
 	{
 		return pPlayer->IsDrawnTransparent();
 	}
@@ -1426,16 +1447,16 @@ void CNEOBaseCombatWeapon::SetPickupTouch(void)
 }
 
 #ifdef GAME_DLL
-void CNEOBaseCombatWeapon::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CNEOBaseCombatWeapon::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
 {
-	m_OnPlayerUse.FireOutput( pActivator, pCaller );
+	m_OnPlayerUse.FireOutput(pActivator, pCaller);
 
 	if (m_pfnTouch)
 	{
-		if (CNEO_Player* pNeoPlayer = ToNEOPlayer(pActivator);
+		if (CNEO_Player *pNeoPlayer = ToNEOPlayer(pActivator);
 			pNeoPlayer && CanBePickedUpByClass(pNeoPlayer->GetClass()))
 		{
-			CBaseCombatWeapon* pActiveWeapon = pNeoPlayer->GetActiveWeapon();
+			CBaseCombatWeapon *pActiveWeapon = pNeoPlayer->GetActiveWeapon();
 			const int activeSlot = pActiveWeapon ? pActiveWeapon->GetSlot() : -1;
 			pNeoPlayer->Weapon_DropSlot(GetSlot());
 
@@ -1452,8 +1473,8 @@ void CNEOBaseCombatWeapon::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, US
 }
 #endif
 
-const char *CNEOBaseCombatWeapon::GetDeathIcon(const CNEOBaseCombatWeapon *pNeoWep,
-		const EDeathIconType eType, bool isGrenade, bool isRemoteDetpack)
+const char *CNEOBaseCombatWeapon::GetDeathIcon(
+	const CNEOBaseCombatWeapon *pNeoWep, const EDeathIconType eType, bool isGrenade, bool isRemoteDetpack)
 {
 	if (eType == DEATHICONTYPE_IDX && pNeoWep)
 	{
@@ -1475,4 +1496,3 @@ const char *CNEOBaseCombatWeapon::GetDeathIcon(const CNEOBaseCombatWeapon *pNeoW
 	}
 	return "";
 }
-

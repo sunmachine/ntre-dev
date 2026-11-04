@@ -55,9 +55,8 @@ void CNEOHud_ChildElement::resetLastUpdateTime()
 	m_flLastUpdateTime = 0.0f;
 }
 
-CNEOHud_ChildElement::XYHudPos CNEOHud_ChildElement::DrawNeoHudRoundedCommon(
-	const int x0, const int y0, const int x1, const int y1, Color color,
-	bool topLeft, bool topRight, bool bottomLeft, bool bottomRight) const
+CNEOHud_ChildElement::XYHudPos CNEOHud_ChildElement::DrawNeoHudRoundedCommon(const int x0, const int y0, const int x1,
+	const int y1, Color color, bool topLeft, bool topRight, bool bottomLeft, bool bottomRight) const
 {
 	XYHudPos p{
 		.x0w = x0 + m_rounded_width,
@@ -112,9 +111,9 @@ void CNEOHud_ChildElement::DrawNeoHudRoundedBox(const int x0, const int y0, cons
 	surface()->DrawFilledRect(p.x1w, topRight ? p.y0h : y0, x1, bottomRight ? p.y1h : y1);
 }
 
-void CNEOHud_ChildElement::DrawNeoHudRoundedBoxFaded(const int x0, const int y0, const int x1, const int y1, Color color,
-	unsigned int alpha0, unsigned int alpha1, bool bHorizontal,
-	bool topLeft, bool topRight, bool bottomLeft, bool bottomRight) const
+void CNEOHud_ChildElement::DrawNeoHudRoundedBoxFaded(const int x0, const int y0, const int x1, const int y1,
+	Color color, unsigned int alpha0, unsigned int alpha1, bool bHorizontal, bool topLeft, bool topRight,
+	bool bottomLeft, bool bottomRight) const
 {
 	const auto p = DrawNeoHudRoundedCommon(x0, y0, x1, y1, color, topLeft, topRight, bottomLeft, bottomRight);
 
@@ -122,12 +121,13 @@ void CNEOHud_ChildElement::DrawNeoHudRoundedBoxFaded(const int x0, const int y0,
 	surface()->DrawFilledRectFade(p.x0w, y0, p.x1w, y1, alpha0, alpha1, bHorizontal);
 
 	// Small side rectangles
-	surface()->DrawFilledRectFade(x0, topLeft ? p.y0h : y0, p.x0w, bottomLeft ? p.y1h : y1, alpha0, alpha0, bHorizontal);
-	surface()->DrawFilledRectFade(p.x1w, topRight ? p.y0h : y0, x1, bottomRight ? p.y1h : y1, alpha1, alpha1, bHorizontal);
+	surface()->DrawFilledRectFade(
+		x0, topLeft ? p.y0h : y0, p.x0w, bottomLeft ? p.y1h : y1, alpha0, alpha0, bHorizontal);
+	surface()->DrawFilledRectFade(
+		p.x1w, topRight ? p.y0h : y0, x1, bottomRight ? p.y1h : y1, alpha1, alpha1, bHorizontal);
 }
 
 int CNEOHud_ChildElement::GetMargin()
 {
 	return cl_neo_hud_margin.GetInt();
 }
-

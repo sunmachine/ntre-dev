@@ -27,7 +27,7 @@ enum
 
 class CNEOWorldPosMarkerEnt : public CBaseEntity
 {
-	DECLARE_CLASS( CNEOWorldPosMarkerEnt, CBaseEntity );
+	DECLARE_CLASS(CNEOWorldPosMarkerEnt, CBaseEntity);
 
 public:
 #ifdef CLIENT_DLL
@@ -41,34 +41,34 @@ public:
 	virtual ~CNEOWorldPosMarkerEnt();
 
 #ifdef GAME_DLL
-	virtual void	Spawn() override;
-	virtual int		UpdateTransmitState() override;
+	virtual void Spawn() override;
+	virtual int UpdateTransmitState() override;
 #else
-	virtual void	PostDataUpdate( DataUpdateType_t updateType ) override;
+	virtual void PostDataUpdate(DataUpdateType_t updateType) override;
 #endif
 
 private:
 #ifdef GAME_DLL
-	void InputSetSprite( inputdata_t &inputdata );
-	void InputSetText( inputdata_t &inputdata );
-	void InputEnable( inputdata_t &inputdata );
-	void InputDisable( inputdata_t &inputdata );
+	void InputSetSprite(inputdata_t &inputdata);
+	void InputSetText(inputdata_t &inputdata);
+	void InputEnable(inputdata_t &inputdata);
+	void InputDisable(inputdata_t &inputdata);
 #else
 	friend class CNEOHud_WorldPosMarker_Generic;
 #endif
 
 #ifdef GAME_DLL
-	CNetworkArray( string_t, m_iszSpriteNames, MAX_SCREEN_OVERLAYS );
-	CNetworkString( m_szText, 64 );
+	CNetworkArray(string_t, m_iszSpriteNames, MAX_SCREEN_OVERLAYS);
+	CNetworkString(m_szText, 64);
 #else
-	char m_iszSpriteNames[ MAX_SCREEN_OVERLAYS ][ MAX_PATH ];
+	char m_iszSpriteNames[MAX_SCREEN_OVERLAYS][MAX_PATH];
 	char m_szText[64];
 #endif
-	CNetworkVar( int, m_iCurrentSprite );
-	CNetworkVar( float, m_flScale );
-	CNetworkVar( bool, m_bShowDistance );
-	CNetworkVar( bool, m_bCapzoneEffect );
-	CNetworkVar( bool, m_bEnabled );
+	CNetworkVar(int, m_iCurrentSprite);
+	CNetworkVar(float, m_flScale);
+	CNetworkVar(bool, m_bShowDistance);
+	CNetworkVar(bool, m_bCapzoneEffect);
+	CNetworkVar(bool, m_bEnabled);
 
 #ifdef GAME_DLL
 	string_t m_szKVText = NULL_STRING;

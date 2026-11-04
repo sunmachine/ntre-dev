@@ -8,23 +8,23 @@
 extern ConVar neo_bot_path_lookahead_range;
 
 //---------------------------------------------------------------------------------------------
-CNEOBotNavEntDestroyEntity::CNEOBotNavEntDestroyEntity( const CFuncNavPrerequisite *prereq )
+CNEOBotNavEntDestroyEntity::CNEOBotNavEntDestroyEntity(const CFuncNavPrerequisite *prereq)
 {
 	m_prereq = prereq;
 }
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotNavEntDestroyEntity::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotNavEntDestroyEntity::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
-	if ( m_prereq == NULL )
+	if (m_prereq == NULL)
 	{
-		return Done( "Prerequisite has been removed before we started" );
+		return Done("Prerequisite has been removed before we started");
 	}
 
-	m_path.SetMinLookAheadDistance( me->GetDesiredPathLookAheadRange() );
+	m_path.SetMinLookAheadDistance(me->GetDesiredPathLookAheadRange());
 
-	m_wasIgnoringEnemies = me->HasAttribute( CNEOBot::IGNORE_ENEMIES );
+	m_wasIgnoringEnemies = me->HasAttribute(CNEOBot::IGNORE_ENEMIES);
 
 	//m_isReadyToLaunchSticky = true;
 
@@ -67,33 +67,35 @@ void CNEOBotNavEntDestroyEntity::DetonateStickiesWhenSet( CNEOBot *me, CWeapon_S
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotNavEntDestroyEntity::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotNavEntDestroyEntity::Update(CNEOBot *me, float interval)
 {
-	if ( m_prereq == NULL )
+	if (m_prereq == NULL)
 	{
-		return Done( "Prerequisite has been removed" );
+		return Done("Prerequisite has been removed");
 	}
 
 	CBaseEntity *target = m_prereq->GetTaskEntity();
-	if ( target == NULL )
+	if (target == NULL)
 	{
-		return Done( "Target entity is NULL" );
+		return Done("Target entity is NULL");
 	}
 
 	float attackRange = me->GetMaxAttackRange();
-		
-	if ( m_prereq->GetTaskValue() > 0.0f ) 
+
+	if (m_prereq->GetTaskValue() > 0.0f)
 	{
-		attackRange = MIN( attackRange, m_prereq->GetTaskValue() );
+		attackRange = MIN(attackRange, m_prereq->GetTaskValue());
 	}
 
-	if ( me->IsDistanceBetweenLessThan( target, attackRange ) && me->GetVisionInterface()->IsLineOfSightClearToEntity( target ) )
+	if (me->IsDistanceBetweenLessThan(target, attackRange) &&
+		me->GetVisionInterface()->IsLineOfSightClearToEntity(target))
 	{
-		me->SetAttribute( CNEOBot::IGNORE_ENEMIES );
+		me->SetAttribute(CNEOBot::IGNORE_ENEMIES);
 
-		me->GetBodyInterface()->AimHeadTowards( target->WorldSpaceCenter(), IBody::CRITICAL, 0.2f, NULL, "Aiming at target we need to destroy to progress" );
+		me->GetBodyInterface()->AimHeadTowards(
+			target->WorldSpaceCenter(), IBody::CRITICAL, 0.2f, NULL, "Aiming at target we need to destroy to progress");
 
-		if ( me->GetBodyInterface()->IsHeadAimingOnTarget() )
+		if (me->GetBodyInterface()->IsHeadAimingOnTarget())
 		{
 			// NEO TODO (Adam) remotedet
 #if 0
@@ -114,9 +116,9 @@ ActionResult< CNEOBot >	CNEOBotNavEntDestroyEntity::Update( CNEOBot *me, float i
 
 				return Continue();
 			}
-#endif 
+#endif
 
-			me->EquipBestWeaponForThreat( NULL );
+			me->EquipBestWeaponForThreat(NULL);
 			me->PressFireButton();
 		}
 
@@ -124,30 +126,30 @@ ActionResult< CNEOBot >	CNEOBotNavEntDestroyEntity::Update( CNEOBot *me, float i
 	}
 
 
-	if ( !m_wasIgnoringEnemies )
+	if (!m_wasIgnoringEnemies)
 	{
-		me->ClearAttribute( CNEOBot::IGNORE_ENEMIES );
+		me->ClearAttribute(CNEOBot::IGNORE_ENEMIES);
 	}
 
 	// move into view of our target
-	if ( m_repathTimer.IsElapsed() )
+	if (m_repathTimer.IsElapsed())
 	{
-		m_repathTimer.Start( RandomFloat( 1.0f, 2.0f ) );
+		m_repathTimer.Start(RandomFloat(1.0f, 2.0f));
 
-		CNEOBotPathCompute( me, m_path, target->GetAbsOrigin(), FASTEST_ROUTE );
+		CNEOBotPathCompute(me, m_path, target->GetAbsOrigin(), FASTEST_ROUTE);
 	}
 
-	m_path.Update( me );
+	m_path.Update(me);
 
 	return Continue();
 }
 
 
 //---------------------------------------------------------------------------------------------
-void CNEOBotNavEntDestroyEntity::OnEnd( CNEOBot *me, Action< CNEOBot > *nextAction )
+void CNEOBotNavEntDestroyEntity::OnEnd(CNEOBot *me, Action<CNEOBot> *nextAction)
 {
-	if ( !m_wasIgnoringEnemies )
+	if (!m_wasIgnoringEnemies)
 	{
-		me->ClearAttribute( CNEOBot::IGNORE_ENEMIES );
+		me->ClearAttribute(CNEOBot::IGNORE_ENEMIES);
 	}
 }

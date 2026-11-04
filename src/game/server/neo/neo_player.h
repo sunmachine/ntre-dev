@@ -34,14 +34,15 @@ enum EMenuSelectType
 // For rate-limiting thermoptic/etc visibility calculations
 struct CNEO_Player_FogCacheEntry
 {
-    bool m_bIsHidden{false};
-    float m_flUpdateTime{-1.0f};   // ensure update the first time
-    float m_flObscuredRatio{1.0f}; // more handy for debugging
+	bool m_bIsHidden{false};
+	float m_flUpdateTime{-1.0f};   // ensure update the first time
+	float m_flObscuredRatio{1.0f}; // more handy for debugging
 };
 
 class CNEO_Player : public CHL2MP_Player
 {
 	friend class CNEORules;
+
 public:
 	DECLARE_CLASS(CNEO_Player, CHL2MP_Player);
 
@@ -51,7 +52,7 @@ public:
 	static CNEO_Player *CreatePlayer(const char *className, edict_t *ed)
 	{
 		CNEO_Player::s_PlayerEdict = ed;
-		return (CNEO_Player*)CreateEntityByName(className);
+		return (CNEO_Player *)CreateEntityByName(className);
 	}
 
 	void SendTestMessage(const char *message);
@@ -74,36 +75,38 @@ public:
 	virtual bool BecomeRagdollOnClient(const Vector &force) OVERRIDE;
 	virtual bool CanBecomeServerRagdoll(void) override { return GetClass() != NEO_CLASS_JUGGERNAUT; }
 	virtual void Event_Killed(const CTakeDamageInfo &info) OVERRIDE;
-	virtual float GetReceivedDamageScale(CBaseEntity* pAttacker) OVERRIDE;
-	virtual bool WantsLagCompensationOnEntity(const CBasePlayer *pPlayer, const CUserCmd *pCmd, const CBitVec<MAX_EDICTS> *pEntityTransmitBits) const OVERRIDE;
+	virtual float GetReceivedDamageScale(CBaseEntity *pAttacker) OVERRIDE;
+	virtual bool WantsLagCompensationOnEntity(const CBasePlayer *pPlayer, const CUserCmd *pCmd,
+		const CBitVec<MAX_EDICTS> *pEntityTransmitBits) const OVERRIDE;
 	virtual void FireBullets(const FireBulletsInfo_t &info) OVERRIDE;
-	virtual void Weapon_Equip(CBaseCombatWeapon* pWeapon) OVERRIDE;
+	virtual void Weapon_Equip(CBaseCombatWeapon *pWeapon) OVERRIDE;
 	virtual bool Weapon_Switch(CBaseCombatWeapon *pWeapon, int viewmodelindex = 0) OVERRIDE;
 	virtual bool Weapon_CanSwitchTo(CBaseCombatWeapon *pWeapon) OVERRIDE;
 	virtual bool BumpWeapon(CBaseCombatWeapon *pWeapon) OVERRIDE;
-	CNEOBaseCombatWeapon* Weapon_GetPosition(int slot, int position);
+	CNEOBaseCombatWeapon *Weapon_GetPosition(int slot, int position);
 	virtual void ChangeTeam(int iTeam) OVERRIDE;
 	virtual void PickupObject(CBaseEntity *pObject, bool bLimitMassAndSize) OVERRIDE;
 	virtual void PlayStepSound(Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force) OVERRIDE;
-	const char* GetOverrideStepSound(const char* pBaseStepSound) override;
+	const char *GetOverrideStepSound(const char *pBaseStepSound) override;
 	virtual void Splash() override;
-	virtual void Weapon_Drop(CBaseCombatWeapon *pWeapon, const Vector *pvecTarget = NULL, const Vector *pVelocity = NULL) OVERRIDE;
+	virtual void Weapon_Drop(
+		CBaseCombatWeapon *pWeapon, const Vector *pvecTarget = NULL, const Vector *pVelocity = NULL) OVERRIDE;
 	void Weapon_DropOnDeath(CNEOBaseCombatWeapon *pWeapon, Vector damageForce);
 	void Weapon_DropAllOnDeath(const CTakeDamageInfo &info);
 	virtual void UpdateOnRemove(void) OVERRIDE;
 	virtual void DeathSound(const CTakeDamageInfo &info) OVERRIDE;
-	virtual CBaseEntity* EntSelectSpawnPoint(void) OVERRIDE;
+	virtual CBaseEntity *EntSelectSpawnPoint(void) OVERRIDE;
 	virtual void EquipSuit(bool bPlayEffects = true) OVERRIDE;
 	virtual void RemoveSuit(void) OVERRIDE;
 	virtual void GiveDefaultItems(void) OVERRIDE;
-	virtual int	OnTakeDamage_Alive(const CTakeDamageInfo& info) OVERRIDE;
-	virtual CBaseEntity* GiveNamedItem(const char* szName, int iSubType = 0) override;
-	virtual CBaseEntity* FindUseEntity() override;
+	virtual int OnTakeDamage_Alive(const CTakeDamageInfo &info) OVERRIDE;
+	virtual CBaseEntity *GiveNamedItem(const char *szName, int iSubType = 0) override;
+	virtual CBaseEntity *FindUseEntity() override;
 
-	virtual void InitVCollision(const Vector& vecAbsOrigin, const Vector& vecAbsVelocity) OVERRIDE;
+	virtual void InitVCollision(const Vector &vecAbsOrigin, const Vector &vecAbsVelocity) OVERRIDE;
 	virtual bool TestHitboxes(const Ray_t &ray, unsigned int fContentsMask, trace_t &tr) override;
 
-	virtual void ModifyFireBulletsDamage(CTakeDamageInfo* dmgInfo) OVERRIDE;
+	virtual void ModifyFireBulletsDamage(CTakeDamageInfo *dmgInfo) OVERRIDE;
 
 	virtual const Vector GetPlayerMins(void) const OVERRIDE;
 	virtual const Vector GetPlayerMaxs(void) const OVERRIDE;
@@ -112,35 +115,33 @@ public:
 	// For bots, calculate how obscuring "fog" variables like thermoptic camoflage affect the visibility of a target.
 	// While the functions aren't actually about fog in the NT context, the abstraction of visibility percentage seemed to fit.
 	// -----------------------
-	virtual bool		IsHiddenByFog(CBaseEntity* target) const OVERRIDE;        ///< return true if given target cant be seen because of "fog"
-	virtual float		GetFogObscuredRatio(CBaseEntity* target) const OVERRIDE;  ///< return 0-1 ratio where zero is not obscured, and 1 is completely obscured
-	virtual float		GetFogObscuredRatio(float range) const OVERRIDE;		///< return 0-1 ratio where zero is not obscured, and 1 is completely obscured
-	float				GetCloakObscuredRatio(CNEO_Player* target) const;		///< return 0-1 ratio where zero is not obscured, and 1 is completely obscured
+	virtual bool IsHiddenByFog(
+		CBaseEntity *target) const OVERRIDE; ///< return true if given target cant be seen because of "fog"
+	virtual float GetFogObscuredRatio(CBaseEntity *target)
+		const OVERRIDE; ///< return 0-1 ratio where zero is not obscured, and 1 is completely obscured
+	virtual float GetFogObscuredRatio(
+		float range) const OVERRIDE; ///< return 0-1 ratio where zero is not obscured, and 1 is completely obscured
+	float GetCloakObscuredRatio(
+		CNEO_Player *target) const; ///< return 0-1 ratio where zero is not obscured, and 1 is completely obscured
 
-	void AddNeoFlag(int flags)
-	{
-		m_NeoFlags.GetForModify() = (GetNeoFlags() | flags);
-	}
+	void AddNeoFlag(int flags) { m_NeoFlags.GetForModify() = (GetNeoFlags() | flags); }
 
-	void RemoveNeoFlag(int flags)
-	{
-		m_NeoFlags.GetForModify() = (GetNeoFlags() & ~flags);
-	}
+	void RemoveNeoFlag(int flags) { m_NeoFlags.GetForModify() = (GetNeoFlags() & ~flags); }
 
 	int GetNeoFlags() const { return m_NeoFlags.Get(); }
 
 	void GiveLoadoutWeapon(void);
 	void SetPlayerTeamModel(void);
-	void SetDeadModel(const CTakeDamageInfo& info);
+	void SetDeadModel(const CTakeDamageInfo &info);
 	void SetPlayerCorpseModel(int type);
-	void SpawnSpecificGibs(float vMinVelocity, float vMaxVelocity, const char* cModelName);
+	void SpawnSpecificGibs(float vMinVelocity, float vMaxVelocity, const char *cModelName);
 	virtual void PickDefaultSpawnTeam(void) OVERRIDE;
 
 	virtual bool StartObserverMode(int mode) OVERRIDE;
 	virtual void StopObserverMode(void) OVERRIDE;
 	virtual bool ModeWantsSpectatorGUI(int iMode) override;
 
-	virtual bool	CanHearAndReadChatFrom(CBasePlayer *pPlayer) OVERRIDE;
+	virtual bool CanHearAndReadChatFrom(CBasePlayer *pPlayer) OVERRIDE;
 
 	bool IsCarryingGhost(void) const;
 	bool IsObjective(void) const;
@@ -175,7 +176,7 @@ public:
 	int GetClass() const { return m_iNeoClass; }
 	void SetClass(int neoClass);
 	int GetStar() const { return m_iNeoStar; }
-	const char *GetStarName( int iStar ) const;
+	const char *GetStarName(int iStar) const;
 	bool IsInAim() const { return m_bInAim; }
 	int GetBotDetectableBleedingInjuryEvents() const { return m_iBotDetectableBleedingInjuryEvents; }
 
@@ -188,8 +189,11 @@ public:
 	bool GetBotPauseFiring() const { return !m_botPauseFiringTimer.IsElapsed(); }
 	bool GetSpectatorTakeoverPlayerPending() const { return m_bSpectatorTakeoverPlayerPending; }
 
-	CNEO_Player* GetSpectatorTakeoverPlayerTarget() const { return m_hSpectatorTakeoverPlayerTarget.Get(); }
-	CNEO_Player* GetSpectatorTakeoverPlayerImpersonatingMe() const { return m_hSpectatorTakeoverPlayerImpersonatingMe.Get(); }
+	CNEO_Player *GetSpectatorTakeoverPlayerTarget() const { return m_hSpectatorTakeoverPlayerTarget.Get(); }
+	CNEO_Player *GetSpectatorTakeoverPlayerImpersonatingMe() const
+	{
+		return m_hSpectatorTakeoverPlayerImpersonatingMe.Get();
+	}
 
 	virtual void StartAutoSprint(void) OVERRIDE;
 	virtual void StartSprinting(void) OVERRIDE;
@@ -200,7 +204,7 @@ public:
 
 	virtual void StartWalking(void) OVERRIDE;
 	virtual void StopWalking(void) OVERRIDE;
-	bool IsMakingFootstepSounds(float* pVelRun={}, float* pSpeed={}, int* fLadder={}) const;
+	bool IsMakingFootstepSounds(float *pVelRun = {}, float *pSpeed = {}, int *fLadder = {}) const;
 	bool IsInSilentMoveMode() const;
 	int GetSilentMoveKeys(bool bCrouchFromPress) const;
 	bool IsOnFootstepGround() const;
@@ -213,7 +217,7 @@ public:
 	bool HoldStep(surfacedata_t *psurface, const Vector &vecOrigin);
 
 	// Cloak Power Interface
-	float CloakPower_Get(void) const ;
+	float CloakPower_Get(void) const;
 	void CloakPower_Update(void);
 	bool CloakPower_Drain(float flPower);
 	void CloakPower_Charge(float flPower);
@@ -224,9 +228,9 @@ public:
 	float GetNormSpeed_WithActiveWepEncumberment(void) const;
 	float GetCrouchSpeed_WithActiveWepEncumberment(void) const;
 	float GetSprintSpeed_WithActiveWepEncumberment(void) const;
-	float GetNormSpeed_WithWepEncumberment(CNEOBaseCombatWeapon* pNeoWep) const;
-	float GetCrouchSpeed_WithWepEncumberment(CNEOBaseCombatWeapon* pNeoWep) const;
-	float GetSprintSpeed_WithWepEncumberment(CNEOBaseCombatWeapon* pNeoWep) const;
+	float GetNormSpeed_WithWepEncumberment(CNEOBaseCombatWeapon *pNeoWep) const;
+	float GetCrouchSpeed_WithWepEncumberment(CNEOBaseCombatWeapon *pNeoWep) const;
+	float GetSprintSpeed_WithWepEncumberment(CNEOBaseCombatWeapon *pNeoWep) const;
 	float GetNormSpeed(void) const;
 	float GetCrouchSpeed(void) const;
 	float GetSprintSpeed(void) const;
@@ -235,8 +239,8 @@ public:
 #if 0
 	void HandleSpeedChanges( CMoveData *mv ) override;
 #endif
-	
-	int ShouldTransmit( const CCheckTransmitInfo *pInfo) OVERRIDE;
+
+	int ShouldTransmit(const CCheckTransmitInfo *pInfo) OVERRIDE;
 
 	void SetNameDupePos(const int dupePos);
 	int NameDupePos() const;
@@ -248,16 +252,16 @@ public:
 
 	IMPLEMENT_NETWORK_VAR_FOR_DERIVED(m_EyeAngleOffset);
 
-	void InputSetPlayerModel( inputdata_t &inputData );
-	void InputRefillAmmo( inputdata_t &inputData );
-	void InputSetTeam( inputdata_t &inputdata);
+	void InputSetPlayerModel(inputdata_t &inputData);
+	void InputRefillAmmo(inputdata_t &inputData);
+	void InputSetTeam(inputdata_t &inputdata);
 	void CloakFlash(float time = 0.f);
 
 	void BecomeJuggernaut();
 	void SpawnJuggernautPostDeath();
 
 	bool IsAFK() const;
-	bool ValidTakeoverTargetFor(CNEO_Player* pPlayerTakingOver);
+	bool ValidTakeoverTargetFor(CNEO_Player *pPlayerTakingOver);
 
 private:
 	bool m_bAllowGibbing;
@@ -345,15 +349,16 @@ public:
 	// Bot-only usage
 	float m_flRanOutSprintTime = 0.0f;
 	CNetworkHandle(CNEO_Player, m_hCommandingPlayer); // The player this bot is commanded by
-	CHandle<CNEO_Player> m_hLeadingPlayer; // The player this bot is following
-	CountdownTimer m_tBotPlayerPingCooldown; // The cooldown time for following player ping
-	float m_flBotDynamicFollowDistanceSq; // The dynamic follow distance interval for bots
-	CNetworkArray(Vector, m_vLastPingByStar, STAR__TOTAL); // The last ping location from this player for each squad star
+	CHandle<CNEO_Player> m_hLeadingPlayer;            // The player this bot is following
+	CountdownTimer m_tBotPlayerPingCooldown;          // The cooldown time for following player ping
+	float m_flBotDynamicFollowDistanceSq;             // The dynamic follow distance interval for bots
+	CNetworkArray(
+		Vector, m_vLastPingByStar, STAR__TOTAL); // The last ping location from this player for each squad star
 	// Bot Functions
 	void ResetBotCommandState();
-	void SendMessageToCommander( const char *message );
-	void SendMessageToPlayer( CNEO_Player *pPlayer, const char *message );
-	void ToggleBotFollowCommander( CNEO_Player *pCommander );
+	void SendMessageToCommander(const char *message);
+	void SendMessageToPlayer(CNEO_Player *pPlayer, const char *message);
+	void ToggleBotFollowCommander(CNEO_Player *pCommander);
 	static const Vector VECTOR_INVALID_WAYPOINT;
 	float m_flLastInputTime = gpGlobals->curtime;
 
@@ -375,14 +380,14 @@ private:
 	mutable CNEO_Player_FogCacheEntry m_playerFogCache[MAX_PLAYERS_ARRAY_SAFE];
 
 private:
-	CNEO_Player(const CNEO_Player&);
+	CNEO_Player(const CNEO_Player &);
 
 	// Spectator takeover player related functionality
 	bool IsFakePlayer() const;
-	void SpectatorTryReplacePlayer(CNEO_Player* pNeoPlayerToReplace);
+	void SpectatorTryReplacePlayer(CNEO_Player *pNeoPlayerToReplace);
 	void SpectatorTakeoverPlayerPreThink();
-	void SpectatorTakeoverPlayerInitiate(CNEO_Player* pPlayer);
-	void SpectatorTakeoverPlayerRevert(bool bHardReset=true);
+	void SpectatorTakeoverPlayerInitiate(CNEO_Player *pPlayer);
+	void SpectatorTakeoverPlayerRevert(bool bHardReset = true);
 
 	CNetworkHandle(CNEO_Player, m_hSpectatorTakeoverPlayerTarget);
 	CNetworkHandle(CNEO_Player, m_hSpectatorTakeoverPlayerImpersonatingMe);
@@ -411,7 +416,7 @@ inline CNEO_Player *ToNEOPlayer(CBaseEntity *pEntity)
 	{
 		return nullptr;
 	}
-	return assert_cast<CNEO_Player*>(pEntity);
+	return assert_cast<CNEO_Player *>(pEntity);
 }
 
 inline const CNEO_Player *ToNEOPlayer(const CBaseEntity *pEntity)
@@ -420,7 +425,7 @@ inline const CNEO_Player *ToNEOPlayer(const CBaseEntity *pEntity)
 	{
 		return nullptr;
 	}
-	return assert_cast<const CNEO_Player*>(pEntity);
+	return assert_cast<const CNEO_Player *>(pEntity);
 }
 
 #endif // NEO_PLAYER_H

@@ -31,8 +31,8 @@ public:
 protected:
 	virtual void UpdateStateForNeoHudElementDraw();
 	virtual void DrawNeoHudElement();
-	virtual ConVar* GetUpdateFrequencyConVar() const;
-	virtual void FireGameEvent(IGameEvent* event) override;
+	virtual ConVar *GetUpdateFrequencyConVar() const;
+	virtual void FireGameEvent(IGameEvent *event) override;
 
 private:
 	void DrawCompass() const;
@@ -57,9 +57,9 @@ private:
 	CPanelAnimationVarAliasType(int, m_height, "tall", "8", "proportional_ypos");
 	CPanelAnimationVarAliasType(int, m_fov, "fov", "90", "int");
 	CPanelAnimationVarAliasType(bool, m_separators, "separators", "1", "bool")
-	CPanelAnimationVarAliasType(bool, m_objectiveVisible, "objective_visible", "1", "bool");
+		CPanelAnimationVarAliasType(bool, m_objectiveVisible, "objective_visible", "1", "bool");
 	CPanelAnimationVarAliasType(int, m_fadeExp, "text_fade_exp", "2", "int")
-	CPanelAnimationVar(Color, m_textColor, "text_color", "255 255 255 150");
+		CPanelAnimationVar(Color, m_textColor, "text_color", "255 255 255 150");
 	CPanelAnimationVar(Color, m_boxColor, "box_color", "200 200 200 40");
 
 private:

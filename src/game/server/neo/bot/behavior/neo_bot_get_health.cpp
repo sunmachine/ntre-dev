@@ -9,7 +9,7 @@ extern ConVar neo_bot_path_lookahead_range;
 extern ConVar neo_bot_health_critical_ratio;
 extern ConVar neo_bot_health_ok_ratio;
 
-void neo_bot_health_ratio_change_callback(IConVar* var, const char* pOldValue [[maybe_unused]], float flOldValue)
+void neo_bot_health_ratio_change_callback(IConVar *var, const char *pOldValue [[maybe_unused]], float flOldValue)
 {
 	if (neo_bot_health_ok_ratio.GetFloat() != neo_bot_health_critical_ratio.GetFloat())
 	{
@@ -32,51 +32,50 @@ void neo_bot_health_ratio_change_callback(IConVar* var, const char* pOldValue [[
 	}
 }
 
-ConVar neo_bot_health_critical_ratio( "neo_bot_health_critical_ratio", "0.3", FCVAR_CHEAT, "", neo_bot_health_ratio_change_callback);
-ConVar neo_bot_health_ok_ratio( "neo_bot_health_ok_ratio", "0.65", FCVAR_CHEAT, "", neo_bot_health_ratio_change_callback);
+ConVar neo_bot_health_critical_ratio(
+	"neo_bot_health_critical_ratio", "0.3", FCVAR_CHEAT, "", neo_bot_health_ratio_change_callback);
+ConVar neo_bot_health_ok_ratio(
+	"neo_bot_health_ok_ratio", "0.65", FCVAR_CHEAT, "", neo_bot_health_ratio_change_callback);
 
-ConVar neo_bot_health_search_near_range( "neo_bot_health_search_near_range", "1000", FCVAR_CHEAT );
-ConVar neo_bot_health_search_far_range( "neo_bot_health_search_far_range", "2000", FCVAR_CHEAT );
+ConVar neo_bot_health_search_near_range("neo_bot_health_search_near_range", "1000", FCVAR_CHEAT);
+ConVar neo_bot_health_search_far_range("neo_bot_health_search_far_range", "2000", FCVAR_CHEAT);
 
-ConVar neo_bot_debug_health_scavenging( "neo_bot_debug_ammo_scavenging", "0", FCVAR_CHEAT );
+ConVar neo_bot_debug_health_scavenging("neo_bot_debug_ammo_scavenging", "0", FCVAR_CHEAT);
 
 //---------------------------------------------------------------------------------------------
 class CHealthFilter : public INextBotFilter
 {
 public:
-	CHealthFilter( CNEOBot *me )
-	{
-		m_me = me;
-	}
+	CHealthFilter(CNEOBot *me) { m_me = me; }
 
-	bool IsSelected( const CBaseEntity *constCandidate ) const
+	bool IsSelected(const CBaseEntity *constCandidate) const
 	{
-		if ( !constCandidate )
+		if (!constCandidate)
 			return false;
 
-		CBaseEntity *candidate = const_cast< CBaseEntity * >( constCandidate );
+		CBaseEntity *candidate = const_cast<CBaseEntity *>(constCandidate);
 
-		CClosestNEOPlayer close( candidate );
-		ForEachPlayer( close );
+		CClosestNEOPlayer close(candidate);
+		ForEachPlayer(close);
 
 		// if the closest player to this candidate object is an enemy, don't use it
-		if ( close.m_closePlayer && m_me->IsEnemy( close.m_closePlayer ) )
+		if (close.m_closePlayer && m_me->IsEnemy(close.m_closePlayer))
 			return false;
 
 		// ignore non-existent ammo to ensure we collect nearby existing ammo
-		if ( candidate->IsEffectActive( EF_NODRAW ) )
+		if (candidate->IsEffectActive(EF_NODRAW))
 			return false;
 
-		if ( candidate->ClassMatches( "item_healthkit" ) )
+		if (candidate->ClassMatches("item_healthkit"))
 			return true;
 
-		if ( candidate->ClassMatches( "item_healthvial" ) )
+		if (candidate->ClassMatches("item_healthvial"))
 			return true;
 
-		if ( candidate->ClassMatches( "item_healthcharger" ) )
+		if (candidate->ClassMatches("item_healthcharger"))
 			return true;
 
-		if ( candidate->ClassMatches( "func_healthcharger" ) )
+		if (candidate->ClassMatches("func_healthcharger"))
 			return true;
 
 		return false;
@@ -88,7 +87,7 @@ public:
 
 //---------------------------------------------------------------------------------------------
 static CNEOBot *s_possibleBot = NULL;
-static CHandle< CBaseEntity > s_possibleHealth = NULL;
+static CHandle<CBaseEntity> s_possibleHealth = NULL;
 static int s_possibleFrame = 0;
 
 
@@ -96,55 +95,60 @@ static int s_possibleFrame = 0;
 /** 
  * Return true if this Action has what it needs to perform right now
  */
-bool CNEOBotGetHealth::IsPossible( CNEOBot *me )
+bool CNEOBotGetHealth::IsPossible(CNEOBot *me)
 {
-	VPROF_BUDGET( "CNEOBotGetHealth::IsPossible", "NextBot" );
+	VPROF_BUDGET("CNEOBotGetHealth::IsPossible", "NextBot");
 
 	float healthRatio = (float)me->GetHealth() / (float)me->GetMaxHealth();
 
 #ifdef _DEBUG
-	Assert(neo_bot_health_ok_ratio.GetFloat() != neo_bot_health_critical_ratio.GetFloat()); // Change callback should ensure this isn't the case, but not sure if its triggered immediately
-#endif // _DEBUG
-	float t = ( healthRatio - neo_bot_health_critical_ratio.GetFloat() ) / ( neo_bot_health_ok_ratio.GetFloat() - neo_bot_health_critical_ratio.GetFloat() );
-	t = clamp( t, 0.0f, 1.0f );
+	Assert(neo_bot_health_ok_ratio.GetFloat() !=
+		neo_bot_health_critical_ratio
+			.GetFloat()); // Change callback should ensure this isn't the case, but not sure if its triggered immediately
+#endif                    // _DEBUG
+	float t = (healthRatio - neo_bot_health_critical_ratio.GetFloat()) /
+		(neo_bot_health_ok_ratio.GetFloat() - neo_bot_health_critical_ratio.GetFloat());
+	t = clamp(t, 0.0f, 1.0f);
 
-	if ( me->GetFlags() & FL_ONFIRE )
+	if (me->GetFlags() & FL_ONFIRE)
 	{
 		// on fire - get health now
 		t = 0.0f;
 	}
 
 	// the more we are hurt, the farther we'll travel to get health
-	float searchRange = neo_bot_health_search_far_range.GetFloat() + t * ( neo_bot_health_search_near_range.GetFloat() - neo_bot_health_search_far_range.GetFloat() );
+	float searchRange = neo_bot_health_search_far_range.GetFloat() +
+		t * (neo_bot_health_search_near_range.GetFloat() - neo_bot_health_search_far_range.GetFloat());
 
-	CBaseEntity* healthkit = NULL;
-	CUtlVector< CHandle< CBaseEntity > > hHealthKits;
-	while ( ( healthkit = gEntList.FindEntityByClassname( healthkit, "*_health*" ) ) != NULL )
+	CBaseEntity *healthkit = NULL;
+	CUtlVector<CHandle<CBaseEntity>> hHealthKits;
+	while ((healthkit = gEntList.FindEntityByClassname(healthkit, "*_health*")) != NULL)
 	{
-		hHealthKits.AddToTail( healthkit );
+		hHealthKits.AddToTail(healthkit);
 	}
 
-	CHealthFilter healthFilter( me );
-	CUtlVector< CHandle< CBaseEntity > > hReachableHealthKits;
-	me->SelectReachableObjects( hHealthKits, &hReachableHealthKits, healthFilter, me->GetLastKnownArea(), searchRange );
+	CHealthFilter healthFilter(me);
+	CUtlVector<CHandle<CBaseEntity>> hReachableHealthKits;
+	me->SelectReachableObjects(hHealthKits, &hReachableHealthKits, healthFilter, me->GetLastKnownArea(), searchRange);
 
-	CBaseEntity* closestHealth = hReachableHealthKits.Size() > 0 ? hReachableHealthKits[0] : NULL;
+	CBaseEntity *closestHealth = hReachableHealthKits.Size() > 0 ? hReachableHealthKits[0] : NULL;
 
-	if ( !closestHealth )
+	if (!closestHealth)
 	{
-		if ( me->IsDebugging( NEXTBOT_BEHAVIOR ) )
+		if (me->IsDebugging(NEXTBOT_BEHAVIOR))
 		{
-			Warning( "%3.2f: No health nearby\n", gpGlobals->curtime );
+			Warning("%3.2f: No health nearby\n", gpGlobals->curtime);
 		}
 		return false;
 	}
 
 	PathFollower path;
-	if ( !CNEOBotPathCompute( me, path, closestHealth->WorldSpaceCenter(), FASTEST_ROUTE ) || !path.IsValid() || path.GetResult() != Path::COMPLETE_PATH )
+	if (!CNEOBotPathCompute(me, path, closestHealth->WorldSpaceCenter(), FASTEST_ROUTE) || !path.IsValid() ||
+		path.GetResult() != Path::COMPLETE_PATH)
 	{
-		if ( me->IsDebugging( NEXTBOT_BEHAVIOR ) )
+		if (me->IsDebugging(NEXTBOT_BEHAVIOR))
 		{
-			Warning( "%3.2f: No path to health!\n", gpGlobals->curtime );
+			Warning("%3.2f: No path to health!\n", gpGlobals->curtime);
 		}
 		return false;
 	}
@@ -157,27 +161,27 @@ bool CNEOBotGetHealth::IsPossible( CNEOBot *me )
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotGetHealth::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotGetHealth::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
-	VPROF_BUDGET( "CNEOBotGetHealth::OnStart", "NextBot" );
+	VPROF_BUDGET("CNEOBotGetHealth::OnStart", "NextBot");
 
-	m_path.SetMinLookAheadDistance( me->GetDesiredPathLookAheadRange() );
+	m_path.SetMinLookAheadDistance(me->GetDesiredPathLookAheadRange());
 
 	// if IsPossible() has already been called, use its cached data
-	if ( s_possibleFrame != gpGlobals->framecount || s_possibleBot != me )
+	if (s_possibleFrame != gpGlobals->framecount || s_possibleBot != me)
 	{
-		if ( !IsPossible( me ) || s_possibleHealth == NULL )
+		if (!IsPossible(me) || s_possibleHealth == NULL)
 		{
-			return Done( "Can't get health" );
+			return Done("Can't get health");
 		}
 	}
 
 	m_healthKit = s_possibleHealth;
-	m_isGoalCharger = m_healthKit->ClassMatches( "*charger*" );
+	m_isGoalCharger = m_healthKit->ClassMatches("*charger*");
 
 	if (!CNEOBotPathCompute(me, m_path, m_healthKit->WorldSpaceCenter(), DEFAULT_ROUTE))
 	{
-		return Done( "No path to health!" );
+		return Done("No path to health!");
 	}
 
 	return Continue();
@@ -185,72 +189,72 @@ ActionResult< CNEOBot >	CNEOBotGetHealth::OnStart( CNEOBot *me, Action< CNEOBot 
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotGetHealth::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotGetHealth::Update(CNEOBot *me, float interval)
 {
-	if ( m_healthKit == NULL || ( m_healthKit->IsEffectActive( EF_NODRAW ) ) )
+	if (m_healthKit == NULL || (m_healthKit->IsEffectActive(EF_NODRAW)))
 	{
-		return Done( "Health kit I was going for has been taken" );
+		return Done("Health kit I was going for has been taken");
 	}
 
-	if ( me->GetHealth() >= me->GetMaxHealth() )
+	if (me->GetHealth() >= me->GetMaxHealth())
 	{
-		return Done( "I've been healed" );
+		return Done("I've been healed");
 	}
 
-	if ( NEORules()->IsTeamplay() )
+	if (NEORules()->IsTeamplay())
 	{
 		// if the closest player to the item we're after is an enemy, give up
 
-		CClosestNEOPlayer close( m_healthKit );
-		ForEachPlayer( close );
-		if ( close.m_closePlayer && me->IsEnemy( close.m_closePlayer ) )
-			return Done( "An enemy is closer to it" );
+		CClosestNEOPlayer close(m_healthKit);
+		ForEachPlayer(close);
+		if (close.m_closePlayer && me->IsEnemy(close.m_closePlayer))
+			return Done("An enemy is closer to it");
 	}
 
-	if ( !m_path.IsValid() )
+	if (!m_path.IsValid())
 	{
 		// this can occur if we overshoot the health kit's location
 		// because it is momentarily gone
-		if ( !CNEOBotPathCompute( me, m_path, m_healthKit->WorldSpaceCenter(), DEFAULT_ROUTE ) )
+		if (!CNEOBotPathCompute(me, m_path, m_healthKit->WorldSpaceCenter(), DEFAULT_ROUTE))
 		{
-			return Done( "No path to health!" );
+			return Done("No path to health!");
 		}
 	}
 
-	m_path.Update( me );
+	m_path.Update(me);
 
 	// may need to switch weapons (ie: engineer holding toolbox now needs to heal and defend himself)
 	const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat();
-	me->EquipBestWeaponForThreat( threat );
+	me->EquipBestWeaponForThreat(threat);
 
 	return Continue();
 }
 
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotGetHealth::OnStuck( CNEOBot *me )
+EventDesiredResult<CNEOBot> CNEOBotGetHealth::OnStuck(CNEOBot *me)
 {
-	return TryDone( RESULT_CRITICAL, "Stuck trying to reach health kit" );
+	return TryDone(RESULT_CRITICAL, "Stuck trying to reach health kit");
 }
 
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotGetHealth::OnMoveToSuccess( CNEOBot *me, const Path *path )
+EventDesiredResult<CNEOBot> CNEOBotGetHealth::OnMoveToSuccess(CNEOBot *me, const Path *path)
 {
 	return TryContinue();
 }
 
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotGetHealth::OnMoveToFailure( CNEOBot *me, const Path *path, MoveToFailureType reason )
+EventDesiredResult<CNEOBot> CNEOBotGetHealth::OnMoveToFailure(CNEOBot *me, const Path *path, MoveToFailureType reason)
 {
-	return TryDone( RESULT_CRITICAL, "Failed to reach health kit" );
+	return TryDone(RESULT_CRITICAL, "Failed to reach health kit");
 }
 
 
 //---------------------------------------------------------------------------------------------
 // We are always hurrying if we need to collect health
-QueryResultType CNEOBotGetHealth::ShouldHurry( const INextBot *me ) const
+QueryResultType CNEOBotGetHealth::ShouldHurry(const INextBot *me) const
 {
 	return ANSWER_YES;
 }

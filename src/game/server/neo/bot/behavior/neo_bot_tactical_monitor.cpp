@@ -34,35 +34,36 @@
 #include "weapon_ghost.h"
 #include "nav_mesh.h"
 
-ConVar neo_bot_force_jump( "neo_bot_force_jump", "0", FCVAR_CHEAT, "Force bots to continuously jump" );
+ConVar neo_bot_force_jump("neo_bot_force_jump", "0", FCVAR_CHEAT, "Force bots to continuously jump");
 
-ConVar neo_bot_scavenge_upgrade_delay( "neo_bot_scavenge_upgrade_delay", "4", FCVAR_GAMEDLL,
-	"Delay in seconds between checking for a better weapon if the bot already has a primary weapon.", true, 1, false, 0 );
+ConVar neo_bot_scavenge_upgrade_delay("neo_bot_scavenge_upgrade_delay", "4", FCVAR_GAMEDLL,
+	"Delay in seconds between checking for a better weapon if the bot already has a primary weapon.", true, 1, false,
+	0);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Attempts to kick/despawn the bot in the Update()
 
-class CNEODespawn : public Action< CNEOBot >
+class CNEODespawn : public Action<CNEOBot>
 {
 public:
-	virtual ActionResult< CNEOBot >	Update( CNEOBot* me, float interval );
-	virtual const char* GetName( void ) const { return "Despawn"; };
+	virtual ActionResult<CNEOBot> Update(CNEOBot *me, float interval);
+	virtual const char *GetName(void) const { return "Despawn"; };
 };
 
 
-ActionResult< CNEOBot > CNEODespawn::Update( CNEOBot* me, float interval )
+ActionResult<CNEOBot> CNEODespawn::Update(CNEOBot *me, float interval)
 {
 	// players need to be kicked, not deleted
-	if ( me->GetEntity()->IsPlayer() )
+	if (me->GetEntity()->IsPlayer())
 	{
-		CBasePlayer* player = static_cast< CBasePlayer* >( me->GetEntity() );
-		engine->ServerCommand( UTIL_VarArgs( "kickid %d\n", player->GetUserID() ) );
+		CBasePlayer *player = static_cast<CBasePlayer *>(me->GetEntity());
+		engine->ServerCommand(UTIL_VarArgs("kickid %d\n", player->GetUserID()));
 	}
 	else
 	{
-		UTIL_Remove( me->GetEntity() );
+		UTIL_Remove(me->GetEntity());
 	}
 	return Continue();
 }
@@ -77,62 +78,62 @@ CNEOBotTacticalMonitor::CNEOBotTacticalMonitor()
 CNEOBotTacticalMonitor::~CNEOBotTacticalMonitor() = default;
 
 
-Action< CNEOBot > *CNEOBotTacticalMonitor::InitialContainedAction( CNEOBot *me )
+Action<CNEOBot> *CNEOBotTacticalMonitor::InitialContainedAction(CNEOBot *me)
 {
 	return new CNEOBotScenarioMonitor;
 }
 
 
 //-----------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotTacticalMonitor::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotTacticalMonitor::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
 	m_pIgnoredWeapons->Reset();
-	m_hazardCheckTimer.Start( 0.5f );
+	m_hazardCheckTimer.Start(0.5f);
 	return Continue();
 }
 
 
 //-----------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotTacticalMonitor::MonitorArmedDetpack( CNEOBot *me )
+ActionResult<CNEOBot> CNEOBotTacticalMonitor::MonitorArmedDetpack(CNEOBot *me)
 {
-	if ( !m_detpackCheckTimer.IsElapsed() )
+	if (!m_detpackCheckTimer.IsElapsed())
 	{
 		return Continue();
 	}
 
-	CWeaponDetpack *pDetWeapon = assert_cast<CWeaponDetpack*>( me->Weapon_OwnsThisType( "weapon_remotedet" ) );
-	if ( !pDetWeapon || pDetWeapon->m_bRemoteHasBeenTriggered )
+	CWeaponDetpack *pDetWeapon = assert_cast<CWeaponDetpack *>(me->Weapon_OwnsThisType("weapon_remotedet"));
+	if (!pDetWeapon || pDetWeapon->m_bRemoteHasBeenTriggered)
 	{
 		// Longer delay assuming that a detpack pickup would be rare
 		// Players usually don't realize they picked up a detpack anyway
-		m_detpackCheckTimer.Start( 10.0f );
+		m_detpackCheckTimer.Start(10.0f);
 		return Continue();
 	}
 
-	if ( !pDetWeapon->m_bThisDetpackHasBeenThrown )
+	if (!pDetWeapon->m_bThisDetpackHasBeenThrown)
 	{
 		// Based on GetArmingTime plus need to get away
-		m_detpackCheckTimer.Start( 3.0f );
+		m_detpackCheckTimer.Start(3.0f);
 		return Continue();
 	}
-	m_detpackCheckTimer.Start( 0.5f );
+	m_detpackCheckTimer.Start(0.5f);
 
 	CBaseEntity *pDetpackEnt = pDetWeapon->GetDetpackEntity();
-	if ( !pDetpackEnt )
+	if (!pDetpackEnt)
 	{
 		return Continue();
 	}
 
-	const Vector& vecDetpackPos = pDetpackEnt->GetAbsOrigin();
+	const Vector &vecDetpackPos = pDetpackEnt->GetAbsOrigin();
 
 	// Check if I am too close to the detpack
-	if ( me->GetAbsOrigin().DistToSqr( vecDetpackPos ) <= Square( NEO_DETPACK_DAMAGE_RADIUS ) )
+	if (me->GetAbsOrigin().DistToSqr(vecDetpackPos) <= Square(NEO_DETPACK_DAMAGE_RADIUS))
 	{
 		return Continue();
 	}
 
 	float flThresholdMultiplier;
-	switch ( me->GetDifficulty() )
+	switch (me->GetDifficulty())
 	{
 	case CNEOBot::EASY:
 		flThresholdMultiplier = 1.05f;
@@ -151,30 +152,30 @@ ActionResult< CNEOBot > CNEOBotTacticalMonitor::MonitorArmedDetpack( CNEOBot *me
 		break;
 	}
 
-	const float flMaxRadiusSq = Square( NEO_DETPACK_DAMAGE_RADIUS * flThresholdMultiplier );
+	const float flMaxRadiusSq = Square(NEO_DETPACK_DAMAGE_RADIUS * flThresholdMultiplier);
 	bool bShouldDetonate = false;
 
 	// Check if any known threat or teammate is in range
-	CUtlVector< CKnownEntity > knownVector;
-	me->GetVisionInterface()->CollectKnownEntities( &knownVector );
+	CUtlVector<CKnownEntity> knownVector;
+	me->GetVisionInterface()->CollectKnownEntities(&knownVector);
 	bool bIsTeamplay = NEORules()->IsTeamplay();
 
-	for ( int i = 0; i < knownVector.Count(); ++i )
+	for (int i = 0; i < knownVector.Count(); ++i)
 	{
-		if ( knownVector[i].IsObsolete() )
+		if (knownVector[i].IsObsolete())
 		{
 			continue;
 		}
 
 		CBaseEntity *pEntity = knownVector[i].GetEntity();
-		if ( !pEntity )
+		if (!pEntity)
 		{
 			continue;
 		}
 
-		if ( vecDetpackPos.DistToSqr( knownVector[i].GetLastKnownPosition() ) <= flMaxRadiusSq )
+		if (vecDetpackPos.DistToSqr(knownVector[i].GetLastKnownPosition()) <= flMaxRadiusSq)
 		{
-			if ( bIsTeamplay && me->InSameTeam( pEntity ) )
+			if (bIsTeamplay && me->InSameTeam(pEntity))
 			{
 				// Teammate in blast radius
 				return Continue();
@@ -186,14 +187,14 @@ ActionResult< CNEOBot > CNEOBotTacticalMonitor::MonitorArmedDetpack( CNEOBot *me
 	}
 
 	// Check if ghost carrier is in range
-	if ( !bShouldDetonate )
+	if (!bShouldDetonate)
 	{
-		if ( CWeaponGhost *pGhost = NEORules()->m_pGhost )
+		if (CWeaponGhost *pGhost = NEORules()->m_pGhost)
 		{
 			CBaseCombatCharacter *pGhostOwner = pGhost->GetOwner();
-			if ( pGhostOwner && !me->InSameTeam( pGhostOwner ) )
+			if (pGhostOwner && !me->InSameTeam(pGhostOwner))
 			{
-				if ( vecDetpackPos.DistToSqr( pGhostOwner->GetAbsOrigin() ) <= flMaxRadiusSq )
+				if (vecDetpackPos.DistToSqr(pGhostOwner->GetAbsOrigin()) <= flMaxRadiusSq)
 				{
 					bShouldDetonate = true;
 				}
@@ -201,9 +202,9 @@ ActionResult< CNEOBot > CNEOBotTacticalMonitor::MonitorArmedDetpack( CNEOBot *me
 		}
 	}
 
-	if ( bShouldDetonate )
+	if (bShouldDetonate)
 	{
-		return SuspendFor( new CNEOBotDetpackTrigger(), "Triggering detpack!" );
+		return SuspendFor(new CNEOBotDetpackTrigger(), "Triggering detpack!");
 	}
 
 	return Continue();
@@ -211,47 +212,47 @@ ActionResult< CNEOBot > CNEOBotTacticalMonitor::MonitorArmedDetpack( CNEOBot *me
 
 
 //-----------------------------------------------------------------------------------------
-void CNEOBotTacticalMonitor::AvoidBumpingFriends( CNEOBot *me )
+void CNEOBotTacticalMonitor::AvoidBumpingFriends(CNEOBot *me)
 {
 	const float avoidRange = 32.0f;
 
-	if ( !NEORules()->IsTeamplay() )
+	if (!NEORules()->IsTeamplay())
 	{
 		return;
 	}
 
 	// stepping straight away from a teammate can step off a ledge
-	if ( me->IsOnPreciseArea() )
+	if (me->IsOnPreciseArea())
 	{
 		return;
 	}
 
-	CUtlVector< CNEO_Player * > friendVector;
-	CollectPlayers( &friendVector, me->GetTeamNumber(), COLLECT_ONLY_LIVING_PLAYERS );
+	CUtlVector<CNEO_Player *> friendVector;
+	CollectPlayers(&friendVector, me->GetTeamNumber(), COLLECT_ONLY_LIVING_PLAYERS);
 
 	CNEO_Player *closestFriend = NULL;
 	float closestRangeSq = avoidRange * avoidRange;
 
-	for( int i=0; i<friendVector.Count(); ++i )
+	for (int i = 0; i < friendVector.Count(); ++i)
 	{
 		CNEO_Player *friendly = friendVector[i];
 
-		if ( friendly == me->GetEntity() )
+		if (friendly == me->GetEntity())
 			continue;
 
-		float rangeSq = ( friendly->GetAbsOrigin() - me->GetAbsOrigin() ).LengthSqr();
-		if ( rangeSq < closestRangeSq )
+		float rangeSq = (friendly->GetAbsOrigin() - me->GetAbsOrigin()).LengthSqr();
+		if (rangeSq < closestRangeSq)
 		{
 			closestFriend = friendly;
 			closestRangeSq = rangeSq;
 		}
 	}
 
-	if ( !closestFriend )
+	if (!closestFriend)
 		return;
 
 	// avoid unless hindrance returns a definitive "no"
-	if ( me->GetIntentionInterface()->IsHindrance( me, closestFriend ) == ANSWER_UNDEFINED )
+	if (me->GetIntentionInterface()->IsHindrance(me, closestFriend) == ANSWER_UNDEFINED)
 	{
 		me->ReleaseForwardButton();
 		me->ReleaseLeftButton();
@@ -259,31 +260,30 @@ void CNEOBotTacticalMonitor::AvoidBumpingFriends( CNEOBot *me )
 		me->ReleaseBackwardButton();
 
 		Vector away = me->GetAbsOrigin() - closestFriend->GetAbsOrigin();
-		if ( away.AsVector2D().IsZero() )
+		if (away.AsVector2D().IsZero())
 		{
 			// stacked on the same spot (e.g. an overflowed spawn point): "away" has no direction, so pick one at random
-			const QAngle randomYaw( 0.0f, RandomFloat( 0.0f, 360.0f ), 0.0f );
-			AngleVectors( randomYaw, &away );
+			const QAngle randomYaw(0.0f, RandomFloat(0.0f, 360.0f), 0.0f);
+			AngleVectors(randomYaw, &away);
 		}
 
-		me->GetLocomotionInterface()->Approach( me->GetLocomotionInterface()->GetFeet() + away );
+		me->GetLocomotionInterface()->Approach(me->GetLocomotionInterface()->GetFeet() + away);
 	}
 }
 
 
-
 //-----------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotTacticalMonitor::WatchForLadders( CNEOBot *me )
+ActionResult<CNEOBot> CNEOBotTacticalMonitor::WatchForLadders(CNEOBot *me)
 {
 	// Check if our current path has an approaching ladder segment
 	const PathFollower *path = me->GetCurrentPath();
-	if ( !path || !path->IsValid() )
+	if (!path || !path->IsValid())
 	{
 		return Continue();
 	}
 
 	const Path::Segment *goal = path->GetCurrentGoal();
-	if ( !goal || !goal->ladder )
+	if (!goal || !goal->ladder)
 	{
 		return Continue();
 	}
@@ -291,25 +291,19 @@ ActionResult< CNEOBot > CNEOBotTacticalMonitor::WatchForLadders( CNEOBot *me )
 	// We're approaching a ladder - check distance
 	const float ladderApproachRange = CNEOBotLadderApproach::ALIGN_RANGE;
 	bool goingUp = (goal->how == GO_LADDER_UP);
-	Vector ladderPos = (goal->how == GO_LADDER_UP) 
-		? goal->ladder->m_bottom 
-		: goal->ladder->m_top;
+	Vector ladderPos = (goal->how == GO_LADDER_UP) ? goal->ladder->m_bottom : goal->ladder->m_top;
 
 	// Sometimes we accidentally run into a ladder without expecting to
-	if ( me->IsOnLadder() )
+	if (me->IsOnLadder())
 	{
-		return SuspendFor(
-			new CNEOBotLadderClimb( goal->ladder, goingUp ),
-			goingUp ? "Encountered ladder up" : "Encountered ladder down" 
-		);
+		return SuspendFor(new CNEOBotLadderClimb(goal->ladder, goingUp),
+			goingUp ? "Encountered ladder up" : "Encountered ladder down");
 	}
 
-	if ( me->GetAbsOrigin().DistToSqr( ladderPos ) < Square(ladderApproachRange) )
+	if (me->GetAbsOrigin().DistToSqr(ladderPos) < Square(ladderApproachRange))
 	{
-		return SuspendFor( 
-			new CNEOBotLadderApproach( goal->ladder, goingUp ), 
-			goingUp ? "Approaching ladder up" : "Approaching ladder down" 
-		);
+		return SuspendFor(new CNEOBotLadderApproach(goal->ladder, goingUp),
+			goingUp ? "Approaching ladder up" : "Approaching ladder down");
 	}
 
 	return Continue();
@@ -319,23 +313,23 @@ ActionResult< CNEOBot > CNEOBotTacticalMonitor::WatchForLadders( CNEOBot *me )
 //-----------------------------------------------------------------------------------------
 // A bot in a hurry does not retreat from the tank, so it cloaks in the tank's line of fire and keeps going:
 // the tank's motion vision ignores cloaked players under 180 u/s
-void CNEOBotTacticalMonitor::CloakPastNpcTurret( CNEOBot *me )
+void CNEOBotTacticalMonitor::CloakPastNpcTurret(CNEOBot *me)
 {
-	if ( me->m_hCommandingPlayer.Get() )
+	if (me->m_hCommandingPlayer.Get())
 	{
 		return;
 	}
 
 	CNavArea *myArea = me->GetLastKnownArea();
-	if ( !myArea || !CNEOBotPathReservations()->IsAreaNpcTurretHazard( myArea->GetID(), me ) )
+	if (!myArea || !CNEOBotPathReservations()->IsAreaNpcTurretHazard(myArea->GetID(), me))
 	{
 		return;
 	}
 
-	me->EnableCloak( 3.0f );
+	me->EnableCloak(3.0f);
 
 	// An Assault stays under that speed unless it sprints, while a Recon is over it anyway and keeps its pace
-	if ( me->IsCloakEnabled() && ( me->GetClass() == NEO_CLASS_ASSAULT ) )
+	if (me->IsCloakEnabled() && (me->GetClass() == NEO_CLASS_ASSAULT))
 	{
 		// the child behaviors moved first this update, so this cancels their run press
 		me->ReleaseRunButton();
@@ -344,57 +338,58 @@ void CNEOBotTacticalMonitor::CloakPastNpcTurret( CNEOBot *me )
 
 
 //-----------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotTacticalMonitor::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotTacticalMonitor::Update(CNEOBot *me, float interval)
 {
-	if ( neo_bot_force_jump.GetBool() )
+	if (neo_bot_force_jump.GetBool())
 	{
-		if ( !me->GetLocomotionInterface()->IsClimbingOrJumping() )
+		if (!me->GetLocomotionInterface()->IsClimbingOrJumping())
 		{
 			me->GetLocomotionInterface()->Jump();
 		}
 	}
 
-	CBaseEntity *dangerousGrenade = CNEOBotRetreatFromGrenade::FindDangerousGrenade( me );
-	if ( dangerousGrenade )
+	CBaseEntity *dangerousGrenade = CNEOBotRetreatFromGrenade::FindDangerousGrenade(me);
+	if (dangerousGrenade)
 	{
-		return SuspendFor( new CNEOBotRetreatFromGrenade( dangerousGrenade ), "Fleeing from grenade!" );
+		return SuspendFor(new CNEOBotRetreatFromGrenade(dangerousGrenade), "Fleeing from grenade!");
 	}
 
-	ActionResult< CNEOBot > result = WatchForLadders( me );
-	if ( result.IsRequestingChange() )
+	ActionResult<CNEOBot> result = WatchForLadders(me);
+	if (result.IsRequestingChange())
 	{
 		return result;
 	}
 
-	if ( CBaseEntity *breakable = CNEOBotPathClearBreakable::GetBreakableInPath( me ) )
+	if (CBaseEntity *breakable = CNEOBotPathClearBreakable::GetBreakableInPath(me))
 	{
-		return SuspendFor( new CNEOBotPathClearBreakable( breakable ), "Clearing breakable in path" );
+		return SuspendFor(new CNEOBotPathClearBreakable(breakable), "Clearing breakable in path");
 	}
 
-	const bool bInAHurry = ( me->GetIntentionInterface()->ShouldHurry( me ) == ANSWER_YES );
+	const bool bInAHurry = (me->GetIntentionInterface()->ShouldHurry(me) == ANSWER_YES);
 
-	if ( !bInAHurry )
+	if (!bInAHurry)
 	{
 		// check if we need to get to cover,
 		// but not from the ghost carrier, since RetreatToCover would end at once and the next check would start it again
-		const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat( true );
-		QueryResultType shouldRetreat = IsThreatGhostCarrier( threat ) ? ANSWER_NO : me->GetIntentionInterface()->ShouldRetreat( me );
+		const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat(true);
+		QueryResultType shouldRetreat =
+			IsThreatGhostCarrier(threat) ? ANSWER_NO : me->GetIntentionInterface()->ShouldRetreat(me);
 
-		if ( shouldRetreat == ANSWER_YES )
+		if (shouldRetreat == ANSWER_YES)
 		{
-			return SuspendFor( new CNEOBotRetreatToCover, "Backing off" );
+			return SuspendFor(new CNEOBotRetreatToCover, "Backing off");
 		}
-		else if ( shouldRetreat != ANSWER_NO )
+		else if (shouldRetreat != ANSWER_NO)
 		{
 			// retreat if we need to do a full reload
-			if ( me->IsDifficulty( CNEOBot::HARD ) || me->IsDifficulty( CNEOBot::EXPERT ) )
+			if (me->IsDifficulty(CNEOBot::HARD) || me->IsDifficulty(CNEOBot::EXPERT))
 			{
-				CNEOBaseCombatWeapon *weapon = (CNEOBaseCombatWeapon*) me->GetActiveWeapon();
-				if ( weapon && weapon->GetPrimaryAmmoCount() > 0 && me->IsBarrageAndReloadWeapon(weapon))
+				CNEOBaseCombatWeapon *weapon = (CNEOBaseCombatWeapon *)me->GetActiveWeapon();
+				if (weapon && weapon->GetPrimaryAmmoCount() > 0 && me->IsBarrageAndReloadWeapon(weapon))
 				{
-					if ( weapon->Clip1() <= 1 )
+					if (weapon->Clip1() <= 1)
 					{
-						return SuspendFor( new CNEOBotRetreatToCover, "Moving to cover to reload" );
+						return SuspendFor(new CNEOBotRetreatToCover, "Moving to cover to reload");
 					}
 				}
 			}
@@ -402,28 +397,28 @@ ActionResult< CNEOBot >	CNEOBotTacticalMonitor::Update( CNEOBot *me, float inter
 
 		// Don't want to interfere with human squad leader's control just to ignore hazards
 		// Might be annoying if bots ignored following or waypoints (e.g. smoke sightlines avoidance)
-		if ( !me->m_hCommandingPlayer.Get() && m_hazardCheckTimer.IsElapsed() )
+		if (!me->m_hCommandingPlayer.Get() && m_hazardCheckTimer.IsElapsed())
 		{
-			m_hazardCheckTimer.Start( 0.5f );
+			m_hazardCheckTimer.Start(0.5f);
 			CNavArea *myArea = me->GetLastKnownArea();
-			if ( myArea )
+			if (myArea)
 			{
-				if ( CNEOBotPathReservations()->IsAreaHazardous( myArea->GetID(), me ) )
+				if (CNEOBotPathReservations()->IsAreaHazardous(myArea->GetID(), me))
 				{
-					return SuspendFor( new CNEOBotRetreatFromHazardArea( ), "Avoiding hazard area" );
+					return SuspendFor(new CNEOBotRetreatFromHazardArea(), "Avoiding hazard area");
 				}
 			}
 		}
 
-		ActionResult< CNEOBot > scavengeResult = ScavengeForPrimaryWeapon( me );
-		if ( scavengeResult.IsRequestingChange() )
+		ActionResult<CNEOBot> scavengeResult = ScavengeForPrimaryWeapon(me);
+		if (scavengeResult.IsRequestingChange())
 		{
 			return scavengeResult;
 		}
 	}
 	else
 	{
-		CloakPastNpcTurret( me );
+		CloakPastNpcTurret(me);
 	}
 
 #if 0 // NEO TODO (Adam) search for dropped weapons to resupply ammunition
@@ -444,19 +439,19 @@ ActionResult< CNEOBot >	CNEOBotTacticalMonitor::Update( CNEOBot *me, float inter
 	}
 #endif
 
-	ActionResult< CNEOBot > detpackResult = MonitorArmedDetpack( me );
-	if ( detpackResult.IsRequestingChange() )
+	ActionResult<CNEOBot> detpackResult = MonitorArmedDetpack(me);
+	if (detpackResult.IsRequestingChange())
 	{
 		return detpackResult;
 	}
 
-	if ( !(me->m_nButtons & (IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT | IN_USE)) )
+	if (!(me->m_nButtons & (IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT | IN_USE)))
 	{
-		AvoidBumpingFriends( me );
+		AvoidBumpingFriends(me);
 	}
 
 	const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat();
-	if ( !threat )
+	if (!threat)
 	{
 		me->ReloadIfLowClip();
 	}
@@ -468,28 +463,29 @@ ActionResult< CNEOBot >	CNEOBotTacticalMonitor::Update( CNEOBot *me, float inter
 
 
 //-----------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotTacticalMonitor::ScavengeForPrimaryWeapon( CNEOBot *me )
+ActionResult<CNEOBot> CNEOBotTacticalMonitor::ScavengeForPrimaryWeapon(CNEOBot *me)
 {
-	if ( !m_maintainTimer.IsElapsed() )
+	if (!m_maintainTimer.IsElapsed())
 	{
 		return Continue();
 	}
 
 	// Avoid swapping weapon in the middle of a fight
-	if ( me->GetTimeSinceWeaponFired() < 3.0f )
+	if (me->GetTimeSinceWeaponFired() < 3.0f)
 	{
 		return Continue();
 	}
 
-	CBaseCombatWeapon *pPrimary = me->Weapon_GetSlot( 0 );
-	const bool bHasPrimaryAmmo = ( pPrimary != nullptr && pPrimary->HasAnyAmmo() );
+	CBaseCombatWeapon *pPrimary = me->Weapon_GetSlot(0);
+	const bool bHasPrimaryAmmo = (pPrimary != nullptr && pPrimary->HasAnyAmmo());
 	const float flDelay = bHasPrimaryAmmo ? neo_bot_scavenge_upgrade_delay.GetFloat() : 1.0f;
-	m_maintainTimer.Start( flDelay );
-	
-	CBaseEntity *pNearestWeapon = FindNearestPrimaryWeapon( me, false, m_pIgnoredWeapons.get() );
-	if ( pNearestWeapon )
+	m_maintainTimer.Start(flDelay);
+
+	CBaseEntity *pNearestWeapon = FindNearestPrimaryWeapon(me, false, m_pIgnoredWeapons.get());
+	if (pNearestWeapon)
 	{
-		return SuspendFor( new CNEOBotSeekWeapon( pNearestWeapon, m_pIgnoredWeapons.get() ), "Scavenging for a new primary weapon" );
+		return SuspendFor(
+			new CNEOBotSeekWeapon(pNearestWeapon, m_pIgnoredWeapons.get()), "Scavenging for a new primary weapon");
 	}
 
 	return Continue();
@@ -497,24 +493,25 @@ ActionResult< CNEOBot > CNEOBotTacticalMonitor::ScavengeForPrimaryWeapon( CNEOBo
 
 
 //-----------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotTacticalMonitor::OnOtherKilled( CNEOBot *me, CBaseCombatCharacter *victim, const CTakeDamageInfo &info )
+EventDesiredResult<CNEOBot> CNEOBotTacticalMonitor::OnOtherKilled(
+	CNEOBot *me, CBaseCombatCharacter *victim, const CTakeDamageInfo &info)
 {
 	return TryContinue();
 }
 
 
 //-----------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotTacticalMonitor::OnNavAreaChanged( CNEOBot *me, CNavArea *newArea, CNavArea *oldArea )
+EventDesiredResult<CNEOBot> CNEOBotTacticalMonitor::OnNavAreaChanged(CNEOBot *me, CNavArea *newArea, CNavArea *oldArea)
 {
 	return TryContinue();
 }
 
 //-----------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotTacticalMonitor::OnCommandString( CNEOBot *me, const char *command )
+EventDesiredResult<CNEOBot> CNEOBotTacticalMonitor::OnCommandString(CNEOBot *me, const char *command)
 {
-	if ( FStrEq( command, "despawn" ) )
+	if (FStrEq(command, "despawn"))
 	{
-		return TrySuspendFor( new CNEODespawn(), RESULT_CRITICAL, "Received command to go to de-spawn" );
+		return TrySuspendFor(new CNEODespawn(), RESULT_CRITICAL, "Received command to go to de-spawn");
 	}
 
 	return TryContinue();
