@@ -230,9 +230,11 @@ bool ImportCrosshair(CrosshairInfo *xhairInfo, const char *pszSequence,
 
 // iExportSerialVersion is only used for unit testing purpose, for usage in-game
 // it should always be exporting to NEOXHAIR_SERIAL_CURRENT
+// clang-format off
 void ExportCrosshair(CrosshairInfo *xhairInfo, char (&szSequence)[NEO_XHAIR_SEQMAX]
 #ifdef UNIT_TEST_DLL
 		, const int iExportSerialVersion = NEOXHAIR_SERIAL_CURRENT
 #endif
 		);
+// clang-format on
 

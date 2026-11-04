@@ -1279,10 +1279,12 @@ void NeoSettings_Audio(NeoSettings *ns)
 	NeoSettings::Audio *pAudio = &ns->audio;
 	NeoUI::Divider(L"VOLUME");
 	NeoUI::Slider(L"Main Volume", &pAudio->flVolMain, 0.0f, 1.0f, 2, 0.1f);
+	// clang-format off
 	NeoUI::Slider(pAudio->bVolMusicSepInGame
 			? L"Music Volume (Main Menu)"
 			: L"Music Volume"
 				, &pAudio->flVolMusic, 0.0f, 1.0f, 2, 0.1f);
+	// clang-format on
 	NeoUI::RingBoxBool(L"Separate in-game Music Volume", &pAudio->bVolMusicSepInGame);
 	if (pAudio->bVolMusicSepInGame)
 	{

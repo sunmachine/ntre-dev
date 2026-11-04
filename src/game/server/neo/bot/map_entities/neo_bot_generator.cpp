@@ -59,6 +59,7 @@ enum
 };
 
 //------------------------------------------------------------------------------
+// clang-format off
 CNEOBotGenerator::CNEOBotGenerator( void ) 
 	: m_bSuppressFire(false)
 	, m_bDisableDodge(false)
@@ -70,6 +71,7 @@ CNEOBotGenerator::CNEOBotGenerator( void )
 	, m_spawnCountRemaining(0)
 	, m_bSpawnOnlyWhenTriggered(false)
 	, m_bEnabled(true)
+// clang-format on
 {
 	SetThink( NULL );
 }
@@ -414,6 +416,7 @@ LINK_ENTITY_TO_CLASS( bot_action_point, CNEOBotActionPoint );
 
 //------------------------------------------------------------------------------
 
+// clang-format off
 CNEOBotActionPoint::CNEOBotActionPoint()
 : m_stayTime( 0.0f )
 , m_desiredDistance( 1.0f )
@@ -421,6 +424,7 @@ CNEOBotActionPoint::CNEOBotActionPoint()
 {
 
 }
+// clang-format on
 
 //------------------------------------------------------------------------------
 

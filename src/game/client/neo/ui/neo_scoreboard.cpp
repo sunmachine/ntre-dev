@@ -441,10 +441,12 @@ void CNEOScoreBoard::Update()
 		char szClantag[NEO_MAX_CLANTAG_LENGTH] = {};
 		if (pNeoImpersonator)
 		{
+			// clang-format off
 			UTIL_MakeSafeName(
 					pNeoImpersonator->GetPlayerNameWithTakeoverContext(
 							pNeoImpersonator->entindex())
 					, szName, ARRAYSIZE(szName));
+			// clang-format on
 		}
 		else
 		{
@@ -1122,6 +1124,7 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 				// for local player here
 				if (m_playerPopup.iUserID > 0)
 				{
+					// clang-format off
 					if (NeoUI::ButtonTexture(
 								m_playerPopup.bMuted
 										? "vgui/hud/voice_transmit"
@@ -1130,6 +1133,7 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 								, m_playerPopup.bMuted
 										? L"Unmute"
 										: L"Mute").bPressed)
+					// clang-format on
 					{
 						int iPlayerIdx = 0;
 						for (int i = 1; i <= gpGlobals->maxClients; i++)

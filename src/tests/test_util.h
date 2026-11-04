@@ -167,6 +167,7 @@ static void _TestCompareStr(const char *lhs, const char *pszLhs,
 
 #endif
 
+// clang-format off
 #define TEST_END() \
 		printf(	"%s: Final results:\n" \
 				"%s: \tPer-run: Total: %d | Failures: %d\n" \
@@ -176,4 +177,5 @@ static void _TestCompareStr(const char *lhs, const char *pszLhs,
 				, g_szName, g_testTotalIdv, g_testFailuresIdv); \
 		return g_retVal; \
 	}
+// clang-format on
 

@@ -65,9 +65,11 @@ public:
         return lhs < rhs;
     }
 
-    CNEOBotPathReservationSystem()
-        : m_BotReservedAreas(DefLessFunc(int))
-        , m_AreaPenalties(DefLessFunc(unsigned int))
+    // clang-format off
+	CNEOBotPathReservationSystem()
+		: m_BotReservedAreas(DefLessFunc(int))
+		, m_AreaPenalties(DefLessFunc(unsigned int))
+    // clang-format on
     {
         for (int i = 0; i < TEAM__TOTAL; ++i)
         {

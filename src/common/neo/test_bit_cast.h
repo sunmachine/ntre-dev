@@ -113,14 +113,16 @@ namespace neo::test
 			_verifyRoundtrip<char, bool>(v);
 		}
 
-		testTypes<
-			 char
-			,int
-			,float
-			,double
-			,long
-			,long long
-		>();
+		// clang-format off
+	testTypes<
+		 char
+		,int
+		,float
+		,double
+		,long
+		,long long
+	>();
+		// clang-format on
 	}
 }
 #endif // DEBUG

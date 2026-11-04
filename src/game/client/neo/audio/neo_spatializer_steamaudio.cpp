@@ -93,11 +93,13 @@ IPLVector3 ToSteamAudioDirection(const Listener &listener, const Vec3 &origin)
 class CSteamAudioSpatializer final : public ISpatializer
 {
 public:
+	// clang-format off
 	CSteamAudioSpatializer(LibraryHandle library, const PhononApi &api)
 		: m_library(library)
 		, m_api(api)
 	{
 	}
+	// clang-format on
 
 	~CSteamAudioSpatializer() override
 	{
