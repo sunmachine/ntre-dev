@@ -618,8 +618,6 @@ void CBasePlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOri
 	bWalking = speed < velrun;	
 #ifdef NEO
 	const bool bLoudStep = pNeoPlayer->IsLoudFootstep();
-#else
-	const bool bLoudStep = !bWalking;
 #endif
 #ifndef NEO
 
@@ -666,7 +664,11 @@ void CBasePlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOri
 	else if ( GetWaterLevel() == WL_Feet )
 	{
 		psurface = physprops->GetSurfaceData( physprops->GetSurfaceIndex( "water" ) );
+#ifdef NEO
 		fvol = bLoudStep ? 0.5 : 0.2;
+#else
+		fvol = bWalking ? 0.2 : 0.5;
+#endif
 
 		SetStepSoundTime( STEPSOUNDTIME_WATER_FOOT, bWalking );
 	}
