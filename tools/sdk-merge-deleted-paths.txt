@@ -1,0 +1,15 @@
+# Paths NEO removed from the Source SDK 2013 tree on purpose.
+# tools/sdk-merge.sh resolves a modify/delete conflict under these paths as
+# "keep deleted" without asking. A deletion anywhere else is left for a human.
+# One entry per line. A trailing slash means a directory; "*.ext" matches by
+# extension anywhere in the tree. Lines starting with # are comments.
+src/game/client/tf/
+src/game/server/tf/
+src/game/shared/tf/
+src/game/shared/econ/
+src/vpc_scripts/
+*.vpc
+*.vgc
+CONTRIBUTING
+game/mod_tf/gameinfo.txt
+src/devtools/bin/vpc.exe
