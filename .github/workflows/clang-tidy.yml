@@ -1,0 +1,61 @@
+name: clang-tidy
+
+# Analyses the whole of the NEO-owned directories and fails only on findings that
+# are not in tools/tidy-baseline.txt, so a pull request is not blamed for problems
+# it did not add. Valve directories have a .clang-tidy with no checks and are
+# never analysed. The commands live in tools/run_tidy.py, which contributors run
+# locally through the CMake tidy target.
+
+on:
+  pull_request:
+    paths:
+      - 'src/game/client/neo/**'
+      - 'src/game/server/neo/**'
+      - 'src/game/shared/neo/**'
+      - 'src/common/neo/**'
+      - 'src/tests/**'
+      - '**/.clang-tidy'
+      - 'tools/run_tidy.py'
+      - 'tools/tidy_compile_db.py'
+      - 'tools/tidy-baseline.txt'
+      - '.github/workflows/clang-tidy.yml'
+
+jobs:
+  tidy:
+    name: clang-tidy (NEO tree, new findings)
+    runs-on: ubuntu-latest
+    # Runs in the same steamrt sniper image as the build, since the compile
+    # database comes from a CMake configure of the real project.
+    container:
+      image: 'registry.gitlab.steamos.cloud/steamrt/sniper/sdk:latest'
+    steps:
+      - name: Set initial default branch name
+        run: git config --global init.defaultBranch master
+
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      # The container runs as a different user from the checkout, and git
+      # refuses a repository it does not own. CMake's build_info.cmake then
+      # cannot read the version tag and stops. Same fix as the Build workflow.
+      - name: Set ownership
+        run: chown -R $(id -u):$(id -g) "$PWD"
+
+      - name: Git fetch tags
+        run: git fetch origin --tags --force
+
+      - name: Install clang-tidy 19
+        # The sniper image lists bullseye-security on deb.debian.org, which
+        # no longer serves it; Debian moved it to archive.debian.org.
+        run: |
+          sed -i 's|http://deb.debian.org/debian-security|http://archive.debian.org/debian-security|' /etc/apt/sources.list
+          apt-get update
+          apt-get install -y --no-install-recommends clang-tidy-19
+
+      - name: Configure the tooling build (unity build off)
+        run: cmake --preset linux-tooling
+        working-directory: src
+
+      - name: Analyse the NEO tree
+        run: python3 -I tools/run_tidy.py --build-dir src/build/linux-tooling --jobs 4

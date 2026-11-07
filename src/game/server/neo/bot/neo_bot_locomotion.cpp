@@ -2,6 +2,7 @@
 
 #include "neo_bot.h"
 #include "neo_bot_locomotion.h"
+#include "NextBotUtil.h"
 #include "particle_parse.h"
 
 extern ConVar falldamage;
