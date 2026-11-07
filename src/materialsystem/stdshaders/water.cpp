@@ -182,7 +182,7 @@ BEGIN_VS_SHADER( Water_DX90,
 	inline void DrawReflectionRefraction( IMaterialVar **params, IShaderShadow* pShaderShadow,
 		IShaderDynamicAPI* pShaderAPI, bool bReflection, bool bRefraction ) 
 	{
-		bool blightMapWaterFog = params[LIGHTMAPWATERFOG]->GetIntValue();
+		bool blightMapWaterFog = params[LIGHTMAPWATERFOG]->GetIntValue(); // NEO
 		SHADOW_STATE
 		{
 			SetInitialShadowState( );
@@ -248,7 +248,7 @@ BEGIN_VS_SHADER( Water_DX90,
 #ifdef NEO
 			SET_STATIC_VERTEX_SHADER_COMBO(LIGHTMAPWATERFOG, blightMapWaterFog);
 #else // Still custom NEO code
-			SET_STATIC_VERTEX_SHADER_COMBO(LIGHTMAPWATERFOG, 0);
+			SET_STATIC_VERTEX_SHADER_COMBO(LIGHTMAPWATERFOG, 0); // NEO
 #endif // NEO
 			SET_STATIC_VERTEX_SHADER( water_vs20 );
 
@@ -268,7 +268,7 @@ BEGIN_VS_SHADER( Water_DX90,
 #ifdef NEO
 				SET_STATIC_PIXEL_SHADER_COMBO(LIGHTMAPWATERFOG, blightMapWaterFog);
 #else // Still custom NEO code
-				SET_STATIC_PIXEL_SHADER_COMBO(LIGHTMAPWATERFOG, 0);
+				SET_STATIC_PIXEL_SHADER_COMBO(LIGHTMAPWATERFOG, 0); // NEO
 #endif // NEO
 				SET_STATIC_PIXEL_SHADER( water_ps20b );
 			}

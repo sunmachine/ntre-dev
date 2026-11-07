@@ -321,8 +321,8 @@ public:
 	virtual void RequestFocus(int direction = 0);
 	virtual bool HasFocus();
 	virtual void InvalidateLayout(bool layoutNow = false, bool reloadScheme = false);
-	virtual bool RequestFocusPrev(VPANEL panel = 0);
-	virtual bool RequestFocusNext(VPANEL panel = 0);
+	virtual bool RequestFocusPrev(VPANEL panel = 0); // NEO
+	virtual bool RequestFocusNext(VPANEL panel = 0); // NEO
 	// tab positioning
 	virtual void   SetTabPosition(int position);
 	virtual int    GetTabPosition();
@@ -517,7 +517,7 @@ public:
 	virtual bool IsKeyBoardInputEnabled();
 
 	virtual void DrawTexturedBox( int x, int y, int wide, int tall, Color color, float normalizedAlpha );
-	virtual void DrawBox(int x, int y, int wide, int tall, Color color, float normalizedAlpha, bool hollow = false);
+	virtual void DrawBox(int x, int y, int wide, int tall, Color color, float normalizedAlpha, bool hollow = false );
 	virtual void DrawBoxFade(int x, int y, int wide, int tall, Color color, float normalizedAlpha, unsigned int alpha0, unsigned int alpha1, bool bHorizontal, bool hollow = false );
 	virtual void DrawHollowBox(int x, int y, int wide, int tall, Color color, float normalizedAlpha );
 	//=============================================================================
@@ -606,7 +606,7 @@ public:
 	virtual void FillRectSkippingPanel( const Color &clr, int x, int y, int w, int h, Panel *skipPanel );
 
 	virtual int	GetPaintBackgroundType();
-	virtual void GetCornerTextureSize(int& w, int& h);
+	virtual void GetCornerTextureSize( int& w, int& h );
 
 	bool		IsChildOfModalSubTree();
 	bool		IsChildOfSurfaceModalPanel();
@@ -1030,7 +1030,7 @@ public:
 
 
 void VguiPanelGetSortedChildPanelList( Panel *pParentPanel, void *pSortedPanels );
-void VguiPanelGetSortedChildButtonList( Panel *pParentPanel, void *pSortedPanels, const char *pchFilter = NULL, int nFilterType = 0 );
+void VguiPanelGetSortedChildButtonList( Panel *pParentPanel, void *pSortedPanels, const char *pchFilter = NULL, int nFilterType = 0 ); // NEO
 int VguiPanelNavigateSortedChildButtonList( void *pSortedPanels, int nDir );
 int ComputeWide(Panel* pPanel, unsigned int& nBuildFlags, KeyValues *inResourceData, int nParentWide, int nParentTall, bool bComputingForTall);
 int ComputeTall(Panel* pPanel, unsigned int& nBuildFlags, KeyValues *inResourceData, int nParentWide, int nParentTall, bool bComputingForWide);

@@ -65,7 +65,7 @@ void WaveTrace( char const *wavname, char const *funcname )
 	static CUtlSymbolTable s_WaveTrace;
 
 	// Make sure we only show the message once
-	if ( !s_WaveTrace.Find( wavname ).IsValid() )
+	if ( !s_WaveTrace.Find( wavname ).IsValid() ) // NEO
 	{
 		DevMsg( "%s directly referenced wave %s (should use game_sounds.txt system instead)\n", 
 			funcname, wavname );
@@ -153,7 +153,7 @@ public:
 			return;
 
 		// Make sure we only show the message once
-		if ( m_PrecachedScriptSounds.Find( soundname ).IsValid() )
+		if ( m_PrecachedScriptSounds.Find( soundname ).IsValid() ) // NEO
 			return;
 
 		if (m_hPrecacheLogFile == FILESYSTEM_INVALID_HANDLE)
@@ -415,7 +415,7 @@ public:
 				static CUtlSymbolTable s_PrecacheScriptSoundFailures;
 
 				// Make sure we only show the message once
-				if ( !s_PrecacheScriptSoundFailures.Find( soundname ).IsValid() )
+				if ( !s_PrecacheScriptSoundFailures.Find( soundname ).IsValid() ) // NEO
 				{
 					DevMsg( "PrecacheScriptSound '%s' failed, no such sound script entry\n", soundname );
 					s_PrecacheScriptSoundFailures.AddString( soundname );

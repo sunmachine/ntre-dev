@@ -1434,14 +1434,16 @@ Color CBaseHudChat::GetTextColorForClient( TextColor colorNum, int clientIndex )
 		break;
 
 	default:
-		if (clientIndex == 0)
-		{
+		if (clientIndex == 0) // NEO
+		{ // NEO
 			c = GetDefaultTextColor();
+#ifdef NEO
 		}
 		else
 		{
 			c = COLOR_NEO_ORANGE;
 		}
+#endif // NEO
 	}
 
 	return Color( c[0], c[1], c[2], 255 );
@@ -1491,7 +1493,7 @@ void CBaseHudChatLine::InsertAndColorizeText( wchar_t *buf, int clientIndex )
 	}
 	m_textRanges.RemoveAll();
 
-	m_text = CloneWString(buf);
+	m_text = CloneWString( buf );
 
 	CBaseHudChat *pChat = dynamic_cast<CBaseHudChat*>(GetParent() );
 

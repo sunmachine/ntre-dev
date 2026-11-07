@@ -20,7 +20,7 @@ enum NormalDecodeMode_t
 
 // Forward declaration
 #ifdef _WIN32
-#pragma warning(disable : 4471)
+#pragma warning(disable : 4471) // NEO
 typedef enum _D3DFORMAT D3DFORMAT;
 #endif
 

@@ -1645,12 +1645,12 @@ void CAI_ActBusyBehavior::PlaySoundForActBusy( busyanimparts_t AnimPart )
 			CAI_Expresser *pExpresser = GetOuter()->GetExpresser();
 			if ( pExpresser )
 			{
-				const char *aiconcept = STRING(pBusyAnim->iszSounds[AnimPart]);
+				const char *aiconcept = STRING(pBusyAnim->iszSounds[AnimPart]); // NEO
 
 				// Must be able to speak the concept
-				if ( !pExpresser->IsSpeaking() && pExpresser->CanSpeakConcept( aiconcept ) )
+				if ( !pExpresser->IsSpeaking() && pExpresser->CanSpeakConcept( aiconcept ) ) // NEO
 				{
-					pExpresser->Speak( aiconcept );
+					pExpresser->Speak( aiconcept ); // NEO
 				}
 			}
 		}

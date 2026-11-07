@@ -490,7 +490,7 @@ int CClientTools::GetModelIndex( HTOOLHANDLE handle )
 {
 	int idx = m_Handles.Find( HToolEntry_t( handle ) );
 	if ( idx == m_Handles.InvalidIndex() )
-		return 0;
+		return 0; // NEO
 
 	HToolEntry_t &entry = m_Handles[ idx ];
 	if ( entry.m_hEntity )

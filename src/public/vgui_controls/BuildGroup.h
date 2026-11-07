@@ -38,7 +38,7 @@ class BuildGroup final
 
 public:
 	BuildGroup(Panel *parentPanel, Panel *contextPanel);
-	virtual ~BuildGroup();
+	virtual ~BuildGroup(); // NEO
 
 	// Toggle build mode on/off
 	void SetEnabled(bool state);

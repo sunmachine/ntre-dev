@@ -2526,7 +2526,7 @@ void KeyValues::RecursiveLoadFromBuffer( char const *resourceName, CUtlBuffer &b
 #ifdef NEO
 			bool bOverflow = (ival == INT_MAX || ival == INT_MIN) && errno == ERANGE;
 #else
-			bool bOverflow = (ival == LONG_MAX || ival == LONG_MIN) && errno == ERANGE;
+			bool bOverflow = ( ival == LONG_MAX || ival == LONG_MIN ) && errno == ERANGE;
 #endif
 #ifdef POSIX
 			// strtod supports hex representation in strings under posix but we DON'T

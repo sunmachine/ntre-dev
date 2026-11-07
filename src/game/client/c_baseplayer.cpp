@@ -1609,14 +1609,14 @@ Vector C_BasePlayer::GetChaseCamViewOffset( CBaseEntity *target )
 #ifdef NEO
 				return VEC_DUCK_VIEW_SCALED(static_cast<CNEO_Player*>(player));
 #else
-				return VEC_DUCK_VIEW_SCALED(player);
+				return VEC_DUCK_VIEW_SCALED( player );
 #endif
 			}
 
 #ifdef NEO
 			return VEC_VIEW_SCALED(static_cast<CNEO_Player*>(player));
 #else
-			return VEC_VIEW_SCALED(player);
+			return VEC_VIEW_SCALED( player );
 #endif
 		}
 		else
@@ -1824,7 +1824,7 @@ void C_BasePlayer::CalcFreezeCamView( Vector& eyeOrigin, QAngle& eyeAngles, floa
 		Assert(dynamic_cast<CNEO_Player*>(pTarget->GetBaseAnimating()));
 		Vector maxs = pTarget->GetBaseAnimating() ? VEC_HULL_MAX_SCALED(static_cast<CNEO_Player*>(pTarget->GetBaseAnimating())) : VEC_HULL_MAX;
 #else
-		Vector maxs = pTarget->GetBaseAnimating() ? VEC_HULL_MAX_SCALED(pTarget->GetBaseAnimating()) : VEC_HULL_MAX;
+		Vector maxs = pTarget->GetBaseAnimating() ? VEC_HULL_MAX_SCALED( pTarget->GetBaseAnimating() ) : VEC_HULL_MAX;
 #endif
 		
 		vecCamTarget.z -= (maxs.z * 0.5);
@@ -1939,7 +1939,7 @@ void C_BasePlayer::CalcInEyeCamView(Vector& eyeOrigin, QAngle& eyeAngles, float&
 #ifdef NEO
 			eyeOrigin += pTargetAnimating ? VEC_DUCK_VIEW_SCALED(static_cast<CNEO_Player*>(pTargetAnimating)) : VEC_DUCK_VIEW;
 #else
-			eyeOrigin += pTargetAnimating ? VEC_DUCK_VIEW_SCALED(pTargetAnimating) : VEC_DUCK_VIEW;
+			eyeOrigin += pTargetAnimating ? VEC_DUCK_VIEW_SCALED( pTargetAnimating ) : VEC_DUCK_VIEW;
 #endif
 		}
 		else
@@ -1947,7 +1947,7 @@ void C_BasePlayer::CalcInEyeCamView(Vector& eyeOrigin, QAngle& eyeAngles, float&
 #ifdef NEO
 			eyeOrigin += pTargetAnimating ? VEC_VIEW_SCALED(static_cast<CNEO_Player*>(pTargetAnimating)) : VEC_VIEW;
 #else
-			eyeOrigin += pTargetAnimating ? VEC_VIEW_SCALED(pTargetAnimating) : VEC_VIEW;
+			eyeOrigin += pTargetAnimating ? VEC_VIEW_SCALED( pTargetAnimating ) : VEC_VIEW;
 #endif
 		}
 	}
@@ -2096,15 +2096,9 @@ void C_BasePlayer::ThirdPersonSwitch( bool bThirdperson )
 				}
 			}
 		}
+#ifdef NEO
 
 		//Notify weapon.
-#ifndef NEO
-		CBaseCombatWeapon *pWeapon = GetActiveWeapon();
-		if ( pWeapon )
-		{
-			pWeapon->ThirdPersonSwitch( bThirdperson );
-		}
-#else
 		for (int i = 0; i < WeaponCount(); i++)
 		{
 			CBaseCombatWeapon* pWeapon = GetWeapon(i);

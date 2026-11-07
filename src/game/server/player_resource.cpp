@@ -18,7 +18,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-extern void SendProxy_StringT_To_String(const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID);
+extern void SendProxy_StringT_To_String(const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID); // NEO
 
 // Datatable
 IMPLEMENT_SERVERCLASS_ST_NOBASE(CPlayerResource, DT_PlayerResource)

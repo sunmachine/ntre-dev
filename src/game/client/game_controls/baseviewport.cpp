@@ -184,7 +184,7 @@ CBaseViewport::CBaseViewport() : vgui::EditablePanel( NULL, "CBaseViewport")
 	g_lastPanel = NULL;
 
 
-	vgui::HScheme scheme = vgui::scheme()->LoadSchemeFromFileEx(enginevgui->GetPanel(PANEL_CLIENTDLL), "resource/ClientScheme.res", "ClientScheme");
+	vgui::HScheme scheme = vgui::scheme()->LoadSchemeFromFileEx( enginevgui->GetPanel( PANEL_CLIENTDLL ), "resource/ClientScheme.res", "ClientScheme");
 	SetScheme(scheme);
 	SetProportional( true );
 
@@ -382,8 +382,8 @@ IViewPortPanel* CBaseViewport::CreatePanelByName(const char *szPanelName)
 
 	if ( Q_strcmp(PANEL_COMMENTARY_MODELVIEWER, szPanelName) == 0 )
 	{
-		// We should never double allocate this ptr
-		Assert(newpanel == NULL);
+		// We should never double allocate this ptr // NEO
+		Assert(newpanel == NULL); // NEO
 
 		newpanel = new CCommentaryModelViewer( this );
 	}

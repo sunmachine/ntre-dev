@@ -272,7 +272,7 @@ IMPLEMENT_SERVERCLASS_ST_NOBASE( CBaseEntity, DT_BaseEntity )
 #if PREDICTION_ERROR_CHECK_LEVEL > 1 
 	SendPropVector	(SENDINFO(m_vecOrigin), -1,  SPROP_NOSCALE|SPROP_CHANGES_OFTEN, 0.0f, HIGH_DEFAULT, SendProxy_Origin ),
 #else
-	SendPropVector	(SENDINFO(m_vecOrigin), -1,  SPROP_NOSCALE|SPROP_CHANGES_OFTEN, 0.0f, HIGH_DEFAULT, SendProxy_Origin ),
+	SendPropVector	(SENDINFO(m_vecOrigin), -1,  SPROP_NOSCALE|SPROP_CHANGES_OFTEN, 0.0f, HIGH_DEFAULT, SendProxy_Origin ), // NEO
 #endif
 
 	SendPropInt		(SENDINFO( m_ubInterpolationFrame ), NOINTERP_PARITY_MAX_BITS, SPROP_UNSIGNED ),
@@ -1841,6 +1841,7 @@ int CBaseEntity::VPhysicsTakeDamage( const CTakeDamageInfo &info )
 		unsigned short gameFlags = VPhysicsGetObject()->GetGameFlags();
 		if ( gameFlags & FVPHYSICS_PLAYER_HELD )
 		{
+#ifdef NEO
 			// if the player is holding the object, use it's real mass (player holding reduced the mass)
 
 			CBasePlayer *pPlayer = NULL;
@@ -1873,6 +1874,19 @@ int CBaseEntity::VPhysicsTakeDamage( const CTakeDamageInfo &info )
 					force *= ratio;
 				}
 			}
+#else
+			// if the player is holding the object, use it's real mass (player holding reduced the mass)
+			CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+			if ( pPlayer )
+			{
+				float mass = pPlayer->GetHeldObjectMass( VPhysicsGetObject() );
+				if ( mass != 0.0f )
+				{
+					float ratio = VPhysicsGetObject()->GetMass() / mass;
+					force *= ratio;
+				}
+			}
+#endif // NEO
 		}
 		else if ( (gameFlags & FVPHYSICS_PART_OF_RAGDOLL) && (gameFlags & FVPHYSICS_CONSTRAINT_STATIC) )
 		{
@@ -3093,7 +3107,7 @@ void CBaseEntity::PhysicsRelinkChildren( float dt )
 		{
 			// the only case where this is valid is if this entity is an attached ragdoll.
 			// So assert here to catch the non-ragdoll case.
-#if NEO
+#ifdef NEO
 #if DEBUG
 			// NEO NOTE (Rain): This is fine in the tutorial map.
 			// Related to the dangling VR helmet prop sequence at the end of the level.
@@ -3102,7 +3116,9 @@ void CBaseEntity::PhysicsRelinkChildren( float dt )
 #else
 			Assert( 0 );
 #endif
-#endif
+#else
+			Assert( 0 );
+#endif // NEO
 		}
 
 		if ( child->FirstMoveChild() )
@@ -5290,7 +5306,7 @@ void CBaseEntity::PrecacheSoundHelper( const char *pName )
 		return;
 	}
 
-	if ( !g_ModelSoundsSymbolHelper.Find( pName ).IsValid() )
+	if ( !g_ModelSoundsSymbolHelper.Find( pName ).IsValid() ) // NEO
 	{
 		g_ModelSoundsSymbolHelper.AddString( pName );
 
@@ -5390,7 +5406,7 @@ void CBaseEntity::PrecacheModelComponents( int nModelIndex )
 						{
 							char token[256];
 							const char *pOptions = pEvent->pszOptions();
-							nexttoken( token, pOptions, ' ');
+							nexttoken( token, pOptions, ' ' );
 							if ( token[0] ) 
 							{
 								PrecacheParticleSystem( token );

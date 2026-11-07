@@ -1740,21 +1740,29 @@ int CBasePlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 
 #ifdef NEO
 	if (sv_neo_bullet_physforce_scale.GetFloat() != 0)
-#endif
+#else
+	if ( info.GetInflictor() && (GetMoveType() == MOVETYPE_WALK) && 
+		( !attacker->IsSolidFlagSet(FSOLID_TRIGGER)) )
+#endif // NEO
 	{
+#ifdef NEO
 		if (info.GetInflictor() && (GetMoveType() == MOVETYPE_WALK) &&
 			(!attacker->IsSolidFlagSet(FSOLID_TRIGGER)))
 		{
 			Vector force = vecDir * -DamageForce(WorldAlignSize(), info.GetBaseDamage());
 			if (force.z > 250.0f)
+#else
+		Vector force = vecDir * -DamageForce( WorldAlignSize(), info.GetBaseDamage() );
+		if ( force.z > 250.0f )
+#endif // NEO
 			{
 				force.z = 250.0f;
 			}
 #ifdef NEO
 			force *= sv_neo_bullet_physforce_scale.GetFloat();
 #endif
-			ApplyAbsVelocityImpulse(force);
-		}
+			ApplyAbsVelocityImpulse(force); // NEO
+		} // NEO
 	}
 
 	// fire global game event
@@ -2883,18 +2891,15 @@ bool CBasePlayer::IsValidObserverTarget(CBaseEntity * target)
 	}
 		
 	// check forcecamera settings for active players
-	if (GetTeamNumber() != TEAM_SPECTATOR)
+	if ( GetTeamNumber() != TEAM_SPECTATOR )
 	{
-		switch (mp_forcecamera.GetInt())
+		switch ( mp_forcecamera.GetInt() )	
 		{
-		case OBS_ALLOW_ALL:
-			break;
-		case OBS_ALLOW_TEAM:
-			if (GetTeamNumber() != target->GetTeamNumber())
+			case OBS_ALLOW_ALL	:	break;
+			case OBS_ALLOW_TEAM :	if ( GetTeamNumber() != target->GetTeamNumber() )
 				return false;
 			break;
-		case OBS_ALLOW_NONE:
-			return false;
+			case OBS_ALLOW_NONE :	return false;
 		}
 	}
 	
@@ -3070,10 +3075,12 @@ float CBasePlayer::GetHeldObjectMass( IPhysicsObject *pHeldObject )
 	return 0;
 }
 
+#ifdef NEO
 CBaseEntity	*CBasePlayer::GetHeldObject( void )
 {
 	return NULL;
 }
+#endif // NEO
 
 //-----------------------------------------------------------------------------
 // Purpose:	Server side of jumping rules.  Most jumping logic is already
@@ -3983,8 +3990,8 @@ void CBasePlayer::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
 
 	// Handle FL_FROZEN.
 	// Prevent player moving for some seconds after New Game, so that they pick up everything
-	const bool originalCheck = (GetFlags() & FL_FROZEN ||
-		(developer.GetInt() == 0 && gpGlobals->eLoadType == MapLoad_NewGame && gpGlobals->curtime < 3.0));
+	const bool originalCheck = (GetFlags() & FL_FROZEN || // NEO
+		(developer.GetInt() == 0 && gpGlobals->eLoadType == MapLoad_NewGame && gpGlobals->curtime < 3.0)); // NEO
 
 #ifdef NEO
 	static constexpr byte IMPULSE_SPRAY = 201;
@@ -4001,7 +4008,7 @@ void CBasePlayer::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
 	const bool bPlayerInFreezeTime = static_cast<CNEO_Player*>(this)->GetNeoFlags() & NEO_FL_FREEZETIME;
 	if (originalCheck || bPlayerInFreezeTime)
 #else
-	if (originalCheck)
+	if (originalCheck) // NEO
 #endif
 	{
 		ucmd->forwardmove = 0;
@@ -4029,7 +4036,7 @@ void CBasePlayer::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
 			ucmd->impulse = 0;
 		}
 #else
-		ucmd->impulse = 0;
+		ucmd->impulse = 0; // NEO
 		ucmd->buttons = 0;
 #endif
 
@@ -4037,9 +4044,9 @@ void CBasePlayer::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
 		// Want to be able to turn around whilst pre-round freeze time happens.
 		if (originalCheck)
 #endif
-		{
-			VectorCopy(pl.v_angle, ucmd->viewangles);
-		}
+		{ // NEO
+			VectorCopy(pl.v_angle, ucmd->viewangles); // NEO
+		} // NEO
 	}
 	else
 	{
@@ -5904,7 +5911,7 @@ bool CBasePlayer::GetInVehicle( IServerVehicle *pVehicle, int nRole )
 	Assert(dynamic_cast<CNEO_Player*>(this));
 	SetViewOffset(VEC_VIEW_SCALED(static_cast<CNEO_Player*>(this)));
 #else
-	SetViewOffset(VEC_VIEW_SCALED(this));
+	SetViewOffset( VEC_VIEW_SCALED( this ) );
 #endif
 
 	m_Local.m_bDucked = false;
@@ -6138,7 +6145,7 @@ CBaseEntity	*CBasePlayer::GiveNamedItem( const char *pszName, int iSubType )
 
 	// Msg( "giving %s\n", pszName );
 
-	EHANDLE pent = NULL;
+	EHANDLE pent = NULL; // NEO
 
 #ifdef NEO
 	// NEO NOTE (nullsystem): Only need to check for weapons that are not stubbed out
@@ -6204,7 +6211,7 @@ CBaseEntity	*CBasePlayer::GiveNamedItem( const char *pszName, int iSubType )
 	}
 
 	pent->SetLocalOrigin( GetLocalOrigin() );
-	pent->AddSpawnFlags(SF_NORESPAWN);
+	pent->AddSpawnFlags( SF_NORESPAWN );
 
 	CBaseCombatWeapon *pWeapon = dynamic_cast<CBaseCombatWeapon*>( (CBaseEntity*)pent );
 	if ( pWeapon )
@@ -8914,7 +8921,7 @@ void CBasePlayer::RefreshCollisionBounds( void )
 	Assert(dynamic_cast<CNEO_Player*>(this));
 	SetViewOffset(VEC_VIEW_SCALED(static_cast<CNEO_Player*>(this)));
 #else
-	SetViewOffset(VEC_VIEW_SCALED(this));
+	SetViewOffset( VEC_VIEW_SCALED( this ) );
 #endif
 }
 

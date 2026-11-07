@@ -179,7 +179,7 @@ void ParseParticleEffectsMap( const char *pMapName, bool bLoadSheets )
 	CUtlVector<CUtlString> files;
 	char szMapManifestFilename[MAX_PATH] = { 0 };
 
-	szMapManifestFilename[0] = '\0';
+	szMapManifestFilename[0] = '\0'; // NEO
 
 	if ( pMapName && *pMapName )
 	{

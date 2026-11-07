@@ -51,7 +51,7 @@ public:
 							m_pCachedRenderData = NULL;
 						}
 
-						virtual ~CBaseCommand()
+						virtual ~CBaseCommand() // NEO
 						{
 							ReleaseCachedRenderData();
 						}

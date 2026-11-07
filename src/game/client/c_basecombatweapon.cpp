@@ -160,7 +160,7 @@ void C_BaseCombatWeapon::OnDataChanged( DataUpdateType_t updateType )
 
 				pPlayer->EmitSound(filter, pPlayer->entindex(), params);
 #else
-				pPlayer->EmitSound("Player.PickupWeapon");
+				pPlayer->EmitSound( "Player.PickupWeapon" );
 #endif
 			}
 		}

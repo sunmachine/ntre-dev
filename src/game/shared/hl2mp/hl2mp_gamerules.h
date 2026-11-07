@@ -120,6 +120,7 @@ public:
 	virtual const CViewVectors* GetViewVectors() const;
 	const HL2MPViewVectors* GetHL2MPViewVectors() const;
 
+#ifdef NEO
 	float GetMapRemainingTime();
 
 	void CheckRestartGame();
@@ -131,6 +132,12 @@ public:
 	void RestartGame();
 	void CleanUpMap();
 #endif
+#else
+	float GetMapRemainingTime();
+	void CleanUpMap();
+	void CheckRestartGame();
+	void RestartGame();
+#endif // NEO
 	void OnNavMeshLoad( void );
 
 #ifndef CLIENT_DLL
@@ -155,7 +162,7 @@ public:
 #ifdef NEO
 	virtual bool CheckGameOver( void );
 #else
-	bool CheckGameOver(void);
+	bool CheckGameOver( void );
 #endif
 
 	bool IsIntermission( void );
@@ -170,14 +177,14 @@ public:
 	virtual bool GetTeamPlayEnabled() const { return true; }
 #endif
 
+#ifdef NEO
 	bool	IsTeamplay( void )
 	{
-#ifdef NEO
 		return GetTeamPlayEnabled();
-#else
-		return m_bTeamPlayEnabled;
-#endif
 	}
+#else
+	bool	IsTeamplay( void ) { return m_bTeamPlayEnabled;	}
+#endif // NEO
 
 	void	CheckAllPlayersReady( void );
 
@@ -186,13 +193,15 @@ public:
 #ifdef NEO
 protected:
 	CNetworkVar(float, m_flGameStartTime);
-#else
-private:
-	CNetworkVar(float, m_flGameStartTime);
-#endif
 
 private:
 	CNetworkVar( bool, m_bTeamPlayEnabled );
+#else
+private:
+	
+	CNetworkVar( bool, m_bTeamPlayEnabled );
+	CNetworkVar( float, m_flGameStartTime );
+#endif // NEO
 	CUtlVector<EHANDLE> m_hRespawnableItemsAndWeapons;
 	float m_tmNextPeriodicThink;
 	float m_flRestartGameTime;

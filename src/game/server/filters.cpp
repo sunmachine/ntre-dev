@@ -407,8 +407,8 @@ protected:
 
 	bool PassesDamageFilterImpl(const CTakeDamageInfo &info)
 	{
-		//Tony; these are bitflags. check them as so.
-		return ((info.GetDamageType() & m_iDamageType) == m_iDamageType);
+		//Tony; these are bitflags. check them as so. // NEO
+		return ((info.GetDamageType() & m_iDamageType) == m_iDamageType); // NEO
 	}
 
 	int m_iDamageType;

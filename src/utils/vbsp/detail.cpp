@@ -440,9 +440,9 @@ face_t *MakeBrushFace( side_t *originalSide, winding_t *winding )
 	f->split[0] = f->split[1] = NULL;
 	f->w = CopyWinding( winding );
 	f->originalface = originalSide;
-#ifdef SDK2013CE
-	f->smoothingGroups = originalSide->smoothingGroups;
-#endif
+#ifdef SDK2013CE // NEO
+	f->smoothingGroups = originalSide->smoothingGroups; // NEO
+#endif // NEO
 
 	//
 	// save material info

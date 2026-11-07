@@ -1932,7 +1932,7 @@ extern "C" int V_tier0_stricmp(const char *s1, const char *s2 );
 // >:)
 #define PAD_LIGHTMAP_ATLAS 1
 
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------- // NEO
 
 #ifdef NEO
 // Used for automatic generation of SourceMod gamedata
@@ -1970,6 +1970,6 @@ static auto _##cls##_force_reg = (OffsetCalculator<cls>::register_offsets(), 0);
 
 #endif
 
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------- // NEO
 
 #endif /* PLATFORM_H */

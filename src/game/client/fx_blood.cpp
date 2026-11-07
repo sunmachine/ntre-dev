@@ -572,7 +572,7 @@ void BloodImpactCallback( const CEffectData & data )
 #ifdef NEO
 DECLARE_CLIENT_EFFECT( "bloodimpact", BloodImpactCallback);
 #else
-DECLARE_CLIENT_EFFECT( "BloodImpact", BloodImpactCallback);
+DECLARE_CLIENT_EFFECT( "BloodImpact", BloodImpactCallback );
 #endif
 
 //-----------------------------------------------------------------------------

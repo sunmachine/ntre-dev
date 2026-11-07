@@ -193,6 +193,7 @@ ConVar cl_neo_grenade_show_path("cl_neo_grenade_show_path", "0", FCVAR_ARCHIVE |
 
 		// smaller, cube bounding box so we rest on the ground
 		SetSize( Vector ( -2, -2, -2 ), Vector ( 2, 2, 2 ) );
+#ifdef NEO
 
 		if (sv_neo_grenade_show_path.GetBool())
 		{ // Transmit the grenade to all players so they can see the path outside their pvs
@@ -202,6 +203,7 @@ ConVar cl_neo_grenade_show_path("cl_neo_grenade_show_path", "0", FCVAR_ARCHIVE |
 		{ // Spectators will still want to see the grenade if they have cl_neo_grenade_show_path set
 			SetTransmitState(FL_EDICT_FULLCHECK);
 		}
+#endif // NEO
 	}
 
 	void CBaseGrenadeProjectile::DangerSoundThink( void )

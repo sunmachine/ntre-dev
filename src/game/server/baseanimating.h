@@ -12,7 +12,7 @@
 
 #include "baseentity.h"
 #include "entityoutput.h"
-#include "interface.h"
+#include "interface.h" // NEO
 #include "studio.h"
 #include "datacache/idatacache.h"
 #include "tier0/threadtools.h"
@@ -194,7 +194,7 @@ public:
 	
 	void GetEyeballs( Vector &origin, QAngle &angles ); // ?? remove ??
 
-	DLL_CLASS_EXPORT int LookupAttachment( const char *szName );
+	DLL_CLASS_EXPORT int LookupAttachment( const char *szName ); // NEO
 
 	// These return the attachment in world space
 	bool GetAttachment( const char *szName, Vector &absOrigin, QAngle &absAngles );

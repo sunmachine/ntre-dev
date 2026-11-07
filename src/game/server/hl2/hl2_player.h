@@ -15,6 +15,7 @@
 #include "simtimer.h"
 #include "soundenvelope.h"
 
+#ifdef NEO
 // In HL2MP we need to inherit from  BaseMultiplayerPlayer!
 #if defined ( HL2MP )
 #include "basemultiplayerplayer.h"
@@ -22,7 +23,7 @@
 #else
 #define BASEPLAYERCLASS CBasePlayer
 #endif
-
+#endif // NEO
 class CAI_Squad;
 class CPropCombineBall;
 
@@ -83,10 +84,10 @@ public:
 //=============================================================================
 // >> HL2_PLAYER
 //=============================================================================
-class CHL2_Player : public BASEPLAYERCLASS
+class CHL2_Player : public BASEPLAYERCLASS // NEO
 {
 public:
-	DECLARE_CLASS( CHL2_Player, BASEPLAYERCLASS );
+	DECLARE_CLASS( CHL2_Player, BASEPLAYERCLASS ); // NEO
 
 	CHL2_Player();
 	~CHL2_Player( void );
@@ -190,9 +191,12 @@ public:
 	void StartSprinting( void );
 	void StopSprinting( void );
 	void InitSprinting( void );
+#ifndef NEO
+	bool IsSprinting( void ) { return m_fIsSprinting; }
+#endif // NEO
 	bool CanSprint( void );
 	void EnableSprint( bool bEnable);
-	bool IsSprinting(void) { return m_fIsSprinting; }
+	bool IsSprinting(void) { return m_fIsSprinting; } // NEO
 #endif
 
 
@@ -272,7 +276,7 @@ public:
 	virtual	bool		IsHoldingEntity( CBaseEntity *pEnt );
 	virtual void		ForceDropOfCarriedPhysObjects( CBaseEntity *pOnlyIfHoldindThis );
 	virtual float		GetHeldObjectMass( IPhysicsObject *pHeldObject );
-	virtual CBaseEntity	*GetHeldObject( void );
+	virtual CBaseEntity	*GetHeldObject( void ); // NEO
 
 	virtual bool		IsFollowingPhysics( void ) { return (m_afPhysicsFlags & PFLAG_ONBARNACLE) > 0; }
 	void				InputForceDropPhysObjects( inputdata_t &data );

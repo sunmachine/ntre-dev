@@ -40,10 +40,17 @@ public:
 
 	const Vector &ApplySpread( const Vector &vecSpread, float bias = 1.0, IUniformRandomStream* pCustomRandom = NULL );
 
+#ifdef NEO
 	const Vector &GetShotDirection() const	{ return m_vecShotDirection; }
 	const Vector &GetResult() const			{ return m_vecResult; }
 	const Vector &GetRightVector() const	{ return m_vecRight; }
 	const Vector &GetUpVector() const		{ return m_vecUp;}
+#else
+	const Vector &GetShotDirection()	{ return m_vecShotDirection; }
+	const Vector &GetResult()			{ return m_vecResult; }
+	const Vector &GetRightVector()		{ return m_vecRight; }
+	const Vector &GetUpVector()			{ return m_vecUp;}
+#endif // NEO
 
 #ifdef NEO
 protected:
@@ -51,9 +58,12 @@ protected:
 private:
 #endif
 	Vector m_vecShotDirection;
-	Vector m_vecResult;
+	Vector m_vecResult; // NEO
 	Vector m_vecRight;
 	Vector m_vecUp;
+#ifndef NEO
+	Vector m_vecResult;
+#endif // NEO
 };
 
 //---------------------------------------------------------

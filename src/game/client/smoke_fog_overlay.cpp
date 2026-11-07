@@ -62,10 +62,10 @@ void TermSmokeFogOverlay()
 
 void DrawSmokeFogOverlay()
 {
-	if (g_SmokeFogOverlayAlpha == 0 || !g_pSmokeFogMaterial || !materials)
-	{
+	if (g_SmokeFogOverlayAlpha == 0 || !g_pSmokeFogMaterial || !materials) // NEO
+	{ // NEO
 		return;
-	}
+	} // NEO
 
 	tmZone( TELEMETRY_LEVEL0, TMZF_NONE, "%s", __FUNCTION__ );
 
@@ -138,6 +138,7 @@ void DrawSmokeFogOverlay()
 #endif // NEO
 }
 
+#ifdef NEO
 #ifdef GLOWS_ENABLE
 extern ConVar glow_outline_effect_enable;
 #endif // GLOWS_ENABLE
@@ -178,3 +179,4 @@ void UpdateThermalOverride()
 #endif // GLOWS_ENABLE
 	g_SmokeFogOverlayThermalOverride = false;
 }
+#endif // NEO

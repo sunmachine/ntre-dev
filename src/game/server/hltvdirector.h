@@ -67,7 +67,7 @@ public: // CBaseGameSystem overrides
 	virtual void	Shutdown();
 	virtual void	FrameUpdatePostEntityThink();
 	virtual void	LevelInitPostEntity();
-	virtual const char	*GetFixedCameraEntityName( void ) { return "point_viewcontrol"; }
+	virtual const char	*GetFixedCameraEntityName( void ) { return "point_viewcontrol"; } // NEO
 
 			bool	SetCameraMan( int iPlayerIndex );
 			int		GetCameraMan() { return m_iCameraManIndex; }

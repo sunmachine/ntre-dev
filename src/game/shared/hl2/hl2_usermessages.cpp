@@ -45,7 +45,7 @@ void RegisterUserMessages( void )
 	usermessages->Register( "LogoTimeMsg", 4 );
 	usermessages->Register( "AchievementEvent", -1 );
 	usermessages->Register( "UpdateJalopyRadar", -1 );
-	usermessages->Register( "RoundResult", -1 );
+	usermessages->Register( "RoundResult", -1 ); // NEO
 
 #ifdef NEO
 	usermessages->Register( "KillerDamageInfo", -1 );

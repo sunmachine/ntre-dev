@@ -58,7 +58,7 @@ char *CTextStatsMgr::GetStatsFilename( void )
 	return m_szStatFilename;
 }
 
-void CTextStatsMgr::SetStatsFilename( const char *sFilename )
+void CTextStatsMgr::SetStatsFilename( const char *sFilename ) // NEO
 {
 	Assert( sFilename && sFilename[0] );
 

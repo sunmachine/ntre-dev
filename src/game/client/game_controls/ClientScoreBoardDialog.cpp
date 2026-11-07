@@ -217,7 +217,7 @@ void CClientScoreBoardDialog::ShowPanel(bool bShow)
 	if ( bShow )
 	{
 		Reset();
-		SetKeyBoardInputEnabled(true);
+		SetKeyBoardInputEnabled(true); // NEO
 		Update();
 		SetVisible( true );
 		MoveToFront();
@@ -385,7 +385,7 @@ void CClientScoreBoardDialog::AddHeader()
 	m_pPlayerList->AddSection(m_iSectionId, "");
 	m_pPlayerList->SetSectionAlwaysVisible(m_iSectionId);
 	m_pPlayerList->AddColumnToSection(m_iSectionId, "name", "#PlayerName", 0, scheme()->GetProportionalScaledValueEx( GetScheme(),NAME_WIDTH) );
-	m_pPlayerList->AddColumnToSection(m_iSectionId, "frags", "#PlayerScore", 0, scheme()->GetProportionalScaledValueEx(GetScheme(), SCORE_WIDTH));
+	m_pPlayerList->AddColumnToSection(m_iSectionId, "frags", "#PlayerScore", 0, scheme()->GetProportionalScaledValueEx( GetScheme(),SCORE_WIDTH) );
 	m_pPlayerList->AddColumnToSection(m_iSectionId, "deaths", "#PlayerDeath", 0, scheme()->GetProportionalScaledValueEx( GetScheme(),DEATH_WIDTH) );
 	m_pPlayerList->AddColumnToSection(m_iSectionId, "ping", "#PlayerPing", 0, scheme()->GetProportionalScaledValueEx( GetScheme(),PING_WIDTH) );
 }
@@ -424,7 +424,7 @@ void CClientScoreBoardDialog::AddSection(int teamType, int teamNumber)
 		}
 
 		m_pPlayerList->AddColumnToSection(m_iSectionId, "name", string1, 0, scheme()->GetProportionalScaledValueEx( GetScheme(),NAME_WIDTH) - m_iAvatarWidth );
-		m_pPlayerList->AddColumnToSection(m_iSectionId, "frags", "", 0, scheme()->GetProportionalScaledValueEx(GetScheme(), SCORE_WIDTH));
+		m_pPlayerList->AddColumnToSection(m_iSectionId, "frags", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(),SCORE_WIDTH) );
 		m_pPlayerList->AddColumnToSection(m_iSectionId, "deaths", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(),DEATH_WIDTH) );
 		m_pPlayerList->AddColumnToSection(m_iSectionId, "ping", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(),PING_WIDTH) );
 	}
@@ -438,7 +438,7 @@ void CClientScoreBoardDialog::AddSection(int teamType, int teamNumber)
 			m_pPlayerList->AddColumnToSection( m_iSectionId, "avatar", "", SectionedListPanel::COLUMN_IMAGE | SectionedListPanel::COLUMN_RIGHT, m_iAvatarWidth );
 		}
 		m_pPlayerList->AddColumnToSection(m_iSectionId, "name", "#Spectators", 0, scheme()->GetProportionalScaledValueEx( GetScheme(),NAME_WIDTH) - m_iAvatarWidth );
-		m_pPlayerList->AddColumnToSection(m_iSectionId, "frags", "", 0, scheme()->GetProportionalScaledValueEx(GetScheme(), SCORE_WIDTH));
+		m_pPlayerList->AddColumnToSection(m_iSectionId, "frags", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(),SCORE_WIDTH) );
 	}
 }
 
@@ -482,7 +482,7 @@ bool CClientScoreBoardDialog::GetPlayerScoreInfo(int playerIndex, KeyValues *kv)
 		return false;
 
 	kv->SetInt("deaths", gr->GetDeaths( playerIndex ) );
-	kv->SetInt("frags", gr->GetFrags(playerIndex));
+	kv->SetInt("frags", gr->GetFrags( playerIndex ) );
 	kv->SetInt("ping", gr->GetPing( playerIndex ) ) ;
 	kv->SetString("name", gr->GetPlayerName( playerIndex ) );
 	kv->SetInt("playerIndex", playerIndex);

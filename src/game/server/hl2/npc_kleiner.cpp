@@ -79,7 +79,7 @@ int CNPC_Kleiner::GetSoundInterests ( void )
 void CNPC_Kleiner::Spawn()
 {
 	// Allow custom model usage (mostly for monitors)
-	const char *szModel = STRING( GetModelName() );
+	const char *szModel = STRING( GetModelName() ); // NEO
 	if (!szModel || !*szModel)
 	{
 		szModel = "models/kleiner.mdl";

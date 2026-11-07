@@ -876,11 +876,11 @@ void PathFollower::Update( INextBot *bot )
 	// a detour crosses only walkable floor, and the prop it goes around is no ledge to climb
 	const bool shouldClimb = !isDetouring;
 #else
-	const bool shouldClimb = true;
+	const bool shouldClimb = true; // NEO
 #endif
 
 	// climb up ledges
-	if ( shouldClimb && !Climbing( bot, m_goal, forward, left, goalRange ) )
+	if ( shouldClimb && !Climbing( bot, m_goal, forward, left, goalRange ) ) // NEO
 	{
 		// a failed climb could mean an invalid path
 		if ( !IsValid() )
@@ -957,9 +957,9 @@ void PathFollower::Update( INextBot *bot )
 			// which walks us off the ledge over the landing
 			const bool keepDropGoal = IsPartWayDownDrop( bot, next );
 #else
-			const bool keepDropGoal = false;
+			const bool keepDropGoal = false; // NEO
 #endif
-			if ( !keepDropGoal && ( mover->IsStuck() || !next || ( next->pos.z - mover->GetFeet().z > mover->GetMaxJumpHeight() ) || !mover->IsPotentiallyTraversable( mover->GetFeet(), next->pos ) ) )
+			if ( !keepDropGoal && ( mover->IsStuck() || !next || ( next->pos.z - mover->GetFeet().z > mover->GetMaxJumpHeight() ) || !mover->IsPotentiallyTraversable( mover->GetFeet(), next->pos ) ) ) // NEO
 			{
 				// the next node is too high, too - we really did fall off the path
 				mover->GetBot()->OnMoveToFailure( this, FAIL_FELL_OFF );
@@ -2080,7 +2080,7 @@ bool PathFollower::JumpOverGaps( INextBot *bot, const Path::Segment *goal, const
 		return false;
 	}
 
-	//trace_t result;
+	//trace_t result; // NEO
 	NextBotTraversableTraceFilter filter( bot, ILocomotion::IMMEDIATELY );
 
 	const float hullWidth = ( body ) ? body->GetHullWidth() : 1.0f;

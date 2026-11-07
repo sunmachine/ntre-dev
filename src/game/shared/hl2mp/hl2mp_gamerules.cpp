@@ -34,13 +34,13 @@
 	#include "hl2mp_gameinterface.h"
 	#include "hl2mp_cvars.h"
 
-#if defined(DEBUG) || defined(NEO)
+#if defined(DEBUG) || defined(NEO) // NEO
 #ifdef NEO
 	#include "hl2mp_bot_temp.h"
 #else
-	#include "tf_bot_temp.h"
+	#include "tf_bot_temp.h" // NEO
 #endif // NEO
-#endif // defined(DEBUG) || defined(NEO)
+#endif // defined(DEBUG) || defined(NEO) // NEO
 
 #ifdef NEO
 	#include "neo_gamerules.h"
@@ -184,7 +184,7 @@ static const char *s_PreserveEnts[] =
 #endif
 
 // NOTE: the indices here must match TEAM_TERRORIST, TEAM_CT, TEAM_SPECTATOR, etc.
-const char *sTeamNames[] =
+const char *sTeamNames[] = // NEO
 {
 #ifdef NEO
 	"Unassigned",
@@ -997,35 +997,6 @@ CAmmoDef *GetAmmoDef()
 		"Automatically switch to picked up weapons (if more powerful)" );
 
 #else
-
-#ifndef NEO
-#ifdef GAME_DLL
-	void Bot_f(); // Handler for the "bot" command.
-	ConCommand cc_Bot("bot", Bot_f, "Add a bot.", FCVAR_CHEAT);
-#if defined(DEBUG)
-	void Bot_f()
-	{
-		// Look at -count.
-		int count = 1;
-		count = clamp( count, 1, 16 );
-
-		int iTeam = TEAM_COMBINE;
-				
-		// Look at -frozen.
-		bool bFrozen = false;
-			
-		// Ok, spawn all the bots.
-		while ( --count >= 0 )
-		{
-			BotPutInServer( bFrozen, iTeam );
-		}
-	}
-#endif
-
-#endif
-
-	ConCommand cc_Bot_Alias_BotAdd("bot_add", Bot_f, "Add a bot. Alias for \"bot\".", FCVAR_CHEAT);
-#endif //NEO
 
 	bool CHL2MPRules::FShouldSwitchWeapon( CBasePlayer *pPlayer, CBaseCombatWeapon *pWeapon )
 	{		

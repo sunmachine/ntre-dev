@@ -1811,9 +1811,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 		else
 		{
 #ifdef NEO
-			// Don't run the biasing code for the player at the moment.
-			vecDir = Manipulator.ApplySpread( info.m_vecSpread );
-#else
+#if 0 // Recoil view follow, switched off in #177 so fully automatic weapons stay usable with ping.
 			Manipulator.ApplySpread(info.m_vecSpread);
 			Vector vecRecoilDir;
 			Manipulator.GetSpreadAndRecoilDirections(vecDir, vecRecoilDir);
@@ -1842,7 +1840,10 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 				pNeoAttacker->SetLocalAngles(Lerp(sv_neo_recoil_viewfollow_scale.GetFloat(), pNeoAttacker->LocalEyeAngles(), postRecoilViewAngle));
 #endif
 			}
+#endif
 #endif // NEO
+			// Don't run the biasing code for the player at the moment.
+			vecDir = Manipulator.ApplySpread( info.m_vecSpread );
 		}
 
 		vecEnd = info.m_vecSrc + vecDir * info.m_flDistance;
@@ -2171,7 +2172,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 		{
 			HandleShotImpactingGlass( info, tr, vecDir, &traceFilter );
 		}
-#endif // GAME_DLL
+#endif // GAME_DLL // NEO
 #endif // NEO
 #ifdef NEO
 		// Bullet penetration

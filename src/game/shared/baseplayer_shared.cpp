@@ -100,7 +100,7 @@
 #endif
 
 #ifdef CLIENT_DLL
-ConVar mp_usehwmmodels( "mp_usehwmmodels", "0", FCVAR_NONE, "Enable the use of the hw morph models. (-1 = never, 1 = always, 0 = based upon GPU)" ); // -1 = never, 0 = if hasfastvertextextures, 1 = always
+ConVar mp_usehwmmodels( "mp_usehwmmodels", "0", FCVAR_NONE, "Enable the use of the hw morph models. (-1 = never, 1 = always, 0 = based upon GPU)" ); // -1 = never, 0 = if hasfastvertextextures, 1 = always // NEO
 #ifdef NEO
 extern ConVar neo_fov;
 #endif
@@ -618,8 +618,6 @@ void CBasePlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOri
 	bWalking = speed < velrun;	
 #ifdef NEO
 	const bool bLoudStep = pNeoPlayer->IsLoudFootstep();
-#else
-	const bool bLoudStep = !bWalking;
 #endif
 #ifndef NEO
 
@@ -666,7 +664,11 @@ void CBasePlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOri
 	else if ( GetWaterLevel() == WL_Feet )
 	{
 		psurface = physprops->GetSurfaceData( physprops->GetSurfaceIndex( "water" ) );
+#ifdef NEO
 		fvol = bLoudStep ? 0.5 : 0.2;
+#else
+		fvol = bWalking ? 0.2 : 0.5;
+#endif
 
 		SetStepSoundTime( STEPSOUNDTIME_WATER_FOOT, bWalking );
 	}
