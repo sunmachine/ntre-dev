@@ -2,7 +2,8 @@ name: clang-format
 
 # Checks only the lines a pull request changed, and only in NEO-owned paths.
 # Valve directories are covered by the root .clang-format (DisableFormat: true)
-# and never report anything.
+# and never report anything. The commands live in tools/format_changed.py, which
+# contributors run locally, and the Windows job keeps that path working.
 
 on:
   pull_request:
@@ -15,45 +16,31 @@ on:
       - 'src/materialsystem/stdshaders/**'
       - 'src/launcher_main/neo_case_heal.h'
       - '**/.clang-format'
+      - 'tools/neo_dev.py'
+      - 'tools/format_changed.py'
+      - '.github/workflows/clang-format.yml'
 
 jobs:
   format:
-    name: clang-format (changed lines)
-    runs-on: ubuntu-24.04
+    name: clang-format (changed lines, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2022]
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      # The same pinned version as CONTRIBUTING.md, so a contributor's local run
+      # and this job lay code out identically.
       - name: Install clang-format 19
-        run: sudo apt-get install -y --no-install-recommends clang-format-19
+        run: python -m pip install clang-format==19.1.7
 
       - name: Check changed lines
-        run: |
-          base=$(git merge-base "origin/${{ github.base_ref }}" HEAD)
-          # git clang-format exits 0 when the changed lines are formatted or
-          # no file matched, 1 when it printed a diff, 2 on an error.
-          rc=0
-          git clang-format-19 --diff --binary clang-format-19 "$base" -- \
-            src/game/client/neo src/game/server/neo src/game/shared/neo src/common/neo src/tests || rc=$?
-          if [ "$rc" -eq 1 ]; then
-            echo "::error::Formatting differs on changed lines. Run: git clang-format-19 $base"
-          fi
-          exit "$rc"
-
-      # NEO-owned files inside Valve directories are not reached by a directory
-      # .clang-format (the root one disables formatting there), so they are
-      # checked by an explicit, case-insensitive path list with the NEO style.
-      - name: Check changed shader and launcher files
-        run: |
-          base=$(git merge-base "origin/${{ github.base_ref }}" HEAD)
-          rc=0
-          git clang-format-19 --diff --binary clang-format-19 \
-            --style=file:src/game/shared/neo/.clang-format "$base" -- \
-            'src/materialsystem/stdshaders/[Nn]eo_*.cpp' \
-            'src/materialsystem/stdshaders/[Nn]eo_*.h' \
-            src/launcher_main/neo_case_heal.h || rc=$?
-          if [ "$rc" -eq 1 ]; then
-            echo "::error::Formatting differs on changed lines of a NEO shader or launcher file."
-          fi
-          exit "$rc"
+        run: python -I tools/neo_dev.py format --check --base "origin/${{ github.base_ref }}"

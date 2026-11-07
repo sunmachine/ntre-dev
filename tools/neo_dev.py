@@ -8,6 +8,9 @@ one script in tools/ with the options given after the command, so
 "<command> --help" shows that script's options. CI runs the same commands.
 
 Before pushing
+  format                  Format the lines this branch changed in NEO-owned code, as the
+                          clang-format check does. --check only reports.
+                          Script: format_changed.py.
   check-valve-edits       Check that every edit this branch made to a Valve file is inside
                           #ifdef NEO or tagged // NEO, so Valve SDK updates keep merging.
                           Script: check_valve_edits.py.
@@ -29,6 +32,7 @@ import sys
 
 TOOLS = os.path.dirname(os.path.realpath(__file__))
 COMMANDS = {
+    'format': ('format_changed.py', []),
     'check-valve-edits': ('check_valve_edits.py', ['--check']),
     'update-valve-baseline': ('check_valve_edits.py', ['--update-baseline']),
     'merge-valve-sdk': ('merge_valve_sdk.sh', []),
