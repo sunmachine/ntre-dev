@@ -1680,6 +1680,7 @@ set(UNITY_SOURCE_NEO_UI
     neo/ui/neo_hud_ammo.cpp
     neo/ui/neo_hud_childelement.cpp
     neo/ui/neo_hud_compass.cpp
+    neo/ui/neo_hud_crosshair_paint.cpp
     neo/ui/neo_hud_damage_indicator.cpp
     neo/ui/neo_hud_deathnotice.cpp
     neo/ui/neo_hud_friendly_marker.cpp

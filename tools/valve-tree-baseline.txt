@@ -3,7 +3,6 @@
 # Lines tagged // NEO do not count. A count may only shrink.
 # Format: <count><tab><path>, largest first.
 2045	src/game/client/mp3player.cpp
-232	src/game/client/hud_crosshair.cpp
 72	src/public/shaderlib/cshader.h
 17	src/materialsystem/stdshaders/lightmappedgeneric_ps2_3_x.h
 14	src/materialsystem/stdshaders/water_ps2x_helper.h
