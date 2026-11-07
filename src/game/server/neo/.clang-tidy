@@ -13,5 +13,5 @@ Checks: >
   -performance-avoid-endl,
   -performance-enum-size,
   -performance-no-int-to-ptr
-HeaderFilterRegex: '(/neo/|/common/neo/|/tests/)'
+HeaderFilterRegex: '/src/(game/(client|server|shared)/neo|common/neo|tests)/'
 WarningsAsErrors: ''

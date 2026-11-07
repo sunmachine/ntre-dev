@@ -102,6 +102,12 @@
       "name": "linux-release",
       "displayName": "Linux Release",
       "configurePreset": "linux-release"
+    },
+    {
+      "name": "linux-tidy",
+      "displayName": "Linux clang-tidy",
+      "configurePreset": "linux-tooling",
+      "targets": ["tidy"]
     }
   ]
 }

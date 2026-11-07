@@ -502,6 +502,19 @@ if(NOT NEO_DEDICATED)
     endif()
 endif()
 
+# Runs clang-tidy over NEO-owned code: cmake --build --preset linux-tidy
+if(OS_LINUX)
+    find_package(Python3 COMPONENTS Interpreter QUIET)
+    if(Python3_Interpreter_FOUND)
+        add_custom_target(
+            tidy
+            COMMAND "${Python3_EXECUTABLE}" -I "${CMAKE_SOURCE_DIR}/../tools/run_tidy.py" --build-dir "${CMAKE_BINARY_DIR}"
+            USES_TERMINAL
+            VERBATIM
+        )
+    endif()
+endif()
+
 if(NEO_CI_BUILD AND "${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
     set(BUILD_TYPE_NAME "Release")
 else()
