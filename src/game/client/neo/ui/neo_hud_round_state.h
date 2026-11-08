@@ -13,7 +13,6 @@
 #include <vgui_controls/Panel.h>
 
 namespace vgui {
-class ImagePanel;
 class ImageList;
 }
 
@@ -56,6 +55,9 @@ private:
 	};
 
 	void CheckActiveStar();
+	void DrawActiveStar() const;
+	void DrawRoundClock(const Color &color) const;
+	void DrawPlayersAlive() const;
 	void DrawPlayerList();
 	void DrawPlayerList_BotCmdr();
 	int DrawPlayerRow(int playerIndex, int yOffset, bool small = false, const Color* highlightColor = nullptr);
@@ -103,7 +105,10 @@ private:
 	vgui::IntRect m_rectRightTeamTotalLogo = {};
 	int m_ilogoSize = 0;
 
-	vgui::ImagePanel *m_ipStars[STAR__TOTAL] = {};
+	int m_iStarTextures[STAR__TOTAL] = {};
+	int m_iStarToDraw = -1;
+	Color m_colorStar = {};
+	float m_flStarScale = 1.0f;
 	int m_iPreviouslyActiveStar = -1;
 	int m_iPreviouslyActiveTeam = -1;
 
