@@ -3369,6 +3369,138 @@ Scheme
 				"additive"	"1"
 			}
 		}
+		NHudFeedName
+		{
+			"1"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"11"
+				"weight"	"700"
+				"yres"		"480 599"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"2"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"12"
+				"weight"	"700"
+				"yres"		"600 767"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"3"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"15"
+				"weight"	"700"
+				"yres"		"768 1023"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"4"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"18"
+				"weight"	"700"
+				"yres"		"1024 1199"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"5"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"21"
+				"weight"	"700"
+				"yres"		"1200 1440"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"6"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"24"
+				"weight"	"700"
+				"yres"		"1441 1599"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"7"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"25"
+				"weight"	"700"
+				"yres"		"1600 6000"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+		}
+		NHudFeedText
+		{
+			"1"
+			{
+				"name"		"Montserrat"
+				"tall"		"9"
+				"weight"	"500"
+				"yres"		"480 599"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"2"
+			{
+				"name"		"Montserrat"
+				"tall"		"10"
+				"weight"	"500"
+				"yres"		"600 767"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"3"
+			{
+				"name"		"Montserrat"
+				"tall"		"13"
+				"weight"	"500"
+				"yres"		"768 1023"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"4"
+			{
+				"name"		"Montserrat"
+				"tall"		"16"
+				"weight"	"500"
+				"yres"		"1024 1199"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"5"
+			{
+				"name"		"Montserrat"
+				"tall"		"19"
+				"weight"	"500"
+				"yres"		"1200 1440"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"6"
+			{
+				"name"		"Montserrat"
+				"tall"		"22"
+				"weight"	"500"
+				"yres"		"1441 1599"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"7"
+			{
+				"name"		"Montserrat"
+				"tall"		"23"
+				"weight"	"500"
+				"yres"		"1600 6000"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+		}
 				"antialias"	"1"
 				"additive"	"1"
 			}
