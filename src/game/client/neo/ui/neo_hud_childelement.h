@@ -5,6 +5,7 @@
 #endif
 
 #include "neo_gamerules.h"
+#include "neo_hud_draw.h"
 
 class C_NEO_Player;
 
@@ -93,6 +94,8 @@ protected:
 	}
 
 	static int GetMargin();
+	// A size written in pixels at 1080p, scaled to the screen. See NeoHud::ScaledPx.
+	static int ScaledPx(const int iPxAt1080) { return NeoHud::ScaledPx(iPxAt1080); }
 	int m_iHideHudElementNumber = NEO_HUD_ELEMENT_INVALID;
 
 private:
