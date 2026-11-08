@@ -3166,6 +3166,17 @@ Scheme
 				"additive"	"1"
 			}
 		}
+		NHudScoreboardIcons
+		{
+			"1"
+			{
+				"name"		"killfeedicons"
+				"tall"		"5"
+				"weight"	"0"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+		}
 		NHudDashScore
 		{
 			"1"
@@ -3495,6 +3506,24 @@ Scheme
 				"dropshadow"	"1"
 			}
 		}
+		NHudScoreboardMono
+		{
+			"1"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"7"
+				"weight"	"700"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+		}
+		NHudScoreboardText
+		{
+			"1"
+			{
+				"name"		"Montserrat"
+				"tall"		"7"
+				"weight"	"500"
 				"antialias"	"1"
 				"additive"	"1"
 			}
