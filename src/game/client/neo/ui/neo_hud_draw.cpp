@@ -5,6 +5,9 @@
 #include <vgui/ISurface.h>
 #include <vgui_controls/Controls.h>
 
+#include "neo_hud_deathnotice.h"
+#include "neo_player_shared.h"
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -281,5 +284,35 @@ InkRange DrawNumberCentered(vgui::HFont font, const int xCenter, const int yBase
 float GetReadoutTracking(vgui::HFont font)
 {
 	return surface()->GetFontAscent(font, L'H') * READOUT_TRACKING;
+}
+
+wchar_t GetRankGlyph(const int iXP)
+{
+	return static_cast<wchar_t>(NEO_HUD_DEATHNOTICEICON_RANKLESS_DOG + GetRank(iXP));
+}
+
+int GetRankGlyphWideMax(vgui::HFont hIconFont)
+{
+	int iWide = 0;
+	for (int i = NEO_HUD_DEATHNOTICEICON_RANKLESS_DOG; i <= NEO_HUD_DEATHNOTICEICON_LT; ++i)
+	{
+		int a = 0, b = 0, c = 0;
+		surface()->GetCharABCwide(hIconFont, static_cast<wchar_t>(i), a, b, c);
+		iWide = Max(iWide, b);
+	}
+	return iWide;
+}
+
+void DrawRankGlyphCentered(vgui::HFont hIconFont, const int xColumn, const int iColumnWide, const int yRow, const int iRowTall, const int iXP)
+{
+	const wchar_t wchGlyph = GetRankGlyph(iXP);
+	int a = 0, b = 0, c = 0;
+	surface()->GetCharABCwide(hIconFont, wchGlyph, a, b, c);
+	surface()->DrawSetTextFont(hIconFont);
+	// Drawing applies the glyph's left bearing, so the pen stands that far short of the ink
+	surface()->DrawSetTextPos(xColumn + ((iColumnWide - b) / 2) - a, yRow + ((iRowTall - surface()->GetFontTall(hIconFont)) / 2));
+	// A one character string, since DrawUnicodeChar draws nothing in a NeoUI panel such as the scoreboard
+	const wchar_t wszGlyph[] = { wchGlyph, L'\0' };
+	surface()->DrawPrintText(wszGlyph, 1);
 }
 }  // namespace NeoHud
