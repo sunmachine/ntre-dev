@@ -92,6 +92,23 @@ static const struct Theme
 
 static constexpr const float FL_CHECK_HP_REDUCTION_DELTA_MAX = 1.5f;
 
+namespace
+{
+// Sizes written at 1080p
+// Text over the avatar from its edges, and the card's text from the avatar and its edges
+constexpr int CARD_TEXT_PAD_PX = 4;
+// Between the stat columns
+constexpr int CARD_STAT_GAP_PX = 4;
+// Between cards in a column
+constexpr int CARD_ROW_GAP_PX = 4;
+// The matches-won indicators' first row and the gap between rows
+constexpr int WON_INDICATOR_Y_PX = 10;
+constexpr int WON_INDICATOR_GAP_PX = 6;
+// The team logo and name row's top and height
+constexpr int TEAM_HEADER_Y_PX = 4;
+constexpr int TEAM_NAME_TALL_PX = 45;
+}
+
 CNEOHud_SpectatorOverlay *g_pNeoHudSpecOverlay;
 
 CNEOHud_SpectatorOverlay::CNEOHud_SpectatorOverlay(const char* pElementName, vgui::Panel* parent)
@@ -425,7 +442,7 @@ void CNEOHud_SpectatorOverlay::DrawCardStatsRow(const SpectatorPlayerCard &card,
 	const int iTotalW = wide - iAvatarSize - (iTextPad * 2);
 
 	// Sizing split between XP and death
-	const int iGap = flWideAs43 / 360.0f;
+	const int iGap = ScaledPx(CARD_STAT_GAP_PX);
 	const int iColW = iTotalW / 5;
 
 	const int iTextFontTall = vgui::surface()->GetFontTall(m_hInfoFont);
@@ -579,7 +596,7 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 		vgui::surface()->DrawPrintText(wszInitial, 1);
 	}
 
-	const int iTextPad = flWideAs43 / 360.0f;
+	const int iTextPad = ScaledPx(CARD_TEXT_PAD_PX);
 
 	// HP text or dead icon over avatar
 	if (card.bAlive)
@@ -836,18 +853,15 @@ void CNEOHud_SpectatorOverlay::DrawNeoHudElement()
 
 		// Won indicators:
 		//   Box WH: 1440/90=16px
-		//   Starting y: 1080/108=10px
-		//   Gap y: 1080/180=6px
 		const int iIndWinWH = flWideAs43 / 90.0f;
-		const int iYIndStart = iScrTall / 108.0f;
-		const int iYIndGap = iScrTall / 180.0f;
-		// Team logo and name starting y: 1080/270=4px
-		const int iYNameLogoStart = iScrTall / 270.0f;
+		const int iYIndStart = ScaledPx(WON_INDICATOR_Y_PX);
+		const int iYIndGap = ScaledPx(WON_INDICATOR_GAP_PX);
+		// Team logo and name
+		const int iYNameLogoStart = ScaledPx(TEAM_HEADER_Y_PX);
 		// Name:
 		//   Pad wide: 1440/72=20px
-		//   Tall: 1080/24=45px
 		const int iNamePadW = flWideAs43 / 72.0f;
-		const int iNameT = iScrTall / 24.0f;
+		const int iNameT = ScaledPx(TEAM_NAME_TALL_PX);
 
 		Color rsColor = pRoundStateHUD->box_color;
 
@@ -991,7 +1005,7 @@ void CNEOHud_SpectatorOverlay::DrawNeoHudElement()
 	const int iTotalCardWide = flWideAs43 / 4.1f;
 	const int iAvatarWH = flWideAs43 / 22.5f;
 	const int iGapWide = flWideAs43 / 120.0f;
-	const int iGapBetween = flWideAs43 / 360.0f;
+	const int iGapBetween = ScaledPx(CARD_ROW_GAP_PX);
 
 	// Draw player cards on the side
 	for (const auto iTeam : {TEAM_JINRAI, TEAM_NSF})
