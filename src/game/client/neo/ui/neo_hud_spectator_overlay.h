@@ -22,6 +22,9 @@ struct SpectatorPlayerCard
 	int iEntIndex = 0;
 	int iTeam = 0;
 	wchar_t wszPlayerName[MAX_PLAYER_NAME_LENGTH] = {};
+	// As the card shows them: the name cut to fit beside the class name, and the class name in capitals
+	wchar_t wszDisplayName[MAX_PLAYER_NAME_LENGTH] = {};
+	wchar_t wszClassName[32] = {};
 	// NEO NOTE (nullsystem): wcaWeaponIcons is NOT used as a string
 	// but individual characters!
 	wchar_t wcaWeaponIcons[MAX_WEAPONS] = {};
@@ -87,15 +90,19 @@ protected:
 	ConVar *GetUpdateFrequencyConVar() const final;
 
 private:
+	void SetCardNames(SpectatorPlayerCard &card, const int iNameRowWide) const;
+	int GetCardWeaponsWide(const SpectatorPlayerCard &card, const int iWeaponGap) const;
 	void DrawCardNameRow(const SpectatorPlayerCard &card, const bool bIsLeftSide,
-			const int x, const int y, const int wide, const int iAvatarSize, const int iTextPad) const;
+			const int x, const int y, const int wide, const int iAvatarSize, const int iEdgePad, const Color &colorText) const;
 	void DrawCardStatsRow(const SpectatorPlayerCard &card, const bool bIsLeftSide,
-			const int x, const int y, const int wide, const int iAvatarSize, const int iTextPad, const float flWideAs43) const;
+			const int x, const int y, const int wide, const int iAvatarSize, const int iEdgePad, const Color &colorText,
+			const int iXPWide, const int iDeathWide, const int iGroupGap) const;
 	void DrawPlayerCard(const int iPlayerIdx,
 			const bool bIsLeftSide,
 			const int x, const int y,
 			const int wide, const int tall,
-			const Color accentColor, const float flWideAs43) const;
+			const Color accentColor, const float flWideAs43,
+			const int iXPWide, const int iDeathWide, const int iGroupGap) const;
 
 	CPanelAnimationVar(vgui::HFont, m_hNameFont, "NameFont", "NHudSpectatorOverlayName");
 	CPanelAnimationVar(vgui::HFont, m_hInfoFont, "InfoFont", "NHudSpectatorOverlayInfo");
