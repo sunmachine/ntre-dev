@@ -203,6 +203,7 @@ bool g_bOBSDetected = false;
 #endif
 
 #ifdef LINUX
+#include "neo/neo_casefix.h"
 #include "neo_fixup_glshaders.h"
 #include <unistd.h>
 #endif
@@ -1145,6 +1146,10 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	if (!ParticleMgr()->Init(MAX_TOTAL_PARTICLES, materials))
 		return false;
 
+#if defined(NEO) && defined(LINUX)
+	// Before anything loads a scheme or a sound script from the original game's folders.
+	FixupMixedCasePaths(filesystem);
+#endif
 
 	if (!VGui_Startup( appSystemFactory ))
 		return false;

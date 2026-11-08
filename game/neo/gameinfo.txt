@@ -27,6 +27,10 @@
 			Game+Mod+Mod_Write+Default_Write_Path |gameinfo_path|.
 			GameBin                          |gameinfo_path|bin
 
+			// Lowercase links to the original game's mixed-case directories and fonts, made at startup
+			// by src/game/shared/neo/neo_casefix.cpp, so they must come before the original game's path
+			Game                             |gameinfo_path|casefix
+
 			// Find OG:NT through Steam, works with the game client
 			Game                             |appid_244630|NeotokyoSource
 			// However it may fail with SRCDS/dedicated server and SDK tools,

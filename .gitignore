@@ -16,6 +16,7 @@ out
 /game/mod_hl2mp
 
 /game/neo/screenshots
+/game/neo/casefix
 
 # Mod launcher binary and the appid file it writes at runtime
 /game/neo_linux64
