@@ -126,6 +126,9 @@ void CNEOHud_Compass::Paint()
 	BaseClass::Paint();
 }
 
+// Side padding inside the box, in label heights
+static constexpr float COMPASS_PADDING_SCALE = 1.5f;
+
 static C_NEO_Player *GetFirstPersonPlayer()
 {
 	C_NEO_Player *pFPPlayer = C_NEO_Player::GetLocalNEOPlayer();
@@ -231,6 +234,7 @@ void CNEOHud_Compass::DrawCompass() const
 	static const wchar_t* ROSE[] = {
 		L"S", L"|", L"SW", L"|", L"W", L"|", L"NW", L"|", L"N", L"|", L"NE", L"|", L"E", L"|", L"SE", L"|",
 	};
+	static constexpr int COMPASS_SEPARATOR_LIFT_PX = 1;
 
 	auto player = GetFirstPersonPlayer();
 	Assert(player);
@@ -258,8 +262,10 @@ void CNEOHud_Compass::DrawCompass() const
 		surface()->DrawSetTextColor(m_textColor.r(), m_textColor.g(), m_textColor.b(), alpha * m_textColor.a());
 		int labelWidth, labelHeight;
 		surface()->GetTextSize(m_hFont, ROSE[i], labelWidth, labelHeight);
-		const float padding = (float)labelHeight;
-		surface()->DrawSetTextPos(m_xPos + padding + (m_width - padding * 2) * proportion - (float)labelWidth / 2, m_yPos + (float)m_height / 2 - (float)labelHeight / 2);
+		const float padding = labelHeight * COMPASS_PADDING_SCALE;
+		// The separator's glyph sits low in the font, so lift it to center it in the box
+		const int iSeparatorLift = (i % 2) ? ScaledPx(COMPASS_SEPARATOR_LIFT_PX) : 0;
+		surface()->DrawSetTextPos(m_xPos + padding + (m_width - padding * 2) * proportion - (float)labelWidth / 2, m_yPos + (float)m_height / 2 - (float)labelHeight / 2 - iSeparatorLift);
 		surface()->DrawPrintText(ROSE[i], Q_UnicodeLength(ROSE[i]));	
 	}
 
@@ -286,7 +292,7 @@ void CNEOHud_Compass::DrawCompass() const
 			surface()->DrawSetTextColor(ghostIsBeingCarried ? ghostIsCarriedByEnemyTeam ? COLOR_RED : teamColor : COLOR_WHITE);
 			int labelWidth, labelHeight;
 			surface()->GetTextSize(m_hFont, arrowUnicode, labelWidth, labelHeight);
-			const float padding = (float)labelHeight;
+			const float padding = labelHeight * COMPASS_PADDING_SCALE;
 			surface()->DrawSetTextPos(m_xPos + padding + (m_width - padding * 2) * proportion - (float)labelWidth / 2, m_yPos - labelHeight);
 			surface()->DrawPrintText(arrowUnicode, Q_UnicodeLength(arrowUnicode));
 		}
@@ -313,7 +319,7 @@ void CNEOHud_Compass::DrawCallouts() const
 	const wchar_t arrowUnicode[] = L"▼";
 	int labelWidth, labelHeight;
 	surface()->GetTextSize(m_hFont, arrowUnicode, labelWidth, labelHeight);
-	const float padding = (float)labelHeight;
+	const float padding = labelHeight * COMPASS_PADDING_SCALE;
 
 	// Cache ConVars and View parameters
 	const float maxAge = cl_neo_ghost_callout_compass_time.GetFloat();
