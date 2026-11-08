@@ -42,8 +42,8 @@ CNEOHud_KillerInfo::CNEOHud_KillerInfo(const char *pszName, vgui::Panel *parent)
 void CNEOHud_KillerInfo::ApplySchemeSettings(vgui::IScheme *pScheme)
 {
 	vgui::Panel::ApplySchemeSettings(pScheme);
-	m_hFontNormal = pScheme->GetFont("HudSelectionText", true);
-	m_hFontTitle = pScheme->GetFont("NeoUINormal", true);
+	m_hFontNormal = NeoHud::GetFont(pScheme, "HudSelectionText");
+	m_hFontTitle = NeoHud::GetFont(pScheme, "NeoUINormal");
 	CommonSetupHUD();
 }
 
@@ -107,8 +107,10 @@ void CNEOHud_KillerInfo::DrawNeoHudElement()
 	const bool bValidAvatar = m_avatar.m_iTextureID > 0;
 
 	// NEO NOTE (nullsystem): Similar sizing to how the scoreboard popup card is
-	const int iMargin = wide / 384;
-	const int iAvatarWT = bValidAvatar ? (((tall / 35) * 3) - (iMargin * 2)) : 0;
+	const int iMargin = wide / 192;
+	// The avatar keeps about the size it had when the margin was half this, so the box grows around it.
+	// It can be a pixel smaller than before: at 2560 wide it loses 13 px where it lost 12.
+	const int iAvatarWT = bValidAvatar ? (((tall / 35) * 3) - iMargin) : 0;
 	const int iTextOffsetX = bValidAvatar ? (iAvatarWT + (2 * iMargin)) : iMargin;
 
 	wchar_t wszText[256] = {};

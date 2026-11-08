@@ -26,6 +26,9 @@
 #include <vgui_controls/AnimationController.h>
 #include <vgui/ISurface.h>
 #include "hud_lcd.h"
+#ifdef NEO
+#include "neo/ui/neo_hud_draw.h"
+#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -499,8 +502,8 @@ void CHud::InitFonts()
 	g_hFontTrebuchet24 = pScheme->GetFont("CenterPrintText", true);
 
 #ifdef NEO
-	g_hFontKillfeed = pScheme->GetFont("NHudOCRSmallNoAdditive", true);
-	g_hFontKillfeedIcons = pScheme->GetFont("NHudKillfeedIcons", true);
+	g_hFontKillfeed = NeoHud::GetFont(pScheme, "NHudOCRSmallNoAdditive");
+	g_hFontKillfeedIcons = NeoHud::GetFont(pScheme, "NHudKillfeedIcons");
 
 	if (g_hFontKillfeed == vgui::INVALID_FONT)
 	{

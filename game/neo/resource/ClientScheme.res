@@ -2574,6 +2574,30 @@ Scheme
 			"1"
 			{
 				"name"		"NOCR"
+		NHudVitalsText
+		{
+			"1"
+			{
+				"name"		"Jura"
+				"tall"		"11"
+				"weight"	"700"
+				"range"		"0x0000 0x017F"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+		}
+		NHudCompassText
+		{
+			"1"
+			{
+				"name"		"Jura"
+				"tall"		"11"
+				"weight"	"700"
+				"range"		"0x0000 0x017F"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+		}
 				"tall"		"23"
 				"weight"	"0"
 				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
@@ -2609,8 +2633,25 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Neuropol2"
-				"tall"		"9"
+				"name"		"NOCR"
+				"tall"		"10"
+				"weight"	"0"
+				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"antialias"	"1"
+				"additive"	"1"
+			}
+		}
+		NHudVitalsNumber
+		{
+			"1"
+			{
+				"name"		"NOCR"
+				"tall"		"10"
+				"weight"	"700"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+		}
 				"weight"	"600"
 				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
 				"antialias"	"1"
@@ -3904,6 +3945,9 @@ Scheme
 		"12"		"resource/neotokyo_press_n.ttf"
 		"13"		"resource/killfeedicons.ttf"
 		"14"		"resource/montserrat-regular.ttf"
+		"15"		"resource/jura-semibold.ttf"
+		"17"		"resource/jura-medium.ttf"
+		"18"		"resource/jura-bold.ttf"
 	}
 
 }
