@@ -823,6 +823,7 @@
 		"ypos"			"467"
 		"wide"			"200"
 		"tall"			"11"
+		"label_baseline"	"8"
 		"fov"			"90"
 		"separators"	"1"
 		"objective_visible"	"1"
