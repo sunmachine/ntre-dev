@@ -2581,6 +2581,394 @@ Scheme
 				"additive"	"1"
 			}
 		}
+		NHudMonoBody
+		{
+			"1"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"10"
+				"weight"	"700"
+				"yres"		"480 599"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"2"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"11"
+				"weight"	"700"
+				"yres"		"600 767"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"3"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"13"
+				"weight"	"700"
+				"yres"		"768 1023"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"4"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"16"
+				"weight"	"700"
+				"yres"		"1024 1199"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"5"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"19"
+				"weight"	"700"
+				"yres"		"1200 1440"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"6"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"21"
+				"weight"	"700"
+				"yres"		"1441 1599"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"7"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"22"
+				"weight"	"700"
+				"yres"		"1600 6000"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+		}
+		NHudMonoTiny
+		{
+			"1"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"8"
+				"weight"	"700"
+				"yres"		"480 599"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"2"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"9"
+				"weight"	"700"
+				"yres"		"600 767"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"3"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"10"
+				"weight"	"700"
+				"yres"		"768 1023"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"4"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"11"
+				"weight"	"700"
+				"yres"		"1024 1199"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"5"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"13"
+				"weight"	"700"
+				"yres"		"1200 1440"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"6"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"14"
+				"weight"	"700"
+				"yres"		"1441 1599"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+			"7"
+			{
+				"name"		"Overpass Mono"
+				"tall"		"16"
+				"weight"	"700"
+				"yres"		"1600 6000"
+				"antialias"	"1"
+				"dropshadow"	"1"
+			}
+		}
+		NHudDashClock
+		{
+			"1"
+			{
+				"name"		"NOCR"
+				"tall"		"19"
+				"weight"	"700"
+				"yres"		"480 599"
+				"additive"	"1"
+			}
+			"2"
+			{
+				"name"		"NOCR"
+				"tall"		"22"
+				"weight"	"700"
+				"yres"		"600 767"
+				"additive"	"1"
+			}
+			"3"
+			{
+				"name"		"NOCR"
+				"tall"		"25"
+				"weight"	"700"
+				"yres"		"768 1023"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"4"
+			{
+				"name"		"NOCR"
+				"tall"		"26"
+				"weight"	"700"
+				"yres"		"1024 1199"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"5"
+			{
+				"name"		"NOCR"
+				"tall"		"27"
+				"weight"	"700"
+				"yres"		"1200 1440"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"6"
+			{
+				"name"		"NOCR"
+				"tall"		"30"
+				"weight"	"700"
+				"yres"		"1441 1599"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"7"
+			{
+				"name"		"NOCR"
+				"tall"		"30"
+				"weight"	"700"
+				"yres"		"1600 6000"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+		}
+		NHudDashAlive
+		{
+			"1"
+			{
+				"name"		"NOCR"
+				"tall"		"10"
+				"weight"	"700"
+				"yres"		"480 599"
+				"additive"	"1"
+			}
+			"2"
+			{
+				"name"		"NOCR"
+				"tall"		"13"
+				"weight"	"700"
+				"yres"		"600 767"
+				"additive"	"1"
+			}
+			"3"
+			{
+				"name"		"NOCR"
+				"tall"		"15"
+				"weight"	"700"
+				"yres"		"768 1023"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"4"
+			{
+				"name"		"NOCR"
+				"tall"		"18"
+				"weight"	"700"
+				"yres"		"1024 1199"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"5"
+			{
+				"name"		"NOCR"
+				"tall"		"22"
+				"weight"	"700"
+				"yres"		"1200 1440"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"6"
+			{
+				"name"		"NOCR"
+				"tall"		"26"
+				"weight"	"700"
+				"yres"		"1441 1599"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"7"
+			{
+				"name"		"NOCR"
+				"tall"		"28"
+				"weight"	"700"
+				"yres"		"1600 6000"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+		}
+		NHudDashVs
+		{
+			"1"
+			{
+				"name"		"Jura"
+				"tall"		"10"
+				"weight"	"500"
+				"yres"		"480 599"
+				"additive"	"1"
+			}
+			"2"
+			{
+				"name"		"Jura"
+				"tall"		"11"
+				"weight"	"500"
+				"yres"		"600 767"
+				"additive"	"1"
+			}
+			"3"
+			{
+				"name"		"Jura"
+				"tall"		"14"
+				"weight"	"500"
+				"yres"		"768 1023"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"4"
+			{
+				"name"		"Jura"
+				"tall"		"16"
+				"weight"	"500"
+				"yres"		"1024 1199"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"5"
+			{
+				"name"		"Jura"
+				"tall"		"19"
+				"weight"	"500"
+				"yres"		"1200 1440"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"6"
+			{
+				"name"		"Jura"
+				"tall"		"24"
+				"weight"	"500"
+				"yres"		"1441 1599"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"7"
+			{
+				"name"		"Jura"
+				"tall"		"24"
+				"weight"	"500"
+				"yres"		"1600 6000"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+		}
+		NHudDashRound
+		{
+			"1"
+			{
+				"name"		"Jura"
+				"tall"		"11"
+				"weight"	"600"
+				"yres"		"480 599"
+				"additive"	"1"
+			}
+			"2"
+			{
+				"name"		"Jura"
+				"tall"		"12"
+				"weight"	"600"
+				"yres"		"600 767"
+				"additive"	"1"
+			}
+			"3"
+			{
+				"name"		"Jura"
+				"tall"		"13"
+				"weight"	"600"
+				"yres"		"768 1023"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"4"
+			{
+				"name"		"Jura"
+				"tall"		"16"
+				"weight"	"600"
+				"yres"		"1024 1199"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"5"
+			{
+				"name"		"Jura"
+				"tall"		"20"
+				"weight"	"600"
+				"yres"		"1200 1440"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"6"
+			{
+				"name"		"Jura"
+				"tall"		"23"
+				"weight"	"600"
+				"yres"		"1441 1599"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"7"
+			{
+				"name"		"Jura"
+				"tall"		"25"
+				"weight"	"600"
+				"yres"		"1600 6000"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+		}
 		NHudPanelLabel
 		{
 			"1"
@@ -2784,8 +3172,148 @@ Scheme
 				"additive"	"1"
 			}
 		}
+		NHudDashScore
+		{
+			"1"
+			{
+				"name"		"NOCR"
+				"tall"		"30"
+				"weight"	"0"
+				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"yres"	"480 599"
+				"additive"	"1"
+			}
+			"2"
+			{
+				"name"		"NOCR"
+				"tall"		"31"
+				"weight"	"0"
+				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"yres"	"600 767"
+				"additive"	"1"
+			}
+			"3"
+			{
+				"name"		"NOCR"
+				"tall"		"33"
+				"weight"	"0"
+				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"yres"		"768 1023"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"4"
+			{
+				"name"		"NOCR"
+				"tall"		"36"
+				"weight"	"0"
+				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"yres"	"1024 1199"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"5"
+			{
+				"name"		"NOCR"
+				"tall"		"39"
+				"weight"	"0"
+				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"yres"	"1200 1440"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"6"
+			{
+				"name"		"NOCR"
+				"tall"		"41"
+				"weight"	"0"
+				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"yres"	"1441 1599"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"7"
+			{
+				"name"		"NOCR"
+				"tall"		"42"
+				"weight"	"0"
+				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"yres"	"1600 6000"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+		}
+		NHudDashStatus
+		{
+			"1"
+			{
+				"name"		"Jura"
+				"tall"		"16"
 				"weight"	"600"
 				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"yres"	"480 599"
+				"additive"	"1"
+			}
+			"2"
+			{
+				"name"		"Jura"
+				"tall"		"19"
+				"weight"	"600"
+				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"yres"	"600 767"
+				"additive"	"1"
+			}
+			"3"
+			{
+				"name"		"Jura"
+				"tall"		"22"
+				"weight"	"600"
+				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"yres"	"768 1023"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"4"
+			{
+				"name"		"Jura"
+				"tall"		"27"
+				"weight"	"600"
+				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"yres"	"1024 1199"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"5"
+			{
+				"name"		"Jura"
+				"tall"		"32"
+				"weight"	"600"
+				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"yres"	"1200 1440"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"6"
+			{
+				"name"		"Jura"
+				"tall"		"35"
+				"weight"	"600"
+				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"yres"	"1441 1599"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+			"7"
+			{
+				"name"		"Jura"
+				"tall"		"38"
+				"weight"	"600"
+				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"yres"	"1600 6000"
+				"antialias"	"1"
+				"additive"	"1"
+			}
+		}
 		NHudReserveA
 		{
 			"1"
@@ -4133,6 +4661,7 @@ Scheme
 		"13"		"resource/killfeedicons.ttf"
 		"14"		"resource/montserrat-regular.ttf"
 		"15"		"resource/jura-semibold.ttf"
+		"16"		"resource/overpassmono-bold.ttf"
 		"17"		"resource/jura-medium.ttf"
 		"18"		"resource/jura-bold.ttf"
 	}
