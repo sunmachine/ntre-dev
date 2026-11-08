@@ -40,6 +40,11 @@ public:
 	void SelectNextAlivePlayerInHud();
 	void SelectPreviousAlivePlayerInHud();
 	int GetSelectedPlayerInHud();
+	// True when the player avatars beside the dash were drawn this frame or the last, which cl_neo_squad_hud_original
+	// alone doesn't decide. The last frame counts too, because the kill feed may paint before or after the dash in a frame.
+	bool IsDrawingAvatars() const { return m_iAvatarsDrawnFrame >= gpGlobals->framecount - 1; }
+	// The bottom of the avatars, their health bars and the fade behind them, or of the box when that is lower
+	int GetAvatarsYEnd() const { return m_iAvatarsYEnd; }
 
 protected:
 	virtual void UpdateStateForNeoHudElementDraw();
@@ -58,6 +63,7 @@ private:
 	void DrawActiveStar() const;
 	void DrawRoundClock(const Color &color) const;
 	void DrawPlayersAlive() const;
+	void UpdateSquadNameColumns();
 	void DrawPlayerList();
 	void DrawPlayerList_BotCmdr();
 	int DrawPlayerRow(int playerIndex, int yOffset, bool small = false, const Color* highlightColor = nullptr);
@@ -74,21 +80,35 @@ private:
 	vgui::HFont m_hOCRSmallFont = 0UL;
 	vgui::HFont m_hOCRSmallerFont = 0UL;
 	vgui::HFont m_hTinyText = 0UL;
-	int m_iTinyTextHeight = 0;
+	vgui::HFont m_hRoundFont = 0UL;
+	vgui::HFont m_hClockFont = 0UL;
+	vgui::HFont m_hAliveFont = 0UL;
+	vgui::HFont m_hAliveVsFont = 0UL;
+	vgui::HFont m_hScoreFont = 0UL;
+	vgui::HFont m_hStatusFont = 0UL;
+	vgui::HFont m_hSquadFont = 0UL;
 
 	int m_iXpos = 0;
 
 	// Center Box
 	int m_iBoxYEnd = 0;
 	int m_iSmallFontHeight = 0;
+	int m_iRoundBaseline = 0;
+	int m_iClockBaseline = 0;
+	int m_iAliveBaseline = 0;
+	int m_iClockColonWide = 0;
+	int m_iClockColonGap = 0;
+	int m_iAliveVsGap = 0;
 
 	// Center Box info
 	wchar_t m_wszRoundUnicode[12] = {};
-	int m_iWszRoundUCSize = 0;
 	wchar_t m_wszTime[6] = {};
 	wchar_t m_wszLeftTeamScore[3] = {};
 	wchar_t m_wszRightTeamScore[3] = {};
 	wchar_t m_wszPlayersAliveUnicode[16] = {};
+	bool m_bPlayersAliveAreCounts = false;
+	wchar_t m_wszLeftPlayersAlive[3] = {};
+	wchar_t m_wszRightPlayersAlive[3] = {};
 	const wchar_t *m_pWszStatusUnicode = nullptr;
 	int m_iStatusUnicodeSize = 0;
 
@@ -104,6 +124,22 @@ private:
 	vgui::IntRect m_rectLeftTeamTotalLogo = {};
 	vgui::IntRect m_rectRightTeamTotalLogo = {};
 	int m_ilogoSize = 0;
+
+	// Player avatars beside the dash
+	int m_iAvatarsDrawnFrame = -1;
+	int m_iAvatarsYEnd = 0;
+	int m_iAvatarDashGap = 0;
+	int m_iAvatarGap = 0;
+	int m_iAvatarFadePad = 0;
+	int m_iAvatarNameBaseline = 0;
+	int m_iAvatarTop = 0;
+	int m_iAvatarHealthGap = 0;
+	int m_iAvatarHealthTall = 0;
+
+	// Squad list
+	int m_iSquadNameColumns = 0;
+	int m_iSquadClassColumns = 0;
+	int m_iSquadRowX = 0;
 
 	int m_iStarTextures[STAR__TOTAL] = {};
 	int m_iStarToDraw = -1;
