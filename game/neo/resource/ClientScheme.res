@@ -2737,15 +2737,12 @@ Scheme
 				"additive"	"1"
 			}
 		}
-		NHudAmmoReserve
 		NHudAmmoStatus
 		{
 			"1"
 			{
-				"name"		"Neuropol2"
 				"name"		"Jura"
 				"tall"		"11"
-				"weight"	"600"
 				"weight"	"700"
 				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
 				"antialias"	"1"
