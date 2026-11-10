@@ -256,6 +256,23 @@ text    NHudWeapon  -            NHudFireMode   NOCR Icons   60    58      1477 
 </section>
 
 <section>
+<h2>Scoreboard and spectator overlay</h2>
+<p>These come from the overlay and scoreboard pull request, #32, and this pass did not change them. Both sets were captured on 2026-11-10 in the same scenes, a round of bots on <code>ntre_oilstain_ctg</code>, so the names and numbers differ between them. The crops are at native size.</p>
+<ol>
+<li><strong>Scoreboard body.</strong> Verdana at the row's size on <code>master</code>. Overpass Mono at about 10 px in the pull request, with Montserrat for class and rank names, and each column keeps a margin from its edges.</li>
+<li><strong>Spectator cards.</strong> On <code>master</code> each card places its XP and deaths from its own numbers, so the columns wander from card to card. In the pull request the columns are as wide as the team's widest values and line up down the stack, and a long name is cut and ends in three dots.</li>
+<li><strong>Card text.</strong> Names and numbers move from Verdana to Overpass Mono, and the class label from Verdana to Montserrat.</li>
+</ol>
+<div class="grid pairs">
+<figure class="pair wide"><span class="tag">Original, master</span><img src="img/orig_sb_alive.png" alt="Scoreboard, alive on master" loading="lazy"><span class="tag new">Latest</span><img src="img/new_sb_alive.png" alt="Scoreboard, alive, latest" loading="lazy"><figcaption><b>Scoreboard, alive.</b> Pressed during play.</figcaption></figure>
+<figure class="pair wide"><span class="tag">Original, master</span><img src="img/orig_sb_dead.png" alt="Scoreboard, dead on master" loading="lazy"><span class="tag new">Latest</span><img src="img/new_sb_dead.png" alt="Scoreboard, dead, latest" loading="lazy"><figcaption><b>Scoreboard, dead.</b> After a suicide, with the damage columns and the killer card below. The bots did not hit the player in the latest run, so its damage columns are empty.</figcaption></figure>
+<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_spec_left.png" alt="Spectator cards, left team on master" loading="lazy"><span class="tag new">Latest</span><img src="img/new_spec_left.png" alt="Spectator cards, left team, latest" loading="lazy"><figcaption><b>Spectator cards, left team.</b> The selected card has the white outline.</figcaption></figure>
+<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_spec_right.png" alt="Spectator cards, right team on master" loading="lazy"><span class="tag new">Latest</span><img src="img/new_spec_right.png" alt="Spectator cards, right team, latest" loading="lazy"><figcaption><b>Spectator cards, right team.</b> Dead players show the skull and dimmed stats.</figcaption></figure>
+<figure class="pair wide"><span class="tag">Original, master</span><img src="img/orig_spec_scene.jpg" alt="Spectator overlay, whole screen on master" loading="lazy"><span class="tag new">Latest</span><img src="img/new_spec_scene.jpg" alt="Spectator overlay, whole screen, latest" loading="lazy"><figcaption><b>Spectator overlay, whole screen.</b> Scaled to 1280 wide.</figcaption></figure>
+</div>
+</section>
+
+<section>
 <h2>Panels this pass did not change</h2>
 <p>The vitals, compass, dash and kill feed are as the pull requests propose them. Their latest captures follow, since the measurements above were taken on them too. They have no <code>master</code> captures beside them yet.</p>
 </section>
@@ -304,7 +321,7 @@ text    NHudWeapon  -            NHudFireMode   NOCR Icons   60    58      1477 
 <ul>
 <li><strong>The ammo panel with the debug view on,</strong> for the MX, SRM and SUPA 7.</li>
 <li><strong>The ammo panel for the frag grenade, smoke grenade, knife and BALC.</strong> The rail change moved the counts, and these were not captured again.</li>
-<li><strong>All nineteen full scenes and their debug frames.</strong> Every one has the earlier ammo panel in its corner.</li>
+<li><strong>The other full scenes and their debug frames.</strong> Each has the earlier ammo panel in its corner. The scoreboard and spectator overlay scenes were captured again and are above.</li>
 <li><strong>The M41L and ZR68L.</strong> They have never been captured. The M41L could not be put in hand.</li>
 <li><strong>The vitals, compass, dash and kill feed on <code>master</code>.</strong> Only the ammo panel was captured there.</li>
 <li><strong>The ammo panel's rows in the padding table,</strong> and the rest of its dump.</li>
