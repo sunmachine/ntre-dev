@@ -1,0 +1,22 @@
+// Raymarched voxel smoke. All vector/float params are overwritten per draw by
+// C_NeoVolSmoke; the values here are only defaults for material inspection.
+"Neo_VolSmoke"
+{
+	"$basetexture"	"_neo_volsmoke_0"
+	"$volmin"		"[0 0 0]"
+	"$volmax"		"[1 1 1]"
+	"$boxmin"		"[0 0 0]"
+	"$boxmax"		"[1 1 1]"
+	"$gridparams"	"[32 8 4 0.03125]"
+	"$ambient"		"[0.6 0.6 0.6]"
+	"$lightcolor"	"[0.8 0.8 0.8]"
+	"$extinction"	"0.06"
+	"$maxsteps"		"48"
+	"$stepscale"	"1.0"
+	"$noiseamp"		"0.35"
+	"$noisescale"	"0.045"
+	"$jitter"		"1"
+	"$debugmode"	"0"
+	"$translucent"	"1"
+	"$nofog"		"1"
+}

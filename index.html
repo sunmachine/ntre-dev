@@ -17,6 +17,10 @@ li { padding: 12px 0; border-bottom: 1px solid var(--line); }
 a { color: var(--link); text-decoration: none; font-weight: 500; }
 a:hover, a:focus-visible { text-decoration: underline; }
 li span { display: block; color: var(--muted); font-size: 0.92rem; }
+li ul { margin: 8px 0 0 14px; padding: 0; border: 0; }
+li ul li { padding: 3px 0; border: 0; font-size: 0.92rem; }
+li ul li a { font-weight: 400; }
+li ul li span { display: inline; }
 </style>
 </head>
 <body>
@@ -27,7 +31,13 @@ li span { display: block; color: var(--muted); font-size: 0.92rem; }
     <li><a href="weapons/">Gun Handling Audit</a><span>How every gun fires, kill math, a usefulness quotient, and why the MX is so strong.</span></li>
     <li><a href="footsteps/">Footstep Consistency Audit</a><span>Crouched footsteps, the held step, turning and step volume. <a href="https://github.com/NeotokyoRebuild/neo/pull/2264">PR #2264</a></span></li>
     <li><a href="place-mode/">Place Mode Mock-up</a><span>How a nav review could colour areas by place on ntre_saitama_ctg: one patch and one label per place, with place changes hatched in DIFF.</span></li>
-    <li><a href="volumetric-smoke/">Volumetric Smoke Prototype</a><span>Interactive WebGL demo of raymarched voxel smoke as a replacement for the sprite-lattice smoke grenade: flood fill through geometry, carving, self-shadowing, and a sorted-billboard mode for comparison.</span></li>
+    <li><a href="volumetric-smoke/">Volumetric Smoke Prototype</a><span>Interactive WebGL demo of raymarched voxel smoke as a replacement for the sprite-lattice smoke grenade: flood fill through geometry, carving, self-shadowing, and a sorted-billboard mode for comparison.</span>
+      <ul>
+        <li><a href="volumetric-smoke/patches/0001-raymarched-voxel-smoke.patch">0001 — raymarched voxel smoke</a> <span>· <code>C_NeoVolSmoke</code> client sim/renderable, <code>Neo_VolSmoke</code> ps_3_0 shader, optional smoke-grenade hook. Applies to <code>master</code>.</span></li>
+        <li><a href="volumetric-smoke/patches/0002-tight-bounds-adaptive-steps-overlay.patch">0002 — tight bounds, adaptive steps, inside overlay</a> <span>· march only the filled AABB, step count from ray length, legacy fog overlay driven by local density. Applies on 0001.</span></li>
+        <li><a href="volumetric-smoke/patches/neo_volsmoke.vmt">neo_volsmoke.vmt</a> <span>· material for neoAssets (<code>materials/dev/</code> is gitignored in the code repo).</span></li>
+      </ul>
+    </li>
     <li><a href="wiki/">NT;RE Wiki</a><span>Prototype gameplay wiki built with MkDocs: weapons, classes, mechanics and game modes, every stat linked to its source line.</span></li>
   </ul>
 </main>

@@ -1,0 +1,1558 @@
+From 7301e3c83b03c12bbce5d057f285a6af4cb4259a Mon Sep 17 00:00:00 2001
+From: Dan Peavey <sunmachine@users.noreply.github.com>
+Date: Mon, 9 Nov 2026 03:47:39 -0800
+Subject: [PATCH 1/2] Prototype: raymarched voxel smoke (C_NeoVolSmoke +
+ Neo_VolSmoke shader)
+
+Order-independent smoke without OIT: each smoke volume is a CPU voxel grid
+rendered as ONE raymarched box, so transmittance is integrated along the eye
+ray and nothing inside the volume ever needs sorting.
+
+Client (game/client/neo/c_neo_volsmoke.*):
+- Flood-fills a 32^3 (16/64 selectable) grid through world collision using
+  enginetrace, spread over frames for the bloom animation. Gas budget is a
+  fraction of the inscribed sphere, so in corridors it spreads further.
+- Per-cell ramp, carve/regrow (bullets, explosions) and end-of-life fade.
+- Slab-ordered light sweep toward neo_volsmoke_lightdir -> per-voxel
+  transmittance baked into the G channel.
+- Uploads R=density, G=light as a 2D slice atlas via a procedural texture
+  (material system has no 3D procedural textures).
+- Draws the AABB's far faces only with the hardware depth test off; the pixel
+  shader clips against the engine's depth-in-dest-alpha frame buffer copy,
+  which is what spritecard $DEPTHBLEND already reads.
+- Optional hook (neo_volsmoke_hook_grenade 1) replaces the legacy
+  C_ParticleSmokeGrenade billboard smoke on grenade detonation.
+
+Shader (materialsystem/stdshaders/Neo_VolSmoke.cpp, neo_volsmoke_{vs,ps}30.fxc):
+- ps_3_0 dynamic loop, manual trilinear between atlas slices, animated value
+  noise edge erosion, interleaved-gradient jitter, premultiplied output.
+- Clip Z is affine along the ray, so the depth compare needs no extra matrices:
+  the VS hands the PS clip Z at the vertex and at the eye.
+
+Console: neo_volsmoke_spawn [extent] [lifetime], neo_volsmoke_carve,
+neo_volsmoke_explode, neo_volsmoke_clear, neo_volsmoke_debug 0..3,
+neo_volsmoke_cullflip (toggle if smoke vanishes when you stand inside it).
+
+The .inc files are hand-written to match the generator's output; run
+buildneoshaders.bat to produce the .vcs files (they ship via neoAssets).
+---
+ src/game/client/CMakeLists.txt                |   2 +
+ src/game/client/c_particle_smokegrenade.cpp   |  18 +
+ src/game/client/neo/c_neo_volsmoke.cpp        | 732 ++++++++++++++++++
+ src/game/client/neo/c_neo_volsmoke.h          | 119 +++
+ src/materialsystem/stdshaders/CMakeLists.txt  |   1 +
+ .../stdshaders/Neo_VolSmoke.cpp               | 156 ++++
+ .../stdshaders/include/neo_volsmoke_ps30.inc  |  60 ++
+ .../stdshaders/include/neo_volsmoke_vs30.inc  |  33 +
+ .../stdshaders/neo_volsmoke_ps30.fxc          | 205 +++++
+ .../stdshaders/neo_volsmoke_vs30.fxc          |  41 +
+ .../stdshaders/neoshader_dx9_30.txt           |   7 +
+ .../stdshaders/stdshader_dx9_30.txt           |   2 +
+ 12 files changed, 1376 insertions(+)
+ create mode 100644 src/game/client/neo/c_neo_volsmoke.cpp
+ create mode 100644 src/game/client/neo/c_neo_volsmoke.h
+ create mode 100644 src/materialsystem/stdshaders/Neo_VolSmoke.cpp
+ create mode 100644 src/materialsystem/stdshaders/include/neo_volsmoke_ps30.inc
+ create mode 100644 src/materialsystem/stdshaders/include/neo_volsmoke_vs30.inc
+ create mode 100644 src/materialsystem/stdshaders/neo_volsmoke_ps30.fxc
+ create mode 100644 src/materialsystem/stdshaders/neo_volsmoke_vs30.fxc
+
+diff --git a/src/game/client/CMakeLists.txt b/src/game/client/CMakeLists.txt
+index 7b73417..f34f43d 100644
+--- a/src/game/client/CMakeLists.txt
++++ b/src/game/client/CMakeLists.txt
+@@ -1598,6 +1598,7 @@ set(UNITY_SOURCE_NEO_SRC_CLIENT
+     neo/c_neo_point_world_text.cpp
+     neo/c_neo_player.cpp
+     neo/c_neo_te_tocflash.cpp
++    neo/c_neo_volsmoke.cpp
+     neo/neo_fixup_glshaders.cpp
+     neo/c_neo_bloom_controller.cpp
+     neo/c_neo_killer_damage_infos.cpp
+@@ -1617,6 +1618,7 @@ target_sources_grouped(
+     neo/c_neo_point_world_text.h
+     neo/c_neo_player.h
+     neo/c_neo_te_tocflash.h
++    neo/c_neo_volsmoke.h
+     neo/neo_fixup_glshaders.h
+     neo/c_neo_killer_damage_infos.h
+     ${UNITY_SOURCE_NEO_SRC_CLIENT}
+diff --git a/src/game/client/c_particle_smokegrenade.cpp b/src/game/client/c_particle_smokegrenade.cpp
+index 495bdba..aed0b4b 100644
+--- a/src/game/client/c_particle_smokegrenade.cpp
++++ b/src/game/client/c_particle_smokegrenade.cpp
+@@ -22,11 +22,20 @@
+ 
+ #ifdef NEO
+ #include "c_neo_player.h"
++#include "neo/c_neo_volsmoke.h"
+ #endif
+ 
+ // memdbgon must be the last include file in a .cpp file!!!
+ #include "tier0/memdbgon.h"
+ 
++#ifdef NEO
++// Prototype: replace the legacy billboard smoke with a raymarched voxel volume.
++static ConVar neo_volsmoke_hook_grenade( "neo_volsmoke_hook_grenade", "0", FCVAR_CHEAT,
++	"1 = smoke grenades spawn a volumetric smoke (C_NeoVolSmoke) instead of the legacy particle smoke." );
++static ConVar neo_volsmoke_hook_extent( "neo_volsmoke_hook_extent", "192", FCVAR_CHEAT,
++	"AABB half-size used for grenade-spawned volumetric smoke." );
++#endif
++
+ // ------------------------------------------------------------------------- //
+ // Definitions
+ // ------------------------------------------------------------------------- //
+@@ -344,6 +353,15 @@ void C_ParticleSmokeGrenade::OnDataChanged( DataUpdateType_t updateType )
+ 
+ 	if(updateType == DATA_UPDATE_CREATED )
+ 	{
++#ifdef NEO
++		if ( neo_volsmoke_hook_grenade.GetBool() )
++		{
++			// Lifetime: the server's fade-end if it has one, else the volsmoke default.
++			const float lifetime = ( m_FadeEndTime > 0.0f ) ? m_FadeEndTime : 25.0f;
++			C_NeoVolSmoke::Create( GetAbsOrigin(), neo_volsmoke_hook_extent.GetFloat(), lifetime );
++			return; // skip the legacy particle system entirely
++		}
++#endif
+ 		Start(ParticleMgr(), NULL);
+ 	}
+ }
+diff --git a/src/game/client/neo/c_neo_volsmoke.cpp b/src/game/client/neo/c_neo_volsmoke.cpp
+new file mode 100644
+index 0000000..379fe15
+--- /dev/null
++++ b/src/game/client/neo/c_neo_volsmoke.cpp
+@@ -0,0 +1,732 @@
++// NEO volumetric smoke - client-side voxel smoke volume (demo).
++// See c_neo_volsmoke.h for the overview.
++
++#include "cbase.h"
++#include "c_neo_volsmoke.h"
++
++#include "materialsystem/imaterialsystem.h"
++#include "materialsystem/imaterialvar.h"
++#include "materialsystem/imesh.h"
++#include "materialsystem/itexture.h"
++#include "pixelwriter.h"
++#include "vtf/vtf.h"
++#include "engine/IEngineTrace.h"
++#include "collisionutils.h"
++#include "c_baseplayer.h"
++#include "mathlib/mathlib.h"
++
++// memdbgon must be the last include file in a .cpp file!!!
++#include "tier0/memdbgon.h"
++
++// ---------------------------------------------------------------------------
++// ConVars
++// ---------------------------------------------------------------------------
++static ConVar neo_volsmoke_grid( "neo_volsmoke_grid", "32", FCVAR_CHEAT, "Cells per axis (16, 32 or 64).", true, 16.0f, true, 64.0f );
++static ConVar neo_volsmoke_extent( "neo_volsmoke_extent", "192", FCVAR_CHEAT, "Half-size of a smoke volume's AABB in world units.", true, 32.0f, true, 1024.0f );
++static ConVar neo_volsmoke_lifetime( "neo_volsmoke_lifetime", "25", FCVAR_CHEAT, "Seconds until the volume has fully dissipated.", true, 1.0f, true, 120.0f );
++static ConVar neo_volsmoke_fill_rate( "neo_volsmoke_fill_rate", "300", FCVAR_CHEAT, "Max cells reached by the flood fill per frame (bloom speed).", true, 1.0f, true, 100000.0f );
++static ConVar neo_volsmoke_fill_fraction( "neo_volsmoke_fill_fraction", "1.0", FCVAR_CHEAT, "Gas volume as a fraction of the inscribed sphere. In tight spaces the smoke spreads further instead.", true, 0.05f, true, 4.0f );
++static ConVar neo_volsmoke_ramp( "neo_volsmoke_ramp", "1.5", FCVAR_CHEAT, "Seconds for a reached cell to ramp to full density.", true, 0.05f, true, 10.0f );
++static ConVar neo_volsmoke_dissipate( "neo_volsmoke_dissipate", "5.0", FCVAR_CHEAT, "Seconds of fade-out at the end of life.", true, 0.1f, true, 30.0f );
++static ConVar neo_volsmoke_regrow( "neo_volsmoke_regrow", "4.0", FCVAR_CHEAT, "Seconds for a carved cell to refill.", true, 0.1f, true, 60.0f );
++static ConVar neo_volsmoke_carve_radius( "neo_volsmoke_carve_radius", "24", FCVAR_CHEAT, "Capsule radius carved by neo_volsmoke_carve.", true, 1.0f, true, 512.0f );
++static ConVar neo_volsmoke_explode_radius( "neo_volsmoke_explode_radius", "110", FCVAR_CHEAT, "Sphere radius carved by neo_volsmoke_explode.", true, 1.0f, true, 1024.0f );
++static ConVar neo_volsmoke_lightdir( "neo_volsmoke_lightdir", "0.3 0.2 1.0", FCVAR_CHEAT, "Direction *toward* the light used for the baked light sweep." );
++static ConVar neo_volsmoke_light_k( "neo_volsmoke_light_k", "0.05", FCVAR_CHEAT, "Extinction per world unit used by the light sweep.", true, 0.0f, true, 1.0f );
++static ConVar neo_volsmoke_light_sweep_hz( "neo_volsmoke_light_sweep_hz", "15", FCVAR_CHEAT, "How often per second to recompute the light sweep.", true, 1.0f, true, 120.0f );
++static ConVar neo_volsmoke_ambient_scale( "neo_volsmoke_ambient_scale", "0.9", FCVAR_CHEAT, "Multiplier on sampled ambient light.", true, 0.0f, true, 8.0f );
++static ConVar neo_volsmoke_light_scale( "neo_volsmoke_light_scale", "0.8", FCVAR_CHEAT, "Multiplier on the directional light term.", true, 0.0f, true, 8.0f );
++static ConVar neo_volsmoke_extinction( "neo_volsmoke_extinction", "0.06", FCVAR_CHEAT, "Shader extinction per world unit at density 1.", true, 0.0f, true, 2.0f );
++static ConVar neo_volsmoke_steps( "neo_volsmoke_steps", "32", FCVAR_CHEAT, "Raymarch steps across the box.", true, 4.0f, true, 64.0f );
++static ConVar neo_volsmoke_noise_amp( "neo_volsmoke_noise_amp", "0.35", FCVAR_CHEAT, "Edge erosion noise amplitude.", true, 0.0f, true, 2.0f );
++static ConVar neo_volsmoke_noise_scale( "neo_volsmoke_noise_scale", "0.045", FCVAR_CHEAT, "Noise frequency (1/world units).", true, 0.0f, true, 1.0f );
++static ConVar neo_volsmoke_jitter( "neo_volsmoke_jitter", "1", FCVAR_CHEAT, "Per-pixel step jitter (grain) instead of banding." );
++static ConVar neo_volsmoke_debug( "neo_volsmoke_debug", "0", FCVAR_CHEAT, "0 off, 1 coverage, 2 scene depth as read by the shader, 3 box hit." );
++static ConVar neo_volsmoke_cullflip( "neo_volsmoke_cullflip", "0", FCVAR_CHEAT, "Flip which box faces are drawn. If the smoke vanishes when you step inside the box, toggle this." );
++static ConVar neo_volsmoke_draw( "neo_volsmoke_draw", "1", FCVAR_CHEAT, "Draw smoke volumes." );
++static ConVar neo_volsmoke_material( "neo_volsmoke_material", "dev/neo_volsmoke", FCVAR_CHEAT, "Material using the Neo_VolSmoke shader." );
++
++// ---------------------------------------------------------------------------
++// Texture regenerator: owns a CPU copy of the atlas so the material system
++// can pull bits whenever it likes without touching the simulation arrays.
++// ---------------------------------------------------------------------------
++class CNeoVolSmokeRegenerator : public ITextureRegenerator
++{
++public:
++	CNeoVolSmokeRegenerator( int width, int height )
++		: m_nWidth( width ), m_nHeight( height )
++	{
++		m_Bits.SetCount( width * height * 4 );
++		Q_memset( m_Bits.Base(), 0, m_Bits.Count() );
++	}
++
++	unsigned char *Bits() { return m_Bits.Base(); }
++	int Pitch() const { return m_nWidth * 4; }
++
++	virtual void RegenerateTextureBits( ITexture *pTexture, IVTFTexture *pVTFTexture, Rect_t *pRect ) override
++	{
++		const int w = pVTFTexture->Width();
++		const int h = pVTFTexture->Height();
++		if ( w != m_nWidth || h != m_nHeight )
++			return;
++
++		CPixelWriter writer;
++		writer.SetPixelMemory( pVTFTexture->Format(), pVTFTexture->ImageData( 0, 0, 0 ), pVTFTexture->RowSizeInBytes( 0 ) );
++
++		const unsigned char *src = m_Bits.Base();
++		for ( int y = 0; y < h; ++y )
++		{
++			writer.Seek( 0, y );
++			for ( int x = 0; x < w; ++x, src += 4 )
++			{
++				// Our buffer is R,G,B,A; CPixelWriter handles the target format.
++				writer.WritePixel( src[0], src[1], src[2], src[3] );
++			}
++		}
++	}
++
++	virtual void Release() override { delete this; }
++
++private:
++	int m_nWidth;
++	int m_nHeight;
++	CUtlVector< unsigned char > m_Bits;
++};
++
++// ---------------------------------------------------------------------------
++// Statics
++// ---------------------------------------------------------------------------
++CUtlVector< C_NeoVolSmoke * > C_NeoVolSmoke::s_Volumes;
++int C_NeoVolSmoke::s_nNextId = 0;
++
++static int RoundGrid( int n )
++{
++	if ( n <= 16 ) return 16;
++	if ( n <= 32 ) return 32;
++	return 64;
++}
++
++static void AtlasLayout( int n, int &cols, int &rows )
++{
++	// Keep both dimensions a power of two: 16 -> 4x4, 32 -> 8x4, 64 -> 8x8.
++	cols = ( n >= 64 ) ? 8 : ( n >= 32 ? 8 : 4 );
++	rows = n / cols;
++}
++
++// ---------------------------------------------------------------------------
++C_NeoVolSmoke::C_NeoVolSmoke()
++	: m_nId( s_nNextId++ ), m_nN( 0 ), m_nAtlasCols( 0 ), m_nAtlasRows( 0 ), m_flCellSize( 1.0f ),
++	  m_flSpawnTime( 0 ), m_flLifetime( 1 ), m_nFrontierHead( 0 ), m_nFilledCells( 0 ),
++	  m_nMaxCells( 0 ), m_nMaxDepth( 0 ), m_bFillDone( false ), m_pRegen( NULL ),
++	  m_bAtlasDirty( true ), m_flNextLightSweep( 0 )
++{
++}
++
++C_NeoVolSmoke::~C_NeoVolSmoke()
++{
++	Shutdown();
++	s_Volumes.FindAndRemove( this );
++}
++
++C_NeoVolSmoke *C_NeoVolSmoke::Create( const Vector &origin, float extent, float lifetime )
++{
++	C_NeoVolSmoke *pVol = new C_NeoVolSmoke();
++	pVol->Init( origin, extent, lifetime );
++
++	if ( !pVol->InitializeAsClientEntity( NULL, RENDER_GROUP_TRANSLUCENT_ENTITY ) )
++	{
++		pVol->Release();
++		return NULL;
++	}
++
++	pVol->SetNextClientThink( CLIENT_THINK_ALWAYS );
++	s_Volumes.AddToTail( pVol );
++	return pVol;
++}
++
++void C_NeoVolSmoke::CarveAll( const Vector &start, const Vector &end, float radius )
++{
++	for ( int i = 0; i < s_Volumes.Count(); ++i )
++	{
++		s_Volumes[i]->Carve( start, end, radius );
++	}
++}
++
++void C_NeoVolSmoke::RemoveAll()
++{
++	// Release() removes the entity from the list via the destructor.
++	while ( s_Volumes.Count() > 0 )
++	{
++		s_Volumes[0]->Release();
++	}
++}
++
++// ---------------------------------------------------------------------------
++void C_NeoVolSmoke::Init( const Vector &origin, float extent, float lifetime )
++{
++	m_nN = RoundGrid( neo_volsmoke_grid.GetInt() );
++	AtlasLayout( m_nN, m_nAtlasCols, m_nAtlasRows );
++
++	m_vecSpawn    = origin;
++	m_vecGridMin  = origin - Vector( extent, extent, extent );
++	m_vecGridMax  = origin + Vector( extent, extent, extent );
++	m_flCellSize  = ( 2.0f * extent ) / (float)m_nN;
++	m_flSpawnTime = gpGlobals->curtime;
++	m_flLifetime  = lifetime;
++
++	SetAbsOrigin( origin );
++	SetCollisionBounds( Vector( -extent, -extent, -extent ), Vector( extent, extent, extent ) );
++
++	const int cells = m_nN * m_nN * m_nN;
++	m_Reach.SetCount( cells );
++	m_FillTime.SetCount( cells );
++	m_CarveTime.SetCount( cells );
++	m_Noise.SetCount( cells );
++	m_Density.SetCount( cells );
++	m_Light.SetCount( cells );
++
++	for ( int i = 0; i < cells; ++i )
++	{
++		m_Reach[i]     = 255;
++		m_FillTime[i]  = 0.0f;
++		m_CarveTime[i] = -1.0f;
++		m_Noise[i]     = (unsigned char)RandomInt( 0, 255 );
++		m_Density[i]   = 0.0f;
++		m_Light[i]     = 1.0f;
++	}
++
++	// Gas budget: fraction of the inscribed sphere, in cells. In corridors the
++	// same budget gets spent on reaching further.
++	const float r = 0.5f * (float)m_nN;
++	m_nMaxDepth = MAX( 1, (int)r - 1 );
++	m_nMaxCells = (int)( neo_volsmoke_fill_fraction.GetFloat() * ( 4.0f / 3.0f ) * M_PI_F * r * r * r );
++	m_nMaxCells = clamp( m_nMaxCells, 1, cells );
++
++	// Seed cell: the cell containing the spawn point. If that is inside a
++	// solid (grenade resting against a wall), walk upward a little.
++	int sx = m_nN / 2, sy = m_nN / 2, sz = m_nN / 2;
++	for ( int tries = 0; tries < 4; ++tries )
++	{
++		if ( !( enginetrace->GetPointContents( CellCenter( sx, sy, sz ) ) & CONTENTS_SOLID ) )
++			break;
++		sz = MIN( sz + 1, m_nN - 1 );
++	}
++	const int seed = Idx( sx, sy, sz );
++	m_Reach[seed]    = 0;
++	m_FillTime[seed] = gpGlobals->curtime;
++	m_Frontier.AddToTail( seed );
++	m_nFrontierHead = 0;
++	m_nFilledCells  = 1;
++	m_bFillDone     = false;
++
++	// GPU resources
++	const int atlasW = m_nAtlasCols * m_nN;
++	const int atlasH = m_nAtlasRows * m_nN;
++
++	char texName[64];
++	Q_snprintf( texName, sizeof( texName ), "_neo_volsmoke_%d", m_nId );
++
++	ITexture *pTex = materials->CreateProceduralTexture( texName, TEXTURE_GROUP_OTHER, atlasW, atlasH, IMAGE_FORMAT_BGRA8888,
++		TEXTUREFLAGS_CLAMPS | TEXTUREFLAGS_CLAMPT | TEXTUREFLAGS_NOMIP | TEXTUREFLAGS_NOLOD | TEXTUREFLAGS_PROCEDURAL | TEXTUREFLAGS_SINGLECOPY );
++	if ( pTex && !IsErrorTexture( pTex ) )
++	{
++		m_pRegen = new CNeoVolSmokeRegenerator( atlasW, atlasH );
++		pTex->SetTextureRegenerator( m_pRegen );
++		m_Atlas.Init( pTex );
++	}
++	else
++	{
++		Warning( "C_NeoVolSmoke: failed to create procedural texture %s\n", texName );
++	}
++
++	m_Material.Init( neo_volsmoke_material.GetString(), TEXTURE_GROUP_OTHER );
++	if ( !m_Material || m_Material->IsErrorMaterial() )
++	{
++		Warning( "C_NeoVolSmoke: material %s missing (needs the Neo_VolSmoke shader)\n", neo_volsmoke_material.GetString() );
++	}
++
++	m_bAtlasDirty = true;
++	m_flNextLightSweep = 0.0f;
++}
++
++void C_NeoVolSmoke::Shutdown()
++{
++	if ( m_Atlas.IsValid() )
++	{
++		m_Atlas->SetTextureRegenerator( NULL ); // calls Release() on m_pRegen
++		m_pRegen = NULL;
++		m_Atlas.Shutdown();
++	}
++	m_Material.Shutdown();
++}
++
++// ---------------------------------------------------------------------------
++// Simulation
++// ---------------------------------------------------------------------------
++bool C_NeoVolSmoke::CellOpen( const Vector &from, const Vector &to ) const
++{
++	if ( enginetrace->GetPointContents( to ) & CONTENTS_SOLID )
++		return false;
++
++	trace_t tr;
++	UTIL_TraceLine( from, to, MASK_SOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &tr );
++	return !tr.startsolid && tr.fraction >= 1.0f;
++}
++
++void C_NeoVolSmoke::StepFloodFill( int maxCells )
++{
++	static const int offs[6][3] = { { 1, 0, 0 }, { -1, 0, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 0, 1 }, { 0, 0, -1 } };
++
++	int processed = 0;
++	while ( m_nFrontierHead < m_Frontier.Count() && processed < maxCells && m_nFilledCells < m_nMaxCells )
++	{
++		const int cur = m_Frontier[m_nFrontierHead++];
++		const int cz  = cur / ( m_nN * m_nN );
++		const int cy  = ( cur / m_nN ) % m_nN;
++		const int cx  = cur % m_nN;
++		const int depth = m_Reach[cur];
++
++		if ( depth + 1 > m_nMaxDepth )
++			continue;
++
++		const Vector curCenter = CellCenter( cx, cy, cz );
++
++		for ( int k = 0; k < 6 && m_nFilledCells < m_nMaxCells; ++k )
++		{
++			const int nx = cx + offs[k][0], ny = cy + offs[k][1], nz = cz + offs[k][2];
++			if ( !InGrid( nx, ny, nz ) )
++				continue;
++
++			const int ni = Idx( nx, ny, nz );
++			if ( m_Reach[ni] != 255 )
++				continue;
++
++			if ( !CellOpen( curCenter, CellCenter( nx, ny, nz ) ) )
++				continue;
++
++			m_Reach[ni]    = (unsigned char)( depth + 1 );
++			m_FillTime[ni] = gpGlobals->curtime;
++			m_Frontier.AddToTail( ni );
++			++m_nFilledCells;
++			++processed;
++		}
++	}
++
++	if ( m_nFrontierHead >= m_Frontier.Count() || m_nFilledCells >= m_nMaxCells )
++	{
++		m_bFillDone = true;
++		m_Frontier.Purge();
++		m_nFrontierHead = 0;
++	}
++}
++
++void C_NeoVolSmoke::UpdateDensities()
++{
++	const float now     = gpGlobals->curtime;
++	const float age     = now - m_flSpawnTime;
++	const float ramp    = neo_volsmoke_ramp.GetFloat();
++	const float regrow  = neo_volsmoke_regrow.GetFloat();
++	const float dissip  = neo_volsmoke_dissipate.GetFloat();
++	const float lifeFade = clamp( ( m_flLifetime - age ) / dissip, 0.0f, 1.0f );
++	const float invMaxDepth = 1.0f / (float)MAX( 1, m_nMaxDepth );
++
++	const int cells = m_nN * m_nN * m_nN;
++	for ( int i = 0; i < cells; ++i )
++	{
++		const int reach = m_Reach[i];
++		if ( reach == 255 )
++		{
++			m_Density[i] = 0.0f;
++			continue;
++		}
++
++		// Thinner toward the fringe, with a bit of static per-cell variation.
++		const float f    = (float)reach * invMaxDepth;
++		float base       = 1.0f - 0.65f * f * f;
++		base            *= 0.7f + 0.3f * ( (float)m_Noise[i] / 255.0f );
++
++		const float fill = clamp( ( now - m_FillTime[i] ) / ramp, 0.0f, 1.0f );
++		float hole = 1.0f;
++		if ( m_CarveTime[i] >= 0.0f )
++		{
++			hole = clamp( ( now - m_CarveTime[i] ) / regrow, 0.0f, 1.0f );
++			hole = hole * hole; // slow start, then refill
++		}
++
++		m_Density[i] = base * fill * hole * lifeFade;
++	}
++}
++
++// Bilinear sample of m_Light within slab `zSlab` of the given major axis, at
++// fractional coordinates (fx, fy) along the other two axes (cell units).
++float C_NeoVolSmoke::SampleLight( float fx, float fy, int zSlab, int axis ) const
++{
++	if ( zSlab < 0 || zSlab >= m_nN )
++		return 1.0f;
++
++	const int   x0 = (int)floorf( fx ), y0 = (int)floorf( fy );
++	const float tx = fx - (float)x0,   ty = fy - (float)y0;
++
++	float result = 0.0f;
++	for ( int dy = 0; dy < 2; ++dy )
++	{
++		for ( int dx = 0; dx < 2; ++dx )
++		{
++			const int x = x0 + dx, y = y0 + dy;
++			const float w = ( dx ? tx : 1.0f - tx ) * ( dy ? ty : 1.0f - ty );
++			float v = 1.0f;
++			if ( x >= 0 && y >= 0 && x < m_nN && y < m_nN )
++			{
++				int ix, iy, iz;
++				switch ( axis )
++				{
++				case 0:  ix = zSlab; iy = x; iz = y; break;
++				case 1:  ix = x; iy = zSlab; iz = y; break;
++				default: ix = x; iy = y; iz = zSlab; break;
++				}
++				v = m_Light[Idx( ix, iy, iz )];
++			}
++			result += w * v;
++		}
++	}
++	return result;
++}
++
++// One slab-ordered sweep from the lit side: T(cell) = T(parent) * exp(-k*d*cellsize)
++// where parent is one slab toward the light along the light direction.
++void C_NeoVolSmoke::SweepLight()
++{
++	Vector L( 0.3f, 0.2f, 1.0f );
++	sscanf( neo_volsmoke_lightdir.GetString(), "%f %f %f", &L.x, &L.y, &L.z );
++	if ( L.LengthSqr() < 1e-6f )
++		L = Vector( 0, 0, 1 );
++	L.NormalizeInPlace();
++
++	int axis = 2;
++	if ( fabsf( L.x ) >= fabsf( L.y ) && fabsf( L.x ) >= fabsf( L.z ) ) axis = 0;
++	else if ( fabsf( L.y ) >= fabsf( L.z ) ) axis = 1;
++
++	const float major = L[axis];
++	const int   dir   = major > 0.0f ? 1 : -1;      // slab index change toward the light
++	const Vector step = L * ( m_flCellSize / fabsf( major ) ); // world step to the parent slab
++	const float kStep = neo_volsmoke_light_k.GetFloat() * m_flCellSize;
++
++	// Parent offset in cell units along the two minor axes.
++	const int a0 = ( axis == 0 ) ? 1 : 0;
++	const int a1 = ( axis == 2 ) ? 1 : 2;
++	const float ofs0 = step[a0] / m_flCellSize;
++	const float ofs1 = step[a1] / m_flCellSize;
++
++	// Iterate slabs starting at the one nearest the light.
++	const int zStart = dir > 0 ? m_nN - 1 : 0;
++	for ( int n = 0; n < m_nN; ++n )
++	{
++		const int z = zStart - dir * n;
++		const int zParent = z + dir;
++
++		for ( int v = 0; v < m_nN; ++v )
++		{
++			for ( int u = 0; u < m_nN; ++u )
++			{
++				int ix, iy, iz;
++				switch ( axis )
++				{
++				case 0:  ix = z; iy = u; iz = v; break;
++				case 1:  ix = u; iy = z; iz = v; break;
++				default: ix = u; iy = v; iz = z; break;
++				}
++				const int i = Idx( ix, iy, iz );
++
++				const float parentT = SampleLight( (float)u + ofs0, (float)v + ofs1, zParent, axis );
++				m_Light[i] = parentT * expf( -kStep * m_Density[i] );
++			}
++		}
++	}
++}
++
++void C_NeoVolSmoke::Carve( const Vector &start, const Vector &end, float radius )
++{
++	// Quick reject against the AABB (expanded by radius).
++	Vector mins = m_vecGridMin - Vector( radius, radius, radius );
++	Vector maxs = m_vecGridMax + Vector( radius, radius, radius );
++	Ray_t ray;
++	ray.Init( start, end );
++	if ( !IsBoxIntersectingRay( mins, maxs, ray ) )
++		return;
++
++	const Vector seg = end - start;
++	const float  segLenSq = seg.LengthSqr();
++	const float  r2 = radius * radius;
++	const float  now = gpGlobals->curtime;
++
++	// Only visit the cells inside the capsule's bounding box.
++	Vector cmin = start.Min( end ) - Vector( radius, radius, radius );
++	Vector cmax = start.Max( end ) + Vector( radius, radius, radius );
++	int x0 = clamp( (int)floorf( ( cmin.x - m_vecGridMin.x ) / m_flCellSize ), 0, m_nN - 1 );
++	int y0 = clamp( (int)floorf( ( cmin.y - m_vecGridMin.y ) / m_flCellSize ), 0, m_nN - 1 );
++	int z0 = clamp( (int)floorf( ( cmin.z - m_vecGridMin.z ) / m_flCellSize ), 0, m_nN - 1 );
++	int x1 = clamp( (int)floorf( ( cmax.x - m_vecGridMin.x ) / m_flCellSize ), 0, m_nN - 1 );
++	int y1 = clamp( (int)floorf( ( cmax.y - m_vecGridMin.y ) / m_flCellSize ), 0, m_nN - 1 );
++	int z1 = clamp( (int)floorf( ( cmax.z - m_vecGridMin.z ) / m_flCellSize ), 0, m_nN - 1 );
++
++	bool touched = false;
++	for ( int z = z0; z <= z1; ++z )
++	{
++		for ( int y = y0; y <= y1; ++y )
++		{
++			for ( int x = x0; x <= x1; ++x )
++			{
++				const int i = Idx( x, y, z );
++				if ( m_Reach[i] == 255 )
++					continue;
++
++				const Vector c = CellCenter( x, y, z );
++				float t = 0.0f;
++				if ( segLenSq > 1e-6f )
++					t = clamp( DotProduct( c - start, seg ) / segLenSq, 0.0f, 1.0f );
++				const Vector closest = start + seg * t;
++				if ( ( c - closest ).LengthSqr() <= r2 )
++				{
++					m_CarveTime[i] = now;
++					touched = true;
++				}
++			}
++		}
++	}
++
++	if ( touched )
++		m_bAtlasDirty = true;
++}
++
++// ---------------------------------------------------------------------------
++void C_NeoVolSmoke::FillAtlas( unsigned char *pDst, int pitch, int width, int height ) const
++{
++	for ( int z = 0; z < m_nN; ++z )
++	{
++		const int tileX = ( z % m_nAtlasCols ) * m_nN;
++		const int tileY = ( z / m_nAtlasCols ) * m_nN;
++		for ( int y = 0; y < m_nN; ++y )
++		{
++			unsigned char *row = pDst + ( tileY + y ) * pitch + tileX * 4;
++			for ( int x = 0; x < m_nN; ++x )
++			{
++				const int i = Idx( x, y, z );
++				row[x * 4 + 0] = (unsigned char)( clamp( m_Density[i], 0.0f, 1.0f ) * 255.0f + 0.5f ); // R density
++				row[x * 4 + 1] = (unsigned char)( clamp( m_Light[i],   0.0f, 1.0f ) * 255.0f + 0.5f ); // G light
++				row[x * 4 + 2] = 0;
++				row[x * 4 + 3] = 255;
++			}
++		}
++	}
++}
++
++void C_NeoVolSmoke::ClientThink()
++{
++	const float now = gpGlobals->curtime;
++
++	if ( now - m_flSpawnTime > m_flLifetime )
++	{
++		Release();
++		return;
++	}
++
++	if ( !m_bFillDone )
++	{
++		StepFloodFill( neo_volsmoke_fill_rate.GetInt() );
++	}
++
++	// Densities animate every frame (ramp, regrow, dissipation).
++	UpdateDensities();
++
++	if ( now >= m_flNextLightSweep )
++	{
++		SweepLight();
++		m_flNextLightSweep = now + 1.0f / neo_volsmoke_light_sweep_hz.GetFloat();
++	}
++
++	if ( m_pRegen && m_Atlas.IsValid() )
++	{
++		FillAtlas( m_pRegen->Bits(), m_pRegen->Pitch(), m_nAtlasCols * m_nN, m_nAtlasRows * m_nN );
++		m_Atlas->Download();
++		m_bAtlasDirty = false;
++	}
++}
++
++// ---------------------------------------------------------------------------
++// Rendering
++// ---------------------------------------------------------------------------
++void C_NeoVolSmoke::GetRenderBounds( Vector &mins, Vector &maxs )
++{
++	mins = m_vecGridMin - GetRenderOrigin();
++	maxs = m_vecGridMax - GetRenderOrigin();
++}
++
++static void SetVec3Var( IMaterial *pMat, const char *name, const Vector &v )
++{
++	bool found = false;
++	IMaterialVar *pVar = pMat->FindVar( name, &found, false );
++	if ( found ) pVar->SetVecValue( v.x, v.y, v.z );
++}
++
++static void SetVec4Var( IMaterial *pMat, const char *name, float x, float y, float z, float w )
++{
++	bool found = false;
++	IMaterialVar *pVar = pMat->FindVar( name, &found, false );
++	if ( found ) pVar->SetVecValue( x, y, z, w );
++}
++
++static void SetFloatVar( IMaterial *pMat, const char *name, float f )
++{
++	bool found = false;
++	IMaterialVar *pVar = pMat->FindVar( name, &found, false );
++	if ( found ) pVar->SetFloatValue( f );
++}
++
++static void SetIntVar( IMaterial *pMat, const char *name, int i )
++{
++	bool found = false;
++	IMaterialVar *pVar = pMat->FindVar( name, &found, false );
++	if ( found ) pVar->SetIntValue( i );
++}
++
++int C_NeoVolSmoke::DrawModel( int flags )
++{
++	if ( !neo_volsmoke_draw.GetBool() || !m_Material || m_Material->IsErrorMaterial() || !m_Atlas.IsValid() )
++		return 0;
++
++	IMaterial *pMat = m_Material;
++
++	// Lighting: ambient from the light grid at the spawn point (gamma -> linear).
++	Vector amb = engine->GetLightForPoint( m_vecSpawn + Vector( 0, 0, 32.0f ), true );
++	amb.x = powf( MAX( amb.x, 0.0f ), 2.2f );
++	amb.y = powf( MAX( amb.y, 0.0f ), 2.2f );
++	amb.z = powf( MAX( amb.z, 0.0f ), 2.2f );
++	amb *= neo_volsmoke_ambient_scale.GetFloat();
++	// Directional term scales with the scene brightness so indoor smoke stays dim.
++	const float brightness = clamp( ( amb.x + amb.y + amb.z ) / 3.0f, 0.02f, 1.0f );
++	const Vector lightCol = Vector( 1, 1, 1 ) * ( brightness * neo_volsmoke_light_scale.GetFloat() );
++
++	bool found = false;
++	IMaterialVar *pBase = pMat->FindVar( "$basetexture", &found, false );
++	if ( found ) pBase->SetTextureValue( m_Atlas );
++
++	SetVec3Var( pMat, "$volmin", m_vecGridMin );
++	SetVec3Var( pMat, "$volmax", m_vecGridMax );
++	SetVec4Var( pMat, "$gridparams", (float)m_nN, (float)m_nAtlasCols, (float)m_nAtlasRows, 1.0f / (float)m_nN );
++	SetVec3Var( pMat, "$ambient", amb );
++	SetVec3Var( pMat, "$lightcolor", lightCol );
++	SetFloatVar( pMat, "$extinction", neo_volsmoke_extinction.GetFloat() );
++	SetFloatVar( pMat, "$steps", neo_volsmoke_steps.GetFloat() );
++	SetFloatVar( pMat, "$noiseamp", neo_volsmoke_noise_amp.GetFloat() );
++	SetFloatVar( pMat, "$noisescale", neo_volsmoke_noise_scale.GetFloat() );
++	SetIntVar( pMat, "$jitter", neo_volsmoke_jitter.GetInt() );
++	SetIntVar( pMat, "$debugmode", neo_volsmoke_debug.GetInt() );
++
++	CMatRenderContextPtr pRenderContext( materials );
++
++	pRenderContext->MatrixMode( MATERIAL_MODEL );
++	pRenderContext->PushMatrix();
++	pRenderContext->LoadIdentity();
++
++	// Draw only the far side of the box: exactly one fragment per pixel, and
++	// still correct with the camera inside the volume. The pixel shader does
++	// the depth test against the scene itself.
++	pRenderContext->CullMode( neo_volsmoke_cullflip.GetBool() ? MATERIAL_CULLMODE_CCW : MATERIAL_CULLMODE_CW );
++
++	pRenderContext->Bind( pMat, (IClientRenderable *)this );
++	IMesh *pMesh = pRenderContext->GetDynamicMesh( true, NULL, NULL, pMat );
++
++	const Vector &a = m_vecGridMin;
++	const Vector &b = m_vecGridMax;
++	const Vector corners[8] =
++	{
++		Vector( a.x, a.y, a.z ), Vector( b.x, a.y, a.z ), Vector( b.x, b.y, a.z ), Vector( a.x, b.y, a.z ),
++		Vector( a.x, a.y, b.z ), Vector( b.x, a.y, b.z ), Vector( b.x, b.y, b.z ), Vector( a.x, b.y, b.z ),
++	};
++	// Outward-facing, consistent winding per face.
++	static const unsigned short indices[36] =
++	{
++		0, 2, 1,  0, 3, 2,   // -z
++		4, 5, 6,  4, 6, 7,   // +z
++		0, 1, 5,  0, 5, 4,   // -y
++		2, 3, 7,  2, 7, 6,   // +y
++		1, 2, 6,  1, 6, 5,   // +x
++		3, 0, 4,  3, 4, 7,   // -x
++	};
++
++	CMeshBuilder meshBuilder;
++	meshBuilder.Begin( pMesh, MATERIAL_TRIANGLES, 8, 36 );
++	for ( int i = 0; i < 8; ++i )
++	{
++		meshBuilder.Position3fv( corners[i].Base() );
++		meshBuilder.AdvanceVertex();
++	}
++	for ( int i = 0; i < 36; ++i )
++	{
++		meshBuilder.Index( indices[i] );
++		meshBuilder.AdvanceIndex();
++	}
++	meshBuilder.End();
++	pMesh->Draw();
++
++	pRenderContext->CullMode( MATERIAL_CULLMODE_CCW );
++	pRenderContext->MatrixMode( MATERIAL_MODEL );
++	pRenderContext->PopMatrix();
++
++	return 1;
++}
++
++// ---------------------------------------------------------------------------
++// Console commands
++// ---------------------------------------------------------------------------
++static bool ViewTrace( trace_t &tr, float dist )
++{
++	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
++	if ( !pPlayer )
++		return false;
++
++	Vector fwd;
++	pPlayer->EyeVectors( &fwd );
++	const Vector start = pPlayer->EyePosition();
++	UTIL_TraceLine( start, start + fwd * dist, MASK_SOLID_BRUSHONLY, pPlayer, COLLISION_GROUP_NONE, &tr );
++	return true;
++}
++
++CON_COMMAND_F( neo_volsmoke_spawn, "Spawn a volumetric smoke at the crosshair. Args: [extent] [lifetime]", FCVAR_CHEAT )
++{
++	trace_t tr;
++	if ( !ViewTrace( tr, 2048.0f ) )
++		return;
++
++	const float extent   = args.ArgC() > 1 ? atof( args[1] ) : neo_volsmoke_extent.GetFloat();
++	const float lifetime = args.ArgC() > 2 ? atof( args[2] ) : neo_volsmoke_lifetime.GetFloat();
++
++	// Lift off the surface a little so the seed cell is not inside it.
++	Vector origin = tr.endpos + tr.plane.normal * 24.0f;
++	if ( tr.fraction >= 1.0f )
++		origin = tr.endpos;
++
++	C_NeoVolSmoke *p = C_NeoVolSmoke::Create( origin, extent, lifetime );
++	Msg( "neo_volsmoke: %s at (%.0f %.0f %.0f), extent %.0f, %d live\n", p ? "spawned" : "FAILED", origin.x, origin.y, origin.z, extent, C_NeoVolSmoke::LiveCount() );
++}
++
++CON_COMMAND_F( neo_volsmoke_carve, "Carve a bullet-sized hole through smoke along your view.", FCVAR_CHEAT )
++{
++	trace_t tr;
++	if ( !ViewTrace( tr, 4096.0f ) )
++		return;
++	C_NeoVolSmoke::CarveAll( tr.startpos, tr.endpos, neo_volsmoke_carve_radius.GetFloat() );
++}
++
++CON_COMMAND_F( neo_volsmoke_explode, "Carve an explosion-sized sphere out of smoke at the crosshair.", FCVAR_CHEAT )
++{
++	trace_t tr;
++	if ( !ViewTrace( tr, 4096.0f ) )
++		return;
++	C_NeoVolSmoke::CarveAll( tr.endpos, tr.endpos, neo_volsmoke_explode_radius.GetFloat() );
++}
++
++CON_COMMAND_F( neo_volsmoke_clear, "Remove all volumetric smoke.", FCVAR_CHEAT )
++{
++	C_NeoVolSmoke::RemoveAll();
++}
+diff --git a/src/game/client/neo/c_neo_volsmoke.h b/src/game/client/neo/c_neo_volsmoke.h
+new file mode 100644
+index 0000000..4a2db31
+--- /dev/null
++++ b/src/game/client/neo/c_neo_volsmoke.h
+@@ -0,0 +1,119 @@
++// NEO volumetric smoke - client-side voxel smoke volume (demo).
++//
++// A CPU-simulated density grid that flood-fills through world collision from
++// a spawn point, is lit by a sweep toward a light direction, can be carved by
++// bullets/explosions (with regrow), and is uploaded as a 2D slice atlas to a
++// procedural texture. Rendering is a single raymarched box per volume via the
++// Neo_VolSmoke shader, so there is no intra-volume sorting and no OIT issue.
++//
++// This is a client-only prototype: spawn with `neo_volsmoke_spawn`, carve with
++// `neo_volsmoke_carve`, inspect with `neo_volsmoke_debug`.
++
++#ifndef C_NEO_VOLSMOKE_H
++#define C_NEO_VOLSMOKE_H
++#ifdef _WIN32
++#pragma once
++#endif
++
++#include "c_baseentity.h"
++#include "materialsystem/itexture.h"
++#include "materialsystem/MaterialSystemUtil.h"
++#include "utlvector.h"
++
++class CNeoVolSmokeRegenerator;
++
++class C_NeoVolSmoke : public C_BaseEntity
++{
++	DECLARE_CLASS( C_NeoVolSmoke, C_BaseEntity );
++
++public:
++	C_NeoVolSmoke();
++	virtual ~C_NeoVolSmoke();
++
++	// Spawns a client-only volume centred on `origin`. `extent` is the half
++	// size of the AABB in world units; `lifetime` seconds until dissipation.
++	static C_NeoVolSmoke *Create( const Vector &origin, float extent, float lifetime );
++
++	// Carves a capsule out of every live volume (bullet trace / explosion).
++	static void CarveAll( const Vector &start, const Vector &end, float radius );
++
++	static void RemoveAll();
++	static int  LiveCount() { return s_Volumes.Count(); }
++
++	// C_BaseEntity
++	virtual void ClientThink() override;
++	virtual bool ShouldDraw() override { return true; }
++	virtual bool IsTransparent() override { return true; }
++	virtual RenderGroup_t GetRenderGroup() override { return RENDER_GROUP_TRANSLUCENT_ENTITY; }
++	virtual void GetRenderBounds( Vector &mins, Vector &maxs ) override;
++	virtual int  DrawModel( int flags ) override;
++
++	// Fills the slice atlas; called by the texture regenerator.
++	void FillAtlas( unsigned char *pDst, int pitch, int width, int height ) const;
++
++	int  GridN() const { return m_nN; }
++	int  AtlasCols() const { return m_nAtlasCols; }
++	int  AtlasRows() const { return m_nAtlasRows; }
++
++private:
++	void Init( const Vector &origin, float extent, float lifetime );
++	void Shutdown();
++
++	// Simulation
++	void StepFloodFill( int maxCells );
++	void UpdateDensities();
++	void SweepLight();
++	void Carve( const Vector &start, const Vector &end, float radius );
++
++	// Grid helpers
++	inline int    Idx( int x, int y, int z ) const { return ( z * m_nN + y ) * m_nN + x; }
++	inline bool   InGrid( int x, int y, int z ) const { return x >= 0 && y >= 0 && z >= 0 && x < m_nN && y < m_nN && z < m_nN; }
++	inline Vector CellCenter( int x, int y, int z ) const
++	{
++		return m_vecGridMin + Vector( ( x + 0.5f ) * m_flCellSize, ( y + 0.5f ) * m_flCellSize, ( z + 0.5f ) * m_flCellSize );
++	}
++	bool CellOpen( const Vector &from, const Vector &to ) const;
++
++	float SampleLight( float fx, float fy, int zSlab, int axis ) const;
++
++private:
++	static CUtlVector< C_NeoVolSmoke * > s_Volumes;
++	static int s_nNextId;
++
++	int    m_nId;
++	int    m_nN;            // cells per axis
++	int    m_nAtlasCols;
++	int    m_nAtlasRows;
++	float  m_flCellSize;
++	Vector m_vecGridMin;
++	Vector m_vecGridMax;
++	Vector m_vecSpawn;
++
++	float  m_flSpawnTime;
++	float  m_flLifetime;
++
++	// Per-cell state
++	CUtlVector< unsigned char > m_Reach;      // BFS depth from spawn, 255 = unreached
++	CUtlVector< float >         m_FillTime;   // curtime when the cell was reached
++	CUtlVector< float >         m_CarveTime;  // curtime of last carve, <0 = never
++	CUtlVector< unsigned char > m_Noise;      // static per-cell variation
++	CUtlVector< float >         m_Density;    // 0..1 current density
++	CUtlVector< float >         m_Light;      // 0..1 transmittance toward light
++
++	// Flood fill frontier (ring buffer of cell indices)
++	CUtlVector< int > m_Frontier;
++	int   m_nFrontierHead;
++	int   m_nFilledCells;
++	int   m_nMaxCells;
++	int   m_nMaxDepth;
++	bool  m_bFillDone;
++
++	// GPU side
++	CTextureReference        m_Atlas;
++	CNeoVolSmokeRegenerator *m_pRegen;
++	CMaterialReference       m_Material;
++	bool  m_bAtlasDirty;
++	float m_flNextLightSweep;
++};
++
++#endif // C_NEO_VOLSMOKE_H
+diff --git a/src/materialsystem/stdshaders/CMakeLists.txt b/src/materialsystem/stdshaders/CMakeLists.txt
+index d6ce822..13a1e54 100644
+--- a/src/materialsystem/stdshaders/CMakeLists.txt
++++ b/src/materialsystem/stdshaders/CMakeLists.txt
+@@ -127,6 +127,7 @@ target_sources_grouped(
+     Neo_SSAO_Shader.cpp
+     Neo_TestShader.cpp
+     Neo_ThermalVision.cpp
++    Neo_VolSmoke.cpp
+     neo_thermal_model_dx9.cpp
+     neo_thermal_model_dx9_helper.cpp
+     neo_thermal_model_dx9_helper.h
+diff --git a/src/materialsystem/stdshaders/Neo_VolSmoke.cpp b/src/materialsystem/stdshaders/Neo_VolSmoke.cpp
+new file mode 100644
+index 0000000..6d0a82b
+--- /dev/null
++++ b/src/materialsystem/stdshaders/Neo_VolSmoke.cpp
+@@ -0,0 +1,156 @@
++// NEO volumetric smoke shader.
++//
++// Draws the AABB of a voxel smoke volume (see client/neo/c_neo_volsmoke.cpp)
++// and raymarches the slice atlas in $basetexture. Depth test is done in the
++// pixel shader against the engine's depth-in-dest-alpha frame buffer copy, so
++// hardware depth test is off and the box can be drawn with its far faces only.
++
++#include "BaseVSShader.h"
++
++#include "neo_volsmoke_vs30.inc"
++#include "neo_volsmoke_ps30.inc"
++
++// memdbgon must be the last include file in a .cpp file!!!
++#include "tier0/memdbgon.h"
++
++BEGIN_VS_SHADER( Neo_VolSmoke, "NEO raymarched voxel smoke" )
++
++BEGIN_SHADER_PARAMS
++	SHADER_PARAM( VOLMIN,     SHADER_PARAM_TYPE_VEC3,    "[0 0 0]",       "World-space AABB min" )
++	SHADER_PARAM( VOLMAX,     SHADER_PARAM_TYPE_VEC3,    "[1 1 1]",       "World-space AABB max" )
++	SHADER_PARAM( GRIDPARAMS, SHADER_PARAM_TYPE_VEC4,    "[32 8 4 0.03125]", "x = N, y = atlas cols, z = atlas rows, w = 1/N" )
++	SHADER_PARAM( AMBIENT,    SHADER_PARAM_TYPE_VEC3,    "[0.6 0.6 0.6]", "Ambient light reaching the smoke (linear)" )
++	SHADER_PARAM( LIGHTCOLOR, SHADER_PARAM_TYPE_VEC3,    "[0.8 0.8 0.8]", "Directional light colour (linear), scaled by baked per-voxel light" )
++	SHADER_PARAM( EXTINCTION, SHADER_PARAM_TYPE_FLOAT,   "0.06",          "Extinction per world unit at density 1" )
++	SHADER_PARAM( STEPS,      SHADER_PARAM_TYPE_FLOAT,   "32",            "Raymarch steps across the box" )
++	SHADER_PARAM( NOISEAMP,   SHADER_PARAM_TYPE_FLOAT,   "0.35",          "Edge erosion noise amplitude" )
++	SHADER_PARAM( NOISESCALE, SHADER_PARAM_TYPE_FLOAT,   "0.045",         "Noise frequency (1/world units)" )
++	SHADER_PARAM( JITTER,     SHADER_PARAM_TYPE_INTEGER, "1",             "Per-pixel step jitter (grain instead of banding)" )
++	SHADER_PARAM( DEBUGMODE,  SHADER_PARAM_TYPE_INTEGER, "0",             "0 off, 1 coverage, 2 scene depth, 3 box hit" )
++END_SHADER_PARAMS
++
++SHADER_INIT_PARAMS()
++{
++	SET_FLAGS2( MATERIAL_VAR2_NEEDS_FULL_FRAME_BUFFER_TEXTURE );
++	SET_FLAGS( MATERIAL_VAR_TRANSLUCENT );
++	SET_FLAGS( MATERIAL_VAR_NOFOG );
++}
++
++SHADER_INIT
++{
++	if ( params[BASETEXTURE]->IsDefined() )
++	{
++		LoadTexture( BASETEXTURE );
++	}
++}
++
++SHADER_FALLBACK
++{
++	if ( g_pHardwareConfig->GetDXSupportLevel() < 95 || !g_pHardwareConfig->SupportsShaderModel_3_0() )
++	{
++		// No ps_3_0: draw nothing rather than something wrong. The caller can
++		// fall back to the legacy particle smoke when this material is in
++		// fallback (IMaterial::GetShaderName() != "Neo_VolSmoke").
++		return "Wireframe";
++	}
++	return 0;
++}
++
++SHADER_DRAW
++{
++	SHADOW_STATE
++	{
++		pShaderShadow->VertexShaderVertexFormat( VERTEX_POSITION, 1, 0, 0 );
++
++		// Manual depth test in the PS; never touch hardware depth.
++		pShaderShadow->EnableDepthWrites( false );
++		pShaderShadow->EnableDepthTest( false );
++
++		// Dest alpha holds scene depth for later translucents - don't clobber it.
++		pShaderShadow->EnableAlphaWrites( false );
++
++		// Premultiplied alpha.
++		pShaderShadow->EnableBlending( true );
++		pShaderShadow->BlendFunc( SHADER_BLEND_ONE, SHADER_BLEND_ONE_MINUS_SRC_ALPHA );
++
++		// Culling is driven by the caller (far faces only, see client code).
++		pShaderShadow->EnableCulling( true );
++
++		pShaderShadow->EnableTexture( SHADER_SAMPLER0, true ); // atlas (data, not sRGB)
++		pShaderShadow->EnableTexture( SHADER_SAMPLER1, true ); // frame buffer / depth
++		pShaderShadow->EnableSRGBRead( SHADER_SAMPLER0, false );
++		pShaderShadow->EnableSRGBRead( SHADER_SAMPLER1, false );
++		pShaderShadow->EnableSRGBWrite( true );
++
++		DECLARE_STATIC_VERTEX_SHADER( neo_volsmoke_vs30 );
++		SET_STATIC_VERTEX_SHADER( neo_volsmoke_vs30 );
++
++		DECLARE_STATIC_PIXEL_SHADER( neo_volsmoke_ps30 );
++		SET_STATIC_PIXEL_SHADER( neo_volsmoke_ps30 );
++
++		pShaderShadow->FogMode( SHADER_FOGMODE_DISABLED );
++	}
++
++	DYNAMIC_STATE
++	{
++		BindTexture( SHADER_SAMPLER0, BASETEXTURE );
++		pShaderAPI->BindStandardTexture( SHADER_SAMPLER1, TEXTURE_FRAME_BUFFER_FULL_DEPTH );
++
++		float c[4];
++
++		// c0: eye position
++		Vector eye;
++		pShaderAPI->GetWorldSpaceCameraPosition( eye.Base() );
++		c[0] = eye.x; c[1] = eye.y; c[2] = eye.z; c[3] = 0.0f;
++		pShaderAPI->SetPixelShaderConstant( 0, c );
++
++		// c1: volume min + extinction
++		params[VOLMIN]->GetVecValue( c, 3 );
++		c[3] = params[EXTINCTION]->GetFloatValue();
++		pShaderAPI->SetPixelShaderConstant( 1, c );
++
++		// c2: volume max + steps
++		params[VOLMAX]->GetVecValue( c, 3 );
++		c[3] = params[STEPS]->GetFloatValue();
++		pShaderAPI->SetPixelShaderConstant( 2, c );
++
++		// c3: grid layout
++		params[GRIDPARAMS]->GetVecValue( c, 4 );
++		pShaderAPI->SetPixelShaderConstant( 3, c );
++
++		// c4: ambient + jitter flag
++		params[AMBIENT]->GetVecValue( c, 3 );
++		c[3] = params[JITTER]->GetIntValue() ? 1.0f : 0.0f;
++		pShaderAPI->SetPixelShaderConstant( 4, c );
++
++		// c5: directional light colour + time
++		params[LIGHTCOLOR]->GetVecValue( c, 3 );
++		c[3] = pShaderAPI->CurrentTime();
++		pShaderAPI->SetPixelShaderConstant( 5, c );
++
++		// c6: noise + debug
++		c[0] = params[NOISEAMP]->GetFloatValue();
++		c[1] = params[NOISESCALE]->GetFloatValue();
++		c[2] = 0.0f;
++		c[3] = (float)params[DEBUGMODE]->GetIntValue();
++		pShaderAPI->SetPixelShaderConstant( 6, c );
++
++		// c7: half-texel offset for the frame buffer lookup
++		int w, h;
++		pShaderAPI->GetBackBufferDimensions( w, h );
++		c[0] = 0.5f / (float)MAX( w, 1 );
++		c[1] = 0.5f / (float)MAX( h, 1 );
++		c[2] = 0.0f; c[3] = 0.0f;
++		pShaderAPI->SetPixelShaderConstant( 7, c );
++
++		DECLARE_DYNAMIC_VERTEX_SHADER( neo_volsmoke_vs30 );
++		SET_DYNAMIC_VERTEX_SHADER( neo_volsmoke_vs30 );
++
++		DECLARE_DYNAMIC_PIXEL_SHADER( neo_volsmoke_ps30 );
++		SET_DYNAMIC_PIXEL_SHADER( neo_volsmoke_ps30 );
++	}
++
++	Draw();
++}
++
++END_SHADER
+diff --git a/src/materialsystem/stdshaders/include/neo_volsmoke_ps30.inc b/src/materialsystem/stdshaders/include/neo_volsmoke_ps30.inc
+new file mode 100644
+index 0000000..7c9eff3
+--- /dev/null
++++ b/src/materialsystem/stdshaders/include/neo_volsmoke_ps30.inc
+@@ -0,0 +1,60 @@
++#include "shaderlib/cshader.h"
++class neo_volsmoke_ps30_Static_Index
++{
++private:
++	int m_nCONVERT_TO_SRGB;
++#ifdef _DEBUG
++	bool m_bCONVERT_TO_SRGB;
++#endif
++public:
++	void SetCONVERT_TO_SRGB( int i )
++	{
++		Assert( i >= 0 && i <= 1 );
++		m_nCONVERT_TO_SRGB = i;
++#ifdef _DEBUG
++		m_bCONVERT_TO_SRGB = true;
++#endif
++	}
++	void SetCONVERT_TO_SRGB( bool i )
++	{
++		m_nCONVERT_TO_SRGB = i ? 1 : 0;
++#ifdef _DEBUG
++		m_bCONVERT_TO_SRGB = true;
++#endif
++	}
++public:
++	neo_volsmoke_ps30_Static_Index( )
++	{
++#ifdef _DEBUG
++		m_bCONVERT_TO_SRGB = true;
++#endif // _DEBUG
++		m_nCONVERT_TO_SRGB =  g_pHardwareConfig->NeedsShaderSRGBConversion();
++	}
++	int GetIndex()
++	{
++		// Asserts to make sure that we aren't using any skipped combinations.
++		// Asserts to make sure that we are setting all of the combination vars.
++#ifdef _DEBUG
++		bool bAllStaticVarsDefined = m_bCONVERT_TO_SRGB;
++		Assert( bAllStaticVarsDefined );
++#endif // _DEBUG
++		return ( 1 * m_nCONVERT_TO_SRGB ) + 0;
++	}
++};
++#define shaderStaticTest_neo_volsmoke_ps30 0
++class neo_volsmoke_ps30_Dynamic_Index
++{
++public:
++	neo_volsmoke_ps30_Dynamic_Index()
++	{
++	}
++	int GetIndex()
++	{
++		// Asserts to make sure that we aren't using any skipped combinations.
++		// Asserts to make sure that we are setting all of the combination vars.
++#ifdef _DEBUG
++#endif // _DEBUG
++		return 0;
++	}
++};
++#define shaderDynamicTest_neo_volsmoke_ps30 0
+diff --git a/src/materialsystem/stdshaders/include/neo_volsmoke_vs30.inc b/src/materialsystem/stdshaders/include/neo_volsmoke_vs30.inc
+new file mode 100644
+index 0000000..5b970eb
+--- /dev/null
++++ b/src/materialsystem/stdshaders/include/neo_volsmoke_vs30.inc
+@@ -0,0 +1,33 @@
++#include "shaderlib/cshader.h"
++class neo_volsmoke_vs30_Static_Index
++{
++public:
++	neo_volsmoke_vs30_Static_Index( )
++	{
++	}
++	int GetIndex()
++	{
++		// Asserts to make sure that we aren't using any skipped combinations.
++		// Asserts to make sure that we are setting all of the combination vars.
++#ifdef _DEBUG
++#endif // _DEBUG
++		return 0;
++	}
++};
++#define shaderStaticTest_neo_volsmoke_vs30 0
++class neo_volsmoke_vs30_Dynamic_Index
++{
++public:
++	neo_volsmoke_vs30_Dynamic_Index()
++	{
++	}
++	int GetIndex()
++	{
++		// Asserts to make sure that we aren't using any skipped combinations.
++		// Asserts to make sure that we are setting all of the combination vars.
++#ifdef _DEBUG
++#endif // _DEBUG
++		return 0;
++	}
++};
++#define shaderDynamicTest_neo_volsmoke_vs30 0
+diff --git a/src/materialsystem/stdshaders/neo_volsmoke_ps30.fxc b/src/materialsystem/stdshaders/neo_volsmoke_ps30.fxc
+new file mode 100644
+index 0000000..605d10f
+--- /dev/null
++++ b/src/materialsystem/stdshaders/neo_volsmoke_ps30.fxc
+@@ -0,0 +1,205 @@
++// NEO volumetric smoke - pixel shader.
++//
++// Raymarches a CPU-simulated voxel grid (uploaded as a 2D slice atlas, since
++// the material system only hands us 2D procedural textures) through the
++// volume's AABB. One fragment per pixel per volume means transmittance is
++// integrated along the ray: no intra-volume sorting, so no OIT problem.
++//
++// Scene depth comes from the engine's depth-in-dest-alpha copy
++// (TEXTURE_FRAME_BUFFER_FULL_DEPTH), using exactly the encoding that
++// spritecard's $DEPTHBLEND path reads, so the march stops at geometry.
++
++// STATIC: "CONVERT_TO_SRGB"	"0..1"	[ps30][= g_pHardwareConfig->NeedsShaderSRGBConversion()] [PC]
++// STATIC: "CONVERT_TO_SRGB"	"0..0"	[= 0] [XBOX]
++
++#include "common_ps_fxc.h"
++
++sampler AtlasSampler : register( s0 ); // density atlas (R = density, G = light)
++sampler DepthSampler : register( s1 ); // frame buffer copy, depth in .a
++
++const float4 g_EyePos       : register( c0 ); // xyz eye, w unused
++const float4 g_VolMin       : register( c1 ); // xyz, w = extinction per unit at density 1
++const float4 g_VolMax       : register( c2 ); // xyz, w = number of steps (float)
++const float4 g_Grid         : register( c3 ); // x = N, y = atlas cols, z = atlas rows, w = 1/N
++const float4 g_Ambient      : register( c4 ); // rgb ambient light, w = jitter enable
++const float4 g_Light        : register( c5 ); // rgb directional light, w = time
++const float4 g_Misc         : register( c6 ); // x = noise amp, y = noise scale, z = unused, w = debug mode
++const float4 g_ScreenParams : register( c7 ); // xy = half texel
++
++#define MAX_STEPS 64
++
++struct PS_INPUT
++{
++	float3 vWorldPos  : TEXCOORD0;
++	float4 vScreenPos : TEXCOORD1;
++	float2 vClipZ     : TEXCOORD2;
++};
++
++// ---------------------------------------------------------------------------
++// Atlas lookup: slice z lives at tile (z % cols, z / cols).
++// ---------------------------------------------------------------------------
++float2 SliceUV( float2 uv, float slice )
++{
++	float col = fmod( slice, g_Grid.y );
++	float row = floor( slice / g_Grid.y );
++	return ( float2( col, row ) + uv ) / g_Grid.yz;
++}
++
++float2 SampleVolume( float3 uvw )
++{
++	// Keep xy inside the tile by half a texel so bilinear never bleeds into
++	// the neighbouring slice.
++	float halfTexel = 0.5f * g_Grid.w;
++	float2 uv = clamp( uvw.xy, halfTexel, 1.0f - halfTexel );
++
++	float z  = clamp( uvw.z * g_Grid.x - 0.5f, 0.0f, g_Grid.x - 1.0f );
++	float z0 = floor( z );
++	float z1 = min( z0 + 1.0f, g_Grid.x - 1.0f );
++	float fz = z - z0;
++
++	float2 s0 = tex2Dlod( AtlasSampler, float4( SliceUV( uv, z0 ), 0, 0 ) ).rg;
++	float2 s1 = tex2Dlod( AtlasSampler, float4( SliceUV( uv, z1 ), 0, 0 ) ).rg;
++	return lerp( s0, s1, fz );
++}
++
++// ---------------------------------------------------------------------------
++// Cheap procedural 3D value noise for edge erosion / wisps.
++// ---------------------------------------------------------------------------
++float Hash3( float3 p )
++{
++	return frac( sin( dot( p, float3( 12.9898f, 78.233f, 37.719f ) ) ) * 43758.5453f );
++}
++
++float ValueNoise3( float3 p )
++{
++	float3 i = floor( p );
++	float3 f = frac( p );
++	f = f * f * ( 3.0f - 2.0f * f );
++
++	float n000 = Hash3( i + float3( 0, 0, 0 ) );
++	float n100 = Hash3( i + float3( 1, 0, 0 ) );
++	float n010 = Hash3( i + float3( 0, 1, 0 ) );
++	float n110 = Hash3( i + float3( 1, 1, 0 ) );
++	float n001 = Hash3( i + float3( 0, 0, 1 ) );
++	float n101 = Hash3( i + float3( 1, 0, 1 ) );
++	float n011 = Hash3( i + float3( 0, 1, 1 ) );
++	float n111 = Hash3( i + float3( 1, 1, 1 ) );
++
++	float nx00 = lerp( n000, n100, f.x );
++	float nx10 = lerp( n010, n110, f.x );
++	float nx01 = lerp( n001, n101, f.x );
++	float nx11 = lerp( n011, n111, f.x );
++	float nxy0 = lerp( nx00, nx10, f.y );
++	float nxy1 = lerp( nx01, nx11, f.y );
++	return lerp( nxy0, nxy1, f.z );
++}
++
++// Interleaved gradient noise - per-pixel march offset to trade banding for grain.
++float IGN( float2 pixel )
++{
++	return frac( 52.9829189f * frac( dot( pixel, float2( 0.06711056f, 0.00583715f ) ) ) );
++}
++
++float4 main( PS_INPUT i ) : COLOR
++{
++	// --- eye ray --------------------------------------------------------
++	float3 toVert   = i.vWorldPos - g_EyePos.xyz;
++	float  distVert = length( toVert );
++	float3 rd       = toVert / distVert;
++	float3 ro       = g_EyePos.xyz;
++
++	// --- screen uv + scene depth ---------------------------------------
++	float2 screenUV = i.vScreenPos.xy / i.vScreenPos.w;
++	screenUV = screenUV * float2( 0.5f, -0.5f ) + 0.5f + g_ScreenParams.xy;
++
++	float sceneA = tex2D( DepthSampler, screenUV ).a;
++
++	// Clip Z is affine along the ray: solve for the distance at which our
++	// encoded depth equals the scene's. Dest alpha of ~0 (cleared/sky) or
++	// ~1 (saturated range) both mean "nothing in front of us".
++	float tScene = 1.0e9f;
++	float dClipZ = ( i.vClipZ.x - i.vClipZ.y ) / distVert;
++	if ( sceneA > 0.002f && sceneA < 0.995f && abs( dClipZ ) > 1.0e-6f )
++	{
++		float sceneClipZ = sceneA / OO_DESTALPHA_DEPTH_RANGE;
++		tScene = ( sceneClipZ - i.vClipZ.y ) / dClipZ;
++	}
++
++	// --- AABB slab test -------------------------------------------------
++	float3 invDir = 1.0f / rd;
++	float3 tA = ( g_VolMin.xyz - ro ) * invDir;
++	float3 tB = ( g_VolMax.xyz - ro ) * invDir;
++	float3 tNear = min( tA, tB );
++	float3 tFar  = max( tA, tB );
++	float t0 = max( max( tNear.x, tNear.y ), tNear.z );
++	float t1 = min( min( tFar.x,  tFar.y  ), tFar.z  );
++
++	t0 = max( t0, 0.0f );        // camera may be inside the box
++	t1 = min( t1, tScene );      // stop at opaque geometry
++
++	int debugMode = (int)g_Misc.w;
++	if ( debugMode == 2 )
++	{
++		// Visualise the depth we think the scene has (grey = closer).
++		float v = saturate( tScene / 2048.0f );
++		return FinalOutput( float4( v.xxx, 1.0f ), 0, PIXEL_FOG_TYPE_NONE, TONEMAP_SCALE_NONE );
++	}
++
++	if ( t1 <= t0 )
++	{
++		return float4( 0, 0, 0, 0 ); // premultiplied: leaves the frame buffer untouched
++	}
++
++	// --- march ------------------------------------------------------------
++	float  numSteps = max( g_VolMax.w, 4.0f );
++	float  stepLen  = ( t1 - t0 ) / numSteps;
++	float3 volSize  = g_VolMax.xyz - g_VolMin.xyz;
++
++	float jitter = ( g_Ambient.w > 0.5f ) ? IGN( i.vScreenPos.xy / i.vScreenPos.w * 1024.0f + g_Light.w * 100.0f ) : 0.5f;
++	float t = t0 + stepLen * jitter;
++
++	float  T   = 1.0f;          // transmittance
++	float3 col = float3( 0, 0, 0 );
++	float  time = g_Light.w;
++
++	[loop]
++	for ( int s = 0; s < MAX_STEPS; s++ )
++	{
++		if ( t > t1 || T < 0.005f )
++			break;
++
++		float3 p   = ro + rd * t;
++		float3 uvw = ( p - g_VolMin.xyz ) / volSize;
++
++		float2 v = SampleVolume( uvw );
++		float d  = v.r;
++
++		if ( d > 0.001f )
++		{
++			// Erode with animated noise so cell boundaries read as wisps.
++			float n = ValueNoise3( p * g_Misc.y + float3( 0.0f, 0.0f, -time * 0.35f ) );
++			d = saturate( d * 1.25f - g_Misc.x * n );
++
++			float sigma = d * g_VolMin.w * stepLen;
++			float a     = 1.0f - exp( -sigma );
++
++			float3 lit = g_Ambient.rgb + g_Light.rgb * v.g;
++			col += T * a * lit;
++			T   *= 1.0f - a;
++		}
++
++		t += stepLen;
++	}
++
++	if ( debugMode == 1 )
++	{
++		return FinalOutput( float4( ( 1.0f - T ).xxx, 1.0f - T ), 0, PIXEL_FOG_TYPE_NONE, TONEMAP_SCALE_NONE );
++	}
++	if ( debugMode == 3 )
++	{
++		return FinalOutput( float4( 0.2f, 0.6f, 0.2f, 0.6f ), 0, PIXEL_FOG_TYPE_NONE, TONEMAP_SCALE_NONE );
++	}
++
++	// Premultiplied output; shader sets ONE / ONE_MINUS_SRC_ALPHA.
++	return FinalOutput( float4( col, 1.0f - T ), 0, PIXEL_FOG_TYPE_NONE, TONEMAP_SCALE_LINEAR );
++}
+diff --git a/src/materialsystem/stdshaders/neo_volsmoke_vs30.fxc b/src/materialsystem/stdshaders/neo_volsmoke_vs30.fxc
+new file mode 100644
+index 0000000..d9fe8af
+--- /dev/null
++++ b/src/materialsystem/stdshaders/neo_volsmoke_vs30.fxc
+@@ -0,0 +1,41 @@
++// NEO volumetric smoke - vertex shader.
++//
++// The client draws the world-space AABB of a smoke volume with an identity
++// model matrix, so vPos *is* the world position. We hand the pixel shader
++// everything it needs to build a per-pixel eye ray and to compare against the
++// engine's depth-in-dest-alpha encoding without any extra matrices:
++//
++//   clip-space Z is affine in world position, so interpolating it as a
++//   TEXCOORD (perspective-correct) gives the exact clip Z of the surface point,
++//   and clip Z of the eye itself is a constant we can compute here.
++
++#include "common_vs_fxc.h"
++
++struct VS_INPUT
++{
++	float4 vPos : POSITION;
++};
++
++struct VS_OUTPUT
++{
++	float4 vProjPos   : POSITION;
++	float3 vWorldPos  : TEXCOORD0;
++	float4 vScreenPos : TEXCOORD1; // projPos, for screen UV reconstruction
++	float2 vClipZ     : TEXCOORD2; // x = clip Z at this vertex, y = clip Z at the eye
++};
++
++VS_OUTPUT main( const VS_INPUT v )
++{
++	VS_OUTPUT o = (VS_OUTPUT)0;
++
++	float4 worldPos = float4( v.vPos.xyz, 1.0f );
++	float4 projPos  = mul( worldPos, cModelViewProj );
++
++	o.vProjPos   = projPos;
++	o.vWorldPos  = worldPos.xyz;
++	o.vScreenPos = projPos;
++	o.vClipZ.x   = projPos.z;
++	o.vClipZ.y   = mul( float4( cEyePos, 1.0f ), cModelViewProj ).z;
++
++	return o;
++}
+diff --git a/src/materialsystem/stdshaders/neoshader_dx9_30.txt b/src/materialsystem/stdshaders/neoshader_dx9_30.txt
+index 2e6c262..b6fb57a 100644
+--- a/src/materialsystem/stdshaders/neoshader_dx9_30.txt
++++ b/src/materialsystem/stdshaders/neoshader_dx9_30.txt
+@@ -5,3 +5,10 @@
+ neo_nightvision_ps30.fxc
+ neo_motionvision_ps30.fxc
+ neo_thermalvision_ps30.fxc
++neo_volsmoke_ps30.fxc
++
++////////////////////////
++// NEO VERTEX SHADERS //
++////////////////////////
++
++neo_volsmoke_vs30.fxc
+diff --git a/src/materialsystem/stdshaders/stdshader_dx9_30.txt b/src/materialsystem/stdshaders/stdshader_dx9_30.txt
+index 2d362c0..d6510b9 100644
+--- a/src/materialsystem/stdshaders/stdshader_dx9_30.txt
++++ b/src/materialsystem/stdshaders/stdshader_dx9_30.txt
+@@ -21,6 +21,7 @@ neo_noise_ps30.fxc
+ neo_ssao_combine_ps30.fxc
+ neo_ssao_ps30.fxc
+ neo_thermalvision_ps30.fxc
++neo_volsmoke_ps30.fxc
+ neo_colorblind_ps30.fxc
+ 
+ ////////////////////////
+@@ -29,6 +30,7 @@ neo_colorblind_ps30.fxc
+ 
+ //neo_motionvision_modelshader_vs30.fxc
+ neo_passthrough_vs30.fxc
++neo_volsmoke_vs30.fxc
+ 
+ cloak_vs20.fxc
+ cloak_ps2x.fxc
+-- 
+2.43.0
+

@@ -1,0 +1,321 @@
+From 8bb8f9ac6a9235fa15cd2f6e4c7f1c2371fc2de9 Mon Sep 17 00:00:00 2001
+From: Dan Peavey <sunmachine@users.noreply.github.com>
+Date: Mon, 9 Nov 2026 15:03:53 -0800
+Subject: [PATCH 2/2] volsmoke: tight bounds, adaptive step count, inside-smoke
+ overlay
+
+- Draw/march only the AABB of cells that currently hold density
+  (recomputed in UpdateDensities), not the full grid extent. Render bounds
+  follow it so leaf-system culling tightens too.
+- Step count is now ray length inside the smoke / (cell * $stepscale),
+  capped by $maxsteps: grazing rays take 2-3 steps, core rays take many.
+  Replaces the fixed $steps.
+- Feed the camera's trilinear local density into g_SmokeFogOverlayAlpha so
+  the legacy fullscreen smoke overlay (and the HUD glow / place-name
+  occlusion that already reads it) works for volumes. While the camera is
+  in dense smoke the max step count drops to neo_volsmoke_inside_maxsteps.
+- New convars: neo_volsmoke_maxsteps, _stepscale, _overlay, _overlay_dist,
+  _inside_maxsteps.
+---
+ src/game/client/neo/c_neo_volsmoke.cpp        | 86 +++++++++++++++++--
+ src/game/client/neo/c_neo_volsmoke.h          |  6 ++
+ .../stdshaders/Neo_VolSmoke.cpp               | 17 +++-
+ .../stdshaders/neo_volsmoke_ps30.fxc          | 20 +++--
+ 4 files changed, 113 insertions(+), 16 deletions(-)
+
+diff --git a/src/game/client/neo/c_neo_volsmoke.cpp b/src/game/client/neo/c_neo_volsmoke.cpp
+index 379fe15..bc281da 100644
+--- a/src/game/client/neo/c_neo_volsmoke.cpp
++++ b/src/game/client/neo/c_neo_volsmoke.cpp
+@@ -13,6 +13,8 @@
+ #include "engine/IEngineTrace.h"
+ #include "collisionutils.h"
+ #include "c_baseplayer.h"
++#include "view.h"
++#include "smoke_fog_overlay.h"
+ #include "mathlib/mathlib.h"
+ 
+ // memdbgon must be the last include file in a .cpp file!!!
+@@ -37,7 +39,11 @@ static ConVar neo_volsmoke_light_sweep_hz( "neo_volsmoke_light_sweep_hz", "15",
+ static ConVar neo_volsmoke_ambient_scale( "neo_volsmoke_ambient_scale", "0.9", FCVAR_CHEAT, "Multiplier on sampled ambient light.", true, 0.0f, true, 8.0f );
+ static ConVar neo_volsmoke_light_scale( "neo_volsmoke_light_scale", "0.8", FCVAR_CHEAT, "Multiplier on the directional light term.", true, 0.0f, true, 8.0f );
+ static ConVar neo_volsmoke_extinction( "neo_volsmoke_extinction", "0.06", FCVAR_CHEAT, "Shader extinction per world unit at density 1.", true, 0.0f, true, 2.0f );
+-static ConVar neo_volsmoke_steps( "neo_volsmoke_steps", "32", FCVAR_CHEAT, "Raymarch steps across the box.", true, 4.0f, true, 64.0f );
++static ConVar neo_volsmoke_maxsteps( "neo_volsmoke_maxsteps", "48", FCVAR_CHEAT, "Upper bound on raymarch steps per pixel.", true, 2.0f, true, 64.0f );
++static ConVar neo_volsmoke_stepscale( "neo_volsmoke_stepscale", "1.0", FCVAR_CHEAT, "Raymarch step length in cells. Steps per pixel = ray length inside the smoke / (cell * this).", true, 0.25f, true, 4.0f );
++static ConVar neo_volsmoke_overlay( "neo_volsmoke_overlay", "1", FCVAR_CHEAT, "Feed the camera's local smoke density into the legacy fullscreen smoke overlay (and HUD occlusion)." );
++static ConVar neo_volsmoke_overlay_dist( "neo_volsmoke_overlay_dist", "220", FCVAR_CHEAT, "Path length (units) the overlay assumes for the camera's local density.", true, 0.0f, true, 2000.0f );
++static ConVar neo_volsmoke_inside_maxsteps( "neo_volsmoke_inside_maxsteps", "12", FCVAR_CHEAT, "Max steps while the camera is in dense smoke (the overlay hides the banding).", true, 2.0f, true, 64.0f );
+ static ConVar neo_volsmoke_noise_amp( "neo_volsmoke_noise_amp", "0.35", FCVAR_CHEAT, "Edge erosion noise amplitude.", true, 0.0f, true, 2.0f );
+ static ConVar neo_volsmoke_noise_scale( "neo_volsmoke_noise_scale", "0.045", FCVAR_CHEAT, "Noise frequency (1/world units).", true, 0.0f, true, 1.0f );
+ static ConVar neo_volsmoke_jitter( "neo_volsmoke_jitter", "1", FCVAR_CHEAT, "Per-pixel step jitter (grain) instead of banding." );
+@@ -118,7 +124,7 @@ C_NeoVolSmoke::C_NeoVolSmoke()
+ 	: m_nId( s_nNextId++ ), m_nN( 0 ), m_nAtlasCols( 0 ), m_nAtlasRows( 0 ), m_flCellSize( 1.0f ),
+ 	  m_flSpawnTime( 0 ), m_flLifetime( 1 ), m_nFrontierHead( 0 ), m_nFilledCells( 0 ),
+ 	  m_nMaxCells( 0 ), m_nMaxDepth( 0 ), m_bFillDone( false ), m_pRegen( NULL ),
+-	  m_bAtlasDirty( true ), m_flNextLightSweep( 0 )
++	  m_bAtlasDirty( true ), m_flNextLightSweep( 0 ), m_flCameraDensity( 0.0f )
+ {
+ }
+ 
+@@ -171,6 +177,8 @@ void C_NeoVolSmoke::Init( const Vector &origin, float extent, float lifetime )
+ 	m_vecGridMin  = origin - Vector( extent, extent, extent );
+ 	m_vecGridMax  = origin + Vector( extent, extent, extent );
+ 	m_flCellSize  = ( 2.0f * extent ) / (float)m_nN;
++	m_vecDrawMin  = m_vecGridMin;
++	m_vecDrawMax  = m_vecGridMax;
+ 	m_flSpawnTime = gpGlobals->curtime;
+ 	m_flLifetime  = lifetime;
+ 
+@@ -330,6 +338,9 @@ void C_NeoVolSmoke::UpdateDensities()
+ 	const float lifeFade = clamp( ( m_flLifetime - age ) / dissip, 0.0f, 1.0f );
+ 	const float invMaxDepth = 1.0f / (float)MAX( 1, m_nMaxDepth );
+ 
++	int bmin[3] = { m_nN, m_nN, m_nN };
++	int bmax[3] = { -1, -1, -1 };
++
+ 	const int cells = m_nN * m_nN * m_nN;
+ 	for ( int i = 0; i < cells; ++i )
+ 	{
+@@ -354,9 +365,55 @@ void C_NeoVolSmoke::UpdateDensities()
+ 		}
+ 
+ 		m_Density[i] = base * fill * hole * lifeFade;
++
++		if ( m_Density[i] > 0.004f )
++		{
++			const int z = i / ( m_nN * m_nN ), y = ( i / m_nN ) % m_nN, x = i % m_nN;
++			bmin[0] = MIN( bmin[0], x ); bmax[0] = MAX( bmax[0], x );
++			bmin[1] = MIN( bmin[1], y ); bmax[1] = MAX( bmax[1], y );
++			bmin[2] = MIN( bmin[2], z ); bmax[2] = MAX( bmax[2], z );
++		}
++	}
++
++	// Tight draw bounds: only pixels under the smoke's real footprint get marched.
++	// Half a cell of margin covers bilinear spill between cells.
++	if ( bmax[0] < 0 )
++	{
++		m_vecDrawMin = m_vecDrawMax = m_vecSpawn;
++	}
++	else
++	{
++		for ( int a = 0; a < 3; ++a )
++		{
++			m_vecDrawMin[a] = MAX( m_vecGridMin[a], m_vecGridMin[a] + ( bmin[a] - 0.5f ) * m_flCellSize );
++			m_vecDrawMax[a] = MIN( m_vecGridMax[a], m_vecGridMin[a] + ( bmax[a] + 1.5f ) * m_flCellSize );
++		}
+ 	}
+ }
+ 
++float C_NeoVolSmoke::SampleDensity( const Vector &pos ) const
++{
++	// Cell-centre aligned trilinear lookup, matching the shader's filtering.
++	float f[3]; int i0[3]; float t[3];
++	for ( int a = 0; a < 3; ++a )
++	{
++		f[a]  = ( pos[a] - m_vecGridMin[a] ) / m_flCellSize - 0.5f;
++		if ( f[a] < -1.0f || f[a] > (float)m_nN )
++			return 0.0f;
++		i0[a] = (int)floorf( f[a] );
++		t[a]  = f[a] - (float)i0[a];
++	}
++	float result = 0.0f;
++	for ( int dz = 0; dz < 2; ++dz ) for ( int dy = 0; dy < 2; ++dy ) for ( int dx = 0; dx < 2; ++dx )
++	{
++		const int x = i0[0] + dx, y = i0[1] + dy, z = i0[2] + dz;
++		if ( !InGrid( x, y, z ) ) continue;
++		const float w = ( dx ? t[0] : 1.0f - t[0] ) * ( dy ? t[1] : 1.0f - t[1] ) * ( dz ? t[2] : 1.0f - t[2] );
++		result += w * m_Density[Idx( x, y, z )];
++	}
++	return result;
++}
++
+ // Bilinear sample of m_Light within slab `zSlab` of the given major axis, at
+ // fractional coordinates (fx, fy) along the other two axes (cell units).
+ float C_NeoVolSmoke::SampleLight( float fx, float fy, int zSlab, int axis ) const
+@@ -538,6 +595,15 @@ void C_NeoVolSmoke::ClientThink()
+ 	// Densities animate every frame (ramp, regrow, dissipation).
+ 	UpdateDensities();
+ 
++	// Inside-smoke overlay: reuse the legacy fullscreen fog overlay and its HUD
++	// hooks (glow/place-name occlusion read g_SmokeFogOverlayAlpha too).
++	m_flCameraDensity = SampleDensity( MainViewOrigin() );
++	if ( neo_volsmoke_overlay.GetBool() && m_flCameraDensity > 0.0f )
++	{
++		const float a = 1.0f - expf( -m_flCameraDensity * neo_volsmoke_extinction.GetFloat() * neo_volsmoke_overlay_dist.GetFloat() );
++		g_SmokeFogOverlayAlpha = MIN( 1.0f, g_SmokeFogOverlayAlpha + a );
++	}
++
+ 	if ( now >= m_flNextLightSweep )
+ 	{
+ 		SweepLight();
+@@ -557,8 +623,8 @@ void C_NeoVolSmoke::ClientThink()
+ // ---------------------------------------------------------------------------
+ void C_NeoVolSmoke::GetRenderBounds( Vector &mins, Vector &maxs )
+ {
+-	mins = m_vecGridMin - GetRenderOrigin();
+-	maxs = m_vecGridMax - GetRenderOrigin();
++	mins = m_vecDrawMin - GetRenderOrigin();
++	maxs = m_vecDrawMax - GetRenderOrigin();
+ }
+ 
+ static void SetVec3Var( IMaterial *pMat, const char *name, const Vector &v )
+@@ -612,11 +678,17 @@ int C_NeoVolSmoke::DrawModel( int flags )
+ 
+ 	SetVec3Var( pMat, "$volmin", m_vecGridMin );
+ 	SetVec3Var( pMat, "$volmax", m_vecGridMax );
++	SetVec3Var( pMat, "$boxmin", m_vecDrawMin );
++	SetVec3Var( pMat, "$boxmax", m_vecDrawMax );
+ 	SetVec4Var( pMat, "$gridparams", (float)m_nN, (float)m_nAtlasCols, (float)m_nAtlasRows, 1.0f / (float)m_nN );
+ 	SetVec3Var( pMat, "$ambient", amb );
+ 	SetVec3Var( pMat, "$lightcolor", lightCol );
+ 	SetFloatVar( pMat, "$extinction", neo_volsmoke_extinction.GetFloat() );
+-	SetFloatVar( pMat, "$steps", neo_volsmoke_steps.GetFloat() );
++	// Adaptive step count; cap it hard while the camera sits in dense smoke, where
++	// the overlay hides banding and the march terminates early anyway.
++	const bool bInsideDense = neo_volsmoke_overlay.GetBool() && m_flCameraDensity > 0.35f;
++	SetFloatVar( pMat, "$maxsteps", bInsideDense ? neo_volsmoke_inside_maxsteps.GetFloat() : neo_volsmoke_maxsteps.GetFloat() );
++	SetFloatVar( pMat, "$stepscale", neo_volsmoke_stepscale.GetFloat() );
+ 	SetFloatVar( pMat, "$noiseamp", neo_volsmoke_noise_amp.GetFloat() );
+ 	SetFloatVar( pMat, "$noisescale", neo_volsmoke_noise_scale.GetFloat() );
+ 	SetIntVar( pMat, "$jitter", neo_volsmoke_jitter.GetInt() );
+@@ -636,8 +708,8 @@ int C_NeoVolSmoke::DrawModel( int flags )
+ 	pRenderContext->Bind( pMat, (IClientRenderable *)this );
+ 	IMesh *pMesh = pRenderContext->GetDynamicMesh( true, NULL, NULL, pMat );
+ 
+-	const Vector &a = m_vecGridMin;
+-	const Vector &b = m_vecGridMax;
++	const Vector &a = m_vecDrawMin;
++	const Vector &b = m_vecDrawMax;
+ 	const Vector corners[8] =
+ 	{
+ 		Vector( a.x, a.y, a.z ), Vector( b.x, a.y, a.z ), Vector( b.x, b.y, a.z ), Vector( a.x, b.y, a.z ),
+diff --git a/src/game/client/neo/c_neo_volsmoke.h b/src/game/client/neo/c_neo_volsmoke.h
+index 4a2db31..2f58d04 100644
+--- a/src/game/client/neo/c_neo_volsmoke.h
++++ b/src/game/client/neo/c_neo_volsmoke.h
+@@ -51,6 +51,9 @@ public:
+ 	// Fills the slice atlas; called by the texture regenerator.
+ 	void FillAtlas( unsigned char *pDst, int pitch, int width, int height ) const;
+ 
++	// Trilinear density at a world position (0 outside the grid).
++	float SampleDensity( const Vector &pos ) const;
++
+ 	int  GridN() const { return m_nN; }
+ 	int  AtlasCols() const { return m_nAtlasCols; }
+ 	int  AtlasRows() const { return m_nAtlasRows; }
+@@ -87,7 +90,10 @@ private:
+ 	float  m_flCellSize;
+ 	Vector m_vecGridMin;
+ 	Vector m_vecGridMax;
++	Vector m_vecDrawMin;    // tight AABB of cells with density, updated every frame
++	Vector m_vecDrawMax;
+ 	Vector m_vecSpawn;
++	float  m_flCameraDensity; // density at the main view origin, for the inside overlay
+ 
+ 	float  m_flSpawnTime;
+ 	float  m_flLifetime;
+diff --git a/src/materialsystem/stdshaders/Neo_VolSmoke.cpp b/src/materialsystem/stdshaders/Neo_VolSmoke.cpp
+index 6d0a82b..504e7d9 100644
+--- a/src/materialsystem/stdshaders/Neo_VolSmoke.cpp
++++ b/src/materialsystem/stdshaders/Neo_VolSmoke.cpp
+@@ -18,11 +18,14 @@ BEGIN_VS_SHADER( Neo_VolSmoke, "NEO raymarched voxel smoke" )
+ BEGIN_SHADER_PARAMS
+ 	SHADER_PARAM( VOLMIN,     SHADER_PARAM_TYPE_VEC3,    "[0 0 0]",       "World-space AABB min" )
+ 	SHADER_PARAM( VOLMAX,     SHADER_PARAM_TYPE_VEC3,    "[1 1 1]",       "World-space AABB max" )
++	SHADER_PARAM( BOXMIN,     SHADER_PARAM_TYPE_VEC3,    "[0 0 0]",       "Tight AABB min of cells with density (march interval)" )
++	SHADER_PARAM( BOXMAX,     SHADER_PARAM_TYPE_VEC3,    "[1 1 1]",       "Tight AABB max of cells with density (march interval)" )
+ 	SHADER_PARAM( GRIDPARAMS, SHADER_PARAM_TYPE_VEC4,    "[32 8 4 0.03125]", "x = N, y = atlas cols, z = atlas rows, w = 1/N" )
+ 	SHADER_PARAM( AMBIENT,    SHADER_PARAM_TYPE_VEC3,    "[0.6 0.6 0.6]", "Ambient light reaching the smoke (linear)" )
+ 	SHADER_PARAM( LIGHTCOLOR, SHADER_PARAM_TYPE_VEC3,    "[0.8 0.8 0.8]", "Directional light colour (linear), scaled by baked per-voxel light" )
+ 	SHADER_PARAM( EXTINCTION, SHADER_PARAM_TYPE_FLOAT,   "0.06",          "Extinction per world unit at density 1" )
+-	SHADER_PARAM( STEPS,      SHADER_PARAM_TYPE_FLOAT,   "32",            "Raymarch steps across the box" )
++	SHADER_PARAM( MAXSTEPS,   SHADER_PARAM_TYPE_FLOAT,   "48",            "Upper bound on raymarch steps per pixel" )
++	SHADER_PARAM( STEPSCALE,  SHADER_PARAM_TYPE_FLOAT,   "1.0",           "Step length in cells; steps = ray length in smoke / (cell * stepscale)" )
+ 	SHADER_PARAM( NOISEAMP,   SHADER_PARAM_TYPE_FLOAT,   "0.35",          "Edge erosion noise amplitude" )
+ 	SHADER_PARAM( NOISESCALE, SHADER_PARAM_TYPE_FLOAT,   "0.045",         "Noise frequency (1/world units)" )
+ 	SHADER_PARAM( JITTER,     SHADER_PARAM_TYPE_INTEGER, "1",             "Per-pixel step jitter (grain instead of banding)" )
+@@ -109,11 +112,19 @@ SHADER_DRAW
+ 		c[3] = params[EXTINCTION]->GetFloatValue();
+ 		pShaderAPI->SetPixelShaderConstant( 1, c );
+ 
+-		// c2: volume max + steps
++		// c2: volume max + max steps
+ 		params[VOLMAX]->GetVecValue( c, 3 );
+-		c[3] = params[STEPS]->GetFloatValue();
++		c[3] = params[MAXSTEPS]->GetFloatValue();
+ 		pShaderAPI->SetPixelShaderConstant( 2, c );
+ 
++		// c8/c9: tight march bounds + step scale
++		params[BOXMIN]->GetVecValue( c, 3 );
++		c[3] = params[STEPSCALE]->GetFloatValue();
++		pShaderAPI->SetPixelShaderConstant( 8, c );
++		params[BOXMAX]->GetVecValue( c, 3 );
++		c[3] = 0.0f;
++		pShaderAPI->SetPixelShaderConstant( 9, c );
++
+ 		// c3: grid layout
+ 		params[GRIDPARAMS]->GetVecValue( c, 4 );
+ 		pShaderAPI->SetPixelShaderConstant( 3, c );
+diff --git a/src/materialsystem/stdshaders/neo_volsmoke_ps30.fxc b/src/materialsystem/stdshaders/neo_volsmoke_ps30.fxc
+index 605d10f..27537fd 100644
+--- a/src/materialsystem/stdshaders/neo_volsmoke_ps30.fxc
++++ b/src/materialsystem/stdshaders/neo_volsmoke_ps30.fxc
+@@ -19,12 +19,14 @@ sampler DepthSampler : register( s1 ); // frame buffer copy, depth in .a
+ 
+ const float4 g_EyePos       : register( c0 ); // xyz eye, w unused
+ const float4 g_VolMin       : register( c1 ); // xyz, w = extinction per unit at density 1
+-const float4 g_VolMax       : register( c2 ); // xyz, w = number of steps (float)
++const float4 g_VolMax       : register( c2 ); // xyz, w = max steps (float)
+ const float4 g_Grid         : register( c3 ); // x = N, y = atlas cols, z = atlas rows, w = 1/N
+ const float4 g_Ambient      : register( c4 ); // rgb ambient light, w = jitter enable
+ const float4 g_Light        : register( c5 ); // rgb directional light, w = time
+ const float4 g_Misc         : register( c6 ); // x = noise amp, y = noise scale, z = unused, w = debug mode
+ const float4 g_ScreenParams : register( c7 ); // xy = half texel
++const float4 g_BoxMin       : register( c8 ); // xyz tight bounds of filled cells, w = step length in cells
++const float4 g_BoxMax       : register( c9 ); // xyz
+ 
+ #define MAX_STEPS 64
+ 
+@@ -126,9 +128,11 @@ float4 main( PS_INPUT i ) : COLOR
+ 	}
+ 
+ 	// --- AABB slab test -------------------------------------------------
++	// March only the tight bounds of cells that actually hold smoke; the grid
++	// bounds are still what the atlas lookup is relative to.
+ 	float3 invDir = 1.0f / rd;
+-	float3 tA = ( g_VolMin.xyz - ro ) * invDir;
+-	float3 tB = ( g_VolMax.xyz - ro ) * invDir;
++	float3 tA = ( g_BoxMin.xyz - ro ) * invDir;
++	float3 tB = ( g_BoxMax.xyz - ro ) * invDir;
+ 	float3 tNear = min( tA, tB );
+ 	float3 tFar  = max( tA, tB );
+ 	float t0 = max( max( tNear.x, tNear.y ), tNear.z );
+@@ -151,9 +155,13 @@ float4 main( PS_INPUT i ) : COLOR
+ 	}
+ 
+ 	// --- march ------------------------------------------------------------
+-	float  numSteps = max( g_VolMax.w, 4.0f );
+-	float  stepLen  = ( t1 - t0 ) / numSteps;
++	// Adaptive step count: constant sample spacing in world units, so rays
++	// that merely graze the smoke take a few steps and long rays take many,
++	// capped by MAXSTEPS.
+ 	float3 volSize  = g_VolMax.xyz - g_VolMin.xyz;
++	float  cellSize = volSize.x * g_Grid.w;
++	float  numSteps = clamp( ceil( ( t1 - t0 ) / ( cellSize * g_BoxMin.w ) ), 2.0f, max( g_VolMax.w, 2.0f ) );
++	float  stepLen  = ( t1 - t0 ) / numSteps;
+ 
+ 	float jitter = ( g_Ambient.w > 0.5f ) ? IGN( i.vScreenPos.xy / i.vScreenPos.w * 1024.0f + g_Light.w * 100.0f ) : 0.5f;
+ 	float t = t0 + stepLen * jitter;
+@@ -165,7 +173,7 @@ float4 main( PS_INPUT i ) : COLOR
+ 	[loop]
+ 	for ( int s = 0; s < MAX_STEPS; s++ )
+ 	{
+-		if ( t > t1 || T < 0.005f )
++		if ( (float)s >= numSteps || T < 0.005f )
+ 			break;
+ 
+ 		float3 p   = ro + rd * t;
+-- 
+2.43.0
+
