@@ -75,7 +75,7 @@ figure.pair .tag.new{color:var(--accent)}
 <header>
 <p class="eyebrow">NT;RE HUD consistency, measuring pass and ammo rail</p>
 <h1>HUD Glyphs and Ammo Rail</h1>
-<p>Captured on Linux on 2026-11-09 at 1920 by 1080. The starting point is the HUD proposed in the HUD consistency pull requests, #28 to #32 on <a href="https://github.com/sunmachine/ntre-dev/pulls">sunmachine/ntre-dev</a>, and its captures are the ones marked original below. Three additions sit on top of it: a debug view that measures HUD text, a fix for the cut fire mode icons, and a new layout for the ammo rail and the mag count. None of the three is in a pull request yet.</p>
+<p>Captured on Linux at 1920 by 1080, the latest set on 2026-11-09. The captures marked original are <code>master</code> of NeotokyoRebuild/neo at <code>aa8f099d4</code>, captured on 2026-11-10 with only the Linux font loading fix applied so its fonts draw as they do on Windows. The captures marked latest are the HUD proposed in the HUD consistency pull requests, #28 to #32 on <a href="https://github.com/sunmachine/ntre-dev/pulls">sunmachine/ntre-dev</a>, with three additions on top: a debug view that measures HUD text, a fix for the cut fire mode icons, and a new layout for the ammo rail and the mag count. None of the three is in a pull request yet.</p>
 </header>
 
 <p class="part">Part 1. How it is measured</p>
@@ -140,6 +140,8 @@ text    NHudWeapon  -            NHudFireMode   NOCR Icons   60    58      1477 
 <h2>Fire mode icons</h2>
 <p>The automatic, semi-automatic and pump icons lost 3, 4 and 1 rows from their top at 1080p. The engine draws nothing above a font's line box, and NOCR's line box stops below these three glyphs. A font file holding NOCR's icon glyphs with a taller line box removes the cut and keeps each icon's width to the pixel.</p>
 <p>The measuring capture with the world blacked out, enlarged five times, with the dumped rectangles drawn on it. Red is the top of the font's line box, where the engine stops drawing. Before, the round sits flat against it. After, the line box starts above the glyph.</p>
+<div class="grid pairs"><figure class="cut"><img src="img/cut_master.png" alt="Semi-automatic and automatic icons on master, the round above each letter cut flat" loading="lazy"><figcaption><b>On master.</b> Semi-automatic and automatic, enlarged five times. The round above the letter is cut flat in the same way, so the cut is not new to the pull requests.</figcaption></figure></div>
+<p>The six figures below are measuring captures from the pull requests' HUD, before and after the icon fix.</p>
 <div class="grid cuts">
 <figure class="cut"><img src="img/cut_h_before.png" alt="Semi-automatic icon before, its top flat against the red line" loading="lazy"><figcaption><b>Semi, before.</b> Ink starts on the line box's first row.</figcaption></figure>
 <figure class="cut"><img src="img/cut_h_after.png" alt="Semi-automatic icon after, whole" loading="lazy"><figcaption><b>Semi, after.</b> 4 rows back, 11 px above and below.</figcaption></figure>
@@ -212,33 +214,29 @@ text    NHudWeapon  -            NHudFireMode   NOCR Icons   60    58      1477 
 
 <section>
 <h2>Ammo rail and mag count</h2>
-<p>The original rail drew every round at one size. A mag with more rounds than the rail has room for was drawn with fewer rounds than it holds and filled by proportion, so the PZ252's 100 rounds and the SRM's 50 drew the same full rail. Both counts sat on the top row beside the name. The latest layout draws one round per round, gives each gun its own rows and batches, and moves the mag count to the end of the rack. All crops are the bottom right corner at twice native size.</p>
+<p>On <code>master</code> every round is drawn at one size in a single row, a plus sign marks a mag that holds more rounds than the row shows, and the panel has no round count. The latest layout draws one round per round, gives each gun its own rows and batches, adds the round count over the rail and stands the mag count at the end of the rack. All crops are the bottom right corner at twice native size.</p>
 <ol>
 <li><strong>Two rows for the PZ252, SMAC and SRM only.</strong> Their rounds are drawn small, and the lower row empties first.</li>
 <li><strong>One row for every other bulleted gun,</strong> with rounds at full size when the mag fits the rail and smaller when it does not. A smaller row stands in the middle of a full round's height.</li>
 <li><strong>Rounds stand in batches.</strong> The batch size is set per gun in its weapon script, and the space between batches is 0.4 of a round's width.</li>
-<li><strong>The mag count stands at the end of the rack,</strong> at the panel's right edge and level with the rail, opposite the fire mode icon. Its number and its round glyph are larger than before.</li>
+<li><strong>The mag count stands at the end of the rack,</strong> at the panel's right edge and level with the rail, opposite the fire mode icon. It is the number alone on <code>master</code>, and here it carries a round glyph.</li>
 <li><strong>The round count sits over the rail's right edge</strong> on the top row.</li>
 </ol>
-<h3>Against the originals</h3>
+<h3>Against master</h3>
 <div class="grid pairs">
-<figure class="pair"><span class="tag">Original</span><img src="img/orig_pz.png" alt="PZ252 ammo panel, original" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_pz.png" alt="PZ252 ammo panel, latest" loading="lazy"><figcaption><b>PZ252.</b> 100 rounds in two rows of 50, a space after every 10.</figcaption></figure>
-<figure class="pair"><span class="tag">Original</span><img src="img/orig_srm.png" alt="SRM ammo panel, original" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_srm.png" alt="SRM ammo panel, latest" loading="lazy"><figcaption><b>SRM.</b> 50 rounds in two rows of 25, a space after every 5.</figcaption></figure>
-<figure class="pair"><span class="tag">Original</span><img src="img/orig_mx.png" alt="MX ammo panel, original" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_mx.png" alt="MX ammo panel, latest" loading="lazy"><figcaption><b>MX.</b> 30 rounds in one row at full size, a space after every 10.</figcaption></figure>
-<figure class="pair"><span class="tag">Original</span><img src="img/orig_milso.png" alt="MilSO ammo panel, original" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_milso.png" alt="MilSO ammo panel, latest" loading="lazy"><figcaption><b>MilSO.</b> 12 rounds in one row at full size, a space after every 4.</figcaption></figure>
-<figure class="pair"><span class="tag">Original</span><img src="img/orig_kyla.png" alt="KYLA ammo panel, original" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_kyla.png" alt="KYLA ammo panel, latest" loading="lazy"><figcaption><b>KYLA.</b> 6 rounds in one row at full size, no spaces.</figcaption></figure>
-<figure class="pair"><span class="tag">Original</span><img src="img/orig_supa7.png" alt="SUPA 7 ammo panel, original" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_supa7.png" alt="SUPA 7 ammo panel, latest" loading="lazy"><figcaption><b>SUPA 7.</b> 7 shells in one row. The two reserve counts stack across the rail's height, shells over slugs, 8 px apart.</figcaption></figure>
-</div>
-<h3>Latest only</h3>
-<p>These guns were not in the original capture set, so there is nothing to set them against.</p>
-<div class="grid pairs">
-<figure class="pair"><span class="tag new">Latest</span><img src="img/rail_smac.png" alt="SMAC ammo panel, latest" loading="lazy"><figcaption><b>SMAC.</b> 90 rounds in two rows, 50 over 40, a space after every 10.</figcaption></figure>
-<figure class="pair"><span class="tag new">Latest</span><img src="img/rail_jitte.png" alt="Jitte ammo panel, latest" loading="lazy"><figcaption><b>Jitte.</b> 30 rounds in one row, a space after every 10. The rounds are drawn smaller so the row fits the rail.</figcaption></figure>
-<figure class="pair"><span class="tag new">Latest</span><img src="img/rail_mpn.png" alt="MPN45 ammo panel, latest" loading="lazy"><figcaption><b>MPN45.</b> 30 rounds in one row, a space after every 10, smaller as on the Jitte.</figcaption></figure>
-<figure class="pair"><span class="tag new">Latest</span><img src="img/rail_m41.png" alt="M41 ammo panel, latest" loading="lazy"><figcaption><b>M41.</b> 15 rounds in one row at full size, a space after every 5.</figcaption></figure>
-<figure class="pair"><span class="tag new">Latest</span><img src="img/rail_tachi.png" alt="TACHI ammo panel, latest" loading="lazy"><figcaption><b>TACHI.</b> 15 rounds in one row at full size, a space after every 5.</figcaption></figure>
-<figure class="pair"><span class="tag new">Latest</span><img src="img/rail_srs.png" alt="SRS ammo panel, latest" loading="lazy"><figcaption><b>SRS.</b> 5 rounds in one row at full size, no spaces.</figcaption></figure>
-<figure class="pair"><span class="tag new">Latest</span><img src="img/rail_aa13.png" alt="AA13 ammo panel, latest" loading="lazy"><figcaption><b>AA13.</b> 16 shells in one row at full size. Only the counts moved.</figcaption></figure>
+<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_pz.png" alt="PZ252 ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_pz.png" alt="PZ252 ammo panel, latest" loading="lazy"><figcaption><b>PZ252.</b> 100 rounds in two rows of 50, a space after every 10.</figcaption></figure>
+<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_srm.png" alt="SRM ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_srm.png" alt="SRM ammo panel, latest" loading="lazy"><figcaption><b>SRM.</b> 50 rounds in two rows of 25, a space after every 5.</figcaption></figure>
+<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_mx.png" alt="MX ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_mx.png" alt="MX ammo panel, latest" loading="lazy"><figcaption><b>MX.</b> 30 rounds in one row at full size, a space after every 10.</figcaption></figure>
+<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_milso.png" alt="MilSO ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_milso.png" alt="MilSO ammo panel, latest" loading="lazy"><figcaption><b>MilSO.</b> 12 rounds in one row at full size, a space after every 4.</figcaption></figure>
+<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_kyla.png" alt="KYLA ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_kyla.png" alt="KYLA ammo panel, latest" loading="lazy"><figcaption><b>KYLA.</b> 6 rounds in one row at full size, no spaces.</figcaption></figure>
+<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_supa7.png" alt="SUPA 7 ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_supa7.png" alt="SUPA 7 ammo panel, latest" loading="lazy"><figcaption><b>SUPA 7.</b> 7 shells in one row. The two reserve counts stack across the rail's height, shells over slugs, 8 px apart.</figcaption></figure>
+<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_smac.png" alt="SMAC ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_smac.png" alt="SMAC ammo panel, latest" loading="lazy"><figcaption><b>SMAC.</b> 90 rounds in two rows, 50 over 40, a space after every 10.</figcaption></figure>
+<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_jitte.png" alt="Jitte ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_jitte.png" alt="Jitte ammo panel, latest" loading="lazy"><figcaption><b>Jitte.</b> 30 rounds in one row, a space after every 10. The rounds are drawn smaller so the row fits the rail.</figcaption></figure>
+<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_mpn.png" alt="MPN45 ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_mpn.png" alt="MPN45 ammo panel, latest" loading="lazy"><figcaption><b>MPN45.</b> 30 rounds in one row, a space after every 10, smaller as on the Jitte.</figcaption></figure>
+<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_m41.png" alt="M41 ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_m41.png" alt="M41 ammo panel, latest" loading="lazy"><figcaption><b>M41.</b> 15 rounds in one row at full size, a space after every 5.</figcaption></figure>
+<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_tachi.png" alt="TACHI ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_tachi.png" alt="TACHI ammo panel, latest" loading="lazy"><figcaption><b>TACHI.</b> 15 rounds in one row at full size, a space after every 5.</figcaption></figure>
+<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_srs.png" alt="SRS ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_srs.png" alt="SRS ammo panel, latest" loading="lazy"><figcaption><b>SRS.</b> 5 rounds in one row at full size, no spaces.</figcaption></figure>
+<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_aa13.png" alt="AA13 ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_aa13.png" alt="AA13 ammo panel, latest" loading="lazy"><figcaption><b>AA13.</b> 16 shells in one row at full size, as on master.</figcaption></figure>
 </div>
 <div class="tablewrap"><table>
 <thead><tr><th>Gun</th><th>Mag</th><th>Rows</th><th>Batch</th><th>Round size</th></tr></thead>
@@ -259,7 +257,7 @@ text    NHudWeapon  -            NHudFireMode   NOCR Icons   60    58      1477 
 
 <section>
 <h2>Panels this pass did not change</h2>
-<p>The vitals, compass, dash and kill feed are as the pull requests propose them. Their latest captures follow, since the measurements above were taken on them too.</p>
+<p>The vitals, compass, dash and kill feed are as the pull requests propose them. Their latest captures follow, since the measurements above were taken on them too. They have no <code>master</code> captures beside them yet.</p>
 </section>
 
 <section>
@@ -308,6 +306,7 @@ text    NHudWeapon  -            NHudFireMode   NOCR Icons   60    58      1477 
 <li><strong>The ammo panel for the frag grenade, smoke grenade, knife and BALC.</strong> The rail change moved the counts, and these were not captured again.</li>
 <li><strong>All nineteen full scenes and their debug frames.</strong> Every one has the earlier ammo panel in its corner.</li>
 <li><strong>The M41L and ZR68L.</strong> They have never been captured. The M41L could not be put in hand.</li>
+<li><strong>The vitals, compass, dash and kill feed on <code>master</code>.</strong> Only the ammo panel was captured there.</li>
 <li><strong>The ammo panel's rows in the padding table,</strong> and the rest of its dump.</li>
 </ul>
 </section>
