@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HUD Glyph Measurements</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jura:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=Overpass+Mono:wght@400;700&display=swap">
+<style>
+html{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+/* Layout: one reading column for findings and tables, full-width grids for captures, a dialog lightbox for scenes. Dark first, since the captures are dark. Same tokens as the HUD Series Captures page this one follows. */
+:root{--bg:#0e1318;--surface:#151c23;--line:#243039;--fg:#e4ebf1;--muted:#8d9ca9;--accent:#7fd3dc;--ok:#79cf9c;--warn:#e3b765;--bad:#ef8a80;
+--display:"Jura","IBM Plex Sans",system-ui,sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,sans-serif;--mono:"Overpass Mono",ui-monospace,Menlo,monospace;color-scheme:dark}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#f2f5f7;--surface:#ffffff;--line:#d7dee4;--fg:#162028;--muted:#5a6a77;--accent:#167d87;--ok:#1f8a4c;--warn:#9a6b10;--bad:#b3372b;color-scheme:light}}
+:root[data-theme="light"]{--bg:#f2f5f7;--surface:#ffffff;--line:#d7dee4;--fg:#162028;--muted:#5a6a77;--accent:#167d87;--ok:#1f8a4c;--warn:#9a6b10;--bad:#b3372b;color-scheme:light}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--body);padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:1180px;margin:0 auto;display:grid;gap:44px}
+main>*{min-width:0}
+header h1{font:700 clamp(28px,4vw,40px)/1.1 var(--display);letter-spacing:.02em;margin:0 0 8px;text-wrap:balance}
+header p{max-width:68ch;margin:0;color:var(--muted)}
+.eyebrow{font:700 12px/1 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+h2{font:700 22px/1.2 var(--display);letter-spacing:.02em;margin:0 0 6px;text-wrap:balance}
+h3{font:600 15px/1.3 var(--body);margin:22px 0 8px}
+section>p,section>ul,section>ol{max-width:68ch;color:var(--muted);margin:0 0 16px}
+section>p strong,li strong{color:var(--fg);font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:14px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface);margin:0 0 16px}
+th,td{text-align:left;padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+thead th{border-top:0;font:600 12px/1.2 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+td.num,td code{font-family:var(--mono);font-variant-numeric:tabular-nums}
+td.num{white-space:nowrap}
+code{font:400 13px var(--mono);color:var(--fg)}
+.pill{display:inline-block;font:600 12px/1 var(--body);padding:4px 8px;border-radius:999px;letter-spacing:.03em;white-space:nowrap}
+.pill.ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.pill.bad{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad)}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));margin:0 0 16px}
+.grid.scenes{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.grid.cuts{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.grid.pairs{grid-template-columns:repeat(auto-fill,minmax(min(100%,460px),1fr))}
+figure{margin:0;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+figure.wide{grid-column:1/-1}
+figure img{display:block;width:100%;height:auto;max-width:100%;background:#000}
+figure.cut img{image-rendering:pixelated}
+figure.scene img{cursor:zoom-in;aspect-ratio:16/9;object-fit:cover}
+figcaption{padding:8px 10px;font-size:13px;color:var(--muted)}
+figcaption b{color:var(--fg);font-weight:600}
+ul,ol{padding-left:20px} li{margin:4px 0}
+.textout{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface);margin:0 0 16px}
+.textout pre{margin:0;padding:12px 14px;font:400 12px/1.35 var(--mono);color:var(--fg);white-space:pre}
+.textout pre.glyph{font-size:9px;line-height:1.05;letter-spacing:.5px}
+.split{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));margin:0 0 16px}
+.split>*{min-width:0;margin:0}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 16px;padding:0;list-style:none;color:var(--muted);font-size:14px;max-width:none}
+.legend li{display:flex;align-items:center;gap:8px;margin:0}
+.sw{width:22px;height:4px;border-radius:1px;flex:none}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 14px}
+.toolbar button{background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:4px;font:600 13px var(--body);padding:7px 12px;cursor:pointer}
+.toolbar button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.toolbar span{color:var(--muted);font-size:13px}
+dialog{border:0;padding:0;background:transparent;max-width:min(96vw,1600px);max-height:96vh}
+dialog::backdrop{background:rgba(0,0,0,.82)}
+dialog img{display:block;max-width:min(96vw,1600px);max-height:90vh;width:auto;height:auto;border-radius:6px}
+dialog p{margin:8px 0 0;color:#dfe6ec;font-size:13px;text-align:center}
+dialog button{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:4px;font:600 13px var(--body);padding:6px 10px;cursor:pointer}
+button:focus-visible,figure.scene img:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: no-preference){dialog[open]{animation:in .15s ease-out}}
+@keyframes in{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<p class="eyebrow">NT;RE HUD consistency, debug and measuring pass</p>
+<h1>HUD Glyph Measurements</h1>
+<p>Captured on Linux on 2026-11-09 at 1920 by 1080, on <code>ntre_oilstain_ctg</code> and <code>ntre_yard_jgr</code> with nine bots. The HUD is the one proposed in the HUD consistency pull requests, #28 to #32 on <a href="https://github.com/sunmachine/ntre-dev/pulls">sunmachine/ntre-dev</a>, with a debug view added on top. The before set has the debug view alone. The after set also has the icon fix described below. Neither addition is in a pull request yet.</p>
+</header>
+
+<section>
+<h2>What was found</h2>
+<p>Nineteen scenes were captured, each with a text dump of every rectangle the HUD drew in that frame. A script read each capture against its dump.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Subject</th><th>Result</th><th>Detail</th></tr></thead>
+<tbody>
+<tr><td>Fire mode icons</td><td><span class="pill bad">Cut, 3 glyphs</span></td><td>The automatic, semi-automatic and pump icons lose 3, 4 and 1 rows from their top at 1080p. The round drawn over the letter is 15 rows tall in the semi-automatic icon, so it shows 11. This is the cut reported from the earlier captures.</td></tr>
+<tr><td>Cause</td><td><span class="pill ok">Measured</span></td><td>The engine draws nothing above a font's line box, and NOCR's line box stops below these three glyphs. Five test copies of NOCR, each with one metric changed, show which metric sets the box.</td></tr>
+<tr><td>Fix</td><td><span class="pill warn">Built, open question</span></td><td>A font file with NOCR's icon glyphs and a taller line box removes the cut and keeps the icons' width to the pixel. It is an asset made from NOCR, so whether it may ship is an open question.</td></tr>
+<tr><td>Other cut glyphs</td><td><span class="pill ok">None in use</span></td><td>Every font file the HUD loads was checked glyph by glyph. Only NOCR's <code>h</code> to <code>m</code> pass their line box among glyphs the HUD draws. Jura, Overpass Mono, Montserrat and the kill feed icon font are clean.</td></tr>
+<tr><td>Text against its boxes</td><td><span class="pill ok">Nothing outside</span></td><td>No text run's ink leaves the box the game reported around it in any scene. The paddings are listed below, and a few are uneven by 2 px.</td></tr>
+<tr><td>Ink where it was placed</td><td><span class="pill ok">Within 3 px</span></td><td>Every run drawn through the shared helpers has its ink within 3 px of the edges the code placed it by. Numbers differ by up to 3 px on purpose, since they are placed by the widest digit.</td></tr>
+<tr><td>Coverage of the debug view</td><td><span class="pill warn">HUD yes, scoreboard no</span></td><td>All 74 text draws that bypassed the shared helpers now report to the view. The scoreboard draws through the menu toolkit in its own coordinates, so its text is dumped without a screen position.</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<h2>The cut, before and after</h2>
+<p>The measuring capture with the world blacked out, enlarged five times, with the dumped rectangles drawn on it. Red is the top of the font's line box, where the engine stops drawing. Before, the round sits flat against it. After, the line box starts above the glyph.</p>
+<div class="grid cuts">
+<figure class="cut"><img src="img/cut_h_before.png" alt="Semi-automatic icon before, its top flat against the red line" loading="lazy"><figcaption><b>Semi, before.</b> Ink starts on the line box's first row.</figcaption></figure>
+<figure class="cut"><img src="img/cut_h_after.png" alt="Semi-automatic icon after, whole" loading="lazy"><figcaption><b>Semi, after.</b> 4 rows back, 11 px above and below.</figcaption></figure>
+<figure class="cut"><img src="img/cut_j_before.png" alt="Automatic icon before" loading="lazy"><figcaption><b>Auto, before.</b></figcaption></figure>
+<figure class="cut"><img src="img/cut_j_after.png" alt="Automatic icon after" loading="lazy"><figcaption><b>Auto, after.</b> 3 rows back.</figcaption></figure>
+<figure class="cut"><img src="img/cut_l_before.png" alt="Pump icon before" loading="lazy"><figcaption><b>Pump, before.</b></figcaption></figure>
+<figure class="cut"><img src="img/cut_l_after.png" alt="Pump icon after" loading="lazy"><figcaption><b>Pump, after.</b> 1 row back.</figcaption></figure>
+</div>
+<div class="tablewrap"><table>
+<thead><tr><th>Icon</th><th>Glyph</th><th>Outline top, font units</th><th>Line box, before</th><th>Ink rows, before</th><th>Line box, after</th><th>Ink rows, after</th><th>Ink columns</th></tr></thead>
+<tbody>
+<tr><td>Semi-automatic</td><td><code>h</code></td><td class="num">1916</td><td class="num">y 1011..1074</td><td class="num">1011..1062, 52 rows</td><td class="num">y 1005..1065</td><td class="num">1007..1062, 56 rows</td><td class="num">1479..1523 both</td></tr>
+<tr><td>Automatic</td><td><code>j</code></td><td class="num">1864</td><td class="num">y 1011..1074</td><td class="num">1011..1060, 50 rows</td><td class="num">y 1005..1065</td><td class="num">1008..1060, 53 rows</td><td class="num">1479..1523 both</td></tr>
+<tr><td>Pump</td><td><code>l</code></td><td class="num">1805</td><td class="num">y 1011..1074</td><td class="num">1011..1062, 52 rows</td><td class="num">y 1005..1065</td><td class="num">1010..1062, 53 rows</td><td class="num">1480..1522 both</td></tr>
+</tbody></table></div>
+<p>NOCR's win ascent is 1757 units. The panel runs from y 996 to 1074, so the whole semi-automatic icon stands 11 px from its top and 11 px from its bottom.</p>
+<h3>The same icon as text</h3>
+<p>The script prints any glyph's pixels as characters, so a cut can be read without opening an image. Left is before, right is after.</p>
+<div class="split">
+<div class="textout"><pre class="glyph">NHudFireMode 'h': line box y 1011..1074
+ 1007      :::::::::::::::::::::::::::::::::::::::::::::::::::
+ 1008      :::::::::::::::::::::::::::::::::::::::::::::::::::
+ 1009      :::::::::::::::::::::::::::::::::::::::::::::::::::
+ 1010      :::::::::::::::::::::::::::::::::::::::::::::::::::
+ 1011 top  ::::=############################+*###########*-:::
+ 1012      ::::=############################+*############+:::
+ 1013      ::::=############################+*############*:::
+ 1014      ::::=############################+*############*:::
+ 1015      ::::=############################+*############+:::
+ 1016      ::::=############################+*###########*-:::
+ 1017      ::::=############################+*##########*-::::
+ 1018      ::::=############################+*########*+-:::::
+ 1019      ::::=############################+*#####*+=-:::::::
+ 1020      ::::=#+-*####################*-::::::::::::::::::::
+ 1021      ::::-+-:=++++++++++++++++++++-:::::::::::::::::::::
+ 1022      :::::::::::::::::::::::::::::::::::::::::::::::::::
+ 1023      :::::::::::::::::::::::::::::::::::::::::::::::::::
+ 1024      :::::::::::::::::::::::::::::::::::::::::::::::::::
+ 1025      :::::::::-=++******##############****++-:::::::::::
+ 1026      :::::::=*###############################*+-::::::::
+ 1027      ::::::+###################################*=:::::::
+ 1028      :::::+#####################################*-::::::</pre></div>
+<div class="textout"><pre class="glyph">NHudFireMode 'h': line box y 1005..1065
+ 1003      :::::::::::::::::::::::::::::::::::::::::::::::::::
+ 1004      :::::::::::::::::::::::::::::::::::::::::::::::::::
+ 1005 top  :::::::::::::::::::::::::::::::::::::::::::::::::::
+ 1006      :::::::::::::::::::::::::::::::::::::::::::::::::::
+ 1007      ::::=*=-*###################*+-::::::::::::::::::::
+ 1008      ::::=############################+*#####*+=-:::::::
+ 1009      ::::=############################+*########*+-:::::
+ 1010      ::::=############################+*##########*-::::
+ 1011      ::::=############################+*###########*-:::
+ 1012      ::::=############################+*############+:::
+ 1013      ::::=############################+*############*:::
+ 1014      ::::=############################+*############*:::
+ 1015      ::::=############################+*############+:::
+ 1016      ::::=############################+*###########*-:::
+ 1017      ::::=############################+*##########*-::::
+ 1018      ::::=############################+*########*+-:::::
+ 1019      ::::=############################+*#####*+=-:::::::
+ 1020      ::::=#+-*####################*-::::::::::::::::::::
+ 1021      ::::-+-:=++++++++++++++++++++-:::::::::::::::::::::
+ 1022      :::::::::::::::::::::::::::::::::::::::::::::::::::
+ 1023      :::::::::::::::::::::::::::::::::::::::::::::::::::
+ 1024      :::::::::::::::::::::::::::::::::::::::::::::::::::
+ 1025      :::::::::-=++******##############****++-:::::::::::
+ 1026      :::::::=*###############################*+-::::::::</pre></div>
+</div>
+</section>
+
+<section>
+<h2>How the engine sizes a font</h2>
+<p>The working assumption was that the engine sizes a font so its win ascent plus win descent fills the requested height. The first fix was built on that and came out about 6% too large in game. So five copies of NOCR were made, each changing one thing, and drawn in one launch. The engine's own numbers for each are below.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Font</th><th>What changed</th><th>Scheme font, height</th><th>Ascent the engine reports</th><th>Glyph advance</th><th>Reading</th></tr></thead>
+<tbody>
+<tr><td>NOCR</td><td>Nothing. Win 1757 and 362, lowest glyph at -362.</td><td class="num">63 / 55 / 22 / 72 / 78 px</td><td class="num">52 / 46 / 18 / 60 / 65</td><td class="num">j 49, c 10, c 4, a 14, g 31</td><td>The reference.</td></tr>
+<tr><td>Copy A</td><td>Win ascent 1950, win descent 169.</td><td class="num">63 px</td><td class="num">53</td><td class="num">j 45</td><td>The glyph shrank. The box is 1950 plus 362: the new ascent, and the old lowest glyph rather than the new win descent.</td></tr>
+<tr><td>Copy B</td><td>hhea ascent and descent only.</td><td class="num">55 px</td><td class="num">46</td><td class="num">c 10</td><td>No change. The hhea table is not read.</td></tr>
+<tr><td>Copy C</td><td>Typo ascent and descent only.</td><td class="num">22 px</td><td class="num">18</td><td class="num">c 4</td><td>No change. The typo metrics are not read.</td></tr>
+<tr><td>Copy D</td><td>Only the icon glyphs kept, so the lowest glyph is at -53. No metric changed.</td><td class="num">72 px</td><td class="num">70</td><td class="num">a 16</td><td>The glyph grew. The box is 1757 plus 53.</td></tr>
+<tr><td>Copy E</td><td>Icon glyphs only, and win ascent 1950.</td><td class="num">78 px</td><td class="num">76</td><td class="num">g 33</td><td>The box is 1950 plus 53.</td></tr>
+</tbody></table></div>
+<p><strong>The rule on Linux:</strong> a font's line box runs from its OS/2 win ascent down to its lowest glyph. The font is sized so that box fills the requested height, and nothing is drawn above the box. For every font the HUD loads today the lowest glyph sits on the win descent, so that assumption gave the right sizes. It fails only for a font whose glyphs stop short of the win descent, which is what a font made of icons is. Windows is untested.</p>
+<p>The shipped fix follows the rule. <code>NOCR Icons</code> has win ascent 1950 and win descent 53, a line box of 2003 units where NOCR's is 2119, and the scheme font's <code>tall</code> drops from 28 to 27 to make up the difference.</p>
+</section>
+
+<section>
+<h2>The debug view</h2>
+<p><code>cl_neo_hud_debug_draw 1</code> outlines every text run and every box the HUD draws. At <code>2</code> it also underlines each character's ink. <code>cl_neo_hud_debug_dump label</code> writes the same rectangles of one frame to <code>hud_debug_label.txt</code> in the game folder. Both are off by default and neither is a cheat.</p>
+<ul class="legend">
+<li><span class="sw" style="background:#00ffff"></span>Font's line box</li>
+<li><span class="sw" style="background:#ff3030"></span>Its top edge, where glyphs are cut</li>
+<li><span class="sw" style="background:#ff00ff"></span>Baseline</li>
+<li><span class="sw" style="background:#ffff00"></span>Ink edges the text was placed by</li>
+<li><span class="sw" style="background:#00ff00"></span>A box or a column</li>
+<li><span class="sw" style="background:#ff9600"></span>One character's ink, at level 2</li>
+</ul>
+<div class="grid pairs">
+<figure class="crop"><img src="img/w_mx_ammo_dbg.png" alt="Ammo panel with the debug view on" loading="lazy"><figcaption>Ammo panel, MX. The icon column and the text column are reported as boxes.</figcaption></figure>
+<figure class="crop"><img src="img/w_mx_vitals_dbg.png" alt="Vitals with the debug view on" loading="lazy"><figcaption>Vitals. The build hash above the box is drawn by the same panel.</figcaption></figure>
+<figure class="crop"><img src="img/w_supa7_ammo_dbg.png" alt="SUPA 7 ammo panel with the debug view on" loading="lazy"><figcaption>SUPA 7. The slug and shell counts each carry their glyph's own font.</figcaption></figure>
+<figure class="crop"><img src="img/w_srm_ammo_dbg.png" alt="SRM ammo panel with the debug view on" loading="lazy"><figcaption>SRM. The small round's font is 72 px tall, so its line box is taller than the panel.</figcaption></figure>
+<figure class="crop wide"><img src="img/p_list_dash_dbg.png" alt="Dash with the debug view on" loading="lazy"><figcaption>Dash, playing.</figcaption></figure>
+<figure class="crop"><img src="img/p_list_squad_dbg.png" alt="Squad list with the debug view on" loading="lazy"><figcaption>Squad list, top left. Each column is its own run.</figcaption></figure>
+<figure class="crop"><img src="img/p_avatars_feed_dbg.png" alt="Kill feed with the debug view on" loading="lazy"><figcaption>Kill feed below the avatars.</figcaption></figure>
+<figure class="crop"><img src="img/w_mx_compass_dbg.png" alt="Compass with the debug view on" loading="lazy"><figcaption>Compass.</figcaption></figure>
+</div>
+<h3>The dump</h3>
+<p>One line per box, text run and character, tab separated, in screen pixels. These are the ammo panel's first lines with the MILSO in hand, after the fix.</p>
+<div class="textout"><pre># screen  1920  1080  frame  208837
+# kind  element     name         scheme_font    font_family  tall  ascent  x0    y0    x1    y1    baseline  ink_left  ink_right  text
+box     NHudWeapon  box          -              -            0     0       1464  996   1920  1074  0         0         0
+box     NHudWeapon  icon column  -              -            0     0       1477  996   1526  1074  0         0         0
+box     NHudWeapon  text column  -              -            0     0       1540  996   1907  1074  0         0         0
+text    NHudWeapon  -            NHudFireMode   NOCR Icons   60    58      1477  1005  1526  1065  1063      1479      1524       h
+text    NHudWeapon  -            NHudAmmoCount  NOCR         22    18      1884  1000  1908  1022  1018      1885      1907       11
+text    NHudWeapon  -            NHudPanelText  NOCR         22    18      1831  1000  1855  1022  1018      1833      1854       x3
+text    NHudWeapon  -            NHudReserveB   NOCR         24    20      1825  998   1830  1022  1018      1825      1830       b</pre></div>
+<h3>The report</h3>
+<p><code>hud_debug_report.py</code> reads a dump and the capture of the same frame. It finds the ink inside each character's columns, compares it with the font's outline, and flags a cut, ink outside its box, or ink away from where it was placed. This is its whole output for the MILSO's ammo panel before the fix.</p>
+<div class="textout"><pre>17 text runs, 1 flagged, 1 boxes
+
+== NHudWeapon
+  NHudFireMode (NOCR 63 px) "h"
+    line box x 1477..1526 y 1011..1074, baseline 1063; ink x 1479..1523 y 1011..1062
+    in box [1464, 996, 1920, 1074]: left 15, top 15, right 396, bottom 11 px to its edges
+    FLAGS CUT_TOP
+    - 'h' outline reaches 4.9 px above its line box, and the capture's ink stops flat on that edge</pre></div>
+<p>After the fix every scene reports no cut. Two kill feed runs per scene are still flagged: the assist separator is drawn as a plus sign with a space on each side, and the view counts the spaces as ink it was placed by. That is the tool's error, not the feed's.</p>
+</section>
+
+<section>
+<h2>Text and its boxes</h2>
+<p>With <code>--layout</code> the report gives each box's padding to the nearest ink and the rows inside it. These are from the after set. Nothing here is flagged. The uneven pairs are listed so they can be ruled intended or not.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Box</th><th>Size</th><th>Left</th><th>Top</th><th>Right</th><th>Bottom</th><th>Note</th></tr></thead>
+<tbody>
+<tr><td>Vitals</td><td class="num">456 by 78</td><td class="num">9</td><td class="num">9</td><td class="num">11</td><td class="num">11</td><td>Baselines at y 1018, 1040 and 1063. The top and left paddings are 2 px smaller than the bottom and right.</td></tr>
+<tr><td>Ammo, text column</td><td class="num">367 by 78</td><td class="num">0</td><td class="num">9</td><td class="num">0</td><td class="num">11</td><td>Name, counts and rail fill the column edge to edge. Baselines at y 1018 and 1063 match the vitals' first and third rows.</td></tr>
+<tr><td>Ammo, whole panel</td><td class="num">456 by 78</td><td class="num">15</td><td class="num">9</td><td class="num">13</td><td class="num">11</td><td>The count ends 13 px from the screen edge. The vitals' text starts 9 px from theirs.</td></tr>
+<tr><td>Ammo, icon column</td><td class="num">49 by 78</td><td class="num">2</td><td class="num">11 to 14</td><td class="num">2</td><td class="num">11 to 13</td><td>Fire mode icons. Frag 12 and 13, smoke 15 and 16, knife 31 and 30.</td></tr>
+<tr><td>Dash</td><td class="num">210 by 66</td><td class="num">21</td><td class="num">8</td><td class="num">20</td><td class="num">8</td><td>Round text ends at y 16, the clock runs 24 to 39, the alive counts start at 47: 7 px between rows, as designed.</td></tr>
+<tr><td>Kill feed row</td><td class="num">29 tall</td><td class="num">13 to 14</td><td class="num">5 to 7</td><td class="num">13 to 14</td><td class="num">5 to 8</td><td>Names stand on a baseline 2 px above the icons' baseline.</td></tr>
+<tr><td>Compass</td><td class="num">450 by 24</td><td class="num">n/a</td><td class="num">3 and 5</td><td class="num">n/a</td><td class="num">4 and 6</td><td>Separators, then letters.</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<h2>Against earlier feedback</h2>
+<p>Each row is something decided or noted earlier in this work, set beside what the measurements say.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Recorded earlier</th><th>Measured now</th><th>Standing</th></tr></thead>
+<tbody>
+<tr><td>Earlier note: the fire mode icons are clipped by about 4 px, and a fix needs an icon font with a taller ascent or new images.</td><td>4, 3 and 1 rows. The icon font is built and measured in game.</td><td><span class="pill warn">Open question</span></td></tr>
+<tr><td>Earlier note: the engine sizes a font so its win ascent plus descent fills the height.</td><td>Win ascent plus the lowest glyph. Same result for every font in use, different for an icon font.</td><td><span class="pill ok">Corrected</span></td></tr>
+<tr><td>Earlier decision: <code>NHudFireMode</code> drops from 32 because the glyphs pass the top padding and the 49.5 px icon column.</td><td>At 28 the ink is 45 px in a 49 px column, 2 px a side. With the icon font the same width comes from <code>tall</code> 27.</td><td><span class="pill ok">Holds</span></td></tr>
+<tr><td>Review finding: the helpers measured by advance but placed by ink, so gaps were off by the side bearings.</td><td>Every helper-drawn run has its ink within 3 px of where it was placed, numbers included.</td><td><span class="pill ok">Holds</span></td></tr>
+<tr><td>Ammo panel: its baselines match the first and third rows of the vitals.</td><td>y 1018 and 1063 in both panels.</td><td><span class="pill ok">Holds</span></td></tr>
+<tr><td>Earlier decision: even gaps of about 7 px between the dash's rows.</td><td>7 px and 7 px, with 8 px above and below.</td><td><span class="pill ok">Holds</span></td></tr>
+<tr><td>Earlier note: the weapon name falls back to the small label font when it nears the counts, which only the SUPA7 does.</td><td>The SUPA 7's name is drawn in the full size font, 110 px clear of the slug count. Its shorter <code>hudname</code> made the fallback unused by any weapon in the set.</td><td><span class="pill warn">The note was stale</span></td></tr>
+<tr><td>Not tested: resolutions other than 1080p, Windows, deathmatch, ghost capture sentences.</td><td>Unchanged. The line box rule above is Linux only until someone runs the dump on Windows.</td><td><span class="pill warn">Open</span></td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<h2>What this changes for the pull requests</h2>
+<p>These are proposals for the pull request series, and none is settled.</p>
+<ol>
+<li><strong>A measuring step before each pull request goes up.</strong> Capture the set with dumps, run the report, and require no cut and no ink outside its box. A new font file goes through the glyph audit first. The layout table goes in the pull request's testing notes.</li>
+<li><strong>The debug view becomes its own pull request.</strong> It is three commits. The first needs only the text foundation, so it can sit right after #28. The second touches every panel's direct text draws and will conflict with the four branches after it, so the recommendation is that each of those adopts the two wrapper calls in the lines it already rewrites, with one sweep at the end for the panels nobody touched.</li>
+<li><strong>The icon fix belongs in the ammo panel pull request</strong>, #29, once the font file is in the assets pull request beside Jura and Overpass Mono.</li>
+<li><strong>Icons want one way in.</strong> The ammo panel places its icons with two hand-measured offsets and one rule of thumb. A table of each icon glyph's ink, made from the font file by a script, would let one helper center any icon and assert that it fits its line box. This is a proposal and nothing is built.</li>
+</ol>
+<h3>Open questions</h3>
+<ul>
+<li>The icon font: ship <code>nocr_icons.ttf</code> made from NOCR, redraw the three icons into the team's own icon font, or leave the cut. NOCR's file names no license.</li>
+<li>Where the debug view sits in the stack, and whether <code>cl_neo_hud_debug_draw</code> should be a cheat after all.</li>
+<li>Whether the 9 and 11 px paddings in the bottom panels, and the 13 px on the ammo panel's right, are intended.</li>
+</ul>
+</section>
+
+<section>
+<h2>Ammo panel</h2>
+<p>Bottom right corner at native pixels, after the fix.</p>
+<div class="grid"><figure class="crop"><img src="img/w_mx_ammo.png" alt="MX" loading="lazy"><figcaption>MX</figcaption></figure><figure class="crop"><img src="img/w_srm_ammo.png" alt="SRM" loading="lazy"><figcaption>SRM</figcaption></figure><figure class="crop"><img src="img/w_pz_ammo.png" alt="PZ252" loading="lazy"><figcaption>PZ252</figcaption></figure><figure class="crop"><img src="img/w_supa7_ammo.png" alt="SUPA 7" loading="lazy"><figcaption>SUPA 7</figcaption></figure><figure class="crop"><img src="img/w_milso_ammo.png" alt="MILSO" loading="lazy"><figcaption>MILSO</figcaption></figure><figure class="crop"><img src="img/w_kyla_ammo.png" alt="KYLA" loading="lazy"><figcaption>KYLA</figcaption></figure><figure class="crop"><img src="img/w_grenade_ammo.png" alt="Frag grenade" loading="lazy"><figcaption>Frag grenade</figcaption></figure><figure class="crop"><img src="img/w_smokegrenade_ammo.png" alt="Smoke grenade" loading="lazy"><figcaption>Smoke grenade</figcaption></figure><figure class="crop"><img src="img/w_knife_ammo.png" alt="Knife" loading="lazy"><figcaption>Knife</figcaption></figure><figure class="crop"><img src="img/balc_idle_ammo.png" alt="BALC idle" loading="lazy"><figcaption>BALC idle</figcaption></figure><figure class="crop"><img src="img/balc_hot_ammo.png" alt="BALC after 2.5 seconds of fire" loading="lazy"><figcaption>BALC after 2.5 s of fire</figcaption></figure><figure class="crop"><img src="img/balc_overheat_ammo.png" alt="BALC overheated" loading="lazy"><figcaption>BALC overheated</figcaption></figure></div>
+<h3>Before the fix, for comparison</h3>
+<div class="grid"><figure class="crop"><img src="img/w_mx_ammo_before.png" alt="MX before the fix" loading="lazy"><figcaption>MX, before</figcaption></figure><figure class="crop"><img src="img/w_milso_ammo_before.png" alt="MILSO before the fix" loading="lazy"><figcaption>MILSO, before</figcaption></figure><figure class="crop"><img src="img/w_supa7_ammo_before.png" alt="SUPA 7 before the fix" loading="lazy"><figcaption>SUPA 7, before</figcaption></figure></div>
+</section>
+
+<section>
+<h2>Vitals</h2>
+<p>Bottom left corner. Jura labels and NOCR numbers on the bars' baselines.</p>
+<div class="grid"><figure class="crop"><img src="img/w_mx_vitals.png" alt="MX, full health" loading="lazy"><figcaption>MX, full health</figcaption></figure><figure class="crop"><img src="img/w_milso_vitals.png" alt="MILSO" loading="lazy"><figcaption>MILSO</figcaption></figure></div>
+</section>
+
+<section>
+<h2>Compass</h2>
+<p>Bottom center. Directions in Jura, the objective arrow above the box.</p>
+<div class="grid"><figure class="crop wide"><img src="img/w_mx_compass.png" alt="Compass with the MX" loading="lazy"><figcaption>With the MX in hand</figcaption></figure><figure class="crop wide"><img src="img/w_milso_compass.png" alt="Compass with the MILSO" loading="lazy"><figcaption>With the MILSO in hand</figcaption></figure></div>
+</section>
+
+<section>
+<h2>Dash</h2>
+<p>Top center. Bold clock and alive counts, even rows, avatars with cut names, squad list in Overpass Mono.</p>
+<div class="grid"><figure class="crop"><img src="img/p_list_squad.png" alt="Squad list, top left of the screen" loading="lazy"><figcaption>Squad list, top left of the screen</figcaption></figure><figure class="crop wide"><img src="img/p_list_dash.png" alt="Playing, squad list shown" loading="lazy"><figcaption>Playing, with the squad list shown</figcaption></figure><figure class="crop wide"><img src="img/p_avatars_dash.png" alt="Playing, avatars" loading="lazy"><figcaption>Playing, avatars</figcaption></figure><figure class="crop wide"><img src="img/s_list_dash.png" alt="Spectating, squad list" loading="lazy"><figcaption>Spectating, squad list</figcaption></figure><figure class="crop wide"><img src="img/s_avatars_dash.png" alt="Spectating, avatars" loading="lazy"><figcaption>Spectating, avatars</figcaption></figure></div>
+</section>
+
+<section>
+<h2>Kill feed</h2>
+<p>Top right. Names in Overpass Mono, words in Montserrat, the feed starting below the avatars only when they drew this frame.</p>
+<div class="grid"><figure class="crop"><img src="img/p_avatars_feed.png" alt="Playing, avatars drawn: the feed starts below them" loading="lazy"><figcaption>Playing, avatars drawn: the feed starts below them</figcaption></figure><figure class="crop"><img src="img/p_list_feed.png" alt="Playing, squad list: the feed starts at the top" loading="lazy"><figcaption>Playing, squad list: the feed starts at the top</figcaption></figure><figure class="crop"><img src="img/s_avatars_feed.png" alt="Spectating, avatars" loading="lazy"><figcaption>Spectating, avatars</figcaption></figure><figure class="crop"><img src="img/s_list_feed.png" alt="Spectating, squad list" loading="lazy"><figcaption>Spectating, squad list</figcaption></figure></div>
+</section>
+
+<section>
+<h2>Every scene</h2>
+<p>Scaled to 1280 wide, from the after set. The switch shows each scene with the debug view on. Click a scene to see it larger.</p>
+<div class="toolbar"><button type="button" id="dbgtoggle" aria-pressed="false">Debug view: off</button><span>Three scenes were captured once only and have no debug frame.</span></div>
+<div class="grid scenes" id="scenes"></div>
+</section>
+
+<section>
+<h2>Still to look at</h2>
+<ul>
+<li>The ghost in hand. The give command did not make it the active weapon in these runs, so there is no ghost scene. It draws the same kill feed icon the knife does.</li>
+<li>The BALC heat bar part way up. Both firing frames came out overheated.</li>
+<li>The scoreboard in the debug view. Its text needs a screen position before the report can measure it.</li>
+<li>Windows, where the engine draws fonts through a different system and the line box rule may differ.</li>
+<li>Resolutions other than 1920 by 1080, deathmatch, and kill feed sentences such as a ghost capture.</li>
+</ul>
+</section>
+</main>
+<dialog id="box"><button type="button" id="close">Close</button><img id="boximg" alt=""><p id="boxcap"></p></dialog>
+<script>
+(function(){
+var SCENES=[["w_mx","MX, playing",1],["w_srm","SRM",1],["w_pz","PZ252",1],["w_supa7","SUPA 7",1],["w_milso","MILSO",1],["w_kyla","KYLA",1],["w_grenade","Frag grenade",1],["w_smokegrenade","Smoke grenade",1],["w_knife","Knife",1],["p_list","Playing, squad list",1],["p_avatars","Playing, avatars",1],["sb_alive","Scoreboard, alive",1],["k_info","Killer info",0],["s_overlay","Spectator overlay",1],["s_avatars","Spectating, avatars",1],["s_list","Spectating, squad list",1],["balc_idle","BALC idle",1],["balc_hot","BALC after 2.5 s of fire",0],["balc_overheat","BALC overheated",0]];
+var grid=document.getElementById('scenes'),box=document.getElementById('box'),img=document.getElementById('boximg'),cap=document.getElementById('boxcap'),toggle=document.getElementById('dbgtoggle'),dbg=false;
+function src(s){return 'img/'+s[0]+(dbg&&s[2]?'_dbg':'')+'.jpg';}
+SCENES.forEach(function(s){
+  var fig=document.createElement('figure');fig.className='scene';
+  var el=document.createElement('img');el.alt=s[1];el.loading='lazy';el.src=src(s);el.tabIndex=0;
+  var fc=document.createElement('figcaption');fc.textContent=s[1];
+  function open(){img.src=el.src;img.alt=el.alt;cap.textContent=s[1]+(dbg&&s[2]?', debug view on':'');box.showModal();}
+  el.addEventListener('click',open);
+  el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});
+  fig.appendChild(el);fig.appendChild(fc);grid.appendChild(fig);s.push(el);
+});
+toggle.addEventListener('click',function(){
+  dbg=!dbg;toggle.setAttribute('aria-pressed',dbg?'true':'false');toggle.textContent='Debug view: '+(dbg?'on':'off');
+  SCENES.forEach(function(s){s[3].src=src(s);});
+});
+document.getElementById('close').addEventListener('click',function(){box.close();});
+box.addEventListener('click',function(e){if(e.target===box)box.close();});
+})();
+</script>
+</body>
+</html>
