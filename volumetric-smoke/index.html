@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Volumetric Smoke Prototype — ntre-dev notes</title>
+<meta name="robots" content="noindex">
+<style>
+  :root { --bg:#0e1013; --panel:#161a20cc; --fg:#e6e8eb; --mut:#9aa3ad; --acc:#7cc4ff; --line:#2a313b; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--fg); font:13px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; overflow:hidden; }
+  canvas#gl { position:fixed; inset:0; width:100%; height:100%; display:block; cursor:crosshair; }
+  #panel { position:fixed; top:12px; left:12px; width:290px; max-height:calc(100% - 24px); overflow:auto; background:var(--panel); backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:10px; padding:12px 14px; box-sizing:border-box; }
+  #panel h1 { font-size:14px; margin:0 0 4px; }
+  #panel .sub { color:var(--mut); margin:0 0 10px; }
+  fieldset { border:1px solid var(--line); border-radius:8px; margin:0 0 10px; padding:8px 10px; }
+  legend { color:var(--mut); padding:0 4px; font-size:12px; }
+  .row { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:4px 0; }
+  .row label { flex:1; color:var(--fg); }
+  .row output { width:44px; text-align:right; color:var(--mut); font-variant-numeric:tabular-nums; }
+  input[type=range] { width:120px; accent-color:var(--acc); }
+  select, button { background:#20262e; color:var(--fg); border:1px solid var(--line); border-radius:6px; padding:4px 8px; font:inherit; cursor:pointer; }
+  button:hover { border-color:var(--acc); }
+  button.on { background:#2a4a66; border-color:var(--acc); }
+  .btns { display:flex; flex-wrap:wrap; gap:6px; }
+  .btns button { flex:1 1 auto; }
+  #stats { color:var(--mut); font-variant-numeric:tabular-nums; white-space:pre; }
+  #hint { position:fixed; right:12px; bottom:12px; background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:8px 10px; color:var(--mut); max-width:360px; }
+  #hint b { color:var(--fg); }
+  #err { position:fixed; inset:auto 12px 12px 12px; background:#5a1d1d; border-radius:8px; padding:10px; display:none; white-space:pre-wrap; }
+  kbd { background:#262c35; border-radius:4px; padding:0 5px; color:var(--fg); }
+  #toggle { display:none; }
+  @media (max-width:640px){ #panel{ width:calc(100% - 24px);} #hint{display:none;} }
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+
+<div id="panel">
+  <p class="sub" style="margin:0 0 6px"><a href="../" style="color:var(--acc);text-decoration:none">← ntre-dev notes</a></p>
+  <h1>Volumetric smoke (raymarched voxel grid)</h1>
+  <p class="sub">Order-independent without OIT: one box per volume, transmittance integrated along the eye ray. WebGL2 twin of the <code>C_NeoVolSmoke</code> / <code>Neo_VolSmoke</code> Source SDK prototype — same flood fill, light sweep, slice atlas and march; scene depth comes from a depth texture instead of dest alpha.</p>
+
+  <fieldset>
+    <legend>Click action</legend>
+    <div class="btns">
+      <button id="mSpawn" class="on" title="Click the scene to spawn a smoke volume">Spawn</button>
+      <button id="mCarve" title="Click to shoot a bullet through smoke">Carve</button>
+      <button id="mExplode" title="Click to clear a sphere out of smoke">Explode</button>
+      <button id="mClear">Clear all</button>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Renderer</legend>
+    <div class="row"><label>Mode</label>
+      <select id="mode">
+        <option value="vol">Raymarched volume</option>
+        <option value="bill">Legacy: sorted billboards</option>
+      </select></div>
+    <div class="row"><label>Debug view</label>
+      <select id="debug">
+        <option value="0">Off</option>
+        <option value="1">Coverage (1 − T)</option>
+        <option value="2">Scene depth seen by march</option>
+        <option value="3">Box hit</option>
+      </select></div>
+    <div class="row"><label>Max steps</label><input type="range" id="steps" min="2" max="64" step="1" value="48"><output>48</output></div>
+    <div class="row"><label>Step length (cells)</label><input type="range" id="stepscale" min="0.25" max="4" step="0.05" value="1"><output>1</output></div>
+    <div class="row"><label>Tight bounds</label><input type="checkbox" id="tight" checked></div>
+    <div class="row"><label>Inside grey-out overlay</label><input type="checkbox" id="overlay" checked></div>
+    <div class="row"><label>Overlay path (units)</label><input type="range" id="ovdist" min="0" max="600" step="10" value="220"><output>220</output></div>
+    <div class="row"><label>Max steps when inside</label><input type="range" id="insteps" min="2" max="64" step="1" value="12"><output>12</output></div>
+    <div class="row"><label>Extinction</label><input type="range" id="ext" min="0.005" max="0.25" step="0.005" value="0.06"><output>0.06</output></div>
+    <div class="row"><label>Noise amp</label><input type="range" id="namp" min="0" max="1" step="0.01" value="0.35"><output>0.35</output></div>
+    <div class="row"><label>Noise scale</label><input type="range" id="nscale" min="0.005" max="0.15" step="0.001" value="0.045"><output>0.045</output></div>
+    <div class="row"><label>Step jitter</label><input type="checkbox" id="jitter" checked></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Simulation</legend>
+    <div class="row"><label>Grid (N³)</label>
+      <select id="grid"><option>16</option><option selected>32</option><option>64</option></select></div>
+    <div class="row"><label>Extent (half size)</label><input type="range" id="extent" min="64" max="400" step="8" value="192"><output>192</output></div>
+    <div class="row"><label>Gas budget (× sphere)</label><input type="range" id="budget" min="0.2" max="2.5" step="0.1" value="1.0"><output>1.0</output></div>
+    <div class="row"><label>Fill rate (cells/frame)</label><input type="range" id="fill" min="20" max="3000" step="20" value="300"><output>300</output></div>
+    <div class="row"><label>Lifetime (s)</label><input type="range" id="life" min="5" max="90" step="1" value="40"><output>40</output></div>
+    <div class="row"><label>Regrow (s)</label><input type="range" id="regrow" min="0.5" max="15" step="0.5" value="4"><output>4</output></div>
+    <div class="row"><label>Light azimuth</label><input type="range" id="laz" min="0" max="360" step="1" value="40"><output>40</output></div>
+    <div class="row"><label>Light elevation</label><input type="range" id="lel" min="5" max="89" step="1" value="55"><output>55</output></div>
+  </fieldset>
+
+  <div id="stats">—</div>
+</div>
+
+<div id="hint"><b>Drag</b> orbit · <b>wheel</b> zoom · <b>WASD / QE</b> move · <b>click</b> = current action · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> switch action · <kbd>Space</kbd> spawn at crosshair · <kbd>V</kbd> toggle renderer</div>
+<div id="err"></div>
+
+<script>
+'use strict';
+// ============================================================================
+// Minimal math
+// ============================================================================
+const V3 = {
+  add:(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]],
+  sub:(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],
+  scale:(a,s)=>[a[0]*s,a[1]*s,a[2]*s],
+  dot:(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],
+  cross:(a,b)=>[a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]],
+  len:(a)=>Math.hypot(a[0],a[1],a[2]),
+  norm:(a)=>{const l=Math.hypot(a[0],a[1],a[2])||1; return [a[0]/l,a[1]/l,a[2]/l];},
+};
+function mat4Perspective(fovy, aspect, n, f){
+  const t = 1/Math.tan(fovy/2), m = new Float32Array(16);
+  m[0]=t/aspect; m[5]=t; m[10]=(f+n)/(n-f); m[11]=-1; m[14]=2*f*n/(n-f); return m;
+}
+function mat4LookAt(eye, at, up){
+  const z = V3.norm(V3.sub(eye, at)), x = V3.norm(V3.cross(up, z)), y = V3.cross(z, x);
+  return new Float32Array([x[0],y[0],z[0],0, x[1],y[1],z[1],0, x[2],y[2],z[2],0,
+    -V3.dot(x,eye), -V3.dot(y,eye), -V3.dot(z,eye), 1]);
+}
+function mat4Mul(a,b){ // a*b, column-major
+  const o = new Float32Array(16);
+  for (let c=0;c<4;c++) for (let r=0;r<4;r++){ let s=0; for(let k=0;k<4;k++) s+=a[k*4+r]*b[c*4+k]; o[c*4+r]=s; }
+  return o;
+}
+function mat4Invert(m){
+  const inv = new Float32Array(16), a=m;
+  inv[0]=a[5]*a[10]*a[15]-a[5]*a[11]*a[14]-a[9]*a[6]*a[15]+a[9]*a[7]*a[14]+a[13]*a[6]*a[11]-a[13]*a[7]*a[10];
+  inv[4]=-a[4]*a[10]*a[15]+a[4]*a[11]*a[14]+a[8]*a[6]*a[15]-a[8]*a[7]*a[14]-a[12]*a[6]*a[11]+a[12]*a[7]*a[10];
+  inv[8]=a[4]*a[9]*a[15]-a[4]*a[11]*a[13]-a[8]*a[5]*a[15]+a[8]*a[7]*a[13]+a[12]*a[5]*a[11]-a[12]*a[7]*a[9];
+  inv[12]=-a[4]*a[9]*a[14]+a[4]*a[10]*a[13]+a[8]*a[5]*a[14]-a[8]*a[6]*a[13]-a[12]*a[5]*a[10]+a[12]*a[6]*a[9];
+  inv[1]=-a[1]*a[10]*a[15]+a[1]*a[11]*a[14]+a[9]*a[2]*a[15]-a[9]*a[3]*a[14]-a[13]*a[2]*a[11]+a[13]*a[3]*a[10];
+  inv[5]=a[0]*a[10]*a[15]-a[0]*a[11]*a[14]-a[8]*a[2]*a[15]+a[8]*a[3]*a[14]+a[12]*a[2]*a[11]-a[12]*a[3]*a[10];
+  inv[9]=-a[0]*a[9]*a[15]+a[0]*a[11]*a[13]+a[8]*a[1]*a[15]-a[8]*a[3]*a[13]-a[12]*a[1]*a[11]+a[12]*a[3]*a[9];
+  inv[13]=a[0]*a[9]*a[14]-a[0]*a[10]*a[13]-a[8]*a[1]*a[14]+a[8]*a[2]*a[13]+a[12]*a[1]*a[10]-a[12]*a[2]*a[9];
+  inv[2]=a[1]*a[6]*a[15]-a[1]*a[7]*a[14]-a[5]*a[2]*a[15]+a[5]*a[3]*a[14]+a[13]*a[2]*a[7]-a[13]*a[3]*a[6];
+  inv[6]=-a[0]*a[6]*a[15]+a[0]*a[7]*a[14]+a[4]*a[2]*a[15]-a[4]*a[3]*a[14]-a[12]*a[2]*a[7]+a[12]*a[3]*a[6];
+  inv[10]=a[0]*a[5]*a[15]-a[0]*a[7]*a[13]-a[4]*a[1]*a[15]+a[4]*a[3]*a[13]+a[12]*a[1]*a[7]-a[12]*a[3]*a[5];
+  inv[14]=-a[0]*a[5]*a[14]+a[0]*a[6]*a[13]+a[4]*a[1]*a[14]-a[4]*a[2]*a[13]-a[12]*a[1]*a[6]+a[12]*a[2]*a[5];
+  inv[3]=-a[1]*a[6]*a[11]+a[1]*a[7]*a[10]+a[5]*a[2]*a[11]-a[5]*a[3]*a[10]-a[9]*a[2]*a[7]+a[9]*a[3]*a[6];
+  inv[7]=a[0]*a[6]*a[11]-a[0]*a[7]*a[10]-a[4]*a[2]*a[11]+a[4]*a[3]*a[10]+a[8]*a[2]*a[7]-a[8]*a[3]*a[6];
+  inv[11]=-a[0]*a[5]*a[11]+a[0]*a[7]*a[9]+a[4]*a[1]*a[11]-a[4]*a[3]*a[9]-a[8]*a[1]*a[7]+a[8]*a[3]*a[5];
+  inv[15]=a[0]*a[5]*a[10]-a[0]*a[6]*a[9]-a[4]*a[1]*a[10]+a[4]*a[2]*a[9]+a[8]*a[1]*a[6]-a[8]*a[2]*a[5];
+  let det = a[0]*inv[0]+a[1]*inv[4]+a[2]*inv[8]+a[3]*inv[12]; det = det? 1/det : 0;
+  for (let i=0;i<16;i++) inv[i]*=det; return inv;
+}
+function transformPoint(m, p){
+  const x=m[0]*p[0]+m[4]*p[1]+m[8]*p[2]+m[12], y=m[1]*p[0]+m[5]*p[1]+m[9]*p[2]+m[13],
+        z=m[2]*p[0]+m[6]*p[1]+m[10]*p[2]+m[14], w=m[3]*p[0]+m[7]*p[1]+m[11]*p[2]+m[15];
+  return [x/w,y/w,z/w];
+}
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+
+// ============================================================================
+// Scene: axis-aligned boxes in "Source-ish" units (player ≈ 72 tall). Z is up.
+// ============================================================================
+const SCENE = [];
+function box(min, max, color){ SCENE.push({min, max, color}); }
+box([-1400,-1400,-32],[1400,1400,0],[0.42,0.43,0.45]);              // floor
+// L-shaped room with a doorway
+box([-900,-200,0],[-860,700,160],[0.55,0.52,0.48]);                  // west wall
+box([-900,700,0],[200,740,160],[0.55,0.52,0.48]);                    // north wall
+box([160,-200,0],[200,420,160],[0.55,0.52,0.48]);                    // east wall (south part)
+box([160,540,0],[200,740,160],[0.55,0.52,0.48]);                     // east wall (north part) -> doorway 420..540
+box([-900,-200,0],[-500,-160,160],[0.55,0.52,0.48]);                 // south wall (west part)
+box([-340,-200,0],[200,-160,160],[0.55,0.52,0.48]);                  // south wall (east part) -> doorway -500..-340
+box([-900,-200,150],[-300,740,160],[0.5,0.5,0.52]);                  // partial ceiling slab over the west half
+// corridor leading east from the doorway
+box([200,400,0],[1000,420,128],[0.5,0.47,0.44]);
+box([200,540,0],[1000,560,128],[0.5,0.47,0.44]);
+box([200,400,120],[1000,560,128],[0.46,0.46,0.48]);                  // corridor ceiling
+// a few pillars and crates out in the open
+box([500,-500,0],[580,-420,200],[0.6,0.45,0.35]);
+box([700,-150,0],[780,-70,200],[0.6,0.45,0.35]);
+box([-200,-700,0],[-80,-580,64],[0.5,0.4,0.3]);
+box([-80,-700,0],[40,-580,64],[0.5,0.4,0.3]);
+box([-140,-640,64],[-20,-520,128],[0.5,0.4,0.3]);
+box([900,100,0],[1300,140,96],[0.55,0.52,0.48]);
+
+function pointInSolid(p){
+  for (const b of SCENE) if (p[0]>b.min[0]&&p[0]<b.max[0]&&p[1]>b.min[1]&&p[1]<b.max[1]&&p[2]>b.min[2]&&p[2]<b.max[2]) return true;
+  return false;
+}
+// Slab test: does the segment a->b pass through any scene box?
+function segmentBlocked(a,b){
+  const d = V3.sub(b,a);
+  for (const bx of SCENE){
+    let t0=0, t1=1, hit=true;
+    for (let i=0;i<3;i++){
+      if (Math.abs(d[i])<1e-9){ if (a[i]<bx.min[i]||a[i]>bx.max[i]){hit=false;break;} continue; }
+      const inv=1/d[i]; let ta=(bx.min[i]-a[i])*inv, tb=(bx.max[i]-a[i])*inv;
+      if (ta>tb){const tmp=ta;ta=tb;tb=tmp;}
+      t0=Math.max(t0,ta); t1=Math.min(t1,tb); if (t0>t1){hit=false;break;}
+    }
+    if (hit) return true;
+  }
+  return false;
+}
+// Ray pick against scene boxes: returns {t, pos, normal} or null.
+function rayPick(ro, rd){
+  let best=null;
+  for (const bx of SCENE){
+    let t0=-Infinity, t1=Infinity, axis=-1, sign=0;
+    for (let i=0;i<3;i++){
+      const inv=1/rd[i]; let ta=(bx.min[i]-ro[i])*inv, tb=(bx.max[i]-ro[i])*inv; let s=-1;
+      if (ta>tb){const tmp=ta;ta=tb;tb=tmp; s=1;}
+      if (ta>t0){t0=ta;axis=i;sign=s;} t1=Math.min(t1,tb);
+    }
+    if (t0<=t1 && t0>0 && (!best||t0<best.t)){ const n=[0,0,0]; n[axis]=sign; best={t:t0,pos:V3.add(ro,V3.scale(rd,t0)),normal:n}; }
+  }
+  return best;
+}
+
+// ============================================================================
+// Smoke volume: CPU voxel sim (mirrors C_NeoVolSmoke)
+// ============================================================================
+const params = {
+  steps:48, stepscale:1, tight:true, overlay:true, ovdist:220, insteps:12, ext:0.06, namp:0.35, nscale:0.045, jitter:true, debug:0, mode:'vol',
+  grid:32, extent:192, budget:1.0, fill:300, life:40, regrow:4, laz:40, lel:55,
+  ramp:1.5, dissipate:5.0, lightK:0.05, carveRadius:24, explodeRadius:110,
+};
+function lightDir(){ // direction TOWARD the light
+  const az=params.laz*Math.PI/180, el=params.lel*Math.PI/180;
+  return [Math.cos(el)*Math.cos(az), Math.cos(el)*Math.sin(az), Math.sin(el)];
+}
+
+let nextVolId=0;
+class SmokeVolume {
+  constructor(gl, origin, extent, lifetime){
+    this.id=nextVolId++;
+    this.N=params.grid; const N=this.N;
+    this.cols = N>=32?8:4; this.rows=N/this.cols;
+    this.origin=origin.slice();
+    this.min=[origin[0]-extent,origin[1]-extent,origin[2]-extent];
+    this.max=[origin[0]+extent,origin[1]+extent,origin[2]+extent];
+    this.drawMin=this.min.slice(); this.drawMax=this.max.slice();
+    this.cell=(2*extent)/N;
+    this.spawnTime=now(); this.lifetime=lifetime;
+    const cells=N*N*N;
+    this.reach=new Uint8Array(cells).fill(255);
+    this.fillTime=new Float32Array(cells);
+    this.carveTime=new Float32Array(cells).fill(-1);
+    this.noise=new Uint8Array(cells); for(let i=0;i<cells;i++) this.noise[i]=(Math.random()*256)|0;
+    this.density=new Float32Array(cells);
+    this.light=new Float32Array(cells).fill(1);
+    const r=0.5*N; this.maxDepth=Math.max(1,(r|0)-1);
+    this.maxCells=clamp(Math.round(params.budget*(4/3)*Math.PI*r*r*r),1,cells);
+    // seed cell; walk up if inside a solid
+    let sx=N>>1, sy=N>>1, sz=N>>1;
+    for(let k=0;k<4&&pointInSolid(this.center(sx,sy,sz));k++) sz=Math.min(sz+1,N-1);
+    const seed=this.idx(sx,sy,sz); this.reach[seed]=0; this.fillTime[seed]=this.spawnTime;
+    this.frontier=[seed]; this.head=0; this.filled=1; this.fillDone=false;
+    this.nextSweep=0;
+    // GPU atlas (RG8: R density, G light)
+    this.atlasW=this.cols*N; this.atlasH=this.rows*N;
+    this.bits=new Uint8Array(this.atlasW*this.atlasH*2);
+    this.tex=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,this.tex);
+    gl.texStorage2D(gl.TEXTURE_2D,1,gl.RG8,this.atlasW,this.atlasH);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    this.gl=gl;
+  }
+  idx(x,y,z){ return (z*this.N+y)*this.N+x; }
+  center(x,y,z){ const c=this.cell; return [this.min[0]+(x+0.5)*c, this.min[1]+(y+0.5)*c, this.min[2]+(z+0.5)*c]; }
+  destroy(){ this.gl.deleteTexture(this.tex); }
+
+  stepFloodFill(maxCells){
+    const N=this.N, offs=[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+    let processed=0;
+    while(this.head<this.frontier.length && processed<maxCells && this.filled<this.maxCells){
+      const cur=this.frontier[this.head++];
+      const cz=(cur/(N*N))|0, cy=((cur/N)|0)%N, cx=cur%N, depth=this.reach[cur];
+      if (depth+1>this.maxDepth) continue;
+      const cc=this.center(cx,cy,cz);
+      for (let k=0;k<6&&this.filled<this.maxCells;k++){
+        const nx=cx+offs[k][0], ny=cy+offs[k][1], nz=cz+offs[k][2];
+        if (nx<0||ny<0||nz<0||nx>=N||ny>=N||nz>=N) continue;
+        const ni=this.idx(nx,ny,nz); if (this.reach[ni]!==255) continue;
+        const nc=this.center(nx,ny,nz);
+        if (pointInSolid(nc)||segmentBlocked(cc,nc)) continue;
+        this.reach[ni]=depth+1; this.fillTime[ni]=now(); this.frontier.push(ni); this.filled++; processed++;
+      }
+    }
+    if (this.head>=this.frontier.length||this.filled>=this.maxCells){ this.fillDone=true; this.frontier=[]; this.head=0; }
+  }
+  updateDensities(){
+    const t=now(), age=t-this.spawnTime, lifeFade=clamp((this.lifetime-age)/params.dissipate,0,1);
+    const invMaxDepth=1/Math.max(1,this.maxDepth), ramp=params.ramp, regrow=params.regrow;
+    const cells=this.N**3, N=this.N; const bmin=[N,N,N], bmax=[-1,-1,-1];
+    for (let i=0;i<cells;i++){
+      const r=this.reach[i]; if (r===255){ this.density[i]=0; continue; }
+      const f=r*invMaxDepth; let base=(1-0.65*f*f)*(0.7+0.3*this.noise[i]/255);
+      const fill=clamp((t-this.fillTime[i])/ramp,0,1);
+      let hole=1; if (this.carveTime[i]>=0){ hole=clamp((t-this.carveTime[i])/regrow,0,1); hole*=hole; }
+      const d=base*fill*hole*lifeFade; this.density[i]=d;
+      if (d>0.004){ const z=(i/(N*N))|0, y=((i/N)|0)%N, x=i%N;
+        if(x<bmin[0])bmin[0]=x; if(x>bmax[0])bmax[0]=x; if(y<bmin[1])bmin[1]=y; if(y>bmax[1])bmax[1]=y; if(z<bmin[2])bmin[2]=z; if(z>bmax[2])bmax[2]=z; }
+    }
+    // tight draw bounds (half-cell margin for bilinear spill)
+    if (bmax[0]<0){ this.drawMin=this.origin.slice(); this.drawMax=this.origin.slice(); }
+    else for (let a=0;a<3;a++){ this.drawMin[a]=Math.max(this.min[a],this.min[a]+(bmin[a]-0.5)*this.cell); this.drawMax[a]=Math.min(this.max[a],this.min[a]+(bmax[a]+1.5)*this.cell); }
+  }
+  sampleDensity(p){ // trilinear, cell-centre aligned, 0 outside
+    const N=this.N, f=[0,0,0], i0=[0,0,0], t=[0,0,0];
+    for (let a=0;a<3;a++){ f[a]=(p[a]-this.min[a])/this.cell-0.5; if (f[a]<-1||f[a]>N) return 0; i0[a]=Math.floor(f[a]); t[a]=f[a]-i0[a]; }
+    let r=0;
+    for (let dz=0;dz<2;dz++) for (let dy=0;dy<2;dy++) for (let dx=0;dx<2;dx++){ const x=i0[0]+dx,y=i0[1]+dy,z=i0[2]+dz; if(x<0||y<0||z<0||x>=N||y>=N||z>=N) continue;
+      r+=(dx?t[0]:1-t[0])*(dy?t[1]:1-t[1])*(dz?t[2]:1-t[2])*this.density[this.idx(x,y,z)]; }
+    return r;
+  }
+  sampleLight(fx,fy,zSlab,axis){
+    const N=this.N; if (zSlab<0||zSlab>=N) return 1;
+    const x0=Math.floor(fx), y0=Math.floor(fy), tx=fx-x0, ty=fy-y0; let res=0;
+    for (let dy=0;dy<2;dy++) for (let dx=0;dx<2;dx++){
+      const x=x0+dx, y=y0+dy, w=(dx?tx:1-tx)*(dy?ty:1-ty); let v=1;
+      if (x>=0&&y>=0&&x<N&&y<N){ let ix,iy,iz; if(axis===0){ix=zSlab;iy=x;iz=y;} else if(axis===1){ix=x;iy=zSlab;iz=y;} else {ix=x;iy=y;iz=zSlab;} v=this.light[this.idx(ix,iy,iz)]; }
+      res+=w*v;
+    }
+    return res;
+  }
+  sweepLight(){
+    const N=this.N, L=lightDir();
+    let axis=2; if (Math.abs(L[0])>=Math.abs(L[1])&&Math.abs(L[0])>=Math.abs(L[2])) axis=0; else if (Math.abs(L[1])>=Math.abs(L[2])) axis=1;
+    const major=L[axis], dir=major>0?1:-1, step=V3.scale(L,this.cell/Math.abs(major)), kStep=params.lightK*this.cell;
+    const a0=axis===0?1:0, a1=axis===2?1:2, ofs0=step[a0]/this.cell, ofs1=step[a1]/this.cell;
+    const zStart=dir>0?N-1:0;
+    for (let n=0;n<N;n++){
+      const z=zStart-dir*n, zp=z+dir;
+      for (let v=0;v<N;v++) for (let u=0;u<N;u++){
+        let ix,iy,iz; if(axis===0){ix=z;iy=u;iz=v;} else if(axis===1){ix=u;iy=z;iz=v;} else {ix=u;iy=v;iz=z;}
+        const i=this.idx(ix,iy,iz);
+        this.light[i]=this.sampleLight(u+ofs0,v+ofs1,zp,axis)*Math.exp(-kStep*this.density[i]);
+      }
+    }
+  }
+  carve(start,end,radius){
+    const r=radius, mn=[this.min[0]-r,this.min[1]-r,this.min[2]-r], mx=[this.max[0]+r,this.max[1]+r,this.max[2]+r];
+    // segment vs expanded AABB reject
+    const d=V3.sub(end,start); let t0=0,t1=1;
+    for (let i=0;i<3;i++){ if (Math.abs(d[i])<1e-9){ if (start[i]<mn[i]||start[i]>mx[i]) return; continue; }
+      const inv=1/d[i]; let ta=(mn[i]-start[i])*inv, tb=(mx[i]-start[i])*inv; if(ta>tb){const q=ta;ta=tb;tb=q;} t0=Math.max(t0,ta); t1=Math.min(t1,tb); if(t0>t1) return; }
+    const segLenSq=V3.dot(d,d), r2=r*r, t=now(), N=this.N, c=this.cell;
+    const lo=[0,1,2].map(i=>clamp(Math.floor((Math.min(start[i],end[i])-r-this.min[i])/c),0,N-1));
+    const hi=[0,1,2].map(i=>clamp(Math.floor((Math.max(start[i],end[i])+r-this.min[i])/c),0,N-1));
+    for (let z=lo[2];z<=hi[2];z++) for (let y=lo[1];y<=hi[1];y++) for (let x=lo[0];x<=hi[0];x++){
+      const i=this.idx(x,y,z); if (this.reach[i]===255) continue;
+      const cc=this.center(x,y,z); let tt=0; if (segLenSq>1e-6) tt=clamp(V3.dot(V3.sub(cc,start),d)/segLenSq,0,1);
+      const cl=V3.add(start,V3.scale(d,tt)); const dd=V3.sub(cc,cl);
+      if (V3.dot(dd,dd)<=r2) this.carveTime[i]=t;
+    }
+  }
+  upload(){
+    const N=this.N, gl=this.gl, pitch=this.atlasW*2;
+    for (let z=0;z<N;z++){
+      const tx=(z%this.cols)*N, ty=((z/this.cols)|0)*N;
+      for (let y=0;y<N;y++){
+        let o=(ty+y)*pitch+tx*2;
+        for (let x=0;x<N;x++,o+=2){ const i=this.idx(x,y,z); this.bits[o]=(clamp(this.density[i],0,1)*255+0.5)|0; this.bits[o+1]=(clamp(this.light[i],0,1)*255+0.5)|0; }
+      }
+    }
+    gl.bindTexture(gl.TEXTURE_2D,this.tex);
+    gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,this.atlasW,this.atlasH,gl.RG,gl.UNSIGNED_BYTE,this.bits);
+  }
+  tick(){
+    if (now()-this.spawnTime>this.lifetime) return false;
+    if (!this.fillDone) this.stepFloodFill(params.fill);
+    this.updateDensities();
+    const t=now(); if (t>=this.nextSweep){ this.sweepLight(); this.nextSweep=t+1/15; }
+    this.upload();
+    return true;
+  }
+}
+
+// ============================================================================
+// WebGL setup
+// ============================================================================
+const canvas=document.getElementById('gl');
+const gl=canvas.getContext('webgl2',{antialias:false, alpha:false, depth:false});
+const errBox=document.getElementById('err');
+function fail(msg){ errBox.style.display='block'; errBox.textContent=msg; throw new Error(msg); }
+if (!gl) fail('WebGL2 is required for this demo.');
+
+function compile(type,src){ const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s);
+  if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)) fail('Shader error:\n'+gl.getShaderInfoLog(s)+'\n'+src.split('\n').map((l,i)=>(i+1)+': '+l).join('\n')); return s; }
+function program(vs,fs){ const p=gl.createProgram(); gl.attachShader(p,compile(gl.VERTEX_SHADER,vs)); gl.attachShader(p,compile(gl.FRAGMENT_SHADER,fs)); gl.linkProgram(p);
+  if(!gl.getProgramParameter(p,gl.LINK_STATUS)) fail('Link error: '+gl.getProgramInfoLog(p));
+  const u={}; const n=gl.getProgramParameter(p,gl.ACTIVE_UNIFORMS); for(let i=0;i<n;i++){const info=gl.getActiveUniform(p,i); u[info.name.replace('[0]','')]=gl.getUniformLocation(p,info.name);} return {p,u}; }
+
+// ---- scene shader -----------------------------------------------------------
+const sceneProg=program(`#version 300 es
+layout(location=0) in vec3 aPos; layout(location=1) in vec3 aNrm; layout(location=2) in vec3 aCol;
+uniform mat4 uVP; out vec3 vPos; out vec3 vNrm; out vec3 vCol;
+void main(){ vPos=aPos; vNrm=aNrm; vCol=aCol; gl_Position=uVP*vec4(aPos,1.0); }`,
+`#version 300 es
+precision highp float; in vec3 vPos; in vec3 vNrm; in vec3 vCol; uniform vec3 uLightDir; out vec4 o;
+void main(){
+  float nl=max(dot(normalize(vNrm),uLightDir),0.0);
+  // soft checker on horizontal surfaces to give the eye something to lock onto
+  float ch=0.0; if (abs(vNrm.z)>0.5){ vec2 g=floor(vPos.xy/64.0); ch=mod(g.x+g.y,2.0)*0.06; }
+  vec3 col=vCol*(0.35+0.65*nl)+ch;
+  o=vec4(pow(col,vec3(1.0/2.2)),1.0);
+}`);
+
+// ---- fullscreen blit ------------------------------------------------------------
+const blitProg=program(`#version 300 es
+out vec2 vUV; void main(){ vec2 p=vec2((gl_VertexID<<1)&2, gl_VertexID&2); vUV=p; gl_Position=vec4(p*2.0-1.0,0.0,1.0); }`,
+`#version 300 es
+precision highp float; in vec2 vUV; uniform sampler2D uTex; out vec4 o; void main(){ o=texture(uTex,vUV); }`);
+
+// ---- volumetric smoke (mirrors neo_volsmoke_ps30.fxc) ------------------------------
+const smokeProg=program(`#version 300 es
+layout(location=0) in vec3 aPos; uniform mat4 uVP; out vec3 vWorld;
+void main(){ vWorld=aPos; gl_Position=uVP*vec4(aPos,1.0); }`,
+`#version 300 es
+precision highp float; precision highp int;
+in vec3 vWorld; out vec4 o;
+uniform sampler2D uAtlas; uniform sampler2D uDepth;
+uniform vec3 uEye; uniform vec3 uVolMin; uniform vec3 uVolMax; uniform vec3 uBoxMin; uniform vec3 uBoxMax; uniform vec4 uGrid; // N, cols, rows, 1/N
+uniform vec3 uAmbient; uniform vec3 uLight; uniform float uTime; uniform float uExt; uniform float uMaxSteps; uniform float uStepScale;
+uniform float uNoiseAmp; uniform float uNoiseScale; uniform float uJitter; uniform int uDebug;
+uniform mat4 uInvVP; uniform vec2 uInvRes;
+const int MAX_STEPS=64;
+
+vec2 sliceUV(vec2 uv,float slice){ float col=mod(slice,uGrid.y); float row=floor(slice/uGrid.y); return (vec2(col,row)+uv)/uGrid.yz; }
+vec2 sampleVolume(vec3 uvw){
+  float ht=0.5*uGrid.w; vec2 uv=clamp(uvw.xy,ht,1.0-ht);
+  float z=clamp(uvw.z*uGrid.x-0.5,0.0,uGrid.x-1.0); float z0=floor(z); float z1=min(z0+1.0,uGrid.x-1.0); float fz=z-z0;
+  vec2 s0=textureLod(uAtlas,sliceUV(uv,z0),0.0).rg; vec2 s1=textureLod(uAtlas,sliceUV(uv,z1),0.0).rg; return mix(s0,s1,fz);
+}
+float hash3(vec3 p){ return fract(sin(dot(p,vec3(12.9898,78.233,37.719)))*43758.5453); }
+float vnoise(vec3 p){ vec3 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
+  float n000=hash3(i), n100=hash3(i+vec3(1,0,0)), n010=hash3(i+vec3(0,1,0)), n110=hash3(i+vec3(1,1,0));
+  float n001=hash3(i+vec3(0,0,1)), n101=hash3(i+vec3(1,0,1)), n011=hash3(i+vec3(0,1,1)), n111=hash3(i+vec3(1,1,1));
+  return mix(mix(mix(n000,n100,f.x),mix(n010,n110,f.x),f.y), mix(mix(n001,n101,f.x),mix(n011,n111,f.x),f.y), f.z); }
+float ign(vec2 px){ return fract(52.9829189*fract(dot(px,vec2(0.06711056,0.00583715)))); }
+
+void main(){
+  vec3 toV=vWorld-uEye; float distV=length(toV); vec3 rd=toV/distV; vec3 ro=uEye;
+  // scene depth -> distance along this ray (stand-in for Source's depth-in-dest-alpha read)
+  vec2 uv=gl_FragCoord.xy*uInvRes; float d=texture(uDepth,uv).r; float tScene=1e9;
+  if (d<0.99999){ vec4 p=uInvVP*vec4(uv*2.0-1.0,d*2.0-1.0,1.0); p/=p.w; tScene=length(p.xyz-uEye); }
+  vec3 inv=1.0/rd; vec3 tA=(uBoxMin-ro)*inv, tB=(uBoxMax-ro)*inv; vec3 tN=min(tA,tB), tF=max(tA,tB);
+  float t0=max(max(tN.x,tN.y),tN.z), t1=min(min(tF.x,tF.y),tF.z);
+  t0=max(t0,0.0); t1=min(t1,tScene);
+  if (uDebug==2){ float v=clamp(tScene/2048.0,0.0,1.0); o=vec4(vec3(v),1.0); return; }
+  if (t1<=t0){ o=vec4(0.0); return; }
+  // adaptive: constant world-space sample spacing (cell * stepScale), capped by uMaxSteps
+  vec3 volSize=uVolMax-uVolMin; float cellSize=volSize.x*uGrid.w;
+  float steps=clamp(ceil((t1-t0)/(cellSize*uStepScale)),2.0,max(uMaxSteps,2.0)); float stepLen=(t1-t0)/steps;
+  float jit=(uJitter>0.5)?ign(gl_FragCoord.xy+uTime*100.0):0.5; float t=t0+stepLen*jit;
+  float T=1.0; vec3 col=vec3(0.0);
+  for (int s=0;s<MAX_STEPS;s++){
+    if (float(s)>=steps||T<0.005) break;
+    vec3 p=ro+rd*t; vec3 uvw=(p-uVolMin)/volSize; vec2 v=sampleVolume(uvw); float dn=v.r;
+    if (dn>0.001){
+      float n=vnoise(p*uNoiseScale+vec3(0.0,0.0,-uTime*0.35));
+      dn=clamp(dn*1.25-uNoiseAmp*n,0.0,1.0);
+      float a=1.0-exp(-dn*uExt*stepLen);
+      vec3 lit=uAmbient+uLight*v.g;
+      col+=T*a*lit; T*=1.0-a;
+    }
+    t+=stepLen;
+  }
+  if (uDebug==1){ o=vec4(vec3(1.0-T),1.0-T); return; }
+  if (uDebug==3){ o=vec4(0.2,0.6,0.2,0.6); return; }
+  // Premultiplied output. The scene pass stores gamma-encoded colour, so un-premultiply,
+  // gamma-encode, and re-premultiply (Source does this via FinalOutput/SRGBOutput).
+  float alpha=1.0-T; vec3 rgb=alpha>1e-4?pow(col/alpha,vec3(1.0/2.2))*alpha:vec3(0.0);
+  o=vec4(rgb,alpha);
+}`);
+
+// ---- inside-smoke overlay (legacy HL2 smoke_fog_overlay equivalent) ----------------
+const overlayProg=program(`#version 300 es
+void main(){ vec2 p=vec2((gl_VertexID<<1)&2, gl_VertexID&2); gl_Position=vec4(p*2.0-1.0,0.0,1.0); }`,
+`#version 300 es
+precision highp float; uniform vec4 uColor; out vec4 o; void main(){ o=uColor; }`);
+
+// ---- legacy billboards -----------------------------------------------------------
+const billProg=program(`#version 300 es
+layout(location=0) in vec3 aPos; layout(location=1) in vec2 aUV; layout(location=2) in float aAlpha; layout(location=3) in float aLit;
+uniform mat4 uVP; out vec2 vUV; out float vAlpha; out float vLit;
+void main(){ vUV=aUV; vAlpha=aAlpha; vLit=aLit; gl_Position=uVP*vec4(aPos,1.0); }`,
+`#version 300 es
+precision highp float; in vec2 vUV; in float vAlpha; in float vLit; uniform vec3 uAmbient; uniform vec3 uLight; out vec4 o;
+void main(){ float r=length(vUV*2.0-1.0); float a=smoothstep(1.0,0.25,r)*vAlpha; vec3 c=uAmbient+uLight*vLit; o=vec4(pow(c,vec3(1.0/2.2)),a); }`);
+
+// ---- geometry buffers ------------------------------------------------------------
+function buildSceneMesh(){
+  const pos=[],nrm=[],col=[];
+  const faces=[ // normal, 4 corners as [x,y,z] selectors (0=min,1=max)
+    {n:[0,0,1], c:[[0,0,1],[1,0,1],[1,1,1],[0,1,1]]}, {n:[0,0,-1],c:[[0,0,0],[0,1,0],[1,1,0],[1,0,0]]},
+    {n:[1,0,0], c:[[1,0,0],[1,1,0],[1,1,1],[1,0,1]]}, {n:[-1,0,0],c:[[0,0,0],[0,0,1],[0,1,1],[0,1,0]]},
+    {n:[0,1,0], c:[[0,1,0],[0,1,1],[1,1,1],[1,1,0]]}, {n:[0,-1,0],c:[[0,0,0],[1,0,0],[1,0,1],[0,0,1]]} ];
+  for (const b of SCENE) for (const f of faces){
+    const q=f.c.map(s=>[s[0]?b.max[0]:b.min[0], s[1]?b.max[1]:b.min[1], s[2]?b.max[2]:b.min[2]]);
+    for (const i of [0,1,2,0,2,3]){ pos.push(...q[i]); nrm.push(...f.n); col.push(...b.color); }
+  }
+  const vao=gl.createVertexArray(); gl.bindVertexArray(vao);
+  const mk=(data,loc,size)=>{ const buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(data),gl.STATIC_DRAW); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,size,gl.FLOAT,false,0,0); };
+  mk(pos,0,3); mk(nrm,1,3); mk(col,2,3); gl.bindVertexArray(null);
+  return {vao,count:pos.length/3};
+}
+const sceneMesh=buildSceneMesh();
+
+// unit box for the volumes (positions set per draw via uniform-free approach: rebuild tiny buffer)
+const boxVAO=gl.createVertexArray(); gl.bindVertexArray(boxVAO);
+const boxBuf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,boxBuf); gl.bufferData(gl.ARRAY_BUFFER,8*3*4,gl.DYNAMIC_DRAW);
+gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0,3,gl.FLOAT,false,0,0);
+const boxIdx=gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,boxIdx);
+// outward-facing CCW winding (GL front = CCW)
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array([0,1,2,0,2,3, 4,6,5,4,7,6, 0,5,1,0,4,5, 2,7,3,2,6,7, 1,6,2,1,5,6, 3,4,0,3,7,4]),gl.STATIC_DRAW);
+gl.bindVertexArray(null);
+function setBox(mn,mx){ const a=mn,b=mx; gl.bindBuffer(gl.ARRAY_BUFFER,boxBuf); gl.bufferSubData(gl.ARRAY_BUFFER,0,new Float32Array([
+  a[0],a[1],a[2], b[0],a[1],a[2], b[0],b[1],a[2], a[0],b[1],a[2], a[0],a[1],b[2], b[0],a[1],b[2], b[0],b[1],b[2], a[0],b[1],b[2]])); }
+
+// billboard dynamic buffer
+const billVAO=gl.createVertexArray(); gl.bindVertexArray(billVAO);
+const billBuf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,billBuf);
+const BSTRIDE=7*4; gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0,3,gl.FLOAT,false,BSTRIDE,0);
+gl.enableVertexAttribArray(1); gl.vertexAttribPointer(1,2,gl.FLOAT,false,BSTRIDE,12);
+gl.enableVertexAttribArray(2); gl.vertexAttribPointer(2,1,gl.FLOAT,false,BSTRIDE,20);
+gl.enableVertexAttribArray(3); gl.vertexAttribPointer(3,1,gl.FLOAT,false,BSTRIDE,24);
+gl.bindVertexArray(null);
+let billData=new Float32Array(0);
+
+// ---- framebuffer with depth texture -----------------------------------------------------
+let fbo=null, fboColor=null, fboDepth=null, fbW=0, fbH=0;
+function ensureFBO(w,h){
+  if (w===fbW&&h===fbH) return; fbW=w; fbH=h;
+  if (fbo){ gl.deleteFramebuffer(fbo); gl.deleteTexture(fboColor); gl.deleteTexture(fboDepth); }
+  fboColor=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,fboColor); gl.texStorage2D(gl.TEXTURE_2D,1,gl.RGBA8,w,h);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+  fboDepth=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,fboDepth); gl.texStorage2D(gl.TEXTURE_2D,1,gl.DEPTH_COMPONENT24,w,h);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  fbo=gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER,fbo);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,fboColor,0);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.TEXTURE_2D,fboDepth,0);
+  if (gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE) fail('Framebuffer incomplete');
+  gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+}
+
+// ============================================================================
+// Camera + input
+// ============================================================================
+const cam={ pivot:[-40,380,70], yaw:-0.95, pitch:0.36, dist:620 };
+function camEye(){ const cp=Math.cos(cam.pitch); return V3.add(cam.pivot,[cam.dist*cp*Math.cos(cam.yaw), cam.dist*cp*Math.sin(cam.yaw), cam.dist*Math.sin(cam.pitch)]); }
+let viewProj=null, invViewProj=null, eye=[0,0,0];
+const keys={};
+let action='spawn';
+const volumes=[];
+const t0ms=performance.now(); function now(){ return (performance.now()-t0ms)/1000; }
+
+function setAction(a){ action=a; for (const [k,id] of [['spawn','mSpawn'],['carve','mCarve'],['explode','mExplode']]) document.getElementById(id).classList.toggle('on',k===a); }
+document.getElementById('mSpawn').onclick=()=>setAction('spawn');
+document.getElementById('mCarve').onclick=()=>setAction('carve');
+document.getElementById('mExplode').onclick=()=>setAction('explode');
+document.getElementById('mClear').onclick=()=>{ for (const v of volumes) v.destroy(); volumes.length=0; };
+
+function bindRange(id,key){ const el=document.getElementById(id), out=el.parentElement.querySelector('output'); const f=()=>{ params[key]=parseFloat(el.value); if(out) out.textContent=el.value; }; el.addEventListener('input',f); f(); }
+['steps','stepscale','ovdist','insteps','ext','namp','nscale','extent','budget','fill','life','regrow','laz','lel'].forEach(id=>bindRange(id,id));
+document.getElementById('tight').onchange=e=>params.tight=e.target.checked;
+document.getElementById('overlay').onchange=e=>params.overlay=e.target.checked;
+document.getElementById('jitter').onchange=e=>params.jitter=e.target.checked;
+document.getElementById('debug').onchange=e=>params.debug=parseInt(e.target.value);
+document.getElementById('mode').onchange=e=>params.mode=e.target.value;
+document.getElementById('grid').onchange=e=>params.grid=parseInt(e.target.value);
+
+function mouseRay(cx,cy){
+  const r=canvas.getBoundingClientRect(); const x=((cx-r.left)/r.width)*2-1, y=1-((cy-r.top)/r.height)*2;
+  const pN=transformPoint(invViewProj,[x,y,-1]), pF=transformPoint(invViewProj,[x,y,1]);
+  return {ro:pN, rd:V3.norm(V3.sub(pF,pN))};
+}
+function doAction(ray){
+  const hit=rayPick(ray.ro,ray.rd);
+  if (action==='spawn'){ const p=hit?V3.add(hit.pos,V3.scale(hit.normal,24)):V3.add(ray.ro,V3.scale(ray.rd,600)); spawnAt(p); }
+  else if (action==='carve'){ const end=hit?hit.pos:V3.add(ray.ro,V3.scale(ray.rd,6000)); for (const v of volumes) v.carve(ray.ro,end,params.carveRadius); }
+  else if (action==='explode'){ const p=hit?hit.pos:V3.add(ray.ro,V3.scale(ray.rd,600)); for (const v of volumes) v.carve(p,p,params.explodeRadius); }
+}
+function spawnAt(p){ volumes.push(new SmokeVolume(gl,p,params.extent,params.life)); }
+
+let drag=null;
+canvas.addEventListener('pointerdown',e=>{ drag={x:e.clientX,y:e.clientY,moved:false,b:e.button}; canvas.setPointerCapture(e.pointerId); });
+canvas.addEventListener('pointermove',e=>{ if(!drag) return; const dx=e.clientX-drag.x, dy=e.clientY-drag.y; if (Math.abs(dx)+Math.abs(dy)>3) drag.moved=true;
+  if (drag.moved){ cam.yaw-=dx*0.005; cam.pitch=clamp(cam.pitch+dy*0.005,-0.2,1.45); } drag.x=e.clientX; drag.y=e.clientY; });
+canvas.addEventListener('pointerup',e=>{ if(drag&&!drag.moved&&viewProj) doAction(mouseRay(e.clientX,e.clientY)); drag=null; });
+canvas.addEventListener('wheel',e=>{ cam.dist=clamp(cam.dist*Math.exp(e.deltaY*0.001),10,4000); e.preventDefault(); },{passive:false});
+window.addEventListener('keydown',e=>{ keys[e.code]=true;
+  if (e.code==='Digit1') setAction('spawn'); if (e.code==='Digit2') setAction('carve'); if (e.code==='Digit3') setAction('explode');
+  if (e.code==='Space'){ const r={ro:eye, rd:V3.norm(V3.sub(cam.pivot,eye))}; doAction(r); e.preventDefault(); }
+  if (e.code==='KeyV'){ params.mode=params.mode==='vol'?'bill':'vol'; document.getElementById('mode').value=params.mode; }
+});
+window.addEventListener('keyup',e=>{ keys[e.code]=false; });
+
+// ============================================================================
+// Frame
+// ============================================================================
+let lastT=now(), simMs=0, frameMs=0, fpsAcc=0, fpsN=0, fpsShown=0;
+function frame(){
+  const t=now(), dt=Math.min(0.1,t-lastT); lastT=t;
+  // movement
+  const fwd=V3.norm([Math.cos(cam.yaw),Math.sin(cam.yaw),0]), right=[fwd[1],-fwd[0],0], spd=600*dt*(keys.ShiftLeft?2.5:1);
+  if (keys.KeyW) cam.pivot=V3.sub(cam.pivot,V3.scale(fwd,spd)); if (keys.KeyS) cam.pivot=V3.add(cam.pivot,V3.scale(fwd,spd));
+  if (keys.KeyA) cam.pivot=V3.add(cam.pivot,V3.scale(right,spd)); if (keys.KeyD) cam.pivot=V3.sub(cam.pivot,V3.scale(right,spd));
+  if (keys.KeyE) cam.pivot[2]+=spd; if (keys.KeyQ) cam.pivot[2]-=spd;
+
+  // resize
+  const dpr=Math.min(window.devicePixelRatio||1,1.5); const w=Math.floor(canvas.clientWidth*dpr), h=Math.floor(canvas.clientHeight*dpr);
+  if (canvas.width!==w||canvas.height!==h){ canvas.width=w; canvas.height=h; }
+  ensureFBO(w,h);
+
+  // camera
+  eye=camEye(); const view=mat4LookAt(eye,cam.pivot,[0,0,1]); const proj=mat4Perspective(70*Math.PI/180,w/h,4,12000);
+  viewProj=mat4Mul(proj,view); invViewProj=mat4Invert(viewProj);
+  const L=lightDir();
+  const ambient=[0.30,0.33,0.38], sun=[0.75,0.70,0.62];
+
+  // sim
+  const s0=performance.now();
+  for (let i=volumes.length-1;i>=0;i--) if (!volumes[i].tick()){ volumes[i].destroy(); volumes.splice(i,1); }
+  simMs=simMs*0.9+(performance.now()-s0)*0.1;
+  // local density at the eye -> overlay alpha + cheaper march while inside dense smoke
+  let camDensity=0; for (const v of volumes) camDensity+=v.sampleDensity(eye);
+  const overlayAlpha=(params.overlay&&params.mode==='vol')?1-Math.exp(-camDensity*params.ext*params.ovdist):0;
+  const insideDense=params.overlay&&camDensity>0.35;
+
+  // pass 1: opaque scene into FBO
+  gl.bindFramebuffer(gl.FRAMEBUFFER,fbo); gl.viewport(0,0,w,h);
+  gl.enable(gl.DEPTH_TEST); gl.depthMask(true); gl.disable(gl.BLEND); gl.enable(gl.CULL_FACE); gl.cullFace(gl.BACK);
+  gl.clearColor(0.55,0.65,0.78,1); gl.clearDepth(1); gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+  gl.useProgram(sceneProg.p); gl.uniformMatrix4fv(sceneProg.u.uVP,false,viewProj); gl.uniform3fv(sceneProg.u.uLightDir,L);
+  gl.bindVertexArray(sceneMesh.vao); gl.drawArrays(gl.TRIANGLES,0,sceneMesh.count);
+
+  // legacy billboards are drawn into the FBO with the hardware depth test, back-to-front sorted
+  if (params.mode==='bill' && volumes.length){ drawBillboards(ambient,sun); }
+
+  // pass 2: blit to screen
+  gl.bindFramebuffer(gl.FRAMEBUFFER,null); gl.viewport(0,0,w,h); gl.disable(gl.DEPTH_TEST); gl.disable(gl.CULL_FACE); gl.disable(gl.BLEND);
+  gl.useProgram(blitProg.p); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,fboColor); gl.uniform1i(blitProg.u.uTex,0);
+  gl.bindVertexArray(null); gl.drawArrays(gl.TRIANGLES,0,3);
+
+  // pass 3: volumes, far faces only, manual depth test in-shader, premultiplied blend
+  if (params.mode==='vol' && volumes.length){
+    gl.enable(gl.BLEND); gl.blendFunc(gl.ONE,gl.ONE_MINUS_SRC_ALPHA); gl.enable(gl.CULL_FACE); gl.cullFace(gl.BACK); gl.disable(gl.DEPTH_TEST); // box is wound so its FAR faces are front-facing: one fragment per pixel, works with the eye inside
+    gl.useProgram(smokeProg.p); const u=smokeProg.u;
+    gl.uniformMatrix4fv(u.uVP,false,viewProj); gl.uniformMatrix4fv(u.uInvVP,false,invViewProj); gl.uniform2f(u.uInvRes,1/w,1/h);
+    gl.uniform3fv(u.uEye,eye); gl.uniform3fv(u.uAmbient,ambient); gl.uniform3fv(u.uLight,V3.scale(sun,0.9));
+    gl.uniform1f(u.uTime,t); gl.uniform1f(u.uExt,params.ext); gl.uniform1f(u.uMaxSteps,insideDense?params.insteps:params.steps); gl.uniform1f(u.uStepScale,params.stepscale);
+    gl.uniform1f(u.uNoiseAmp,params.namp); gl.uniform1f(u.uNoiseScale,params.nscale); gl.uniform1f(u.uJitter,params.jitter?1:0); gl.uniform1i(u.uDebug,params.debug);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D,fboDepth); gl.uniform1i(u.uDepth,1);
+    gl.uniform1i(u.uAtlas,0);
+    // sort volumes back-to-front (only matters where two boxes overlap)
+    const order=volumes.slice().sort((a,b)=>V3.len(V3.sub(b.origin,eye))-V3.len(V3.sub(a.origin,eye)));
+    gl.bindVertexArray(boxVAO);
+    for (const v of order){
+      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,v.tex);
+      const bmn=params.tight?v.drawMin:v.min, bmx=params.tight?v.drawMax:v.max;
+      gl.uniform3fv(u.uVolMin,v.min); gl.uniform3fv(u.uVolMax,v.max); gl.uniform3fv(u.uBoxMin,bmn); gl.uniform3fv(u.uBoxMax,bmx); gl.uniform4f(u.uGrid,v.N,v.cols,v.rows,1/v.N);
+      setBox(bmn,bmx); gl.drawElements(gl.TRIANGLES,36,gl.UNSIGNED_SHORT,0);
+    }
+    gl.disable(gl.BLEND);
+  }
+
+  // inside overlay: fullscreen grey, alpha from the camera's local density (what HL2's smoke_fog_overlay does by sprite proximity)
+  if (overlayAlpha>0.002){
+    gl.disable(gl.DEPTH_TEST); gl.disable(gl.CULL_FACE); gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+    gl.useProgram(overlayProg.p); gl.uniform4f(overlayProg.u.uColor,0.62,0.63,0.66,overlayAlpha); gl.bindVertexArray(null); gl.drawArrays(gl.TRIANGLES,0,3);
+    gl.disable(gl.BLEND);
+  }
+
+  // stats
+  frameMs=frameMs*0.9+(performance.now()-s0)*0.1; fpsAcc+=dt; fpsN++; if (fpsAcc>0.5){ fpsShown=fpsN/fpsAcc; fpsAcc=0; fpsN=0; }
+  let filled=0; for (const v of volumes) filled+=v.filled;
+  document.getElementById('stats').textContent=
+    `volumes ${volumes.length}   cells filled ${filled}\n`+
+    `sim ${simMs.toFixed(2)} ms   cpu/frame ${frameMs.toFixed(2)} ms   ${fpsShown.toFixed(0)} fps\n`+
+    `renderer: ${params.mode==='vol'?'raymarched volume':'sorted billboards (legacy)'}\n`+
+    `eye density ${camDensity.toFixed(2)}   overlay α ${overlayAlpha.toFixed(2)}   max steps ${insideDense?params.insteps:params.steps}`;
+  requestAnimationFrame(frame);
+}
+
+function drawBillboards(ambient,sun){
+  // One camera-facing quad per filled cell, sorted back-to-front per frame: the
+  // classic approach and the classic artifacts (popping where sprites cross,
+  // hard intersections with geometry).
+  const parts=[];
+  for (const v of volumes){ const N=v.N, R=v.cell*1.7;
+    for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++){ const i=v.idx(x,y,z); const d=v.density[i]; if (d<0.06) continue;
+      // decimate: keep every other cell in a checker pattern to keep sprite counts sane
+      if (((x+y+z)&1)===1) continue;
+      const c=v.center(x,y,z); c[0]+=((v.noise[i]&7)-3.5)*0.1*v.cell; c[1]+=(((v.noise[i]>>3)&7)-3.5)*0.1*v.cell;
+      parts.push({p:c, r:R*(0.8+0.4*(v.noise[i]/255)), a:Math.min(1,d*0.55), l:v.light[i], d:V3.len(V3.sub(c,eye))}); } }
+  parts.sort((a,b)=>b.d-a.d);
+  const need=parts.length*6*7; if (billData.length<need) billData=new Float32Array(Math.ceil(need*1.5));
+  const fwd=V3.norm(V3.sub(cam.pivot,eye)), right=V3.norm(V3.cross(fwd,[0,0,1])), up=V3.cross(right,fwd);
+  let o=0; const corners=[[-1,-1,0,0],[1,-1,1,0],[1,1,1,1],[-1,-1,0,0],[1,1,1,1],[-1,1,0,1]];
+  for (const q of parts) for (const c of corners){ const px=q.p[0]+(right[0]*c[0]+up[0]*c[1])*q.r, py=q.p[1]+(right[1]*c[0]+up[1]*c[1])*q.r, pz=q.p[2]+(right[2]*c[0]+up[2]*c[1])*q.r;
+    billData[o++]=px; billData[o++]=py; billData[o++]=pz; billData[o++]=c[2]; billData[o++]=c[3]; billData[o++]=q.a; billData[o++]=q.l; }
+  gl.bindVertexArray(billVAO); gl.bindBuffer(gl.ARRAY_BUFFER,billBuf); gl.bufferData(gl.ARRAY_BUFFER,billData.subarray(0,o),gl.DYNAMIC_DRAW);
+  gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA); gl.depthMask(false); gl.enable(gl.DEPTH_TEST); gl.disable(gl.CULL_FACE);
+  gl.useProgram(billProg.p); gl.uniformMatrix4fv(billProg.u.uVP,false,viewProj); gl.uniform3fv(billProg.u.uAmbient,ambient); gl.uniform3fv(billProg.u.uLight,V3.scale(sun,0.9));
+  gl.drawArrays(gl.TRIANGLES,0,parts.length*6);
+  gl.depthMask(true); gl.disable(gl.BLEND); gl.enable(gl.CULL_FACE);
+}
+
+// Start with one smoke already blooming in the room doorway so the page isn't empty.
+window.demo={ spawnAt, volumes, params, cam, carveAll:(a,b,r)=>volumes.forEach(v=>v.carve(a,b,r)) };
+requestAnimationFrame(()=>{ frame(); setTimeout(()=>spawnAt([-60,400,40]),50); });
+</script>
+</body>
+</html>
