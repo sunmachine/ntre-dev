@@ -4,6 +4,8 @@
 #include "neo_gamerules.h"
 #include "neo_theme.h"
 #include "c_neo_killer_damage_infos.h"
+#include "neo_hud_deathnotice.h"
+#include "neo_hud_draw.h"
 
 #include <inputsystem/iinputsystem.h>
 #include <voice_status.h>
@@ -23,6 +25,13 @@ ConVar cl_neo_hud_scoreboard_padding("cl_neo_hud_scoreboard_padding", "0", FCVAR
 extern ConVar cl_neo_streamermode;
 extern ConVar cl_neo_squad_hud_original;
 extern ConVar cl_neo_hud_team_swap_sides;
+
+namespace
+{
+// Between each column's text and its edges, and the least a table too narrow for its name column lowers it to
+constexpr int SCOREBOARD_CELL_MARGIN_PX = 8;
+constexpr int SCOREBOARD_CELL_MARGIN_MIN_PX = 2;
+}
 
 enum ENeoScoreBoardPopup
 {
@@ -206,18 +215,14 @@ void CNEOScoreBoard::ApplySchemeSettings(vgui::IScheme *pScheme)
 	SetFgColor(COLOR_TRANSPARENT);
 	SetBgColor(COLOR_TRANSPARENT);
 
-	static constexpr const char *FONT_NAMES[NeoUI::FONT__TOTAL] = {
-		"HudSelectionText",
-		"NHudOCR",
-		"NHudOCRSmallNoAdditive",
-		"ClientTitleFont",
-		"ClientTitleFontSmall",
-		"NeoUINormal",
+	static constexpr NeoUI::FontOverride FONT_OVERRIDES[] = {
+		{ NeoUI::FONT_NTNORMAL, "NHudScoreboardMono" },
+		{ NeoUI::FONT_NTLARGE, "NeoUINormal" },
+		{ NeoUI::FONT_NTSMALLTEXT, "NHudScoreboardText" },
 	};
-	for (int i = 0; i < NeoUI::FONT__TOTAL; ++i)
-	{
-		m_uiCtx.fonts[i].hdl = pScheme->GetFont(FONT_NAMES[i], true);
-	}
+	NeoUI::LoadFonts(&m_uiCtx, pScheme, FONT_OVERRIDES, ARRAYSIZE(FONT_OVERRIDES));
+	m_hRankIconFont = NeoHud::GetFont(pScheme, "NHudScoreboardIcons");
+	m_iRankGlyphWide = m_hRankIconFont ? NeoHud::GetRankGlyphWideMax(m_hRankIconFont) : 0;
 
 	m_playerPopup = {};
 	m_iTotalPlayers = 0;
@@ -226,6 +231,37 @@ void CNEOScoreBoard::ApplySchemeSettings(vgui::IScheme *pScheme)
 	m_flNextUpdateTime = gpGlobals->curtime + 0.1f;
 
 	NeoUI::ClosePopup();
+}
+
+int CNEOScoreBoard::GetRankIconWide() const
+{
+	if (!m_hRankIconFont)
+	{
+		return 0;
+	}
+	// The margin is live: a narrow table lowers it
+	return m_iRankGlyphWide + m_uiCtx.iMarginX;
+}
+
+void CNEOScoreBoard::DrawRankCell(const int iXP) const
+{
+	const NeoUI::FontInfo &textFont = m_uiCtx.fonts[NeoUI::FONT_NTSMALLTEXT];
+	const int xStart = m_uiCtx.rWidgetArea.x0 + m_uiCtx.iMarginX;
+	const int yText = m_uiCtx.rWidgetArea.y0 + textFont.iYFontOffset;
+	const int iIconColumnWide = GetRankIconWide();
+	vgui::surface()->DrawSetTextColor(m_uiCtx.colors.normalFg);
+
+	if (m_hRankIconFont)
+	{
+		// Centered in a column as wide as the widest rank icon, and on the row, as the kill feed draws it
+		NeoHud::DrawRankGlyphCentered(m_hRankIconFont, xStart, iIconColumnWide - m_uiCtx.iMarginX,
+				m_uiCtx.rWidgetArea.y0, m_uiCtx.irWidgetTall, iXP);
+	}
+
+	const wchar_t *pwszRank = GetRankNameW(iXP);
+	vgui::surface()->DrawSetTextFont(textFont.hdl);
+	vgui::surface()->DrawSetTextPos(xStart + iIconColumnWide, yText);
+	vgui::surface()->DrawPrintText(pwszRank, V_wcslen(pwszRank));
 }
 
 void CNEOScoreBoard::Paint()
@@ -534,7 +570,7 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 				? 35
 				: 25;
 	m_uiCtx.layout.iRowTall = m_uiCtx.layout.iDefRowTall = tall / iDivBy;
-	m_uiCtx.iMarginX = wide / 192 / 2;
+	m_uiCtx.iMarginX = NeoHud::ScaledPx(SCOREBOARD_CELL_MARGIN_PX);
 	m_uiCtx.iMarginY = tall / 108 / 2;
 	int iWideAs43 = static_cast<float>(tall) * (4.0f / 3.0f);
 	if (iWideAs43 > wide) iWideAs43 = wide;
@@ -643,36 +679,75 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 		}
 		NeoUI::EndSection();
 
-		m_uiCtx.colors.sectionBg = COLOR_BLACK_TRANSPARENT;
-
-		const int iClassWide = NeoUI::SuitableWideByWStr(L"Support", NeoUI::SUITABLEWIDE_TABLE);
-
 		int iColsWidePlayersList[COLSPLAYERS__TOTAL] = {};
-		iColsWidePlayersList[COLSPLAYERS_PING] = NeoUI::SuitableWideByWStr(L"BOT", NeoUI::SUITABLEWIDE_TABLE);
-		iColsWidePlayersList[COLSPLAYERS_AVATAR] = m_uiCtx.layout.iRowTall;
-		iColsWidePlayersList[COLSPLAYERS_NAME] = 0;
-		iColsWidePlayersList[COLSPLAYERS_READYUP] = bShowReadyUp ? NeoUI::SuitableWideByWStr(L"NOT READY", NeoUI::SUITABLEWIDE_TABLE) : 0;
-		iColsWidePlayersList[COLSPLAYERS_DMG_DEALT] = bShowDamageInfo ? NeoUI::SuitableWideByWStr(L"Dmg from", NeoUI::SUITABLEWIDE_TABLE) : 0;
-		iColsWidePlayersList[COLSPLAYERS_DMG_TAKEN] = bShowDamageInfo ? NeoUI::SuitableWideByWStr(L"Dmg from", NeoUI::SUITABLEWIDE_TABLE) : 0;
-		iColsWidePlayersList[COLSPLAYERS_CLASS] = iClassWide;
-		iColsWidePlayersList[COLSPLAYERS_RANK] = NeoUI::SuitableWideByWStr(bHasRanklessDog ? L"Rankless Dog" : L"Lieutenant", NeoUI::SUITABLEWIDE_TABLE);
-		iColsWidePlayersList[COLSPLAYERS_XP] = NeoUI::SuitableWideByWStr(L"-99", NeoUI::SUITABLEWIDE_TABLE);
-		iColsWidePlayersList[COLSPLAYERS_DEATH] = NeoUI::SuitableWideByWStr(L"D#", NeoUI::SUITABLEWIDE_TABLE);
-		int iColsWidePlayersTotalNonName = 0;
-		for (int i = 0; i < COLSPLAYERS__TOTAL; ++i)
-		{
-			iColsWidePlayersTotalNonName += iColsWidePlayersList[i];
-		}
-
 		int iColsWideNonPlayersList[COLSNONPLAYERS__TOTAL] = {};
-		iColsWideNonPlayersList[COLSNONPLAYERS_PING] = NeoUI::SuitableWideByWStr(L"BOT", NeoUI::SUITABLEWIDE_TABLE);
-		iColsWideNonPlayersList[COLSNONPLAYERS_AVATAR] = m_uiCtx.layout.iRowTall;
-		iColsWideNonPlayersList[COLSNONPLAYERS_NAME] = 0;
+		int iColsWidePlayersTotalNonName = 0;
 		int iColsWideNonPlayersTotalNonName = 0;
-		for (int i = 0; i < COLSNONPLAYERS__TOTAL; ++i)
+		// Every column but the name, which takes what is left. They depend on the cell margin, which a narrow table lowers.
+		const auto ComputeColsWide = [this, bShowReadyUp, bShowDamageInfo, bHasRanklessDog,
+				&iColsWidePlayersList, &iColsWideNonPlayersList, &iColsWidePlayersTotalNonName, &iColsWideNonPlayersTotalNonName]
+				(const bool bShowClass)
 		{
-			iColsWideNonPlayersTotalNonName += iColsWideNonPlayersList[i];
+			iColsWidePlayersList[COLSPLAYERS_PING] = NeoUI::SuitableWideByWStr(L"BOT", NeoUI::SUITABLEWIDE_TABLE);
+			iColsWidePlayersList[COLSPLAYERS_AVATAR] = m_uiCtx.layout.iRowTall + (m_uiCtx.iMarginX * 2);
+			iColsWidePlayersList[COLSPLAYERS_NAME] = 0;
+			iColsWidePlayersList[COLSPLAYERS_READYUP] = bShowReadyUp ? NeoUI::SuitableWideByWStr(L"NOT READY", NeoUI::SUITABLEWIDE_TABLE) : 0;
+			iColsWidePlayersList[COLSPLAYERS_DMG_DEALT] = bShowDamageInfo ? NeoUI::SuitableWideByWStr(L"Dmg from", NeoUI::SUITABLEWIDE_TABLE) : 0;
+			iColsWidePlayersList[COLSPLAYERS_DMG_TAKEN] = bShowDamageInfo ? NeoUI::SuitableWideByWStr(L"Dmg from", NeoUI::SUITABLEWIDE_TABLE) : 0;
+			// Juggernaut is the longest class name
+			iColsWidePlayersList[COLSPLAYERS_CLASS] = bShowClass ? NeoUI::SuitableWideByWStr(L"Juggernaut", NeoUI::SUITABLEWIDE_TABLE, NeoUI::FONT_NTSMALLTEXT) : 0;
+			iColsWidePlayersList[COLSPLAYERS_RANK] = NeoUI::SuitableWideByWStr(bHasRanklessDog ? L"Rankless Dog" : L"Lieutenant", NeoUI::SUITABLEWIDE_TABLE, NeoUI::FONT_NTSMALLTEXT)
+					+ GetRankIconWide();
+			iColsWidePlayersList[COLSPLAYERS_XP] = NeoUI::SuitableWideByWStr(L"-99", NeoUI::SUITABLEWIDE_TABLE);
+			iColsWidePlayersList[COLSPLAYERS_DEATH] = NeoUI::SuitableWideByWStr(L"D#", NeoUI::SUITABLEWIDE_TABLE);
+			iColsWidePlayersTotalNonName = 0;
+			for (int i = 0; i < COLSPLAYERS__TOTAL; ++i)
+			{
+				iColsWidePlayersTotalNonName += iColsWidePlayersList[i];
+			}
+
+			iColsWideNonPlayersList[COLSNONPLAYERS_PING] = NeoUI::SuitableWideByWStr(L"BOT", NeoUI::SUITABLEWIDE_TABLE);
+			iColsWideNonPlayersList[COLSNONPLAYERS_AVATAR] = m_uiCtx.layout.iRowTall + (m_uiCtx.iMarginX * 2);
+			iColsWideNonPlayersList[COLSNONPLAYERS_NAME] = 0;
+			iColsWideNonPlayersTotalNonName = 0;
+			for (int i = 0; i < COLSNONPLAYERS__TOTAL; ++i)
+			{
+				iColsWideNonPlayersTotalNonName += iColsWideNonPlayersList[i];
+			}
+		};
+		const int iBaseMarginX = m_uiCtx.iMarginX;
+
+		// The table's background keeps its size, and its columns stand in from each side by the space
+		// above and below a row's text, less the margin each column already has
+		const int iCapTall = vgui::surface()->GetFontAscent(m_uiCtx.fonts[NeoUI::FONT_NTNORMAL].hdl, L'H');
+		const auto GetEdgePad = [this, iCapTall]()
+		{
+			return Max(0, ((m_uiCtx.layout.iRowTall - iCapTall) / 2) - m_uiCtx.iMarginX);
+		};
+
+		// The name column stays the widest. A table too narrow for that lowers its cell margin. Both game teams
+		// share one margin, found with the class column shown, so their columns match side by side.
+		const auto NameIsWidest = [&iColsWidePlayersList, &iColsWidePlayersTotalNonName](const int iTableWide)
+		{
+			const int iNameWide = iTableWide - iColsWidePlayersTotalNonName;
+			for (int i = 0; i < COLSPLAYERS__TOTAL; ++i)
+			{
+				if (i != COLSPLAYERS_NAME && iColsWidePlayersList[i] > iNameWide)
+				{
+					return false;
+				}
+			}
+			return true;
+		};
+		const int iGameTeamWide = (iRootSubPanelWide / 2) - (iGap / 2);
+		const int iMinMarginX = NeoHud::ScaledPx(SCOREBOARD_CELL_MARGIN_MIN_PX);
+		ComputeColsWide(true);
+		while (!NameIsWidest(iGameTeamWide - (GetEdgePad() * 2)) && m_uiCtx.iMarginX > iMinMarginX)
+		{
+			--m_uiCtx.iMarginX;
+			ComputeColsWide(true);
 		}
+		const int iGameTeamMarginX = m_uiCtx.iMarginX;
 
 		// Output all the players in the server
 		for (int iCurTeam = TEAM_UNASSIGNED; iCurTeam < TEAM__TOTAL; ++iCurTeam)
@@ -699,7 +774,8 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 					|| false == bIsTeamplay
 					|| bShowDamageInfo
 					|| iLocalPlayerTeam == iCurTeam;
-			iColsWidePlayersList[COLSPLAYERS_CLASS] = bShowClass ? iClassWide : 0;
+			m_uiCtx.iMarginX = (iCurTeam >= FIRST_GAME_TEAM) ? iGameTeamMarginX : iBaseMarginX;
+			ComputeColsWide(bShowClass);
 
 			m_uiCtx.dPanel.x = (wide / 2) - (iRootSubPanelWide / 2);
 			if ((bNSFFirst && TEAM_JINRAI == iCurTeam)
@@ -720,7 +796,18 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 			// One for the heading
 			m_uiCtx.dPanel.tall = m_uiCtx.layout.iRowTall * (1 + ((iCurTeam >= FIRST_GAME_TEAM) ? iMaxSidePlayers : iaTeamTally[iCurTeam]));
 
-			iColsWidePlayersList[COLSPLAYERS_NAME] = m_uiCtx.dPanel.wide - iColsWidePlayersTotalNonName + (bShowClass ? 0 : iClassWide);
+			const int iEdgePad = GetEdgePad();
+			if (NeoUI::MODE_PAINT == eMode)
+			{
+				vgui::surface()->DrawSetColor(COLOR_BLACK_TRANSPARENT);
+				vgui::surface()->DrawFilledRect(m_uiCtx.dPanel.x, m_uiCtx.dPanel.y,
+						m_uiCtx.dPanel.x + m_uiCtx.dPanel.wide, m_uiCtx.dPanel.y + m_uiCtx.dPanel.tall);
+			}
+			m_uiCtx.dPanel.x += iEdgePad;
+			m_uiCtx.dPanel.wide -= iEdgePad * 2;
+			m_uiCtx.colors.sectionBg = COLOR_TRANSPARENT;
+
+			iColsWidePlayersList[COLSPLAYERS_NAME] = m_uiCtx.dPanel.wide - iColsWidePlayersTotalNonName;
 			iColsWideNonPlayersList[COLSNONPLAYERS_NAME] = m_uiCtx.dPanel.wide - iColsWideNonPlayersTotalNonName;
 
 			NeoUI::BeginSection(NeoUI::SECTIONFLAG_DISABLEOFFSETS);
@@ -759,17 +846,23 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 							{
 								V_wcscpy_safe(wszTeamtag, SZWSZ_NEO_TEAM_STRS[iCurTeam].wszStr);
 							}
+							// The dash already shows rounds won, unless the map hides it
+							wchar_t wszRoundsWon[16] = {};
+							if (NEORules()->GetHiddenHudElements() & NEO_HUD_ELEMENT_ROUND_STATE)
+							{
+								V_swprintf_safe(wszRoundsWon, L": %d", pTeam->GetRoundsWon());
+							}
 							if (bShowReadyUp)
 							{
-								V_swprintf_safe(wszText, L"%ls: %d (%d player%ls - %d ready)",
-										wszTeamtag, pTeam->GetRoundsWon(), iaTeamTally[iCurTeam],
+								V_swprintf_safe(wszText, L"%ls%ls (%d player%ls - %d ready)",
+										wszTeamtag, wszRoundsWon, iaTeamTally[iCurTeam],
 										iaTeamTally[iCurTeam] == 1 ? L"" : L"s",
 										iaTeamReadyTally[iCurTeam]);
 							}
 							else
 							{
-								V_swprintf_safe(wszText, L"%ls: %d (%d player%ls)",
-										wszTeamtag, pTeam->GetRoundsWon(), iaTeamTally[iCurTeam],
+								V_swprintf_safe(wszText, L"%ls%ls (%d player%ls)",
+										wszTeamtag, wszRoundsWon, iaTeamTally[iCurTeam],
 										iaTeamTally[iCurTeam] == 1 ? L"" : L"s");
 							}
 						}
@@ -932,10 +1025,12 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 
 					// Avatar/Dead-indicator
 					NeoUI::Pad();
+					// The avatar stands in the middle of its column, a cell margin from the columns either side
+					const int iAvatarX = m_uiCtx.rWidgetArea.x0 + m_uiCtx.iMarginX;
 					const bool bValidAvatar = (pAvatar->m_iTextureID > 0);
 					if (bValidAvatar)
 					{
-						pAvatar->Paint(m_uiCtx.rWidgetArea.x0,
+						pAvatar->Paint(iAvatarX,
 								m_uiCtx.rWidgetArea.y0,
 								m_uiCtx.irWidgetTall,
 								pPlayerInfo->bDead && bIsPlaying);
@@ -945,9 +1040,9 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 						// Slightly redden the avatar
 						vgui::surface()->DrawSetColor(100, 0, 0, 75);
 						vgui::surface()->DrawFilledRect(
-								m_uiCtx.rWidgetArea.x0,
+								iAvatarX,
 								m_uiCtx.rWidgetArea.y0,
-								m_uiCtx.rWidgetArea.x0 + m_uiCtx.irWidgetTall,
+								iAvatarX + m_uiCtx.irWidgetTall,
 								m_uiCtx.rWidgetArea.y0 + m_uiCtx.irWidgetTall);
 					}
 					if (iCurTeam >= FIRST_GAME_TEAM)
@@ -958,9 +1053,9 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 						{
 							vgui::surface()->DrawSetColor(0, 0, 0, 200);
 							vgui::surface()->DrawFilledRect(
-									m_uiCtx.rWidgetArea.x0,
+									iAvatarX,
 									m_uiCtx.rWidgetArea.y0,
-									m_uiCtx.rWidgetArea.x0 + m_uiCtx.irWidgetTall,
+									iAvatarX + m_uiCtx.irWidgetTall,
 									m_uiCtx.rWidgetArea.y0 + m_uiCtx.irWidgetTall);
 						}
 
@@ -968,7 +1063,7 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 						if (pPlayerInfo->bDead)
 						{
 							NeoUI::Texture("vgui/hud/kill_kill",
-									m_uiCtx.rWidgetArea.x0,
+									iAvatarX,
 									m_uiCtx.rWidgetArea.y0,
 									m_uiCtx.irWidgetTall,
 									m_uiCtx.irWidgetTall,
@@ -1049,11 +1144,19 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 							NeoUI::Pad();
 						}
 
-						// Class
+						// Class and rank are words, so they stay readable in the proportional font
+						NeoUI::SwapFont(NeoUI::FONT_NTSMALLTEXT);
 						NeoUI::Label(GetNeoClassNameW(pPlayerInfo->iClass));
+						NeoUI::SwapFont(NeoUI::FONT_NTNORMAL);
 
-						// Rank
-						NeoUI::Label(GetRankNameW(pPlayerInfo->iXP));
+						// Rank, with the kill feed's rank icon before its name
+						NeoUI::Pad();
+						if (NeoUI::MODE_PAINT == eMode)
+						{
+							DrawRankCell(pPlayerInfo->iXP);
+							// The cell drew in its own fonts, so give NeoUI back the one it expects
+							NeoUI::SwapFont(NeoUI::FONT_NTNORMAL, true);
+						}
 
 						// XP
 						V_swprintf_safe(wszText, L"%d", pPlayerInfo->iXP);
@@ -1068,6 +1171,7 @@ void CNEOScoreBoard::OnMainLoop(const NeoUI::Mode eMode)
 			}
 			NeoUI::EndSection();
 		}
+		m_uiCtx.iMarginX = iBaseMarginX;
 
 		m_uiCtx.colors.normalFg = COLOR_NEO_WHITE;
 

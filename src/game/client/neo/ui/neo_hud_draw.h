@@ -8,7 +8,7 @@ class IScheme;
 }
 
 // Drawing mechanics shared by the HUD panels: scheme fonts with a fallback, sizes written at 1080p,
-// and text placed by its baseline and visible edges.
+// text placed by its baseline and visible edges, and the rank glyphs from the kill feed icon font.
 namespace NeoHud
 {
 // The on-screen span of what a draw call put down, from its leftmost to its rightmost visible pixel
@@ -48,4 +48,9 @@ InkRange DrawNumberCentered(vgui::HFont font, int xCenter, int yBaseline, const 
 // and this gives it a little extra space between characters, in proportion to the font's ascent.
 float GetReadoutTracking(vgui::HFont font);
 
+// Rank glyphs in the kill feed icon font, from the rankless dog up to lieutenant
+wchar_t GetRankGlyph(int iXP);
+int GetRankGlyphWideMax(vgui::HFont hIconFont);
+// Centered in a column and on a row, as a table cell draws it. The caller sets the color.
+void DrawRankGlyphCentered(vgui::HFont hIconFont, int xColumn, int iColumnWide, int yRow, int iRowTall, int iXP);
 }
