@@ -59,15 +59,23 @@ ul,ol{padding-left:20px} li{margin:4px 0}
 .toolbar span{color:var(--muted);font-size:13px}
 dialog{border:0;padding:0;background:transparent;max-width:min(96vw,1600px);max-height:96vh}
 dialog::backdrop{background:rgba(0,0,0,.82)}
-dialog img{display:block;max-width:min(96vw,1600px);max-height:90vh;width:auto;height:auto;border-radius:6px}
+dialog img{display:block;max-width:min(96vw,1600px);max-height:90vh;width:auto;height:auto;border-radius:6px;image-rendering:pixelated}
 dialog p{margin:8px 0 0;color:#dfe6ec;font-size:13px;text-align:center}
 dialog button{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:4px;font:600 13px var(--body);padding:6px 10px;cursor:pointer}
 button:focus-visible,figure.scene img:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 @media (prefers-reduced-motion: no-preference){dialog[open]{animation:in .15s ease-out}}
 @keyframes in{from{opacity:0}to{opacity:1}}
 .part{font:700 12px/1 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0;padding-bottom:10px;border-bottom:1px solid var(--line)}
-figure.pair .tag{display:block;padding:6px 10px 4px;font:600 11px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-figure.pair .tag.new{color:var(--accent)}
+.cmps{width:min(1600px,calc(100vw - 32px));margin-left:calc(50% - min(800px,calc(50vw - 16px)));display:grid;gap:18px;margin-bottom:16px}
+.cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px;align-items:start}
+.cmp h4{grid-column:1/-1;margin:0;font:600 14px/1.3 var(--body)}
+.cmp h4 span{font-weight:400;color:var(--muted)}
+.cmp figure{background:var(--surface)}
+.cmp figure img{cursor:zoom-in;background:#000}
+.cmp .tag{display:block;padding:6px 10px 5px;font:600 11px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.cmp .tag.new{color:var(--accent)}
+.cmp img:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:720px){.cmp{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body>
@@ -75,13 +83,13 @@ figure.pair .tag.new{color:var(--accent)}
 <header>
 <p class="eyebrow">NT;RE HUD consistency, measuring pass and ammo rail</p>
 <h1>HUD Glyphs and Ammo Rail</h1>
-<p>Captured on Linux at 1920 by 1080, the latest set on 2026-11-09. The captures marked original are <code>master</code> of NeotokyoRebuild/neo at <code>aa8f099d4</code>, captured on 2026-11-10 with only the Linux font loading fix applied so its fonts draw as they do on Windows. The captures marked latest are the HUD proposed in the HUD consistency pull requests, #28 to #32 on <a href="https://github.com/sunmachine/ntre-dev/pulls">sunmachine/ntre-dev</a>, with three additions on top: a debug view that measures HUD text, a fix for the cut fire mode icons, and a new layout for the ammo rail and the mag count. None of the three is in a pull request yet.</p>
+<p>Captured on Linux at 1920 by 1080. The comparisons in part 2 were all captured on 2026-11-10, both sides in the same scenes on <code>ntre_oilstain_ctg</code> with bots, so names and counts differ between them. The left side of each is <code>master</code> of NeotokyoRebuild/neo at <code>aa8f099d4</code>, with only the Linux font loading fix applied so its fonts draw as they do on Windows. The right side is the HUD proposed in the HUD consistency pull requests, #28 to #32 on <a href="https://github.com/sunmachine/ntre-dev/pulls">sunmachine/ntre-dev</a>, with three additions on top: a debug view that measures HUD text, a fix for the cut fire mode icons, and a new layout for the ammo rail and the mag count. None of the three is in a pull request yet.</p>
 </header>
 
 <p class="part">Part 1. How it is measured</p>
 <section>
 <h2>The debug view</h2>
-<p><code>cl_neo_hud_debug_draw 1</code> outlines every text run and every box the HUD draws. At <code>2</code> it also underlines each character's ink. <code>cl_neo_hud_debug_dump label</code> writes the same rectangles of one frame to <code>hud_debug_label.txt</code> in the game folder. Both are off by default and neither is a cheat.</p>
+<p>The debug frames here are from the measuring set of 2026-11-09. <code>cl_neo_hud_debug_draw 1</code> outlines every text run and every box the HUD draws. At <code>2</code> it also underlines each character's ink. <code>cl_neo_hud_debug_dump label</code> writes the same rectangles of one frame to <code>hud_debug_label.txt</code> in the game folder. Both are off by default and neither is a cheat.</p>
 <ul class="legend">
 <li><span class="sw" style="background:#00ffff"></span>Font's line box</li>
 <li><span class="sw" style="background:#ff3030"></span>Its top edge, where glyphs are cut</li>
@@ -214,7 +222,7 @@ text    NHudWeapon  -            NHudFireMode   NOCR Icons   60    58      1477 
 
 <section>
 <h2>Ammo rail and mag count</h2>
-<p>On <code>master</code> every round is drawn at one size in a single row, a plus sign marks a mag that holds more rounds than the row shows, and the panel has no round count. The latest layout draws one round per round, gives each gun its own rows and batches, adds the round count over the rail and stands the mag count at the end of the rack. All crops are the bottom right corner at twice native size.</p>
+<p>On <code>master</code> every round is drawn at one size in a single row, a plus sign marks a mag that holds more rounds than the row shows, and the panel has no round count. The latest layout draws one round per round, gives each gun its own rows and batches, adds the round count over the rail and stands the mag count at the end of the rack. </p>
 <ol>
 <li><strong>Two rows for the PZ252, SMAC and SRM only.</strong> Their rounds are drawn small, and the lower row empties first.</li>
 <li><strong>One row for every other bulleted gun,</strong> with rounds at full size when the mag fits the rail and smaller when it does not. A smaller row stands in the middle of a full round's height.</li>
@@ -223,20 +231,21 @@ text    NHudWeapon  -            NHudFireMode   NOCR Icons   60    58      1477 
 <li><strong>The round count sits over the rail's right edge</strong> on the top row.</li>
 </ol>
 <h3>Against master</h3>
-<div class="grid pairs">
-<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_pz.png" alt="PZ252 ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_pz.png" alt="PZ252 ammo panel, latest" loading="lazy"><figcaption><b>PZ252.</b> 100 rounds in two rows of 50, a space after every 10.</figcaption></figure>
-<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_srm.png" alt="SRM ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_srm.png" alt="SRM ammo panel, latest" loading="lazy"><figcaption><b>SRM.</b> 50 rounds in two rows of 25, a space after every 5.</figcaption></figure>
-<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_mx.png" alt="MX ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_mx.png" alt="MX ammo panel, latest" loading="lazy"><figcaption><b>MX.</b> 30 rounds in one row at full size, a space after every 10.</figcaption></figure>
-<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_milso.png" alt="MilSO ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_milso.png" alt="MilSO ammo panel, latest" loading="lazy"><figcaption><b>MilSO.</b> 12 rounds in one row at full size, a space after every 4.</figcaption></figure>
-<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_kyla.png" alt="KYLA ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_kyla.png" alt="KYLA ammo panel, latest" loading="lazy"><figcaption><b>KYLA.</b> 6 rounds in one row at full size, no spaces.</figcaption></figure>
-<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_supa7.png" alt="SUPA 7 ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_supa7.png" alt="SUPA 7 ammo panel, latest" loading="lazy"><figcaption><b>SUPA 7.</b> 7 shells in one row. The two reserve counts stack across the rail's height, shells over slugs, 8 px apart.</figcaption></figure>
-<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_smac.png" alt="SMAC ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_smac.png" alt="SMAC ammo panel, latest" loading="lazy"><figcaption><b>SMAC.</b> 90 rounds in two rows, 50 over 40, a space after every 10.</figcaption></figure>
-<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_jitte.png" alt="Jitte ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_jitte.png" alt="Jitte ammo panel, latest" loading="lazy"><figcaption><b>Jitte.</b> 30 rounds in one row, a space after every 10. The rounds are drawn smaller so the row fits the rail.</figcaption></figure>
-<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_mpn.png" alt="MPN45 ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_mpn.png" alt="MPN45 ammo panel, latest" loading="lazy"><figcaption><b>MPN45.</b> 30 rounds in one row, a space after every 10, smaller as on the Jitte.</figcaption></figure>
-<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_m41.png" alt="M41 ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_m41.png" alt="M41 ammo panel, latest" loading="lazy"><figcaption><b>M41.</b> 15 rounds in one row at full size, a space after every 5.</figcaption></figure>
-<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_tachi.png" alt="TACHI ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_tachi.png" alt="TACHI ammo panel, latest" loading="lazy"><figcaption><b>TACHI.</b> 15 rounds in one row at full size, a space after every 5.</figcaption></figure>
-<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_srs.png" alt="SRS ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_srs.png" alt="SRS ammo panel, latest" loading="lazy"><figcaption><b>SRS.</b> 5 rounds in one row at full size, no spaces.</figcaption></figure>
-<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_aa13.png" alt="AA13 ammo panel on master" loading="lazy"><span class="tag new">Latest</span><img src="img/rail_aa13.png" alt="AA13 ammo panel, latest" loading="lazy"><figcaption><b>AA13.</b> 16 shells in one row at full size, as on master.</figcaption></figure>
+<p>Twice native size. Click an image for its full size.</p>
+<div class="cmps">
+<div class="cmp"><h4>PZ252. <span>100 rounds in two rows of 50, a space after every 10.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_pz_master.png" alt="PZ252 on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_pz_latest.png" alt="PZ252, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>SRM. <span>50 rounds in two rows of 25, a space after every 5.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_srm_master.png" alt="SRM on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_srm_latest.png" alt="SRM, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>MX. <span>30 rounds in one row at full size, a space after every 10.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_mx_master.png" alt="MX on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_mx_latest.png" alt="MX, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>MilSO. <span>12 rounds in one row at full size, a space after every 4.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_milso_master.png" alt="MilSO on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_milso_latest.png" alt="MilSO, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>KYLA. <span>6 rounds in one row at full size, no spaces.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_kyla_master.png" alt="KYLA on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_kyla_latest.png" alt="KYLA, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>SUPA 7. <span>7 shells in one row. The two reserve counts stack across the rail's height, shells over slugs.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_supa7_master.png" alt="SUPA 7 on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_supa7_latest.png" alt="SUPA 7, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>SMAC. <span>90 rounds in two rows, 50 over 40, a space after every 10.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_smac_master.png" alt="SMAC on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_smac_latest.png" alt="SMAC, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>Jitte. <span>30 rounds in one row, a space after every 10, drawn smaller so the row fits.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_jitte_master.png" alt="Jitte on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_jitte_latest.png" alt="Jitte, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>MPN45. <span>30 rounds in one row, a space after every 10, smaller as on the Jitte.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_mpn_master.png" alt="MPN45 on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_mpn_latest.png" alt="MPN45, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>M41. <span>15 rounds in one row at full size, a space after every 5.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_m41_master.png" alt="M41 on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_m41_latest.png" alt="M41, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>TACHI. <span>15 rounds in one row at full size, a space after every 5.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_tachi_master.png" alt="TACHI on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_tachi_latest.png" alt="TACHI, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>SRS. <span>5 rounds in one row at full size, no spaces.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_srs_master.png" alt="SRS on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_srs_latest.png" alt="SRS, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>AA13. <span>16 shells in one row at full size, as on master.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_aa13_master.png" alt="AA13 on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_aa13_latest.png" alt="AA13, latest" loading="lazy" tabindex="0"></figure></div>
 </div>
 <div class="tablewrap"><table>
 <thead><tr><th>Gun</th><th>Mag</th><th>Rows</th><th>Batch</th><th>Round size</th></tr></thead>
@@ -257,49 +266,49 @@ text    NHudWeapon  -            NHudFireMode   NOCR Icons   60    58      1477 
 
 <section>
 <h2>Scoreboard and spectator overlay</h2>
-<p>These come from the overlay and scoreboard pull request, #32, and this pass did not change them. Both sets were captured on 2026-11-10 in the same scenes, a round of bots on <code>ntre_oilstain_ctg</code>, so the names and numbers differ between them. The crops are at native size.</p>
+<p>These come from the overlay and scoreboard pull request, #32. The crops are at native size, one team's table at a time so the two sides stay readable in one row.</p>
 <ol>
 <li><strong>Scoreboard body.</strong> Verdana at the row's size on <code>master</code>. Overpass Mono at about 10 px in the pull request, with Montserrat for class and rank names, and each column keeps a margin from its edges.</li>
+<li><strong>Rank glyph.</strong> The kill feed's rank icon stands before each rank name. It was missing from earlier captures of the pull request because a refactor drew it with a call that draws nothing in the scoreboard. That is fixed in #32 and shown here.</li>
 <li><strong>Spectator cards.</strong> On <code>master</code> each card places its XP and deaths from its own numbers, so the columns wander from card to card. In the pull request the columns are as wide as the team's widest values and line up down the stack, and a long name is cut and ends in three dots.</li>
 <li><strong>Card text.</strong> Names and numbers move from Verdana to Overpass Mono, and the class label from Verdana to Montserrat.</li>
 </ol>
-<div class="grid pairs">
-<figure class="pair wide"><span class="tag">Original, master</span><img src="img/orig_sb_alive.png" alt="Scoreboard, alive on master" loading="lazy"><span class="tag new">Latest</span><img src="img/new_sb_alive.png" alt="Scoreboard, alive, latest" loading="lazy"><figcaption><b>Scoreboard, alive.</b> Pressed during play.</figcaption></figure>
-<figure class="pair wide"><span class="tag">Original, master</span><img src="img/orig_sb_dead.png" alt="Scoreboard, dead on master" loading="lazy"><span class="tag new">Latest</span><img src="img/new_sb_dead.png" alt="Scoreboard, dead, latest" loading="lazy"><figcaption><b>Scoreboard, dead.</b> After a suicide, with the damage columns and the killer card below. The bots did not hit the player in the latest run, so its damage columns are empty.</figcaption></figure>
-<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_spec_left.png" alt="Spectator cards, left team on master" loading="lazy"><span class="tag new">Latest</span><img src="img/new_spec_left.png" alt="Spectator cards, left team, latest" loading="lazy"><figcaption><b>Spectator cards, left team.</b> The selected card has the white outline.</figcaption></figure>
-<figure class="pair"><span class="tag">Original, master</span><img src="img/orig_spec_right.png" alt="Spectator cards, right team on master" loading="lazy"><span class="tag new">Latest</span><img src="img/new_spec_right.png" alt="Spectator cards, right team, latest" loading="lazy"><figcaption><b>Spectator cards, right team.</b> Dead players show the skull and dimmed stats.</figcaption></figure>
-<figure class="pair wide"><span class="tag">Original, master</span><img src="img/orig_spec_scene.jpg" alt="Spectator overlay, whole screen on master" loading="lazy"><span class="tag new">Latest</span><img src="img/new_spec_scene.jpg" alt="Spectator overlay, whole screen, latest" loading="lazy"><figcaption><b>Spectator overlay, whole screen.</b> Scaled to 1280 wide.</figcaption></figure>
+<div class="cmps">
+<div class="cmp"><h4>Scoreboard alive, NSF.</h4><figure><span class="tag">master</span><img src="img/cmp/sb_alive_left_master.png" alt="Scoreboard alive, NSF on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/sb_alive_left_latest.png" alt="Scoreboard alive, NSF, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>Scoreboard alive, Jinrai.</h4><figure><span class="tag">master</span><img src="img/cmp/sb_alive_right_master.png" alt="Scoreboard alive, Jinrai on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/sb_alive_right_latest.png" alt="Scoreboard alive, Jinrai, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>Scoreboard dead, NSF. <span>After a suicide, with the damage columns. Only the master run took a hit, so only it shows a damage value.</span></h4><figure><span class="tag">master</span><img src="img/cmp/sb_dead_left_master.png" alt="Scoreboard dead, NSF on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/sb_dead_left_latest.png" alt="Scoreboard dead, NSF, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>Scoreboard dead, Jinrai.</h4><figure><span class="tag">master</span><img src="img/cmp/sb_dead_right_master.png" alt="Scoreboard dead, Jinrai on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/sb_dead_right_latest.png" alt="Scoreboard dead, Jinrai, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>Spectator cards, left team.</h4><figure><span class="tag">master</span><img src="img/cmp/spec_left_master.png" alt="Spectator cards, left team on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/spec_left_latest.png" alt="Spectator cards, left team, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>Spectator cards, right team.</h4><figure><span class="tag">master</span><img src="img/cmp/spec_right_master.png" alt="Spectator cards, right team on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/spec_right_latest.png" alt="Spectator cards, right team, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>Spectator overlay, whole screen. <span>Scaled to 1280 wide.</span></h4><figure><span class="tag">master</span><img src="img/cmp/scene_s_overlay_master.jpg" alt="Spectator overlay, whole screen on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/scene_s_overlay_latest.jpg" alt="Spectator overlay, whole screen, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>Scoreboard dead, whole screen. <span>Scaled to 1280 wide.</span></h4><figure><span class="tag">master</span><img src="img/cmp/scene_sb_dead_master.jpg" alt="Scoreboard dead, whole screen on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/scene_sb_dead_latest.jpg" alt="Scoreboard dead, whole screen, latest" loading="lazy" tabindex="0"></figure></div>
 </div>
 </section>
 
 <section>
-<h2>Panels this pass did not change</h2>
-<p>The vitals, compass, dash and kill feed are as the pull requests propose them. Their latest captures follow, since the measurements above were taken on them too. They have no <code>master</code> captures beside them yet.</p>
+<h2>Vitals, compass, dash and kill feed</h2>
+<p>These come from the text foundation, dash and kill feed pull requests, #28, #30 and #31, and this pass did not change them. The crops are at native size.</p>
+<ol>
+<li><strong>Vitals and compass.</strong> Jura labels and directions, and NOCR numbers on the bars' baselines.</li>
+<li><strong>Dash.</strong> A bold clock and alive counts, with even spacing between its rows. The squad list moves to Overpass Mono in columns.</li>
+<li><strong>Kill feed.</strong> Names in Overpass Mono and words in Montserrat, with the feed starting below the avatars when they are drawn.</li>
+</ol>
+<div class="cmps">
+<div class="cmp"><h4>Vitals.</h4><figure><span class="tag">master</span><img src="img/cmp/vitals_master.png" alt="Vitals on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/vitals_latest.png" alt="Vitals, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>Compass.</h4><figure><span class="tag">master</span><img src="img/cmp/compass_master.png" alt="Compass on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/compass_latest.png" alt="Compass, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>Squad list. <span>Top left of the screen.</span></h4><figure><span class="tag">master</span><img src="img/cmp/squad_master.png" alt="Squad list on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/squad_latest.png" alt="Squad list, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>Dash, playing, avatars.</h4><figure><span class="tag">master</span><img src="img/cmp/dash_avatars_master.png" alt="Dash, playing, avatars on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/dash_avatars_latest.png" alt="Dash, playing, avatars, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>Dash, playing, squad list.</h4><figure><span class="tag">master</span><img src="img/cmp/dash_list_master.png" alt="Dash, playing, squad list on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/dash_list_latest.png" alt="Dash, playing, squad list, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>Dash, spectating, avatars.</h4><figure><span class="tag">master</span><img src="img/cmp/dash_spec_master.png" alt="Dash, spectating, avatars on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/dash_spec_latest.png" alt="Dash, spectating, avatars, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>Kill feed, avatars drawn.</h4><figure><span class="tag">master</span><img src="img/cmp/feed_avatars_master.png" alt="Kill feed, avatars drawn on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/feed_avatars_latest.png" alt="Kill feed, avatars drawn, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>Kill feed, squad list.</h4><figure><span class="tag">master</span><img src="img/cmp/feed_list_master.png" alt="Kill feed, squad list on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/feed_list_latest.png" alt="Kill feed, squad list, latest" loading="lazy" tabindex="0"></figure></div>
+<div class="cmp"><h4>Playing, whole screen. <span>Scaled to 1280 wide.</span></h4><figure><span class="tag">master</span><img src="img/cmp/scene_p_avatars_master.jpg" alt="Playing, whole screen on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/scene_p_avatars_latest.jpg" alt="Playing, whole screen, latest" loading="lazy" tabindex="0"></figure></div>
+</div>
 </section>
 
-<section>
-<h2>Vitals</h2>
-<p>Bottom left corner. Jura labels and NOCR numbers on the bars' baselines.</p>
-<div class="grid"><figure class="crop"><img src="img/w_mx_vitals.png" alt="MX, full health" loading="lazy"><figcaption>MX, full health</figcaption></figure><figure class="crop"><img src="img/w_milso_vitals.png" alt="MILSO" loading="lazy"><figcaption>MILSO</figcaption></figure></div>
-</section>
 
-<section>
-<h2>Compass</h2>
-<p>Bottom center. Directions in Jura, the objective arrow above the box.</p>
-<div class="grid"><figure class="crop wide"><img src="img/w_mx_compass.png" alt="Compass with the MX" loading="lazy"><figcaption>With the MX in hand</figcaption></figure><figure class="crop wide"><img src="img/w_milso_compass.png" alt="Compass with the MILSO" loading="lazy"><figcaption>With the MILSO in hand</figcaption></figure></div>
-</section>
 
-<section>
-<h2>Dash</h2>
-<p>Top center. Bold clock and alive counts, even rows, avatars with cut names, squad list in Overpass Mono.</p>
-<div class="grid"><figure class="crop"><img src="img/p_list_squad.png" alt="Squad list, top left of the screen" loading="lazy"><figcaption>Squad list, top left of the screen</figcaption></figure><figure class="crop wide"><img src="img/p_list_dash.png" alt="Playing, squad list shown" loading="lazy"><figcaption>Playing, with the squad list shown</figcaption></figure><figure class="crop wide"><img src="img/p_avatars_dash.png" alt="Playing, avatars" loading="lazy"><figcaption>Playing, avatars</figcaption></figure><figure class="crop wide"><img src="img/s_list_dash.png" alt="Spectating, squad list" loading="lazy"><figcaption>Spectating, squad list</figcaption></figure><figure class="crop wide"><img src="img/s_avatars_dash.png" alt="Spectating, avatars" loading="lazy"><figcaption>Spectating, avatars</figcaption></figure></div>
-</section>
 
-<section>
-<h2>Kill feed</h2>
-<p>Top right. Names in Overpass Mono, words in Montserrat, the feed starting below the avatars only when they drew this frame.</p>
-<div class="grid"><figure class="crop"><img src="img/p_avatars_feed.png" alt="Playing, avatars drawn: the feed starts below them" loading="lazy"><figcaption>Playing, avatars drawn: the feed starts below them</figcaption></figure><figure class="crop"><img src="img/p_list_feed.png" alt="Playing, squad list: the feed starts at the top" loading="lazy"><figcaption>Playing, squad list: the feed starts at the top</figcaption></figure><figure class="crop"><img src="img/s_avatars_feed.png" alt="Spectating, avatars" loading="lazy"><figcaption>Spectating, avatars</figcaption></figure><figure class="crop"><img src="img/s_list_feed.png" alt="Spectating, squad list" loading="lazy"><figcaption>Spectating, squad list</figcaption></figure></div>
-</section>
 
 <section>
 <h2>Text and its boxes</h2>
@@ -317,14 +326,11 @@ text    NHudWeapon  -            NHudFireMode   NOCR Icons   60    58      1477 
 
 <section>
 <h2>Deferred captures</h2>
-<p>These were on the earlier version of this page. Each shows the ammo panel as it was before the rail change, so it was taken down and waits for the next capture run.</p>
+<p>These wait for a later capture run.</p>
 <ul>
-<li><strong>The ammo panel with the debug view on,</strong> for the MX, SRM and SUPA 7.</li>
-<li><strong>The ammo panel for the frag grenade, smoke grenade, knife and BALC.</strong> The rail change moved the counts, and these were not captured again.</li>
-<li><strong>The other full scenes and their debug frames.</strong> Each has the earlier ammo panel in its corner. The scoreboard and spectator overlay scenes were captured again and are above.</li>
+<li><strong>The ammo panel for the frag grenade, smoke grenade, knife and BALC,</strong> since the rail change moved the counts.</li>
+<li><strong>The ammo panel with the debug view on,</strong> and its rows in the padding table.</li>
 <li><strong>The M41L and ZR68L.</strong> They have never been captured. The M41L could not be put in hand.</li>
-<li><strong>The vitals, compass, dash and kill feed on <code>master</code>.</strong> Only the ammo panel was captured there.</li>
-<li><strong>The ammo panel's rows in the padding table,</strong> and the rest of its dump.</li>
 </ul>
 </section>
 
@@ -339,5 +345,18 @@ text    NHudWeapon  -            NHudFireMode   NOCR Icons   60    58      1477 
 </ul>
 </section>
 </main>
+<dialog id="box"><button type="button" id="close">Close</button><img id="boximg" alt=""><p id="boxcap"></p></dialog>
+<script>
+(function(){
+var box=document.getElementById('box'),img=document.getElementById('boximg'),cap=document.getElementById('boxcap');
+function open(el){img.src=el.src;img.alt=el.alt;cap.textContent=el.alt;box.showModal();}
+document.querySelectorAll('.cmp img').forEach(function(el){
+  el.addEventListener('click',function(){open(el);});
+  el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open(el);}});
+});
+document.getElementById('close').addEventListener('click',function(){box.close();});
+box.addEventListener('click',function(e){if(e.target===box)box.close();});
+})();
+</script>
 </body>
 </html>
