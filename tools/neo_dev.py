@@ -34,18 +34,6 @@ Taking a newer Valve SDK
   guard-valve-edits       Put the unguarded NEO hunks in the given Valve files under
                           #ifdef NEO, with Valve's lines under #else.
                           Script: guard_valve_edits.py.
-
-One-time migration, run once in this order
-  tag-valve-edits         1. Tag short in-place edits of Valve lines // NEO, and give
-                          whitespace-only hunks Valve's text back. First, so only what a tag
-                          cannot cover is left for a guard.
-                          Script: tag_valve_edits.py.
-  guard-valve-edits       2. Guard what tags cannot cover, in the files its output commit lists.
-  fence-sdk-tables        3. Fence the SDK table macros in NEO-owned code from clang-format.
-                          Before the reformat, which would pack their entries.
-                          Script: fence_sdk_tables.py.
-  reformat-neo            4. Format every NEO-owned file once. Last, so the fences are in place.
-                          Script: reformat_neo.py.
 """
 import os
 import runpy
@@ -62,9 +50,6 @@ COMMANDS = {
     'tidy-compile-db': ('make_tidy_compile_db.py', []),
     'merge-valve-sdk': ('merge_valve_sdk.sh', []),
     'guard-valve-edits': ('guard_valve_edits.py', []),
-    'tag-valve-edits': ('tag_valve_edits.py', []),
-    'fence-sdk-tables': ('fence_sdk_tables.py', []),
-    'reformat-neo': ('reformat_neo.py', []),
 }
 
 
