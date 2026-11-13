@@ -57,6 +57,7 @@ public:
 
 	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
+#ifdef NEO
 	DECLARE_PREDICTABLE();
 
 	// This passes the event to the client's and server's CHL2MPPlayerAnimState.
@@ -64,12 +65,10 @@ public:
 	void			SetupBones( matrix3x4_t *pBoneToWorld, int boneMask );
 	// TODO (nullsystem): 2025-02-18 SOURCE SDK 2013 CHECK - END
 
-#ifdef NEO
 	// Mirrors C_HL2MP_Player::OnNewModel: the animation state must drop its per-model
 	// cache when the model changes, on the server as well as the client.
 	virtual CStudioHdr *OnNewModel( void ) OVERRIDE;
-#endif
-
+#endif // NEO
 	DECLARE_ENT_SCRIPTDESC();
 
 	virtual void Precache( void );
@@ -77,6 +76,9 @@ public:
 	virtual void PostThink( void );
 	virtual void PreThink( void );
 	virtual void PlayerDeathThink( void );
+#ifndef NEO
+	virtual void SetAnimation( PLAYER_ANIM playerAnim );
+#endif // NEO
 	virtual bool HandleCommand_JoinTeam( int team );
 	virtual bool ClientCommand( const CCommand &args );
 	virtual void CreateViewModel( int viewmodelindex = 0 );
@@ -183,6 +185,9 @@ private:
 #endif
 
 	CNetworkQAngle( m_angEyeAngles );
+#ifndef NEO
+	CPlayerAnimState   m_PlayerAnimState;
+#endif // NEO
 
 	int m_iLastWeaponFireUsercmd;
 	int m_iModelType;

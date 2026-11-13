@@ -126,8 +126,8 @@
 2	src/game/server/hl2/npc_vortigaunt_episodic.cpp
 2	src/game/server/hl2/prop_thumper.cpp
 4	src/game/server/hl2mp/hl2mp_client.cpp
-139	src/game/server/hl2mp/hl2mp_player.cpp
-12	src/game/server/hl2mp/hl2mp_player.h
+8	src/game/server/hl2mp/hl2mp_player.cpp
+5	src/game/server/hl2mp/hl2mp_player.h
 2	src/game/server/hltvdirector.h
 2	src/game/server/nav_merge.cpp
 4	src/game/server/npc_talker.cpp
