@@ -128,8 +128,6 @@
 1	src/game/server/hl2/npc_strider.h
 2	src/game/server/hl2/npc_vortigaunt_episodic.cpp
 2	src/game/server/hl2/prop_thumper.cpp
-97	src/game/server/hl2mp/grenade_tripmine.cpp
-16	src/game/server/hl2mp/grenade_tripmine.h
 4	src/game/server/hl2mp/hl2mp_client.cpp
 139	src/game/server/hl2mp/hl2mp_player.cpp
 12	src/game/server/hl2mp/hl2mp_player.h
@@ -173,8 +171,6 @@
 2	src/game/shared/hl2mp/weapon_hl2mpbase_machinegun.cpp
 2	src/game/shared/hl2mp/weapon_hl2mpbasebasebludgeon.cpp
 9	src/game/shared/hl2mp/weapon_hl2mpbasebasebludgeon.h
-39	src/game/shared/hl2mp/weapon_rpg.cpp
-4	src/game/shared/hl2mp/weapon_rpg.h
 2	src/game/shared/hl2mp/weapon_slam.h
 6	src/game/shared/igamesystem.cpp
 2	src/game/shared/movevars_shared.cpp
