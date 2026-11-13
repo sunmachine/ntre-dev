@@ -2601,7 +2601,8 @@ void CGameMovement::PlaySwimSound()
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-bool CGameMovement::CheckJumpButton( void ) {
+bool CGameMovement::CheckJumpButton( void )
+{
 	if (player->pl.deadflag)
 	{
 		mv->m_nOldButtons |= IN_JUMP ;	// don't jump again until released

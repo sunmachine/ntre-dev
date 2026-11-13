@@ -153,7 +153,7 @@
 2	src/game/shared/baseplayer_shared.cpp
 2	src/game/shared/baseviewmodel_shared.cpp
 5	src/game/shared/ehandle.h
-81	src/game/shared/gamemovement.cpp
+78	src/game/shared/gamemovement.cpp
 2	src/game/shared/gamerules.cpp
 1	src/game/shared/hl2/hl2_usermessages.cpp
 4	src/game/shared/hl2/hl_gamemovement.cpp
