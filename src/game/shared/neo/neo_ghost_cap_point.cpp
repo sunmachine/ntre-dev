@@ -5,7 +5,7 @@
 
 #ifdef GAME_DLL
 #include "weapon_neobasecombatweapon.h"
-#if(0) // wide name localize helpers
+#if (0) // wide name localize helpers
 #include "tier3/tier3.h"
 #include "vgui/ILocalize.h"
 #endif
@@ -110,13 +110,13 @@ int CNEOGhostCapturePoint::UpdateTransmitState()
 	return FL_EDICT_ALWAYS;
 }
 
-bool CNEOGhostCapturePoint::IsGhostCaptured(int& outTeamNumber, int& outCaptorClientIndex)
+bool CNEOGhostCapturePoint::IsGhostCaptured(int &outTeamNumber, int &outCaptorClientIndex)
 {
 	if (m_bIsActive && m_bGhostHasBeenCaptured)
 	{
 		outCaptorClientIndex = m_iSuccessfulCaptorClientIndex;
-		
-		CBaseEntity* pCaptor = UTIL_PlayerByIndex(m_iSuccessfulCaptorClientIndex);
+
+		CBaseEntity *pCaptor = UTIL_PlayerByIndex(m_iSuccessfulCaptorClientIndex);
 		if (!pCaptor) // The capzone will be the activator if we can't find the guy who capped it
 		{
 			pCaptor = this;
@@ -172,9 +172,9 @@ void CNEOGhostCapturePoint::Spawn(void)
 		// We could recover, but it's probably better to break the capzone
 		// and throw a nag message in console so the mapper can fix their error.
 		Warning("Capzone at position %.1f %.1f %.1f had an invalid owning team: %i. "
-			"Expected %i (Jinrai), %i (NSF), or %i (neutral).\n",
-			GetAbsOrigin().x, GetAbsOrigin().y, GetAbsOrigin().z,
-			m_iOwningTeam.Get(), NEO_FGD_TEAMNUM_ATTACKER, NEO_FGD_TEAMNUM_DEFENDER, NEO_FGD_TEAMNUM_NEUTRAL);
+				"Expected %i (Jinrai), %i (NSF), or %i (neutral).\n",
+			GetAbsOrigin().x, GetAbsOrigin().y, GetAbsOrigin().z, m_iOwningTeam.Get(), NEO_FGD_TEAMNUM_ATTACKER,
+			NEO_FGD_TEAMNUM_DEFENDER, NEO_FGD_TEAMNUM_NEUTRAL);
 
 		// Nobody will be able to cap here.
 		m_iOwningTeam = TEAM_INVALID;
@@ -183,13 +183,13 @@ void CNEOGhostCapturePoint::Spawn(void)
 	// Warning messages for the about-to-occur clamping, if we've hit limits.
 	if (m_flCapzoneRadius < NEO_CAP_MIN_RADIUS)
 	{
-		Warning("Capzone had too small radius: %f, clamping! (Expected a minimum of %f)\n",
-			m_flCapzoneRadius.Get(), NEO_CAP_MIN_RADIUS);
+		Warning("Capzone had too small radius: %f, clamping! (Expected a minimum of %f)\n", m_flCapzoneRadius.Get(),
+			NEO_CAP_MIN_RADIUS);
 	}
 	else if (m_flCapzoneRadius > NEO_CAP_MAX_RADIUS)
 	{
-		Warning("Capzone had too large radius: %f, clamping! (Expected a minimum of %f)\n",
-			m_flCapzoneRadius.Get(), NEO_CAP_MAX_RADIUS);
+		Warning("Capzone had too large radius: %f, clamping! (Expected a minimum of %f)\n", m_flCapzoneRadius.Get(),
+			NEO_CAP_MAX_RADIUS);
 	}
 	// Actually clamp.
 	m_flCapzoneRadius = clamp(m_flCapzoneRadius, NEO_CAP_MIN_RADIUS, NEO_CAP_MAX_RADIUS);
@@ -205,8 +205,7 @@ void CNEOGhostCapturePoint::Spawn(void)
 	}
 
 	RegisterThinkContext("CheckMyRadius");
-	SetContextThink(&CNEOGhostCapturePoint::Think_CheckMyRadius,
-		gpGlobals->curtime, "CheckMyRadius");
+	SetContextThink(&CNEOGhostCapturePoint::Think_CheckMyRadius, gpGlobals->curtime, "CheckMyRadius");
 #else
 	SetNextClientThink(gpGlobals->curtime + NEO_GHOSTCAP_GRAPHICS_THINK_INTERVAL);
 #endif
@@ -236,7 +235,7 @@ void CNEOGhostCapturePoint::Think_CheckMyRadius(void)
 	{ // VIP can escort themselves if sitting in their extract as the round restarts
 		for (int i = 1; i <= gpGlobals->maxClients; i++)
 		{
-			CNEO_Player *player = static_cast<CNEO_Player*>(UTIL_EntityByIndex(i));
+			CNEO_Player *player = static_cast<CNEO_Player *>(UTIL_EntityByIndex(i));
 
 			if (!player)
 			{
@@ -282,8 +281,8 @@ void CNEOGhostCapturePoint::Think_CheckMyRadius(void)
 		}
 	}
 
-	SetContextThink(&CNEOGhostCapturePoint::Think_CheckMyRadius,
-		gpGlobals->curtime + (1.0f / checksPerSecond), "CheckMyRadius");
+	SetContextThink(
+		&CNEOGhostCapturePoint::Think_CheckMyRadius, gpGlobals->curtime + (1.0f / checksPerSecond), "CheckMyRadius");
 }
 #else
 // Purpose: Set up clientside HUD graphics for capzone.

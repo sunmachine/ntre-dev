@@ -74,7 +74,7 @@ SHADER_DRAW
 		const int width = src_texture->GetActualWidth();
 		const int height = src_texture->GetActualHeight();
 
-		const float fTexelSize[2] = { 1.0f / (float)width, 1.0f / (float)height };
+		const float fTexelSize[2] = {1.0f / (float)width, 1.0f / (float)height};
 
 		pShaderAPI->SetPixelShaderConstant(0, fTexelSize);
 

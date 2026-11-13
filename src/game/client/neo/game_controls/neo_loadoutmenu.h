@@ -24,8 +24,8 @@ public:
 	void CommandCompletion();
 
 	virtual const char *GetName(void) { return PANEL_NEO_LOADOUT; }
-	virtual void SetData(KeyValues *data) { }
-	virtual void Reset() { }
+	virtual void SetData(KeyValues *data) {}
+	virtual void Reset() {}
 	virtual void Update() { /* Do things! */ }
 	virtual bool NeedsUpdate(void) { return false; }
 	virtual bool HasInputElements(void) { return true; }
@@ -43,25 +43,22 @@ public:
 
 	virtual void OnMousePressed(vgui::MouseCode code);
 
-	const char *GetResFile(void) const
-	{
-		return "resource/neo_ui/Neo_LoadoutMenu_Dev.res";
-	}
+	const char *GetResFile(void) const { return "resource/neo_ui/Neo_LoadoutMenu_Dev.res"; }
 
 protected:
 	virtual void OnClose() override;
 	void OnCommand(const char *command);
-	void ChangeMenu(const char* menuName);
+	void ChangeMenu(const char *menuName);
 	void OnKeyCodeReleased(vgui::KeyCode code);
 
 	void SetLabelText(const char *textEntryName, const char *text);
 	void SetLabelText(const char *textEntryName, wchar_t *text);
 	void MoveLabelToFront(const char *textEntryName);
 	void FindButtons();
-	void UpdateTimer() { }
+	void UpdateTimer() {}
 
 	// vgui overrides
-	virtual void PerformLayout() { }
+	virtual void PerformLayout() {}
 	virtual void ApplySchemeSettings(vgui::IScheme *pScheme);
 
 	// --------------------------------------------------------

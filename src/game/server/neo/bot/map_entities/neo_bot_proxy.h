@@ -6,25 +6,26 @@ class CNEOBotActionPoint;
 
 class CNEOBotProxy : public CPointEntity
 {
-	DECLARE_CLASS( CNEOBotProxy, CPointEntity );
+	DECLARE_CLASS(CNEOBotProxy, CPointEntity);
+
 public:
 	DECLARE_DATADESC();
 
-	CNEOBotProxy( void );
-	virtual ~CNEOBotProxy() { }
+	CNEOBotProxy(void);
+	virtual ~CNEOBotProxy() {}
 
-	void Think( void );
+	void Think(void);
 
 	// Input
-	void InputSetTeam( inputdata_t &inputdata );
-	void InputSetMovementGoal( inputdata_t &inputdata );
-	void InputSpawn( inputdata_t &inputdata );
-	void InputDelete( inputdata_t &inputdata );
+	void InputSetTeam(inputdata_t &inputdata);
+	void InputSetMovementGoal(inputdata_t &inputdata);
+	void InputSpawn(inputdata_t &inputdata);
+	void InputDelete(inputdata_t &inputdata);
 
-	void OnInjured( void );
-	void OnKilled( void );
-	void OnAttackingEnemy( void );
-	void OnKilledEnemy( void );
+	void OnInjured(void);
+	void OnKilled(void);
+	void OnAttackingEnemy(void);
+	void OnKilledEnemy(void);
 
 protected:
 	// Output
@@ -41,6 +42,6 @@ protected:
 	string_t m_actionPointName;
 	float m_respawnInterval;
 
-	CHandle< CNEOBot > m_bot;
-	CHandle< CNEOBotActionPoint > m_moveGoal;
+	CHandle<CNEOBot> m_bot;
+	CHandle<CNEOBotActionPoint> m_moveGoal;
 };

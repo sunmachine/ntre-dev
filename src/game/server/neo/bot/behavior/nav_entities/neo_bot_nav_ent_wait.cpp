@@ -9,45 +9,43 @@
 extern ConVar neo_bot_path_lookahead_range;
 
 //---------------------------------------------------------------------------------------------
-CNEOBotNavEntWait::CNEOBotNavEntWait( const CFuncNavPrerequisite *prereq )
+CNEOBotNavEntWait::CNEOBotNavEntWait(const CFuncNavPrerequisite *prereq)
 {
 	m_prereq = prereq;
 }
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotNavEntWait::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotNavEntWait::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
-	if ( m_prereq == NULL )
+	if (m_prereq == NULL)
 	{
-		return Done( "Prerequisite has been removed before we started" );
+		return Done("Prerequisite has been removed before we started");
 	}
 
-	m_timer.Start( m_prereq->GetTaskValue() );
+	m_timer.Start(m_prereq->GetTaskValue());
 
 	return Continue();
 }
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotNavEntWait::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotNavEntWait::Update(CNEOBot *me, float interval)
 {
-	if ( m_prereq == NULL )
+	if (m_prereq == NULL)
 	{
-		return Done( "Prerequisite has been removed" );
+		return Done("Prerequisite has been removed");
 	}
 
-	if ( !m_prereq->IsEnabled() )
+	if (!m_prereq->IsEnabled())
 	{
-		return Done( "Prerequisite has been disabled" );
+		return Done("Prerequisite has been disabled");
 	}
 
-	if ( m_timer.IsElapsed() )
+	if (m_timer.IsElapsed())
 	{
-		return Done( "Wait time elapsed" );
+		return Done("Wait time elapsed");
 	}
 
 	return Continue();
 }
-
-

@@ -21,15 +21,14 @@
 
 using vgui::surface;
 
-ConVar cl_neo_ghost_beacon_scale("cl_neo_ghost_beacon_scale", "1", FCVAR_ARCHIVE,
-	"Ghost beacons scale.", true, 0.01, false, 0);
+ConVar cl_neo_ghost_beacon_scale(
+	"cl_neo_ghost_beacon_scale", "1", FCVAR_ARCHIVE, "Ghost beacons scale.", true, 0.01, false, 0);
 
 ConVar cl_neo_ghost_beacon_scale_with_distance("cl_neo_ghost_beacon_scale_with_distance", "0", FCVAR_ARCHIVE,
 	"Toggles the scaling of ghost beacons with distance.", true, 0, true, 1);
 
 ConVar cl_neo_ghost_beacon_alpha("cl_neo_ghost_beacon_alpha", "150", FCVAR_ARCHIVE,
 	"Alpha channel transparency of HUD ghost beacons.", true, 0, true, 255);
-
 
 
 DECLARE_NAMED_HUDELEMENT(CNEOHud_GhostBeacons, neo_ghost_beacons);
@@ -54,7 +53,7 @@ CNEOHud_GhostBeacons::CNEOHud_GhostBeacons(const char *pElementName, vgui::Panel
 	int screenWidth, screenHeight;
 	surface()->GetScreenSize(screenWidth, screenHeight);
 	SetBounds(0, 0, screenWidth, screenHeight);
-	
+
 	m_hTex = surface()->CreateNewTextureID();
 	Assert(m_hTex > 0);
 	surface()->DrawSetTextureFile(m_hTex, "vgui/hud/ctg/g_beacon_enemy", 1, false);
@@ -62,11 +61,9 @@ CNEOHud_GhostBeacons::CNEOHud_GhostBeacons(const char *pElementName, vgui::Panel
 	SetVisible(true);
 }
 
-void CNEOHud_GhostBeacons::UpdateStateForNeoHudElementDraw()
-{
-}
+void CNEOHud_GhostBeacons::UpdateStateForNeoHudElementDraw() {}
 
-void CNEOHud_GhostBeacons::ApplySchemeSettings(vgui::IScheme* pScheme)
+void CNEOHud_GhostBeacons::ApplySchemeSettings(vgui::IScheme *pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 
@@ -90,38 +87,34 @@ void CNEOHud_GhostBeacons::DrawNeoHudElement()
 		return;
 
 	// Only consider drawing beacons if alive or dead, but not LIFE_DYING (the death animation)
-	if (localPlayer->m_lifeState != LIFE_ALIVE &&
-		localPlayer->m_lifeState != LIFE_DEAD)
+	if (localPlayer->m_lifeState != LIFE_ALIVE && localPlayer->m_lifeState != LIFE_DEAD)
 	{
 		return;
 	}
 
-	auto ghoster = localPlayer->IsObserver()
-		? ToNEOPlayer(localPlayer->GetObserverTarget())
-		: localPlayer;
+	auto ghoster = localPlayer->IsObserver() ? ToNEOPlayer(localPlayer->GetObserverTarget()) : localPlayer;
 
-	if (!ghoster || !ghoster->m_bCarryingGhost ||
-		ghoster->GetTeamNumber() < FIRST_GAME_TEAM ||
-		!ghoster->IsAlive() || NEORules()->IsRoundOver() ||
-		(engine->IsHLTV() && (localPlayer->GetObserverMode() != OBS_MODE_IN_EYE && localPlayer->GetObserverMode() != OBS_MODE_CHASE)))
+	if (!ghoster || !ghoster->m_bCarryingGhost || ghoster->GetTeamNumber() < FIRST_GAME_TEAM || !ghoster->IsAlive() ||
+		NEORules()->IsRoundOver() ||
+		(engine->IsHLTV() &&
+			(localPlayer->GetObserverMode() != OBS_MODE_IN_EYE && localPlayer->GetObserverMode() != OBS_MODE_CHASE)))
 	{
 		return;
 	}
 	Assert(ghoster->GetTeamNumber() < TEAM__TOTAL);
 
-	const C_WeaponGhost* ghost;
+	const C_WeaponGhost *ghost;
 	if (sv_neo_ctg_ghost_beacons_when_inactive.GetBool())
 	{
-		ghost = assert_cast<const C_WeaponGhost*>(GetNeoWepWithBits(ghoster, NEO_WEP_GHOST));
-		AssertMsg(ghoster->m_bCarryingGhost == !!ghost,
-			"ghost ptr and m_bCarryingGhost mismatch");
+		ghost = assert_cast<const C_WeaponGhost *>(GetNeoWepWithBits(ghoster, NEO_WEP_GHOST));
+		AssertMsg(ghoster->m_bCarryingGhost == !!ghost, "ghost ptr and m_bCarryingGhost mismatch");
 	}
 	else
 	{
-		auto weapon = assert_cast<C_NEOBaseCombatWeapon*>(ghoster->GetActiveWeapon());
-		ghost = (weapon && weapon->IsGhost()) ? static_cast<const C_WeaponGhost*>(weapon) : nullptr;
+		auto weapon = assert_cast<C_NEOBaseCombatWeapon *>(ghoster->GetActiveWeapon());
+		ghost = (weapon && weapon->IsGhost()) ? static_cast<const C_WeaponGhost *>(weapon) : nullptr;
 		AssertMsg(ghoster->m_bCarryingGhost ==
-			!!assert_cast<const C_WeaponGhost*>(GetNeoWepWithBits(ghoster, NEO_WEP_GHOST)),
+				!!assert_cast<const C_WeaponGhost *>(GetNeoWepWithBits(ghoster, NEO_WEP_GHOST)),
 			"ghost ptr and m_bCarryingGhost mismatch");
 	}
 
@@ -158,15 +151,18 @@ void CNEOHud_GhostBeacons::Paint()
 	PaintNeoElement();
 }
 
-void CNEOHud_GhostBeacons::DrawPlayer(float distance, const Vector& playerPos) const
-{	
+void CNEOHud_GhostBeacons::DrawPlayer(float distance, const Vector &playerPos) const
+{
 	const auto distInMeters = distance * METERS_PER_INCH;
 	const float scale = cl_neo_ghost_beacon_scale.GetFloat();
 	constexpr float HALF_BASE_TEX_LENGTH = 32;
 
 	float halfBeaconLength = HALF_BASE_TEX_LENGTH * scale;
 	int posX, posY;
-	Vector ghostBeaconOffset = Vector(0, 0, cl_neo_ghost_beacon_scale_with_distance.GetBool() ? 32 : 48); // The center of the player, or raise slightly if not scaling
+	Vector ghostBeaconOffset = Vector(0, 0,
+		cl_neo_ghost_beacon_scale_with_distance.GetBool()
+			? 32
+			: 48); // The center of the player, or raise slightly if not scaling
 	GetVectorInScreenSpace(playerPos, posX, posY, &ghostBeaconOffset);
 	if (cl_neo_ghost_beacon_scale_with_distance.GetBool())
 	{
@@ -175,12 +171,14 @@ void CNEOHud_GhostBeacons::DrawPlayer(float distance, const Vector& playerPos) c
 		GetVectorInScreenSpace(playerPos, pos2X, pos2Y, &ghostBeaconOffset2);
 		halfBeaconLength = (posY - pos2Y) * 0.5 * scale;
 	}
-	
+
 	wchar_t m_wszBeaconTextUnicode[4 + 1];
-	V_snwprintf(m_wszBeaconTextUnicode, ARRAYSIZE(m_wszBeaconTextUnicode), L"%02d m", FastFloatToSmallInt(distInMeters));
+	V_snwprintf(
+		m_wszBeaconTextUnicode, ARRAYSIZE(m_wszBeaconTextUnicode), L"%02d m", FastFloatToSmallInt(distInMeters));
 
 	const auto ghostViewDist = sv_neo_ghost_view_distance.GetFloat();
-	const float alphaMultiplier = (distInMeters < ghostViewDist * 35.f / 45) ? 1.0 : ((ghostViewDist - distInMeters) / 10);
+	const float alphaMultiplier =
+		(distInMeters < ghostViewDist * 35.f / 45) ? 1.0 : ((ghostViewDist - distInMeters) / 10);
 	const int alpha = cl_neo_ghost_beacon_alpha.GetInt() * alphaMultiplier;
 	surface()->DrawSetTextColor(255, 255, 255, alpha);
 	surface()->DrawSetTextFont(m_hFont);
@@ -194,8 +192,5 @@ void CNEOHud_GhostBeacons::DrawPlayer(float distance, const Vector& playerPos) c
 
 	// End coordinates according to art size (and our distance scaling)
 	surface()->DrawTexturedRect(
-		posX - halfBeaconLength,
-		posY - halfBeaconLength,
-		posX + halfBeaconLength,
-		posY + halfBeaconLength);
+		posX - halfBeaconLength, posY - halfBeaconLength, posX + halfBeaconLength, posY + halfBeaconLength);
 }

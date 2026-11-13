@@ -8,46 +8,46 @@
 
 #include "nav_mesh.h"
 
-extern void respawn( CBaseEntity* pEdict, bool fCopyCorpse );
+extern void respawn(CBaseEntity *pEdict, bool fCopyCorpse);
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotDead::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotDead::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
 	m_deadTimer.Start();
-	CNEOBotPathReservations()->ReleaseAllAreas( me );
+	CNEOBotPathReservations()->ReleaseAllAreas(me);
 
 	return Continue();
 }
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotDead::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotDead::Update(CNEOBot *me, float interval)
 {
-	if ( me->IsAlive() )
+	if (me->IsAlive())
 	{
 		// how did this happen?
-		return ChangeTo( new CNEOBotMainAction, "This should not happen!" );
+		return ChangeTo(new CNEOBotMainAction, "This should not happen!");
 	}
 
-	if ( m_deadTimer.IsGreaterThen( 5.0f ) )
+	if (m_deadTimer.IsGreaterThen(5.0f))
 	{
-		if ( me->HasAttribute( CNEOBot::REMOVE_ON_DEATH ) )
+		if (me->HasAttribute(CNEOBot::REMOVE_ON_DEATH))
 		{
 			// remove dead bots
-			engine->ServerCommand( UTIL_VarArgs( "kickid %d\n", me->GetUserID() ) );
+			engine->ServerCommand(UTIL_VarArgs("kickid %d\n", me->GetUserID()));
 		}
-		else if ( me->HasAttribute( CNEOBot::BECOME_SPECTATOR_ON_DEATH ) )
+		else if (me->HasAttribute(CNEOBot::BECOME_SPECTATOR_ON_DEATH))
 		{
-			me->ChangeTeam( TEAM_SPECTATOR );
+			me->ChangeTeam(TEAM_SPECTATOR);
 			return Done();
 		}
 	}
 
 	// I want to respawn!
 	// Some gentle massaging for bots to get unstuck if they are holding keys, etc.
-	if ( me->m_lifeState == LIFE_DEAD || me->m_lifeState == LIFE_RESPAWNABLE )
+	if (me->m_lifeState == LIFE_DEAD || me->m_lifeState == LIFE_RESPAWNABLE)
 	{
-		if ( g_pGameRules->FPlayerCanRespawn( me ) )
+		if (g_pGameRules->FPlayerCanRespawn(me))
 		{
 			// Defer respawn to outside of the behavior update loop.
 			// Calling respawn() here triggers CNEOBot::Spawn -> INextBot::Reset -> delete m_behavior.

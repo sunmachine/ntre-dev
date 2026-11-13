@@ -22,8 +22,16 @@ public:
 	ConVarRefEx(const char *pName, const bool bExcludeGlobalPtrs);
 };
 
-#define CONVARREF_DEF(_name) ConVarRefEx _name{#_name, false}
-#define CONVARREF_DEFNOGLOBALPTR(_name) ConVarRefEx _name{#_name, true}
+#define CONVARREF_DEF(_name) \
+	ConVarRefEx _name \
+	{ \
+		#_name, false \
+	}
+#define CONVARREF_DEFNOGLOBALPTR(_name) \
+	ConVarRefEx _name \
+	{ \
+		#_name, true \
+	}
 
 enum XHairExportNotify
 {
@@ -237,9 +245,9 @@ struct NeoSettings
 	Crosshair crosshair;
 	HUD hud;
 
-	KeyValues* backgrounds;
+	KeyValues *backgrounds;
 	int iCBListSize;
-	wchar_t** p2WszCBList;
+	wchar_t **p2WszCBList;
 
 	int iCurTab = 0;
 	bool bBack = false;
@@ -368,8 +376,8 @@ struct NeoSettings
 	CVR cvr;
 };
 void NeoSettingsInit(NeoSettings *ns);
-void NeoSettingsBackgroundsInit(NeoSettings* ns);
-void NeoSettingsBackgroundWrite(const NeoSettings* ns, const char* backgroundName = nullptr);
+void NeoSettingsBackgroundsInit(NeoSettings *ns);
+void NeoSettingsBackgroundWrite(const NeoSettings *ns, const char *backgroundName = nullptr);
 void NeoSettingsDeinit(NeoSettings *ns);
 void NeoSettingsRestore(NeoSettings *ns, const NeoSettings::Keys::Flags flagsKeys = NeoSettings::Keys::NONE);
 void NeoSettingsSave(const NeoSettings *ns);

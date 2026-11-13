@@ -549,17 +549,16 @@ void TestSerialRLE()
 }
 
 TEST_INIT()
-	TEST_RUN(TestDeserialInt);
-	TEST_RUN(TestSerialInt);
-	TEST_RUN(TestDeserialBool);
-	TEST_RUN(TestSerialBool);
-	TEST_RUN(TestDeserialFloat);
-	TEST_RUN(TestSerialFloat);
-	TEST_RUN(TestDeserialMixture);
-	TEST_RUN(TestSerialMixture);
-	TEST_RUN(TestDeserialEmpty);
-	TEST_RUN(TestSerialEmpty);
-	TEST_RUN(TestDeserialRLE);
-	TEST_RUN(TestSerialRLE);
+TEST_RUN(TestDeserialInt);
+TEST_RUN(TestSerialInt);
+TEST_RUN(TestDeserialBool);
+TEST_RUN(TestSerialBool);
+TEST_RUN(TestDeserialFloat);
+TEST_RUN(TestSerialFloat);
+TEST_RUN(TestDeserialMixture);
+TEST_RUN(TestSerialMixture);
+TEST_RUN(TestDeserialEmpty);
+TEST_RUN(TestSerialEmpty);
+TEST_RUN(TestDeserialRLE);
+TEST_RUN(TestSerialRLE);
 TEST_END()
-

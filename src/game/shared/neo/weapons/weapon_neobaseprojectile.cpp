@@ -15,7 +15,7 @@ static_assert(PROJECTILE_RADIUS == NEO_DEPLOYED_DETPACK_RADIUS);
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-void CNEOBaseProjectile::GetThrowPos(const Vector& throwFwd, const Vector& pos, Vector& outPos) const
+void CNEOBaseProjectile::GetThrowPos(const Vector &throwFwd, const Vector &pos, Vector &outPos) const
 {
 	constexpr float playerMaxsY = 16; // Cached for perf
 #ifdef DBGFLAG_ASSERT
@@ -27,9 +27,7 @@ void CNEOBaseProjectile::GetThrowPos(const Vector& throwFwd, const Vector& pos, 
 	// surfaces, we might get stuck if doing a hull trace with the exact radius.
 	constexpr float fuzzFactor = 2;
 	static const Vector projectileMaxs{
-		PROJECTILE_RADIUS + fuzzFactor,
-		PROJECTILE_RADIUS + fuzzFactor,
-		PROJECTILE_RADIUS + fuzzFactor };
+		PROJECTILE_RADIUS + fuzzFactor, PROJECTILE_RADIUS + fuzzFactor, PROJECTILE_RADIUS + fuzzFactor};
 	static const Vector projectileMins = -projectileMaxs;
 
 	// Projectile spawning in front of the player's fwd hull maxs needs a
@@ -38,9 +36,7 @@ void CNEOBaseProjectile::GetThrowPos(const Vector& throwFwd, const Vector& pos, 
 
 	CTraceFilterNoNPCsOrPlayer filter(nullptr, COLLISION_GROUP_NONE);
 	trace_t tr;
-	UTIL_TraceHull(pos,
-		pos + throwFwd * clearanceRequired,
-		projectileMins, projectileMaxs,
-		CONTENTS_SOLID, &filter, &tr);
+	UTIL_TraceHull(
+		pos, pos + throwFwd * clearanceRequired, projectileMins, projectileMaxs, CONTENTS_SOLID, &filter, &tr);
 	outPos = pos + throwFwd * (playerMaxsY * tr.fraction);
 }

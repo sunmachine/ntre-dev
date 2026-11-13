@@ -15,4 +15,3 @@ enum ENeoWeaponType : int
 
 	WEP_TYPE__TOTAL,
 };
-

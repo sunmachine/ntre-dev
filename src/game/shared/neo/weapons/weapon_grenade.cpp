@@ -22,14 +22,23 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar sv_neo_infinite_frag_grenades("sv_neo_infinite_frag_grenades", "0", FCVAR_REPLICATED | FCVAR_CHEAT, "Should frag grenades use up ammo.", true, 0.0, true, 1.0);
-ConVar sv_neo_grenade_throw_intensity("sv_neo_grenade_throw_intensity", "750.0", FCVAR_REPLICATED | FCVAR_CHEAT, "How strong should regular grenade throws be.", true, 0.0, true, 9999.9);
-ConVar sv_neo_grenade_blast_damage("sv_neo_grenade_blast_damage", "270.0", FCVAR_REPLICATED | FCVAR_CHEAT, "How much damage should a grenade blast deal.", true, 0.0, true, 999.9);
-ConVar sv_neo_grenade_blast_radius("sv_neo_grenade_blast_radius", "270.0", FCVAR_REPLICATED | FCVAR_CHEAT, "How large should the grenade blast radius be.", true, 0.0, true, 9999.9);
-ConVar sv_neo_grenade_fuse_timer("sv_neo_grenade_fuse_timer", "2.16", FCVAR_REPLICATED | FCVAR_CHEAT, "How long in seconds until a frag grenade explodes.", true, 0.1, true, 60.0); // Measured as 2.15999... in NT, ie. < 2.16
-ConVar sv_neo_grenade_cor("sv_neo_grenade_cor", "0.45", FCVAR_CHEAT | FCVAR_REPLICATED, "Neotokyo frag coefficient of restitution", true, 0.0, true, 1.0);
-ConVar sv_neo_grenade_gravity("sv_neo_grenade_gravity", "0.4", FCVAR_CHEAT | FCVAR_REPLICATED, "Grenade gravity", true, 0, true, 1);
-ConVar sv_neo_grenade_friction("sv_neo_grenade_friction", "0.2", FCVAR_CHEAT | FCVAR_REPLICATED, "Grenade friction", true, 0, true, 1);
+ConVar sv_neo_infinite_frag_grenades("sv_neo_infinite_frag_grenades", "0", FCVAR_REPLICATED | FCVAR_CHEAT,
+	"Should frag grenades use up ammo.", true, 0.0, true, 1.0);
+ConVar sv_neo_grenade_throw_intensity("sv_neo_grenade_throw_intensity", "750.0", FCVAR_REPLICATED | FCVAR_CHEAT,
+	"How strong should regular grenade throws be.", true, 0.0, true, 9999.9);
+ConVar sv_neo_grenade_blast_damage("sv_neo_grenade_blast_damage", "270.0", FCVAR_REPLICATED | FCVAR_CHEAT,
+	"How much damage should a grenade blast deal.", true, 0.0, true, 999.9);
+ConVar sv_neo_grenade_blast_radius("sv_neo_grenade_blast_radius", "270.0", FCVAR_REPLICATED | FCVAR_CHEAT,
+	"How large should the grenade blast radius be.", true, 0.0, true, 9999.9);
+ConVar sv_neo_grenade_fuse_timer("sv_neo_grenade_fuse_timer", "2.16", FCVAR_REPLICATED | FCVAR_CHEAT,
+	"How long in seconds until a frag grenade explodes.", true, 0.1, true,
+	60.0); // Measured as 2.15999... in NT, ie. < 2.16
+ConVar sv_neo_grenade_cor("sv_neo_grenade_cor", "0.45", FCVAR_CHEAT | FCVAR_REPLICATED,
+	"Neotokyo frag coefficient of restitution", true, 0.0, true, 1.0);
+ConVar sv_neo_grenade_gravity(
+	"sv_neo_grenade_gravity", "0.4", FCVAR_CHEAT | FCVAR_REPLICATED, "Grenade gravity", true, 0, true, 1);
+ConVar sv_neo_grenade_friction(
+	"sv_neo_grenade_friction", "0.2", FCVAR_CHEAT | FCVAR_REPLICATED, "Grenade friction", true, 0, true, 1);
 
 IMPLEMENT_NETWORKCLASS_ALIASED(WeaponGrenade, DT_WeaponGrenade)
 
@@ -45,7 +54,7 @@ BEGIN_NETWORK_TABLE(CWeaponGrenade, DT_WeaponGrenade)
 	SendPropInt(SENDINFO(m_AttackPaused)),
 #endif
 END_NETWORK_TABLE()
-// clang-format on
+	// clang-format on
 
 #ifdef CLIENT_DLL
 // clang-format off
@@ -169,10 +178,11 @@ void CWeaponGrenade::DecrementAmmo(CBaseCombatCharacter *pOwner)
 
 void CWeaponGrenade::ItemPostFrame(void)
 {
-	if (!HasPrimaryAmmo() && (GetIdealActivity() == ACT_VM_IDLE || GetIdealActivity() == ACT_VM_DRAW)) {
+	if (!HasPrimaryAmmo() && (GetIdealActivity() == ACT_VM_IDLE || GetIdealActivity() == ACT_VM_DRAW))
+	{
 		// Finished Throwing Animation, switch to next weapon and destroy this one
 #ifdef GAME_DLL
-		CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+		CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 		if (pOwner)
 		{
 			pOwner->SwitchToNextBestWeapon(this);
@@ -193,7 +203,7 @@ void CWeaponGrenade::ItemPostFrame(void)
 
 	if (m_bDrawbackFinished)
 	{
-		auto pOwner = static_cast<CNEO_Player*>(GetOwner());
+		auto pOwner = static_cast<CNEO_Player *>(GetOwner());
 
 		if (pOwner)
 		{
@@ -205,7 +215,8 @@ void CWeaponGrenade::ItemPostFrame(void)
 					ThrowGrenade(pOwner);
 
 					SendWeaponAnim(ACT_VM_THROW);
-					m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flTimeWeaponIdle = gpGlobals->curtime + SequenceDuration();
+					m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flTimeWeaponIdle =
+						gpGlobals->curtime + SequenceDuration();
 					m_bDrawbackFinished = false;
 					m_AttackPaused = GRENADE_PAUSED_NO;
 				}
@@ -258,7 +269,9 @@ void CWeaponGrenade::ThrowGrenade(CNEO_Player *pPlayer, bool isAlive, CBaseEntit
 
 	Vector vecThrow = vForward * flVel + pPlayer->GetAbsVelocity();
 
-	CBaseGrenadeProjectile *pGrenade = NEOFraggrenade_Create(vecSrc, vec3_angle, vecThrow, AngularImpulse(600, random->RandomInt(-1200, 1200), 0), ((!(pPlayer->IsAlive()) || !isAlive) && pAttacker) ? pAttacker : pPlayer, false);
+	CBaseGrenadeProjectile *pGrenade =
+		NEOFraggrenade_Create(vecSrc, vec3_angle, vecThrow, AngularImpulse(600, random->RandomInt(-1200, 1200), 0),
+			((!(pPlayer->IsAlive()) || !isAlive) && pAttacker) ? pAttacker : pPlayer, false);
 
 	if (pGrenade)
 	{
@@ -278,11 +291,11 @@ void CWeaponGrenade::ThrowGrenade(CNEO_Player *pPlayer, bool isAlive, CBaseEntit
 
 bool CWeaponGrenade::CanDrop()
 {
-	auto owner = GetOwner(); 
+	auto owner = GetOwner();
 	return owner && !owner->IsAlive();
 }
 
-void CWeaponGrenade::Drop(const Vector& vecVelocity)
+void CWeaponGrenade::Drop(const Vector &vecVelocity)
 {
 	BaseClass::Drop(vecVelocity);
 }
@@ -295,7 +308,7 @@ bool CWeaponGrenade::CanBePickedUpByClass(int classId)
 #ifndef CLIENT_DLL
 void CWeaponGrenade::Operator_HandleAnimEvent(animevent_t *pEvent, CBaseCombatCharacter *pOperator)
 {
-	auto pOwner = static_cast<CNEO_Player*>(GetOwner());
+	auto pOwner = static_cast<CNEO_Player *>(GetOwner());
 	Assert(pOwner);
 
 	bool fThrewGrenade = false;

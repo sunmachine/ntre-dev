@@ -23,6 +23,7 @@
 class CWeaponPBK56S : public CNEOBaseCombatWeapon
 {
 	DECLARE_CLASS(CWeaponPBK56S, CNEOBaseCombatWeapon);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -33,7 +34,10 @@ public:
 
 	CWeaponPBK56S();
 
-	virtual NEO_WEP_BITS_UNDERLYING_TYPE GetNeoWepBits(void) const OVERRIDE { return NEO_WEP_PBK56S | NEO_WEP_SUPPRESSED | NEO_WEP_FIREARM; }
+	virtual NEO_WEP_BITS_UNDERLYING_TYPE GetNeoWepBits(void) const OVERRIDE
+	{
+		return NEO_WEP_PBK56S | NEO_WEP_SUPPRESSED | NEO_WEP_FIREARM;
+	}
 	virtual int GetNeoWepXPCost(const int neoClass) const OVERRIDE { return 20; }
 
 	virtual float GetSpeedScale(void) const OVERRIDE { return 0.8f; }
@@ -42,7 +46,7 @@ protected:
 	virtual float GetFastestDryRefireTime() const { return 1.5f; }
 
 private:
-	CWeaponPBK56S(const CWeaponPBK56S& other);
+	CWeaponPBK56S(const CWeaponPBK56S &other);
 };
 
 #endif // NEO_WEAPON_PBK56S_H

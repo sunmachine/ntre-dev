@@ -23,6 +23,7 @@
 class CWeaponBALC : public CNEOBaseCombatWeapon
 {
 	DECLARE_CLASS(CWeaponBALC, CNEOBaseCombatWeapon);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -53,10 +54,7 @@ public:
 	virtual bool CanDrop() final { return false; }
 	virtual bool CanAim() final { return true; }
 	virtual bool IsWeaponReloadable() const override final { return false; }
-	inline virtual bool IsAutomatic(void) const override final
-	{
-		return m_bIsPrimaryFireMode;
-	}
+	inline virtual bool IsAutomatic(void) const override final { return m_bIsPrimaryFireMode; }
 
 	CNetworkVar(bool, m_bOverheated);
 	CNetworkVar(bool, m_bCharging);

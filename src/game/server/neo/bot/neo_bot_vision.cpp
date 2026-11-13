@@ -7,76 +7,78 @@
 #include "neo_gamerules.h"
 #include "neo/weapons/weapon_ghost.h"
 
-ConVar neo_bot_choose_target_interval( "neo_bot_choose_target_interval", "0.3", FCVAR_CHEAT, "How often, in seconds, a NEOBot can reselect his target" );
-ConVar neo_bot_sniper_choose_target_interval( "neo_bot_sniper_choose_target_interval", "3.0", FCVAR_CHEAT, "How often, in seconds, a zoomed-in Sniper can reselect his target" );
+ConVar neo_bot_choose_target_interval(
+	"neo_bot_choose_target_interval", "0.3", FCVAR_CHEAT, "How often, in seconds, a NEOBot can reselect his target");
+ConVar neo_bot_sniper_choose_target_interval("neo_bot_sniper_choose_target_interval", "3.0", FCVAR_CHEAT,
+	"How often, in seconds, a zoomed-in Sniper can reselect his target");
 
 extern ConVar neo_bot_ignore_real_players;
 
 //------------------------------------------------------------------------------------------
-void CNEOBotVision::CollectPotentiallyVisibleEntities( CUtlVector< CBaseEntity* >* potentiallyVisible )
+void CNEOBotVision::CollectPotentiallyVisibleEntities(CUtlVector<CBaseEntity *> *potentiallyVisible)
 {
-	VPROF_BUDGET( "CNEOBotVision::CollectPotentiallyVisibleEntities", "NextBot" );
+	VPROF_BUDGET("CNEOBotVision::CollectPotentiallyVisibleEntities", "NextBot");
 
 	potentiallyVisible->RemoveAll();
 
 	// include all players
-	for ( int i = 1; i <= gpGlobals->maxClients; ++i )
+	for (int i = 1; i <= gpGlobals->maxClients; ++i)
 	{
-		CBasePlayer* player = UTIL_PlayerByIndex( i );
+		CBasePlayer *player = UTIL_PlayerByIndex(i);
 
-		if ( player == NULL )
+		if (player == NULL)
 			continue;
 
-		if ( FNullEnt( player->edict() ) )
+		if (FNullEnt(player->edict()))
 			continue;
 
-		if ( !player->IsPlayer() )
+		if (!player->IsPlayer())
 			continue;
 
-		if ( !player->IsConnected() )
+		if (!player->IsConnected())
 			continue;
 
-		if ( !player->IsAlive() )
+		if (!player->IsAlive())
 			continue;
 
-		if ( neo_bot_ignore_real_players.GetBool() )
+		if (neo_bot_ignore_real_players.GetBool())
 		{
-			if ( !player->IsBot() )
+			if (!player->IsBot())
 				continue;
 		}
 
-		potentiallyVisible->AddToTail( player );
+		potentiallyVisible->AddToTail(player);
 	}
 
 	// include sentry guns
 	UpdatePotentiallyVisibleNPCVector();
 
-	FOR_EACH_VEC( m_potentiallyVisibleNPCVector, it )
+	FOR_EACH_VEC(m_potentiallyVisibleNPCVector, it)
 	{
-		potentiallyVisible->AddToTail( m_potentiallyVisibleNPCVector[it] );
+		potentiallyVisible->AddToTail(m_potentiallyVisibleNPCVector[it]);
 	}
 }
 
 
 //------------------------------------------------------------------------------------------
-void CNEOBotVision::UpdatePotentiallyVisibleNPCVector( void )
+void CNEOBotVision::UpdatePotentiallyVisibleNPCVector(void)
 {
-	if ( m_potentiallyVisibleUpdateTimer.IsElapsed() )
+	if (m_potentiallyVisibleUpdateTimer.IsElapsed())
 	{
-		m_potentiallyVisibleUpdateTimer.Start( RandomFloat( 3.0f, 4.0f ) );
+		m_potentiallyVisibleUpdateTimer.Start(RandomFloat(3.0f, 4.0f));
 
 		// collect list of active buildings
 		m_potentiallyVisibleNPCVector.RemoveAll();
 
-		CUtlVector< INextBot* > botVector;
-		TheNextBots().CollectAllBots( &botVector );
-		for ( int i = 0; i < botVector.Count(); ++i )
+		CUtlVector<INextBot *> botVector;
+		TheNextBots().CollectAllBots(&botVector);
+		for (int i = 0; i < botVector.Count(); ++i)
 		{
-			CBaseCombatCharacter* botEntity = botVector[i]->GetEntity();
-			if ( botEntity && !botEntity->IsPlayer() )
+			CBaseCombatCharacter *botEntity = botVector[i]->GetEntity();
+			if (botEntity && !botEntity->IsPlayer())
 			{
 				// NPC
-				m_potentiallyVisibleNPCVector.AddToTail( botEntity );
+				m_potentiallyVisibleNPCVector.AddToTail(botEntity);
 			}
 		}
 	}
@@ -88,25 +90,25 @@ void CNEOBotVision::UpdatePotentiallyVisibleNPCVector( void )
  * Return true to completely ignore this entity.
  * This is mostly for enemy spies.  If we don't ignore them, we will look at them.
  */
-bool CNEOBotVision::IsIgnored( CBaseEntity* subject ) const
+bool CNEOBotVision::IsIgnored(CBaseEntity *subject) const
 {
 	if (!NEORules()) // This can get called on de-init
 	{
 		return true;
 	}
 
-	CNEOBot* me = ( CNEOBot* )GetBot()->GetEntity();
+	CNEOBot *me = (CNEOBot *)GetBot()->GetEntity();
 
-	if ( me->IsAttentionFocused() )
+	if (me->IsAttentionFocused())
 	{
 		// our attention is restricted to certain subjects
-		if ( !me->IsAttentionFocusedOn( subject ) )
+		if (!me->IsAttentionFocusedOn(subject))
 		{
 			return false;
 		}
 	}
 
-	if ( !me->IsEnemy( subject ) )
+	if (!me->IsEnemy(subject))
 	{
 		// don't ignore friends
 		return false;
@@ -123,7 +125,7 @@ bool CNEOBotVision::IsIgnored( CBaseEntity* subject ) const
 		}
 	}
 
-	if ( subject->IsEffectActive( EF_NODRAW ) )
+	if (subject->IsEffectActive(EF_NODRAW))
 	{
 		return true;
 	}
@@ -134,29 +136,32 @@ bool CNEOBotVision::IsIgnored( CBaseEntity* subject ) const
 
 //------------------------------------------------------------------------------------------
 // Return VISUAL reaction time
-float CNEOBotVision::GetMinRecognizeTime( void ) const
+float CNEOBotVision::GetMinRecognizeTime(void) const
 {
-	CNEOBot* me = ( CNEOBot* )GetBot();
+	CNEOBot *me = (CNEOBot *)GetBot();
 
-	switch ( me->GetDifficulty() )
+	switch (me->GetDifficulty())
 	{
-	case CNEOBot::EASY:	return 1.0f;
-	case CNEOBot::NORMAL:	return 0.5f;
-	case CNEOBot::HARD:	return 0.3f;
-	case CNEOBot::EXPERT:	return 0.2f;
+	case CNEOBot::EASY:
+		return 1.0f;
+	case CNEOBot::NORMAL:
+		return 0.5f;
+	case CNEOBot::HARD:
+		return 0.3f;
+	case CNEOBot::EXPERT:
+		return 0.2f;
 	}
 
 	return 1.0f;
 }
 
 
-
 //------------------------------------------------------------------------------------------
-float CNEOBotVision::GetMaxVisionRange( void ) const
+float CNEOBotVision::GetMaxVisionRange(void) const
 {
 	CNEOBot *me = (CNEOBot *)GetBot();
 
-	if ( me->GetMaxVisionRangeOverride() > 0.0f )
+	if (me->GetMaxVisionRangeOverride() > 0.0f)
 	{
 		// designer specified vision range
 		return me->GetMaxVisionRangeOverride();
@@ -166,7 +171,7 @@ float CNEOBotVision::GetMaxVisionRange( void ) const
 	return 6000.0f;
 }
 
-bool CNEOBotVision::IsInFieldOfView( CBaseEntity *subject ) const
+bool CNEOBotVision::IsInFieldOfView(CBaseEntity *subject) const
 {
 	return IVision::IsInFieldOfView(subject);
 }
@@ -181,4 +186,3 @@ bool CNEOBotVision::IsAbleToSee(CBaseEntity *subject, FieldOfViewCheckType check
 
 	return IVision::IsAbleToSee(subject, checkFOV, visibleSpot);
 }
-

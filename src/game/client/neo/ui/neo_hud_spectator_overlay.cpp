@@ -26,12 +26,9 @@
 #include "tier0/memdbgon.h"
 
 static void cvCallbackOverlayLogoJinrai(
-		[[maybe_unused]] IConVar *cvar,
-		[[maybe_unused]] const char *pOldVal,
-		[[maybe_unused]] float flOldVal)
+	[[maybe_unused]] IConVar *cvar, [[maybe_unused]] const char *pOldVal, [[maybe_unused]] float flOldVal)
 {
-	if (g_pNeoHudSpecOverlay &&
-			vgui::surface()->IsTextureIDValid(g_pNeoHudSpecOverlay->m_iTexLogoJinrai))
+	if (g_pNeoHudSpecOverlay && vgui::surface()->IsTextureIDValid(g_pNeoHudSpecOverlay->m_iTexLogoJinrai))
 	{
 		vgui::surface()->DeleteTextureByID(g_pNeoHudSpecOverlay->m_iTexLogoJinrai);
 		g_pNeoHudSpecOverlay->m_iTexLogoJinrai = -1;
@@ -39,12 +36,9 @@ static void cvCallbackOverlayLogoJinrai(
 }
 
 static void cvCallbackOverlayLogoNSF(
-		[[maybe_unused]] IConVar *cvar,
-		[[maybe_unused]] const char *pOldVal,
-		[[maybe_unused]] float flOldVal)
+	[[maybe_unused]] IConVar *cvar, [[maybe_unused]] const char *pOldVal, [[maybe_unused]] float flOldVal)
 {
-	if (g_pNeoHudSpecOverlay &&
-			vgui::surface()->IsTextureIDValid(g_pNeoHudSpecOverlay->m_iTexLogoNSF))
+	if (g_pNeoHudSpecOverlay && vgui::surface()->IsTextureIDValid(g_pNeoHudSpecOverlay->m_iTexLogoNSF))
 	{
 		vgui::surface()->DeleteTextureByID(g_pNeoHudSpecOverlay->m_iTexLogoNSF);
 		g_pNeoHudSpecOverlay->m_iTexLogoNSF = -1;
@@ -52,28 +46,23 @@ static void cvCallbackOverlayLogoNSF(
 }
 
 ConVar cl_neo_hud_spectator_overlay_enabled("cl_neo_hud_spectator_overlay_enabled", "0",
-		FCVAR_ARCHIVE | FCVAR_DONTRECORD,
-		"Whether the spectator overlay HUD is enabled", true, 0.0f, true, 1.0f);
-ConVar cl_neo_hud_spectator_overlay_jinrai_name("cl_neo_hud_spectator_overlay_jinrai_name", "",
-		FCVAR_ARCHIVE | FCVAR_DONTRECORD,
-		"The name of the Jinrai team");
-ConVar cl_neo_hud_spectator_overlay_nsf_name("cl_neo_hud_spectator_overlay_nsf_name", "",
-		FCVAR_ARCHIVE | FCVAR_DONTRECORD,
-		"The name of the NSF team");
+	FCVAR_ARCHIVE | FCVAR_DONTRECORD, "Whether the spectator overlay HUD is enabled", true, 0.0f, true, 1.0f);
+ConVar cl_neo_hud_spectator_overlay_jinrai_name(
+	"cl_neo_hud_spectator_overlay_jinrai_name", "", FCVAR_ARCHIVE | FCVAR_DONTRECORD, "The name of the Jinrai team");
+ConVar cl_neo_hud_spectator_overlay_nsf_name(
+	"cl_neo_hud_spectator_overlay_nsf_name", "", FCVAR_ARCHIVE | FCVAR_DONTRECORD, "The name of the NSF team");
 ConVar cl_neo_hud_spectator_overlay_jinrai_logo("cl_neo_hud_spectator_overlay_jinrai_logo", "",
-		FCVAR_ARCHIVE | FCVAR_DONTRECORD,
-		"The logo of the Jinrai team, have to be png or jpg", false, 0.0f, false, 0.0f,
-		cvCallbackOverlayLogoJinrai);
+	FCVAR_ARCHIVE | FCVAR_DONTRECORD, "The logo of the Jinrai team, have to be png or jpg", false, 0.0f, false, 0.0f,
+	cvCallbackOverlayLogoJinrai);
 ConVar cl_neo_hud_spectator_overlay_nsf_logo("cl_neo_hud_spectator_overlay_nsf_logo", "",
-		FCVAR_ARCHIVE | FCVAR_DONTRECORD,
-		"The logo of the NSF team, have to be png or jpg", false, 0.0f, false, 0.0f,
-		cvCallbackOverlayLogoNSF);
+	FCVAR_ARCHIVE | FCVAR_DONTRECORD, "The logo of the NSF team, have to be png or jpg", false, 0.0f, false, 0.0f,
+	cvCallbackOverlayLogoNSF);
 ConVar cl_neo_hud_spectator_overlay_jinrai_matches_won("cl_neo_hud_spectator_overlay_jinrai_matches_won", "0",
-		FCVAR_ARCHIVE | FCVAR_DONTRECORD,
-		"The amount of matches Jinrai team won", true, 0.0f, true, static_cast<float>(COMP_MATCHES_WON_MAX));
+	FCVAR_ARCHIVE | FCVAR_DONTRECORD, "The amount of matches Jinrai team won", true, 0.0f, true,
+	static_cast<float>(COMP_MATCHES_WON_MAX));
 ConVar cl_neo_hud_spectator_overlay_nsf_matches_won("cl_neo_hud_spectator_overlay_nsf_matches_won", "0",
-		FCVAR_ARCHIVE | FCVAR_DONTRECORD,
-		"The amount of matches NSF team won", true, 0.0f, true, static_cast<float>(COMP_MATCHES_WON_MAX));
+	FCVAR_ARCHIVE | FCVAR_DONTRECORD, "The amount of matches NSF team won", true, 0.0f, true,
+	static_cast<float>(COMP_MATCHES_WON_MAX));
 
 DECLARE_NAMED_HUDELEMENT(CNEOHud_SpectatorOverlay, neo_spectator_overlay);
 
@@ -94,7 +83,7 @@ static constexpr const float FL_CHECK_HP_REDUCTION_DELTA_MAX = 1.5f;
 
 CNEOHud_SpectatorOverlay *g_pNeoHudSpecOverlay;
 
-CNEOHud_SpectatorOverlay::CNEOHud_SpectatorOverlay(const char* pElementName, vgui::Panel* parent)
+CNEOHud_SpectatorOverlay::CNEOHud_SpectatorOverlay(const char *pElementName, vgui::Panel *parent)
 	: CHudElement(pElementName), EditablePanel(parent, pElementName)
 {
 	g_pNeoHudSpecOverlay = this;
@@ -124,10 +113,8 @@ CNEOHud_SpectatorOverlay::~CNEOHud_SpectatorOverlay()
 
 static bool ShouldDrawHUD()
 {
-	return (g_PR && NEORules()
-			&& NEORules()->IsTeamplay()
-			&& GetLocalPlayerTeam() == TEAM_SPECTATOR
-			&& cl_neo_hud_spectator_overlay_enabled.GetBool());
+	return (g_PR && NEORules() && NEORules()->IsTeamplay() && GetLocalPlayerTeam() == TEAM_SPECTATOR &&
+		cl_neo_hud_spectator_overlay_enabled.GetBool());
 }
 
 void CNEOHud_SpectatorOverlay::Paint()
@@ -180,20 +167,19 @@ void CNEOHud_SpectatorOverlay::FireGameEvent(IGameEvent *event)
 	{
 		// NEO NOTE (nullsystem): Match winner auto update only works on live
 		// games, not demos
-		if (NEORules()
-				&& cl_neo_hud_spectator_overlay_enabled.GetBool()
-				&& NEO_GAME_TYPE_SETTINGS[NEORules()->GetGameType()].comp)
+		if (NEORules() && cl_neo_hud_spectator_overlay_enabled.GetBool() &&
+			NEO_GAME_TYPE_SETTINGS[NEORules()->GetGameType()].comp)
 		{
 			const int iMatchWinner = event->GetInt("winner");
 			switch (iMatchWinner)
 			{
 			case TEAM_JINRAI:
 				cl_neo_hud_spectator_overlay_jinrai_matches_won.SetValue(
-						cl_neo_hud_spectator_overlay_jinrai_matches_won.GetInt() + 1);
+					cl_neo_hud_spectator_overlay_jinrai_matches_won.GetInt() + 1);
 				break;
 			case TEAM_NSF:
 				cl_neo_hud_spectator_overlay_nsf_matches_won.SetValue(
-						cl_neo_hud_spectator_overlay_nsf_matches_won.GetInt() + 1);
+					cl_neo_hud_spectator_overlay_nsf_matches_won.GetInt() + 1);
 				break;
 			default:
 				break;
@@ -202,7 +188,7 @@ void CNEOHud_SpectatorOverlay::FireGameEvent(IGameEvent *event)
 	}
 }
 
-void CNEOHud_SpectatorOverlay::ApplySchemeSettings(vgui::IScheme* pScheme)
+void CNEOHud_SpectatorOverlay::ApplySchemeSettings(vgui::IScheme *pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 
@@ -241,7 +227,8 @@ void CNEOHud_SpectatorOverlay::UpdateStateForNeoHudElementDraw()
 
 	const float flWide = static_cast<float>(iScrWide);
 	float flWideAs43 = static_cast<float>(iScrTall) * (4.0f / 3.0f);
-	if (flWideAs43 > flWide) flWideAs43 = flWide;
+	if (flWideAs43 > flWide)
+		flWideAs43 = flWide;
 	const int iAvatarSize = flWideAs43 / 22.5f;
 
 	for (const auto iPutTeam : {TEAM_JINRAI, TEAM_NSF})
@@ -265,9 +252,7 @@ void CNEOHud_SpectatorOverlay::UpdateStateForNeoHudElementDraw()
 			++m_iTeamPlayersCount[iTeam];
 
 			const CSteamID steamID = GetSteamIDForPlayerIndex(i);
-			pAvatar->SetSteamID(
-					(steamID.IsValid() && CNEOScoreBoard::ShowAvatars())
-						? steamID : CSteamID{});
+			pAvatar->SetSteamID((steamID.IsValid() && CNEOScoreBoard::ShowAvatars()) ? steamID : CSteamID{});
 			pAvatar->Fetch(iAvatarSize);
 
 			Q_UTF8ToUnicode(g_PR->GetPlayerName(i), pCard->wszPlayerName, sizeof(pCard->wszPlayerName));
@@ -328,8 +313,8 @@ void CNEOHud_SpectatorOverlay::UpdateStateForNeoHudElementDraw()
 				// HP reduction
 				pCard->flLastHPChangeTime = pOldCard->flLastHPChangeTime;
 				pCard->iLastHP = pOldCard->iLastHP;
-				if ((pOldCard->iHP > pCard->iHP)
-						&& ((gpGlobals->curtime - pCard->flLastHPChangeTime) > FL_CHECK_HP_REDUCTION_DELTA_MAX))
+				if ((pOldCard->iHP > pCard->iHP) &&
+					((gpGlobals->curtime - pCard->flLastHPChangeTime) > FL_CHECK_HP_REDUCTION_DELTA_MAX))
 				{
 					pCard->flLastHPChangeTime = gpGlobals->curtime;
 					pCard->iLastHP = pOldCard->iHP;
@@ -356,7 +341,7 @@ void CNEOHud_SpectatorOverlay::UpdateStateForNeoHudElementDraw()
 					// array but ghost only for the outside indicator will be
 					// skipped over in the weapon icons list
 					if (const auto *pNeoWep = static_cast<CNEOBaseCombatWeapon *>(pNeoPlayer->GetWeapon(j));
-							pNeoWep && pNeoWep->WeaponIndex() != NEO_WIDX_KNIFE)
+						pNeoWep && pNeoWep->WeaponIndex() != NEO_WIDX_KNIFE)
 					{
 						if (pNeoWep->GetSlot() == 0)
 						{
@@ -368,8 +353,8 @@ void CNEOHud_SpectatorOverlay::UpdateStateForNeoHudElementDraw()
 						}
 
 						// Icons are really only 1 character long
-						Q_UTF8ToUnicode(CNEOBaseCombatWeapon::GetDeathIcon(pNeoWep, DEATHICONTYPE_IDX),
-								wszWeaponIcon, sizeof(wszWeaponIcon));
+						Q_UTF8ToUnicode(CNEOBaseCombatWeapon::GetDeathIcon(pNeoWep, DEATHICONTYPE_IDX), wszWeaponIcon,
+							sizeof(wszWeaponIcon));
 						pCard->wcaWeaponIcons[pCard->iTotalWeaponIcons++] = wszWeaponIcon[0];
 					}
 				}
@@ -378,11 +363,8 @@ void CNEOHud_SpectatorOverlay::UpdateStateForNeoHudElementDraw()
 	}
 }
 
-void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
-		const bool bIsLeftSide,
-		const int x, const int y,
-		const int wide, const int tall,
-		const Color accentColor, const float flWideAs43) const
+void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx, const bool bIsLeftSide, const int x, const int y,
+	const int wide, const int tall, const Color accentColor, const float flWideAs43) const
 {
 	const SpectatorPlayerCard &card = m_cards[iPlayerIdx];
 	const NeoAvatar &avatar = m_avatars[iPlayerIdx];
@@ -410,8 +392,7 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 	// Draw the actual Steam avatar
 	if (avatar.m_iTextureID > 0)
 	{
-		avatar.Paint(iAvatarX, iAvatarY,
-				iAvatarSize, !card.bAlive);
+		avatar.Paint(iAvatarX, iAvatarY, iAvatarSize, !card.bAlive);
 	}
 	else if (card.wszPlayerName[0])
 	{
@@ -420,13 +401,14 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 
 		// Fallback when no avatar: first character of the player name
 		// Usually just bots though
-		wchar_t wszInitial[2] = { card.wszPlayerName[0], L'\0' };
+		wchar_t wszInitial[2] = {card.wszPlayerName[0], L'\0'};
 		vgui::surface()->DrawSetTextColor(OVERLAY_THEME.textSecondary);
 		vgui::surface()->DrawSetTextFont(m_hInfoFont);
 		int iInitialWide = 0;
 		[[maybe_unused]] int iInitialTall = 0;
 		vgui::surface()->GetTextSize(m_hInfoFont, wszInitial, iInitialWide, iInitialTall);
-		vgui::surface()->DrawSetTextPos(iAvatarX + (iAvatarSize - iInitialWide) / 2, iAvatarY + (iAvatarSize - vgui::surface()->GetFontTall(m_hInfoFont)) / 2);
+		vgui::surface()->DrawSetTextPos(iAvatarX + (iAvatarSize - iInitialWide) / 2,
+			iAvatarY + (iAvatarSize - vgui::surface()->GetFontTall(m_hInfoFont)) / 2);
 		vgui::surface()->DrawPrintText(wszInitial, 1);
 	}
 
@@ -441,9 +423,7 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 		int iWideHP = 0, iTallHP = 0;
 		vgui::surface()->GetTextSize(m_hRKHPFont, wszHP, iWideHP, iTallHP);
 
-		const int iHPTextX = bIsLeftSide
-				? iAvatarX + iTextPad
-				: iAvatarX + iAvatarSize - iWideHP - iTextPad;
+		const int iHPTextX = bIsLeftSide ? iAvatarX + iTextPad : iAvatarX + iAvatarSize - iWideHP - iTextPad;
 		const int iHPTextY = iAvatarY + iAvatarSize - iTallHP;
 
 		// Back
@@ -463,11 +443,7 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 		// Dead icon
 		vgui::surface()->DrawSetColor(COLOR_WHITE);
 		vgui::surface()->DrawSetTexture(m_iDeadTexture);
-		vgui::surface()->DrawTexturedRect(
-				iAvatarX,
-				iAvatarY,
-				iAvatarX + iAvatarSize,
-				iAvatarY + iAvatarSize);
+		vgui::surface()->DrawTexturedRect(iAvatarX, iAvatarY, iAvatarX + iAvatarSize, iAvatarY + iAvatarSize);
 	}
 
 	// Round kills, over avatar, upper section
@@ -480,9 +456,7 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 		int iWideRK = 0, iTallRK = 0;
 		vgui::surface()->GetTextSize(m_hRKHPFont, wszNum, iWideRK, iTallRK);
 
-		const int iRKTextX = bIsLeftSide
-				? iAvatarX + iTextPad
-				: iAvatarX + iAvatarSize - iWideRK - iTextPad;
+		const int iRKTextX = bIsLeftSide ? iAvatarX + iTextPad : iAvatarX + iAvatarSize - iWideRK - iTextPad;
 		const int iRKTextY = iAvatarY;
 
 		// Back
@@ -504,21 +478,20 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 		const int hpY = y;
 		const int hpW = wide - iAvatarSize;
 		const int hpH = static_cast<int>(iAvatarSize / 2.0f);
-		const float flClassHP = static_cast<float>(IN_BETWEEN_AR(0, card.iClass, NEO_CLASS__ENUM_COUNT)
-			? MAX_HEALTH_FOR_CLASS[card.iClass] : 100);
+		const float flClassHP = static_cast<float>(
+			IN_BETWEEN_AR(0, card.iClass, NEO_CLASS__ENUM_COUNT) ? MAX_HEALTH_FOR_CLASS[card.iClass] : 100);
 
 		const float flHpPerc = clamp(card.iHP / flClassHP, 0.0f, 1.0f);
 		const int iFillHPWide = static_cast<int>(hpW * flHpPerc);
 
 		// Red HP reduction/loss bar
 		const float flLastHPChangeDelta = gpGlobals->curtime - card.flLastHPChangeTime;
-		if (card.iLastHP > card.iHP
-				&& IN_BETWEEN_EQ(0.0f, flLastHPChangeDelta, FL_CHECK_HP_REDUCTION_DELTA_MAX))
+		if (card.iLastHP > card.iHP && IN_BETWEEN_EQ(0.0f, flLastHPChangeDelta, FL_CHECK_HP_REDUCTION_DELTA_MAX))
 		{
 			static constexpr const float FL_CHECK_HP_REDUCTION_DELTA_ANIM_START =
-					FL_CHECK_HP_REDUCTION_DELTA_MAX * 0.40f;
+				FL_CHECK_HP_REDUCTION_DELTA_MAX * 0.40f;
 			static constexpr const float FL_CHECK_HP_REDUCTION_ANIM_MAX =
-					FL_CHECK_HP_REDUCTION_DELTA_MAX - FL_CHECK_HP_REDUCTION_DELTA_ANIM_START;
+				FL_CHECK_HP_REDUCTION_DELTA_MAX - FL_CHECK_HP_REDUCTION_DELTA_ANIM_START;
 
 			const float flLastHpPerc = clamp(card.iLastHP / flClassHP, 0.0f, 1.0f);
 			int iFillReductHP = static_cast<int>(hpW * flLastHpPerc) - iFillHPWide;
@@ -526,21 +499,15 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 			{
 				if (flLastHPChangeDelta > FL_CHECK_HP_REDUCTION_DELTA_ANIM_START)
 				{
-					iFillReductHP = static_cast<float>(iFillReductHP)
-							* static_cast<float>(
-									(FL_CHECK_HP_REDUCTION_ANIM_MAX - (flLastHPChangeDelta - FL_CHECK_HP_REDUCTION_DELTA_ANIM_START))
-									* (1.0f / FL_CHECK_HP_REDUCTION_ANIM_MAX));
+					iFillReductHP = static_cast<float>(iFillReductHP) *
+						static_cast<float>((FL_CHECK_HP_REDUCTION_ANIM_MAX -
+											   (flLastHPChangeDelta - FL_CHECK_HP_REDUCTION_DELTA_ANIM_START)) *
+							(1.0f / FL_CHECK_HP_REDUCTION_ANIM_MAX));
 				}
-				const int iHPXStart = bIsLeftSide
-						? hpX + iFillHPWide
-						: hpX + hpW - iFillHPWide - iFillReductHP;
+				const int iHPXStart = bIsLeftSide ? hpX + iFillHPWide : hpX + hpW - iFillHPWide - iFillReductHP;
 
 				vgui::surface()->DrawSetColor(OVERLAY_THEME.hpLossBg);
-				vgui::surface()->DrawFilledRect(
-						iHPXStart,
-						hpY,
-						iHPXStart + iFillReductHP,
-						hpY + hpH);
+				vgui::surface()->DrawFilledRect(iHPXStart, hpY, iHPXStart + iFillReductHP, hpY + hpH);
 			}
 		}
 
@@ -557,14 +524,9 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 			const int iMaxFade = Clamp(static_cast<int>(flHpPerc * static_cast<float>(FADE_RANGE)), 0, FADE_RANGE);
 			const int iHPXStart = bIsLeftSide ? hpX : hpX + (hpW - iFillHPWide);
 			vgui::surface()->DrawSetColor(colorHpBar);
-			vgui::surface()->DrawFilledRectFade(
-					iHPXStart,
-					hpY,
-					iHPXStart + iFillHPWide,
-					hpY + hpH,
-					bIsLeftSide ? FADE_START : FADE_START + iMaxFade,
-					bIsLeftSide ? FADE_START + iMaxFade : FADE_START,
-					true);
+			vgui::surface()->DrawFilledRectFade(iHPXStart, hpY, iHPXStart + iFillHPWide, hpY + hpH,
+				bIsLeftSide ? FADE_START : FADE_START + iMaxFade, bIsLeftSide ? FADE_START + iMaxFade : FADE_START,
+				true);
 		}
 	}
 
@@ -576,14 +538,11 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 		int iPlayerNameWide = 0, iPlayerNameTall = 0;
 		vgui::surface()->GetTextSize(m_hNameFont, card.wszPlayerName, iPlayerNameWide, iPlayerNameTall);
 
-		const int iNameX = bIsLeftSide
-				? x + iAvatarSize + iTextPad
-				: x + (wide - iAvatarSize) - iTextPad - iPlayerNameWide;
+		const int iNameX =
+			bIsLeftSide ? x + iAvatarSize + iTextPad : x + (wide - iAvatarSize) - iTextPad - iPlayerNameWide;
 		const int iNameY = y + (((iAvatarSize / 2.0f) - iPlayerNameTall) / 2.0f);
 
-		vgui::surface()->DrawSetTextColor(card.bAlive
-				? OVERLAY_THEME.textPrimary
-				: Color(140, 140, 150, 200));
+		vgui::surface()->DrawSetTextColor(card.bAlive ? OVERLAY_THEME.textPrimary : Color(140, 140, 150, 200));
 		vgui::surface()->DrawSetTextPos(iNameX, iNameY);
 		vgui::surface()->DrawPrintText(card.wszPlayerName, V_wcslen(card.wszPlayerName));
 
@@ -592,14 +551,11 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 		const wchar_t *pwszClassName = GetNeoClassNameW(card.iClass);
 		int iClassNameWide = 0, iClassNameTall = 0;
 		vgui::surface()->GetTextSize(m_hClassFont, pwszClassName, iClassNameWide, iClassNameTall);
-		const int iClNamePosX = bIsLeftSide
-				? x + iAvatarSize + (wide - iAvatarSize) - iTextPad - iClassNameWide
-				: x + iTextPad;
+		const int iClNamePosX =
+			bIsLeftSide ? x + iAvatarSize + (wide - iAvatarSize) - iTextPad - iClassNameWide : x + iTextPad;
 		const int iClNamePosY = y + (((iAvatarSize / 2.0f) - iClassNameTall) / 2.0f);
 
-		vgui::surface()->DrawSetTextColor(card.bAlive
-				? OVERLAY_THEME.textPrimary
-				: Color(140, 140, 150, 200));
+		vgui::surface()->DrawSetTextColor(card.bAlive ? OVERLAY_THEME.textPrimary : Color(140, 140, 150, 200));
 		vgui::surface()->DrawSetTextPos(iClNamePosX, iClNamePosY);
 		vgui::surface()->DrawPrintText(pwszClassName, V_wcslen(pwszClassName));
 	}
@@ -619,13 +575,13 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 
 		int iRankIconWide = 0, iRankIconTall = 0;
 		{
-			const wchar_t wszRankIcon[] = { NEO_HUD_DEATHNOTICEICON_LT, L'\0' };
+			const wchar_t wszRankIcon[] = {NEO_HUD_DEATHNOTICEICON_LT, L'\0'};
 			vgui::surface()->GetTextSize(g_hFontKillfeedIcons, wszRankIcon, iRankIconWide, iRankIconTall);
 		}
 
 		int iDeathIconWide = 0, iDeathIconTall = 0;
 		{
-			const wchar_t wszDeathsIcon[] = { NEO_HUD_DEATHNOTICEICON_KILL, L'\0' };
+			const wchar_t wszDeathsIcon[] = {NEO_HUD_DEATHNOTICEICON_KILL, L'\0'};
 			vgui::surface()->GetTextSize(g_hFontKillfeedIcons, wszDeathsIcon, iDeathIconWide, iDeathIconTall);
 		}
 
@@ -672,10 +628,10 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 
 			// Primary (larger icon, most right in card for Jinrai, most left in card for NSF)
 			// If ghost is primary, this is differed to the ghoster player indicator
-			if (card.iWeaponIdxPrimary >= 0
-					&& NEO_HUD_DEATHNOTICEICON_GHOST != card.wcaWeaponIcons[card.iWeaponIdxPrimary])
+			if (card.iWeaponIdxPrimary >= 0 &&
+				NEO_HUD_DEATHNOTICEICON_GHOST != card.wcaWeaponIcons[card.iWeaponIdxPrimary])
 			{
-				wchar_t wszWeaponIcon[2] = { card.wcaWeaponIcons[card.iWeaponIdxPrimary], L'\0' };
+				wchar_t wszWeaponIcon[2] = {card.wcaWeaponIcons[card.iWeaponIdxPrimary], L'\0'};
 
 				int iWepWide = 0, iWepTall = 0;
 				vgui::surface()->GetTextSize(g_hFontKillfeedIcons, wszWeaponIcon, iWepWide, iWepTall);
@@ -683,7 +639,8 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 				const int iXPosWepIcon = bIsLeftSide ? x + wide - iTextPad - iWepWide : x + iTextPad;
 				iWepPosOffsetX += iWepWide + iTextPad;
 				vgui::surface()->DrawSetTextColor((card.iWeaponIdxPrimary == card.iWeaponIdxActive)
-						? OVERLAY_THEME.textPrimary : OVERLAY_THEME.wepInactive);
+						? OVERLAY_THEME.textPrimary
+						: OVERLAY_THEME.wepInactive);
 				vgui::surface()->DrawSetTextFont(g_hFontKillfeedIcons);
 				vgui::surface()->DrawSetTextPos(iXPosWepIcon, iInfoY + ((iInfoTall - iWepTall) / 2.0f));
 				vgui::surface()->DrawPrintText(wszWeaponIcon, 1);
@@ -697,15 +654,15 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 					continue;
 				}
 
-				wchar_t wszWeaponIcon[2] = { card.wcaWeaponIcons[i], L'\0' };
+				wchar_t wszWeaponIcon[2] = {card.wcaWeaponIcons[i], L'\0'};
 
 				int iWepWide = 0, iWepTall = 0;
 				vgui::surface()->GetTextSize(m_hSmallWeaponsFont, wszWeaponIcon, iWepWide, iWepTall);
 
 				const int iXPosWepIcon = bIsLeftSide ? x + wide - iWepPosOffsetX - iWepWide : x + iWepPosOffsetX;
 				iWepPosOffsetX += iWepWide + iTextPad;
-				vgui::surface()->DrawSetTextColor((i == card.iWeaponIdxActive)
-						? OVERLAY_THEME.textPrimary : OVERLAY_THEME.wepInactive);
+				vgui::surface()->DrawSetTextColor(
+					(i == card.iWeaponIdxActive) ? OVERLAY_THEME.textPrimary : OVERLAY_THEME.wepInactive);
 				vgui::surface()->DrawSetTextFont(m_hSmallWeaponsFont);
 				vgui::surface()->DrawSetTextPos(iXPosWepIcon, iInfoY + ((iInfoTall - iWepTall) * 0.66f));
 				vgui::surface()->DrawPrintText(wszWeaponIcon, 1);
@@ -716,16 +673,15 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 	// Ghoster player indicator - Jinrai right side, NSF left side
 	if (card.iEntIndex == NEORules()->GetGhosterPlayer())
 	{
-		const wchar_t WSZ_DNI_GHOST[] = { NEO_HUD_DEATHNOTICEICON_GHOST, L'\0' };
+		const wchar_t WSZ_DNI_GHOST[] = {NEO_HUD_DEATHNOTICEICON_GHOST, L'\0'};
 
 		int iGhostWide = 0, iGhostTall = 0;
 		vgui::surface()->GetTextSize(m_hGhostFont, WSZ_DNI_GHOST, iGhostWide, iGhostTall);
 
 		vgui::surface()->DrawSetTextColor(
-				(card.iWeaponIdxActive >= 0
-				 		&& NEO_HUD_DEATHNOTICEICON_GHOST == card.wcaWeaponIcons[card.iWeaponIdxActive])
-					? OVERLAY_THEME.textPrimary
-					: OVERLAY_THEME.wepInactive);
+			(card.iWeaponIdxActive >= 0 && NEO_HUD_DEATHNOTICEICON_GHOST == card.wcaWeaponIcons[card.iWeaponIdxActive])
+				? OVERLAY_THEME.textPrimary
+				: OVERLAY_THEME.wepInactive);
 		vgui::surface()->DrawSetTextFont(m_hGhostFont);
 		if (bIsLeftSide)
 		{
@@ -742,17 +698,14 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 
 	// Spectator current observing border
 	const auto *pLocalPlayer = C_NEO_Player::GetLocalNEOPlayer();
-	if (card.iEntIndex == GetSpectatorTarget()
-			&& pLocalPlayer
-			&& pLocalPlayer->IsObserver()
-			&& (pLocalPlayer->GetObserverMode() == OBS_MODE_IN_EYE
-				|| pLocalPlayer->GetObserverMode() == OBS_MODE_CHASE))
+	if (card.iEntIndex == GetSpectatorTarget() && pLocalPlayer && pLocalPlayer->IsObserver() &&
+		(pLocalPlayer->GetObserverMode() == OBS_MODE_IN_EYE || pLocalPlayer->GetObserverMode() == OBS_MODE_CHASE))
 	{
 		vgui::surface()->DrawSetColor(COLOR_WHITE);
-		vgui::surface()->DrawFilledRect(x, y - iMargin, x + wide, y);									// top
-		vgui::surface()->DrawFilledRect(x, y + tall, x + wide, y + tall + iMargin);						// bottom
-		vgui::surface()->DrawFilledRect(x - iMargin, y - iMargin, x, y + tall + iMargin);				// left
-		vgui::surface()->DrawFilledRect(x + wide, y - iMargin, x + wide + iMargin, y + tall + iMargin);	// right
+		vgui::surface()->DrawFilledRect(x, y - iMargin, x + wide, y);                                   // top
+		vgui::surface()->DrawFilledRect(x, y + tall, x + wide, y + tall + iMargin);                     // bottom
+		vgui::surface()->DrawFilledRect(x - iMargin, y - iMargin, x, y + tall + iMargin);               // left
+		vgui::surface()->DrawFilledRect(x + wide, y - iMargin, x + wide + iMargin, y + tall + iMargin); // right
 	}
 
 	// m_iEntIndexSelect indicator
@@ -771,7 +724,7 @@ void CNEOHud_SpectatorOverlay::DrawPlayerCard(const int iPlayerIdx,
 		}
 	}
 
-	// Weapon firing indicator bar - Jinrai right side, NSF left side 
+	// Weapon firing indicator bar - Jinrai right side, NSF left side
 	static constexpr const float FL_LAST_ATTACK_DELTA_MAX = 0.5f;
 	const float flLastAttackDelta = gpGlobals->curtime - card.flLastAttackTime;
 	if (IN_BETWEEN_EQ(0.0f, flLastAttackDelta, FL_LAST_ATTACK_DELTA_MAX))
@@ -809,7 +762,8 @@ void CNEOHud_SpectatorOverlay::DrawNeoHudElement()
 
 	const float flWide = static_cast<float>(iScrWide);
 	float flWideAs43 = static_cast<float>(iScrTall) * (4.0f / 3.0f);
-	if (flWideAs43 > flWide) flWideAs43 = flWide;
+	if (flWideAs43 > flWide)
+		flWideAs43 = flWide;
 
 	// Draw team's name and logo on top
 	const auto *pRoundStateHUD = GET_NAMED_HUDELEMENT(CNEOHud_RoundState, NRoundState);
@@ -869,18 +823,13 @@ void CNEOHud_SpectatorOverlay::DrawNeoHudElement()
 			{
 				if (!vgui::surface()->IsTextureIDValid(m_iTexLogoJinrai) || m_iTexLogoJinrai == -1)
 				{
-					m_iTexLogoJinrai = NeoUI::TextureFromFile(
-							pszJinLogo, "", NeoUI::TEXTUREOPTFLAGS_RESIZETO256);
+					m_iTexLogoJinrai = NeoUI::TextureFromFile(pszJinLogo, "", NeoUI::TEXTUREOPTFLAGS_RESIZETO256);
 				}
 				if (vgui::surface()->IsTextureIDValid(m_iTexLogoJinrai) && m_iTexLogoJinrai != -1)
 				{
 					vgui::surface()->DrawSetColor(COLOR_WHITE);
 					vgui::surface()->DrawSetTexture(m_iTexLogoJinrai);
-					vgui::surface()->DrawTexturedRect(
-						x,
-						y,
-						x + iLogoWH,
-						y + iLogoWH);
+					vgui::surface()->DrawTexturedRect(x, y, x + iLogoWH, y + iLogoWH);
 				}
 			}
 			else
@@ -937,18 +886,13 @@ void CNEOHud_SpectatorOverlay::DrawNeoHudElement()
 			{
 				if (!vgui::surface()->IsTextureIDValid(m_iTexLogoNSF) || m_iTexLogoNSF == -1)
 				{
-					m_iTexLogoNSF = NeoUI::TextureFromFile(
-							pszNSFLogo, "", NeoUI::TEXTUREOPTFLAGS_RESIZETO256);
+					m_iTexLogoNSF = NeoUI::TextureFromFile(pszNSFLogo, "", NeoUI::TEXTUREOPTFLAGS_RESIZETO256);
 				}
 				if (vgui::surface()->IsTextureIDValid(m_iTexLogoNSF) && m_iTexLogoNSF != -1)
 				{
 					vgui::surface()->DrawSetColor(COLOR_WHITE);
 					vgui::surface()->DrawSetTexture(m_iTexLogoNSF);
-					vgui::surface()->DrawTexturedRect(
-						x,
-						y,
-						x + iLogoWH,
-						y + iLogoWH);
+					vgui::surface()->DrawTexturedRect(x, y, x + iLogoWH, y + iLogoWH);
 				}
 			}
 			else
@@ -994,9 +938,7 @@ void CNEOHud_SpectatorOverlay::DrawNeoHudElement()
 		// Center the column vertically on screen
 		const int iTeamCount = m_iTeamPlayersCount[iTeam];
 		const int iTotalHeight = (iTeamCount * iAvatarWH) + ((iTeamCount - 1) * iGapBetween);
-		const int iColXStart = bIsLeftSide
-				? iGapWide
-				: static_cast<int>(iScrWide - iTotalCardWide - iGapWide);
+		const int iColXStart = bIsLeftSide ? iGapWide : static_cast<int>(iScrWide - iTotalCardWide - iGapWide);
 		const int iColYStart = ((iScrTall - iTotalHeight) / 2.0f);
 
 		int iPlayerRow = 0;
@@ -1004,11 +946,9 @@ void CNEOHud_SpectatorOverlay::DrawNeoHudElement()
 		{
 			if (m_cards[i].iTeam == iTeam)
 			{
-				const int iRowY = iColYStart + (iPlayerRow * iAvatarWH)
-						+ ((iPlayerRow > 0) ? (iPlayerRow * iGapBetween) : 0);
-				DrawPlayerCard(i, bIsLeftSide,
-						iColXStart, iRowY, iTotalCardWide, iAvatarWH,
-						accentColor, flWideAs43);
+				const int iRowY =
+					iColYStart + (iPlayerRow * iAvatarWH) + ((iPlayerRow > 0) ? (iPlayerRow * iGapBetween) : 0);
+				DrawPlayerCard(i, bIsLeftSide, iColXStart, iRowY, iTotalCardWide, iAvatarWH, accentColor, flWideAs43);
 				++iPlayerRow;
 			}
 		}
@@ -1060,8 +1000,8 @@ int CNEOHud_SpectatorOverlay::SpecTargetNextEntIdx(const ESpecType eSpecType, ED
 		{
 			for (int i = 0; i < m_iCardsSize; ++i)
 			{
-				iSpecTargetIdx = LoopAroundInArray(iSpecTargetIdx
-						+ ((eDirection == DIRECTION_PREV) ? -1 : +1), m_iCardsSize);
+				iSpecTargetIdx =
+					LoopAroundInArray(iSpecTargetIdx + ((eDirection == DIRECTION_PREV) ? -1 : +1), m_iCardsSize);
 				if (m_cards[iSpecTargetIdx].bAlive)
 				{
 					break;
@@ -1072,4 +1012,3 @@ int CNEOHud_SpectatorOverlay::SpecTargetNextEntIdx(const ESpecType eSpecType, ED
 	}
 	return 0;
 }
-

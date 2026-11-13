@@ -2,84 +2,83 @@
 #include "convar.h"
 #include "neo_motion_model_dx9_helper.h"
 
-DEFINE_FALLBACK_SHADER( Neo_Motion_Model, Neo_Motion_Model_DX9 )
-BEGIN_VS_SHADER( Neo_Motion_Model_DX9, "Help for motion model shader" )
+DEFINE_FALLBACK_SHADER(Neo_Motion_Model, Neo_Motion_Model_DX9)
+BEGIN_VS_SHADER(Neo_Motion_Model_DX9, "Help for motion model shader")
 
-	// clang-format off
+// clang-format off
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( ALPHATESTREFERENCE, SHADER_PARAM_TYPE_FLOAT, "0.0", "" )
 		SHADER_PARAM( MVMGRADTEXTURE, SHADER_PARAM_TYPE_TEXTURE, "dev/tvmgrad", "")
 		SHADER_PARAM( SPEED, SHADER_PARAM_TYPE_FLOAT, "0.0", "")
 	END_SHADER_PARAMS
-	// clang-format on
+// clang-format on
 
-	void SetupVars( NeoMotionModel_DX9_Vars_t& info )
+void SetupVars(NeoMotionModel_DX9_Vars_t &info)
+{
+	info.m_nBaseTexture = BASETEXTURE;
+	info.m_nBaseTextureFrame = FRAME;
+	info.m_nBaseTextureTransform = BASETEXTURETRANSFORM;
+	info.m_nAlphaTestReference = ALPHATESTREFERENCE;
+	info.m_nFlashlightTexture = FLASHLIGHTTEXTURE;
+	info.m_nFlashlightTextureFrame = FLASHLIGHTTEXTUREFRAME;
+}
+
+SHADER_INIT_PARAMS()
+{
+	NeoMotionModel_DX9_Vars_t info;
+	SetupVars(info);
+	InitParamsNeoMotionModel_DX9(this, params, pMaterialName, info);
+}
+
+SHADER_FALLBACK
+{
+	return 0;
+}
+
+SHADER_INIT
+{
+	NeoMotionModel_DX9_Vars_t info;
+	SetupVars(info);
+	InitNeoMotionModel_DX9(this, params, info);
+
+	if (params[MVMGRADTEXTURE]->IsDefined())
 	{
-		info.m_nBaseTexture = BASETEXTURE;
-		info.m_nBaseTextureFrame = FRAME;
-		info.m_nBaseTextureTransform = BASETEXTURETRANSFORM;
-		info.m_nAlphaTestReference = ALPHATESTREFERENCE;
-		info.m_nFlashlightTexture = FLASHLIGHTTEXTURE;
-		info.m_nFlashlightTextureFrame = FLASHLIGHTTEXTUREFRAME;
+		LoadTexture(MVMGRADTEXTURE);
+	}
+	else
+	{
+		Assert(false);
+	}
+}
+
+SHADER_DRAW
+{
+	SHADOW_STATE
+	{
+		pShaderShadow->EnableTexture(SHADER_SAMPLER1, true);
+
+		EnableAlphaBlending(SHADER_BLEND_ONE, SHADER_BLEND_ONE);
+
+		pShaderShadow->EnableDepthWrites(true);
+		pShaderShadow->EnableDepthTest(true);
+		pShaderShadow->DepthFunc(SHADER_DEPTHFUNC_NEAREROREQUAL);
 	}
 
-	SHADER_INIT_PARAMS()
+	DYNAMIC_STATE
 	{
-		NeoMotionModel_DX9_Vars_t info;
-		SetupVars( info );
-		InitParamsNeoMotionModel_DX9( this, params, pMaterialName, info );
+		BindTexture(SHADER_SAMPLER1, MVMGRADTEXTURE);
+
+		VMatrix mat;
+		s_pShaderAPI->GetMatrix(MATERIAL_VIEW, mat.m[0]);
+		MatrixTranspose(mat, mat);
+		mat.m[2][3] = params[SPEED]->GetFloatValue() * 0.01818; // at a speed of 170, value passed to shader is 3.091
+
+		s_pShaderAPI->SetPixelShaderConstant(0, mat.m[2], 1);
 	}
 
-	SHADER_FALLBACK
-	{
-		return 0;
-	}
-
-		SHADER_INIT
-	{
-		NeoMotionModel_DX9_Vars_t info;
-		SetupVars(info);
-		InitNeoMotionModel_DX9(this, params, info);
-
-		if (params[MVMGRADTEXTURE]->IsDefined())
-		{
-			LoadTexture(MVMGRADTEXTURE);
-		}
-		else
-		{
-			Assert(false);
-		}
-	}
-
-		SHADER_DRAW
-	{
-		SHADOW_STATE
-		{
-			pShaderShadow->EnableTexture(SHADER_SAMPLER1, true);
-
-			EnableAlphaBlending(SHADER_BLEND_ONE, SHADER_BLEND_ONE);
-
-			pShaderShadow->EnableDepthWrites(true);
-			pShaderShadow->EnableDepthTest(true);
-			pShaderShadow->DepthFunc(SHADER_DEPTHFUNC_NEAREROREQUAL);
-		}
-
-		DYNAMIC_STATE
-		{
-			BindTexture(SHADER_SAMPLER1, MVMGRADTEXTURE);
-
-			VMatrix mat;
-			s_pShaderAPI->GetMatrix(MATERIAL_VIEW, mat.m[0]);
-			MatrixTranspose(mat, mat);
-			mat.m[2][3] = params[SPEED]->GetFloatValue() * 0.01818; // at a speed of 170, value passed to shader is 3.091
-
-			s_pShaderAPI->SetPixelShaderConstant(0, mat.m[2], 1);
-		}
-		
-		NeoMotionModel_DX9_Vars_t info;
-		SetupVars( info );
-		DrawNeoMotionModel_DX9( this, params, pShaderAPI, pShaderShadow, info, vertexCompression, pContextDataPtr );
-	}
+	NeoMotionModel_DX9_Vars_t info;
+	SetupVars(info);
+	DrawNeoMotionModel_DX9(this, params, pShaderAPI, pShaderShadow, info, vertexCompression, pContextDataPtr);
+}
 
 END_SHADER
-

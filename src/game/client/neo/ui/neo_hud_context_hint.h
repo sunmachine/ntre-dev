@@ -24,13 +24,13 @@ public:
 	void Reset();
 	bool ShouldDraw();
 
-	virtual void FireGameEvent( IGameEvent * event );
+	virtual void FireGameEvent(IGameEvent *event);
 
 protected:
 	void ApplySchemeSettings(vgui::IScheme *pScheme) override;
 	virtual void UpdateStateForNeoHudElementDraw() override;
 	virtual void DrawNeoHudElement() override;
-	virtual ConVar* GetUpdateFrequencyConVar() const override;
+	virtual ConVar *GetUpdateFrequencyConVar() const override;
 	virtual void Paint() override;
 
 private:
@@ -48,7 +48,7 @@ private:
 	CPanelAnimationVar(Color, m_TextColor, "text_color", "255 255 255 255");
 };
 
-void SetUseEntityListEntry(int index, C_BaseEntity* entity);
+void SetUseEntityListEntry(int index, C_BaseEntity *entity);
 void ClearUseEntityListEntry();
 
 #endif // NEO_HUD_CONTEXT_HINT_H

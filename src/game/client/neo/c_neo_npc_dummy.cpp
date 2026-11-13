@@ -10,19 +10,19 @@ END_RECV_TABLE()
 // clang-format on
 
 static C_EntityClassList<C_NEO_NPCDummy> dummies;
-template <> C_NEO_NPCDummy* C_EntityClassList<C_NEO_NPCDummy>::m_pClassList = nullptr;
+template <> C_NEO_NPCDummy *C_EntityClassList<C_NEO_NPCDummy>::m_pClassList = nullptr;
 
 C_NEO_NPCDummy::C_NEO_NPCDummy()
 {
-    dummies.Insert(this);
+	dummies.Insert(this);
 }
 
 C_NEO_NPCDummy::~C_NEO_NPCDummy()
 {
-    dummies.Remove(this);
+	dummies.Remove(this);
 }
 
-C_NEO_NPCDummy* C_NEO_NPCDummy::GetList()
+C_NEO_NPCDummy *C_NEO_NPCDummy::GetList()
 {
-    return dummies.m_pClassList;
+	return dummies.m_pClassList;
 }

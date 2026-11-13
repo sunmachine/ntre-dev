@@ -9,15 +9,15 @@
 class CNEOBotGrenadeThrowSmoke : public CNEOBotGrenadeThrow
 {
 public:
-	CNEOBotGrenadeThrowSmoke( CNEOBaseCombatWeapon *pWeapon, const CKnownEntity *threat );
-	virtual ~CNEOBotGrenadeThrowSmoke() override { }
+	CNEOBotGrenadeThrowSmoke(CNEOBaseCombatWeapon *pWeapon, const CKnownEntity *threat);
+	virtual ~CNEOBotGrenadeThrowSmoke() override {}
 
-	virtual const char *GetName( void ) const override final { return "GrenadeThrowSmoke"; }
+	virtual const char *GetName(void) const override final { return "GrenadeThrowSmoke"; }
 
-	virtual ActionResult< CNEOBot >	OnStart( CNEOBot *me, Action< CNEOBot > *priorAction ) override;
+	virtual ActionResult<CNEOBot> OnStart(CNEOBot *me, Action<CNEOBot> *priorAction) override;
 
 protected:
-	virtual ThrowTargetResult UpdateGrenadeTargeting( CNEOBot *me, CNEOBaseCombatWeapon *pWeapon ) override;
+	virtual ThrowTargetResult UpdateGrenadeTargeting(CNEOBot *me, CNEOBaseCombatWeapon *pWeapon) override;
 };
 
 #endif // NEO_BOT_GRENADE_THROW_SMOKE_H

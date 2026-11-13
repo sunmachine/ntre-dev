@@ -24,70 +24,71 @@ static inline CUtlVector<CNEOBotProfile> g_botProfiles;
 static inline CUtlVector<bool> g_vbBotUsed;
 static inline CThreadMutex g_vbBotUsedMutex;
 
-ConVar neo_bot_prefix_name_with_difficulty("neo_bot_prefix_name_with_difficulty", "0", FCVAR_GAMEDLL, "Append the skill level of the bot to the bot's name", true, 0.0f, true, 1.0f);
+ConVar neo_bot_prefix_name_with_difficulty("neo_bot_prefix_name_with_difficulty", "0", FCVAR_GAMEDLL,
+	"Append the skill level of the bot to the bot's name", true, 0.0f, true, 1.0f);
 
 inline const CNEOBotProfile FIXED_DEFAULT_PROFILE = {
-	// GCC 10 (Steam RT 3.0) designated initalizer bug: Cannot place = string here, fixed in 11+
+// GCC 10 (Steam RT 3.0) designated initalizer bug: Cannot place = string here, fixed in 11+
 #ifdef WIN32
 	.szName = BOT_DEFAULT_NAME,
 #endif
 	.flagDifficulty = BOT_DIFFICULTY_FLAG_ALL,
 	.iDifficultyForced = -1,
 	.flagClass = BOT_CLASS_FLAG_ALL,
-	.flagsWepPrefs = {
+	.flagsWepPrefs =
 		{
-			// Recon
-			NEO_WEP_SRM, 							// Private
-			NEO_WEP_JITTE_S, 						// Corporal
-			NEO_WEP_ZR68_C, 						// Sergeant
-			NEO_WEP_SUPA7, 							// Lieutenant
+			{
+				// Recon
+				NEO_WEP_SRM,     // Private
+				NEO_WEP_JITTE_S, // Corporal
+				NEO_WEP_ZR68_C,  // Sergeant
+				NEO_WEP_SUPA7,   // Lieutenant
+			},
+			{
+				// Assault
+				NEO_WEP_ZR68_S,                 // Private
+				NEO_WEP_ZR68_S | NEO_WEP_M41_S, // Corporal
+				NEO_WEP_MX,                     // Sergeant
+				NEO_WEP_AA13 | NEO_WEP_SRS,     // Lieutenant
+			},
+			{
+				// Support
+				NEO_WEP_ZR68_C | NEO_WEP_SUPA7,         // Private
+				NEO_WEP_MX,                             // Corporal
+				NEO_WEP_MX | NEO_WEP_MX_S,              // Sergeant
+				NEO_WEP_MX | NEO_WEP_MX_S | NEO_WEP_PZ, // Lieutenant
+			},
+			{
+				// VIP
+				NEO_WEP_SMAC,                   // Private
+				NEO_WEP_SRM,                    // Corporal
+				NEO_WEP_SRM | NEO_WEP_JITTE,    // Sergeant
+				NEO_WEP_ZR68_C | NEO_WEP_SUPA7, // Lieutenant
+			},
 		},
-		{
-			// Assault
-			NEO_WEP_ZR68_S, 						// Private
-			NEO_WEP_ZR68_S | NEO_WEP_M41_S, 		// Corporal
-			NEO_WEP_MX, 							// Sergeant
-			NEO_WEP_AA13 | NEO_WEP_SRS, 			// Lieutenant
-		},
-		{
-			// Support
-			NEO_WEP_ZR68_C | NEO_WEP_SUPA7, 		// Private
-			NEO_WEP_MX, 							// Corporal
-			NEO_WEP_MX | NEO_WEP_MX_S, 				// Sergeant
-			NEO_WEP_MX | NEO_WEP_MX_S | NEO_WEP_PZ, // Lieutenant
-		},
-		{
-			// VIP
-			NEO_WEP_SMAC,							// Private
-			NEO_WEP_SRM, 							// Corporal
-			NEO_WEP_SRM | NEO_WEP_JITTE, 			// Sergeant
-			NEO_WEP_ZR68_C | NEO_WEP_SUPA7, 		// Lieutenant
-		},
-	},
 };
 
-template <typename FLAG>
-struct FlagCmp
+template <typename FLAG> struct FlagCmp
 {
 	FLAG flag;
 	const char *szValue;
 };
 
 static const FlagCmp<BotDifficultyFlag> BOT_DIFFICULTY_FLAG_CMP[] = {
-	{ BOT_DIFFICULTY_FLAG_EASY, "easy" },
-	{ BOT_DIFFICULTY_FLAG_NORMAL, "normal" },
-	{ BOT_DIFFICULTY_FLAG_HARD, "hard" },
-	{ BOT_DIFFICULTY_FLAG_EXPERT, "expert" },
+	{BOT_DIFFICULTY_FLAG_EASY, "easy"},
+	{BOT_DIFFICULTY_FLAG_NORMAL, "normal"},
+	{BOT_DIFFICULTY_FLAG_HARD, "hard"},
+	{BOT_DIFFICULTY_FLAG_EXPERT, "expert"},
 };
 
 static const FlagCmp<BotClassFlag> BOT_CLASS_FLAG_CMP[] = {
-	{ BOT_CLASS_FLAG_RECON, "recon" },
-	{ BOT_CLASS_FLAG_ASSAULT, "assault" },
-	{ BOT_CLASS_FLAG_SUPPORT, "support" },
+	{BOT_CLASS_FLAG_RECON, "recon"},
+	{BOT_CLASS_FLAG_ASSAULT, "assault"},
+	{BOT_CLASS_FLAG_SUPPORT, "support"},
 };
 
-#define FLAGCMP_WEP_DEF(M_BITWNAME, M_NAME, M_DISPLAY_NAME, ...) { NEO_WEP_##M_BITWNAME, #M_NAME },
-#define FLAGCMP_WEP_DEF_ALT(M_BITWNAME, M_NAME, M_DISPLAY_NAME, M_NAMEWEP, ...) { NEO_WEP_##M_BITWNAME, M_NAMEWEP },
+#define FLAGCMP_WEP_DEF(M_BITWNAME, M_NAME, M_DISPLAY_NAME, ...) {NEO_WEP_##M_BITWNAME, #M_NAME},
+#define FLAGCMP_WEP_DEF_ALT(M_BITWNAME, M_NAME, M_DISPLAY_NAME, M_NAMEWEP, ...) {NEO_WEP_##M_BITWNAME, M_NAMEWEP},
 
 // Start from the first weapon not empty as that's 1 << 0 in bitwise
 // clang-format off
@@ -100,12 +101,8 @@ FLAGCMP_WEP_DEF(PBK56S, pbk56s, "PBK56")
 // clang-format on
 
 template <typename FLAG, size_t MAX_LEN_IN_FLAGS_CMP>
-FLAG FlagsFromStr(
-		const FLAG flagDefault,
-		const FlagCmp<FLAG> (&flagsCmp)[MAX_LEN_IN_FLAGS_CMP],
-		const char *szValue,
-		BotTemplateApplied *appliedFlags,
-		const BotTemplateApplied_ hasAppliedFlag)
+FLAG FlagsFromStr(const FLAG flagDefault, const FlagCmp<FLAG> (&flagsCmp)[MAX_LEN_IN_FLAGS_CMP], const char *szValue,
+	BotTemplateApplied *appliedFlags, const BotTemplateApplied_ hasAppliedFlag)
 {
 	FLAG flags = 0;
 
@@ -125,7 +122,7 @@ FLAG FlagsFromStr(
 					// Have to do length check also as we're trying to match
 					// within a non-mutated substring rather than just simply a string match
 					if ((V_strlen(flagCmp.szValue) == iTextSize) &&
-							V_strnicmp(szValue + iStartIdx, flagCmp.szValue, iTextSize) == 0)
+						V_strnicmp(szValue + iStartIdx, flagCmp.szValue, iTextSize) == 0)
 					{
 						flags |= flagCmp.flag;
 						bApplied = true;
@@ -162,19 +159,14 @@ FLAG FlagsFromStr(
 
 static void SetProfileTempBotCommon(CNEOBotProfile *pProfile, KeyValues *kv)
 {
-	static const constexpr char *SZ_CLASSES[NEO_CLASS__LOADOUTABLE_COUNT] = {
-		"recon", "assault", "support", "vip"
-	};
-	static const constexpr char *SZ_RANKS[NEO_RANK__TOTAL] = {
-		"private", "corporal", "sergeant", "lieutenant"
-	};
+	static const constexpr char *SZ_CLASSES[NEO_CLASS__LOADOUTABLE_COUNT] = {"recon", "assault", "support", "vip"};
+	static const constexpr char *SZ_RANKS[NEO_RANK__TOTAL] = {"private", "corporal", "sergeant", "lieutenant"};
 
 	if (KeyValues *wepKv = kv->FindKey("weapons"))
 	{
-		static_assert(BOT_TEMPLATE_APPLIED_WEP_PREF_RECON_PRIVATE ==
-				(1 << 0));
+		static_assert(BOT_TEMPLATE_APPLIED_WEP_PREF_RECON_PRIVATE == (1 << 0));
 		static_assert(BOT_TEMPLATE_APPLIED_WEP_PREF_VIP_LIEUTENANT ==
-				(1 << ((NEO_CLASS_LOADOUTABLE_COUNT * NEO_RANK_TOTAL) - 1)));
+			(1 << ((NEO_CLASS_LOADOUTABLE_COUNT * NEO_RANK_TOTAL) - 1)));
 
 		int iBitWise = 0;
 
@@ -189,9 +181,9 @@ static void SetProfileTempBotCommon(CNEOBotProfile *pProfile, KeyValues *kv)
 
 			for (int idxRank = 0; idxRank < NEO_RANK__TOTAL; ++idxRank)
 			{
-				const auto flagsWepPrefCur = FlagsFromStr(pProfile->flagsWepPrefs[idxClass][idxRank],
-						WEP_BIT_FLAG_CMP, wepClassKv->GetString(SZ_RANKS[idxRank]),
-						&pProfile->flagTemplateApplied, static_cast<BotTemplateApplied_>(1 << iBitWise));
+				const auto flagsWepPrefCur = FlagsFromStr(pProfile->flagsWepPrefs[idxClass][idxRank], WEP_BIT_FLAG_CMP,
+					wepClassKv->GetString(SZ_RANKS[idxRank]), &pProfile->flagTemplateApplied,
+					static_cast<BotTemplateApplied_>(1 << iBitWise));
 				pProfile->flagsWepPrefs[idxClass][idxRank] = flagsWepPrefCur;
 
 				// NEO NOTE (nullsystem): Validate against the loadout for the given class and rank
@@ -218,7 +210,8 @@ static void SetProfileTempBotCommon(CNEOBotProfile *pProfile, KeyValues *kv)
 								V_strcat_safe(szInvalids, WEP_BIT_FLAG_CMP[idxWep - 1].szValue);
 							}
 						}
-						Warning(PROFILE_WARN_PREFIX "Invalid weapons for loadout of class %s rank %s:%s\n", SZ_CLASSES[idxClass], SZ_RANKS[idxRank], szInvalids);
+						Warning(PROFILE_WARN_PREFIX "Invalid weapons for loadout of class %s rank %s:%s\n",
+							SZ_CLASSES[idxClass], SZ_RANKS[idxRank], szInvalids);
 					}
 				}
 
@@ -244,13 +237,9 @@ static void SetProfileTempBotCommon(CNEOBotProfile *pProfile, KeyValues *kv)
 				continue;
 			}
 
-			const auto lootFlags = FlagsFromStr(
-				(NEO_WEP_BITS_UNDERLYING_TYPE)0,
-				WEP_BIT_FLAG_CMP,
-				wepClassKv->GetString("loot"),
-				&pProfile->flagTemplateApplied,
-				static_cast<BotTemplateApplied_>(
-					BOT_TEMPLATE_APPLIED_WEP_PREF_RECON_LOOT << idxClass));
+			const auto lootFlags = FlagsFromStr((NEO_WEP_BITS_UNDERLYING_TYPE)0, WEP_BIT_FLAG_CMP,
+				wepClassKv->GetString("loot"), &pProfile->flagTemplateApplied,
+				static_cast<BotTemplateApplied_>(BOT_TEMPLATE_APPLIED_WEP_PREF_RECON_LOOT << idxClass));
 
 			// Append loot preference to lieutenant level
 			const int idxLieutenant = NEO_RANK__TOTAL - 1;
@@ -258,9 +247,8 @@ static void SetProfileTempBotCommon(CNEOBotProfile *pProfile, KeyValues *kv)
 		}
 	}
 
-	pProfile->flagDifficulty = FlagsFromStr(pProfile->flagDifficulty,
-			BOT_DIFFICULTY_FLAG_CMP, kv->GetString("difficulty"),
-			&pProfile->flagTemplateApplied, BOT_TEMPLATE_APPLIED_DIFFICULTY);
+	pProfile->flagDifficulty = FlagsFromStr(pProfile->flagDifficulty, BOT_DIFFICULTY_FLAG_CMP,
+		kv->GetString("difficulty"), &pProfile->flagTemplateApplied, BOT_TEMPLATE_APPLIED_DIFFICULTY);
 
 	const char *szDifficultySelect = kv->GetString("difficulty_select");
 	if (szDifficultySelect && szDifficultySelect[0] != '\0')
@@ -294,7 +282,7 @@ static void SetProfileTempBotCommon(CNEOBotProfile *pProfile, KeyValues *kv)
 					for (int idxArg = 0; idxArg < IDXARG__TOTAL; ++idxArg)
 					{
 						if ((V_strlen(FIRST_ARGS[idxArg]) == iTextSize) &&
-								(V_strnicmp(szDifficultySelect + iStartIdx, FIRST_ARGS[idxArg], iTextSize) == 0))
+							(V_strnicmp(szDifficultySelect + iStartIdx, FIRST_ARGS[idxArg], iTextSize) == 0))
 						{
 							iSetIdxArgs = idxArg;
 							break;
@@ -309,7 +297,8 @@ static void SetProfileTempBotCommon(CNEOBotProfile *pProfile, KeyValues *kv)
 						for (int idxDiff = 0; idxDiff < CNEOBot::NUM_DIFFICULTY_LEVELS; ++idxDiff)
 						{
 							if ((V_strlen(BOT_DIFFICULTY_FLAG_CMP[idxDiff].szValue) == iTextSize) &&
-									V_strnicmp(szDifficultySelect + iStartIdx, BOT_DIFFICULTY_FLAG_CMP[idxDiff].szValue, iTextSize) == 0)
+								V_strnicmp(szDifficultySelect + iStartIdx, BOT_DIFFICULTY_FLAG_CMP[idxDiff].szValue,
+									iTextSize) == 0)
 							{
 								idxChosenDiff = idxDiff;
 								break;
@@ -317,14 +306,14 @@ static void SetProfileTempBotCommon(CNEOBotProfile *pProfile, KeyValues *kv)
 						}
 						if (idxChosenDiff < 0)
 						{
-							Warning(PROFILE_WARN_PREFIX "Cannot parse %.*s for difficulty_select\n",
-									iTextSize, szDifficultySelect + iStartIdx);
+							Warning(PROFILE_WARN_PREFIX "Cannot parse %.*s for difficulty_select\n", iTextSize,
+								szDifficultySelect + iStartIdx);
 						}
 #if LOG_DBG_LEVEL >= 1
 						else
 						{
-							Msg("BOTS: Set forced difficulty setting %.*s\n",
-									iTextSize, szDifficultySelect + iStartIdx);
+							Msg("BOTS: Set forced difficulty setting %.*s\n", iTextSize,
+								szDifficultySelect + iStartIdx);
 						}
 #endif
 					}
@@ -358,9 +347,8 @@ static void SetProfileTempBotCommon(CNEOBotProfile *pProfile, KeyValues *kv)
 		}
 	}
 
-	pProfile->flagClass = FlagsFromStr(pProfile->flagClass,
-			BOT_CLASS_FLAG_CMP, kv->GetString("class"),
-			&pProfile->flagTemplateApplied, BOT_TEMPLATE_APPLIED_CLASS);
+	pProfile->flagClass = FlagsFromStr(pProfile->flagClass, BOT_CLASS_FLAG_CMP, kv->GetString("class"),
+		&pProfile->flagTemplateApplied, BOT_TEMPLATE_APPLIED_CLASS);
 }
 
 void NEOBotProfileLoad()
@@ -434,7 +422,7 @@ void NEOBotProfileLoad()
 			Msg("BOTS: Starting to add bot %s\n", newBotProfile.szName);
 #endif
 			if (const char *pszTemplates = botKv->GetString("templates");
-					pszTemplates && pszTemplates[0] != '\0' && (templateProfiles.Count() > 0))
+				pszTemplates && pszTemplates[0] != '\0' && (templateProfiles.Count() > 0))
 			{
 				// Include the null ending in loop
 				int iStartIdx = 0;
@@ -460,25 +448,27 @@ void NEOBotProfileLoad()
 									if (templateProfile->flagTemplateApplied & (1 << iBitWise))
 									{
 #if LOG_DBG_LEVEL >= 2
-										Msg("  BOTS: Template (%s): Applied wep pref %d,%d = %d\n", szKey, idxClass, idxRank, templateProfile->flagsWepPrefs[idxClass][idxRank]);
+										Msg("  BOTS: Template (%s): Applied wep pref %d,%d = %d\n", szKey, idxClass,
+											idxRank, templateProfile->flagsWepPrefs[idxClass][idxRank]);
 #endif
-										newBotProfile.flagsWepPrefs[idxClass][idxRank] = templateProfile->flagsWepPrefs[idxClass][idxRank];
+										newBotProfile.flagsWepPrefs[idxClass][idxRank] =
+											templateProfile->flagsWepPrefs[idxClass][idxRank];
 									}
 									++iBitWise;
 								}
 							}
 							for (int idxClass = 0; idxClass < NEO_CLASS_VIP; ++idxClass)
 							{
-								const auto lootFlag =
-									static_cast<BotTemplateApplied>(
-										BOT_TEMPLATE_APPLIED_WEP_PREF_RECON_LOOT << idxClass);
+								const auto lootFlag = static_cast<BotTemplateApplied>(
+									BOT_TEMPLATE_APPLIED_WEP_PREF_RECON_LOOT << idxClass);
 
 								if (templateProfile->flagTemplateApplied & lootFlag)
 								{
 									for (int idxRank = 0; idxRank < NEO_RANK__TOTAL; ++idxRank)
 									{
 #if LOG_DBG_LEVEL >= 2
-										Msg("  BOTS: Template (%s): Applied loot wep pref %d,%d = %d\n", szKey, idxClass, idxRank, templateProfile->flagsLootWepPrefs[idxClass][idxRank]);
+										Msg("  BOTS: Template (%s): Applied loot wep pref %d,%d = %d\n", szKey,
+											idxClass, idxRank, templateProfile->flagsLootWepPrefs[idxClass][idxRank]);
 #endif
 										newBotProfile.flagsLootWepPrefs[idxClass][idxRank] =
 											templateProfile->flagsLootWepPrefs[idxClass][idxRank];
@@ -488,14 +478,16 @@ void NEOBotProfileLoad()
 							if (templateProfile->flagTemplateApplied & BOT_TEMPLATE_APPLIED_DIFFICULTY)
 							{
 #if LOG_DBG_LEVEL >= 2
-								Msg("  BOTS: Template (%s): Applied difficulty %d\n", szKey, templateProfile->flagDifficulty);
+								Msg("  BOTS: Template (%s): Applied difficulty %d\n", szKey,
+									templateProfile->flagDifficulty);
 #endif
 								newBotProfile.flagDifficulty = templateProfile->flagDifficulty;
 							}
 							if (templateProfile->flagTemplateApplied & BOT_TEMPLATE_APPLIED_DIFFICULTY_SELECT)
 							{
 #if LOG_DBG_LEVEL >= 2
-								Msg("  BOTS: Template (%s): Applied difficulty_select %d\n", szKey, templateProfile->iDifficultyForced);
+								Msg("  BOTS: Template (%s): Applied difficulty_select %d\n", szKey,
+									templateProfile->iDifficultyForced);
 #endif
 								newBotProfile.iDifficultyForced = templateProfile->iDifficultyForced;
 							}
@@ -587,7 +579,7 @@ CNEOBotProfileReturn NEOBotProfileNextPick(const CNEOBotProfileFilter &filter)
 	int iVisited = 0;
 	int iNum = RandomInt(0, g_botProfiles.Count() - 1);
 	while ((g_vbBotUsed[iNum] || !NEOBotProfilePassFilter(g_botProfiles[iNum], filter)) &&
-			iVisited < g_botProfiles.Count())
+		iVisited < g_botProfiles.Count())
 	{
 		iNum = LoopAroundInArray(iNum + 1, g_botProfiles.Count());
 		++iVisited;
@@ -624,10 +616,8 @@ void NEOBotProfileFreePickByIdx(const int idx)
 	}
 }
 
-int NEOBotProfileCreateNameRetSkill(char (&szBotName)[MAX_PLAYER_NAME_LENGTH],
-		const CNEOBotProfile &profile,
-		const int iRequestedSkill,
-		const char *pszOverrideName)
+int NEOBotProfileCreateNameRetSkill(char (&szBotName)[MAX_PLAYER_NAME_LENGTH], const CNEOBotProfile &profile,
+	const int iRequestedSkill, const char *pszOverrideName)
 {
 	int iCurBotSkill = iRequestedSkill;
 	if (IN_BETWEEN_EQ(CNEOBot::EASY, profile.iDifficultyForced, CNEOBot::EXPERT))
@@ -640,7 +630,7 @@ int NEOBotProfileCreateNameRetSkill(char (&szBotName)[MAX_PLAYER_NAME_LENGTH],
 	{
 		if (IN_BETWEEN_EQ(CNEOBot::EASY, iCurBotSkill, CNEOBot::EXPERT))
 		{
-			static constexpr const char *DIFF_NAME_STRS[] = { "Easy ", "Normal ", "Hard ", "Expert " };
+			static constexpr const char *DIFF_NAME_STRS[] = {"Easy ", "Normal ", "Hard ", "Expert "};
 			pszDifficultyStr = DIFF_NAME_STRS[iCurBotSkill];
 		}
 		else
@@ -652,4 +642,3 @@ int NEOBotProfileCreateNameRetSkill(char (&szBotName)[MAX_PLAYER_NAME_LENGTH],
 	V_sprintf_safe(szBotName, "%sBOT %s", pszDifficultyStr, (pszOverrideName) ? pszOverrideName : profile.szName);
 	return iCurBotSkill;
 }
-

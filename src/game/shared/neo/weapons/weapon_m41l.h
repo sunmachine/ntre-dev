@@ -23,6 +23,7 @@
 class CWeaponM41L : public CNEOBaseCombatWeapon
 {
 	DECLARE_CLASS(CWeaponM41L, CNEOBaseCombatWeapon);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -34,17 +35,21 @@ public:
 	CWeaponM41L();
 
 	NEO_WEP_BITS_UNDERLYING_TYPE WeaponIndex() const override { return NEO_WIDX_M41_L; }
-	virtual NEO_WEP_BITS_UNDERLYING_TYPE GetNeoWepBits(void) const OVERRIDE { return NEO_WEP_M41_L | NEO_WEP_SCOPEDWEAPON | NEO_WEP_FIREARM; }
+	virtual NEO_WEP_BITS_UNDERLYING_TYPE GetNeoWepBits(void) const OVERRIDE
+	{
+		return NEO_WEP_M41_L | NEO_WEP_SCOPEDWEAPON | NEO_WEP_FIREARM;
+	}
 	virtual int GetNeoWepXPCost(const int neoClass) const OVERRIDE { return 0; }
 
 	virtual float GetSpeedScale(void) const OVERRIDE { return 0.725f; }
 
 	bool CanBePickedUpByClass(int classId) OVERRIDE;
+
 protected:
 	virtual float GetFastestDryRefireTime() const OVERRIDE { return 0.2f; }
 
 private:
-	CWeaponM41L(const CWeaponM41L& other);
+	CWeaponM41L(const CWeaponM41L &other);
 };
 
 #endif // NEO_WEAPON_M41_L_H

@@ -27,4 +27,3 @@ inline int g_neoUserIDsLocalKilled[MAX_PLAYERS_ARRAY_SAFE];
 
 inline int g_neoDamageReportSize;
 inline AttackersTotals g_neoDamageReport[MAX_PLAYERS_ARRAY_SAFE];
-

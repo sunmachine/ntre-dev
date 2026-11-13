@@ -10,7 +10,7 @@
 
 // NEO HACK (Rain): This is a hack around a vision shaders corruption on Linux.
 // For details, see: https://github.com/NeotokyoRebuild/neo/pull/587
-void FixupGlShaders(IFileSystem* filesystem, ICvar* cvar)
+void FixupGlShaders(IFileSystem *filesystem, ICvar *cvar)
 {
 	constexpr auto filename = "glshaders.cfg";
 	constexpr auto pathID = "MOD";
@@ -21,7 +21,7 @@ void FixupGlShaders(IFileSystem* filesystem, ICvar* cvar)
 	// The client can still override this by including a command in their autoexec,
 	// if they really want to.
 	constexpr auto cvarname = "mat_autosave_glshaders";
-	ConVar* autosaveGlShaders;
+	ConVar *autosaveGlShaders;
 	if (!(autosaveGlShaders = cvar->FindVar(cvarname)))
 	{
 		Warning("%s: cvar %s not found\n", __FUNCTION__, cvarname);
@@ -42,8 +42,7 @@ void FixupGlShaders(IFileSystem* filesystem, ICvar* cvar)
 	// This should never happen, but just in case the relative mod path lookup somehow fails.
 	if (filesystem->IsDirectory(filename, pathID))
 	{
-		Warning("%s: Expected to find a file at %s path %s, but it was a dir\n",
-			__FUNCTION__, pathID, filename);
+		Warning("%s: Expected to find a file at %s path %s, but it was a dir\n", __FUNCTION__, pathID, filename);
 		return;
 	}
 

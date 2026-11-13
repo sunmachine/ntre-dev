@@ -7,26 +7,14 @@ class PathFollower;
 class ChasePath;
 class CBaseEntity;
 
-bool CNEOBotPathCompute
-(
-	CNEOBot* bot,
-	PathFollower& path,
-	const Vector& goal,
-	RouteType route,
+bool CNEOBotPathCompute(CNEOBot *bot, PathFollower &path, const Vector &goal, RouteType route,
 	float maxPathLength = PATH_NO_LENGTH_LIMIT,
 	bool includeGoalIfPathFails = true, // return incomplete path if full path not found by default
-	bool requireGoalArea = false
-);
+	bool requireGoalArea = false);
 
 // True if the path reaches its goal: complete, and not the straight-line fallback
 // Path::Compute builds when no route reaches the goal
-bool CNEOBotPathReachesGoal(const PathFollower& path);
+bool CNEOBotPathReachesGoal(const PathFollower &path);
 
-bool CNEOBotPathUpdateChase
-(
-	CNEOBot *bot,
-	ChasePath &path,
-	CBaseEntity *subject,
-	RouteType route,
-	Vector *pPredictedSubjectPos = NULL
-);
+bool CNEOBotPathUpdateChase(
+	CNEOBot *bot, ChasePath &path, CBaseEntity *subject, RouteType route, Vector *pPredictedSubjectPos = NULL);

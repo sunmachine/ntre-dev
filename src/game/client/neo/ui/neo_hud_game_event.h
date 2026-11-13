@@ -14,12 +14,13 @@
 class CNEOHud_GameEvent : public CNEOHud_ChildElement, public CHudElement, public vgui::EditablePanel
 {
 	DECLARE_CLASS_SIMPLE(CNEOHud_GameEvent, vgui::EditablePanel);
+
 public:
 	CNEOHud_GameEvent(const char *pElementName, vgui::Panel *parent = nullptr);
 
 	void SetMessage(const char *message, size_t size);
 	void SetMessage(const wchar_t *message, size_t size);
-	void MsgFunc_RoundResult(bf_read& msg);
+	void MsgFunc_RoundResult(bf_read &msg);
 
 	virtual void ApplySchemeSettings(vgui::IScheme *pScheme) override;
 	virtual void Paint() override;
@@ -27,7 +28,7 @@ public:
 protected:
 	virtual void UpdateStateForNeoHudElementDraw() override;
 	virtual void DrawNeoHudElement() override;
-	virtual ConVar* GetUpdateFrequencyConVar() const override;
+	virtual ConVar *GetUpdateFrequencyConVar() const override;
 
 private:
 	vgui::HFont m_hFont;

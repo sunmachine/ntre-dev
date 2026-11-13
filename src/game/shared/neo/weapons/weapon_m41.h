@@ -23,6 +23,7 @@
 class CWeaponM41 : public CNEOBaseCombatWeapon
 {
 	DECLARE_CLASS(CWeaponM41, CNEOBaseCombatWeapon);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -40,11 +41,12 @@ public:
 	virtual float GetSpeedScale(void) const OVERRIDE { return 0.725f; }
 
 	bool CanBePickedUpByClass(int classId) OVERRIDE;
+
 protected:
 	virtual float GetFastestDryRefireTime() const OVERRIDE { return 0.2f; }
 
 private:
-	CWeaponM41(const CWeaponM41& other);
+	CWeaponM41(const CWeaponM41 &other);
 };
 
 #endif // NEO_WEAPON_M41_H

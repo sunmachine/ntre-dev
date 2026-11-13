@@ -16,12 +16,12 @@
 static const Vector g_bludgeonMins(-KNIFE_HULL_DIM, -KNIFE_HULL_DIM, -KNIFE_HULL_DIM);
 static const Vector g_bludgeonMaxs(KNIFE_HULL_DIM, KNIFE_HULL_DIM, KNIFE_HULL_DIM);
 
-IMPLEMENT_NETWORKCLASS_ALIASED (WeaponKnife, DT_WeaponKnife)
+IMPLEMENT_NETWORKCLASS_ALIASED(WeaponKnife, DT_WeaponKnife)
 
 // clang-format off
 BEGIN_NETWORK_TABLE(CWeaponKnife, DT_WeaponKnife)
 END_NETWORK_TABLE()
-// clang-format on
+	// clang-format on
 
 #ifdef CLIENT_DLL
 // clang-format off
@@ -42,31 +42,23 @@ END_DATADESC()
 PRECACHE_WEAPON_REGISTER(weapon_knife);
 
 #ifdef GAME_DLL // NEO FIXME (Rain): fix these values
-acttable_t	CWeaponKnife::m_acttable[] =
-{
-	{ ACT_MP_STAND_IDLE, ACT_IDLE_MELEE, false },
-	{ ACT_MP_RUN, ACT_MP_RUN_MELEE, false },
-	{ ACT_MP_WALK, ACT_WALK, false },
-	{ ACT_MP_JUMP, ACT_HOP, false },
+acttable_t CWeaponKnife::m_acttable[] = {{ACT_MP_STAND_IDLE, ACT_IDLE_MELEE, false},
+	{ACT_MP_RUN, ACT_MP_RUN_MELEE, false}, {ACT_MP_WALK, ACT_WALK, false}, {ACT_MP_JUMP, ACT_HOP, false},
 
-	{ ACT_MP_AIRWALK, ACT_HOVER, false },
-	{ ACT_MP_SWIM, ACT_SWIM, false },
+	{ACT_MP_AIRWALK, ACT_HOVER, false}, {ACT_MP_SWIM, ACT_SWIM, false},
 
-	{ ACT_LEAP, ACT_LEAP, false },
-	{ ACT_DIESIMPLE, ACT_DIESIMPLE, false },
+	{ACT_LEAP, ACT_LEAP, false}, {ACT_DIESIMPLE, ACT_DIESIMPLE, false},
 
-	{ ACT_MP_CROUCH_IDLE, ACT_CROUCHIDLE, false },
-	{ ACT_MP_CROUCHWALK, ACT_WALK_CROUCH, false },
+	{ACT_MP_CROUCH_IDLE, ACT_CROUCHIDLE, false}, {ACT_MP_CROUCHWALK, ACT_WALK_CROUCH, false},
 
-	{ ACT_MP_RELOAD_STAND, ACT_RELOAD, false },
+	{ACT_MP_RELOAD_STAND, ACT_RELOAD, false},
 
-	{ ACT_CROUCHIDLE, ACT_HL2MP_IDLE_CROUCH_MELEE, false },
-	{ ACT_WALK_CROUCH, ACT_HL2MP_WALK_CROUCH_MELEE, false }
-};
+	{ACT_CROUCHIDLE, ACT_HL2MP_IDLE_CROUCH_MELEE, false}, {ACT_WALK_CROUCH, ACT_HL2MP_WALK_CROUCH_MELEE, false}};
 IMPLEMENT_ACTTABLE(CWeaponKnife);
 #endif
 
-namespace {
+namespace
+{
 constexpr float KNIFE_DAMAGE = 25.0f;
 }
 
@@ -92,7 +84,7 @@ void CWeaponKnife::ItemPostFrame()
 
 void CWeaponKnife::PrimaryAttack()
 {
-	auto owner = static_cast<CNEO_Player*>(GetOwner());
+	auto owner = static_cast<CNEO_Player *>(GetOwner());
 	if (owner && owner->GetNeoFlags() & NEO_FL_FREEZETIME)
 	{
 		return;
@@ -118,7 +110,7 @@ bool CWeaponKnife::CanBePickedUpByClass(int classId)
 #ifdef CLIENT_DLL
 bool CWeaponKnife::ShouldDraw()
 {
-	const auto owner = static_cast<CNEO_Player*>(GetOwner());
+	const auto owner = static_cast<CNEO_Player *>(GetOwner());
 	const bool draw = (owner && owner->IsAlive() && owner->GetActiveWeapon() == this);
 	const bool noShadow = !draw;
 
@@ -140,14 +132,14 @@ bool CWeaponKnife::ShouldDraw()
 #else
 bool CWeaponKnife::IsViewable()
 {
-	auto owner = static_cast<CNEO_Player*>(GetOwner());
+	auto owner = static_cast<CNEO_Player *>(GetOwner());
 	return (owner && owner->IsAlive() && owner->GetActiveWeapon() == this);
 }
 #endif
 
 void CWeaponKnife::Swing()
 {
-	auto pOwner = static_cast<CNEO_Player*>(GetOwner());
+	auto pOwner = static_cast<CNEO_Player *>(GetOwner());
 	if (!pOwner)
 		return;
 
@@ -171,12 +163,14 @@ void CWeaponKnife::Swing()
 
 	if (traceHit.fraction == 1.0)
 	{
-		float bludgeonHullRadius = 1.732f * KNIFE_HULL_DIM;  // use cuberoot of 2 to determine how big the hull is from center to the corner point
+		float bludgeonHullRadius = 1.732f *
+			KNIFE_HULL_DIM; // use cuberoot of 2 to determine how big the hull is from center to the corner point
 
 		// Back off by hull "radius"
 		swingEnd -= forward * bludgeonHullRadius;
 
-		UTIL_TraceHull(swingStart, swingEnd, g_bludgeonMins, g_bludgeonMaxs, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit);
+		UTIL_TraceHull(swingStart, swingEnd, g_bludgeonMins, g_bludgeonMaxs, MASK_SHOT_HULL, pOwner,
+			COLLISION_GROUP_NONE, &traceHit);
 		if (traceHit.fraction < 1.0 && traceHit.m_pEnt)
 		{
 			Vector vecToTarget = traceHit.m_pEnt->GetAbsOrigin() - swingStart;
@@ -199,7 +193,8 @@ void CWeaponKnife::Swing()
 
 	WeaponSound(SINGLE);
 #ifdef GAME_DLL
-	CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_EMPTY, 0.2, GetOwner(), SOUNDENT_CHANNEL_WEAPON);
+	CSoundEnt::InsertSound(
+		SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_EMPTY, 0.2, GetOwner(), SOUNDENT_CHANNEL_WEAPON);
 #endif
 
 	// -------------------------
@@ -228,15 +223,15 @@ void CWeaponKnife::Swing()
 	m_flNextSecondaryAttack = FLT_MAX;
 }
 
-Activity CWeaponKnife::ChooseIntersectionPointAndActivity(trace_t& hitTrace, const Vector& mins,
-	const Vector& maxs, CBasePlayer* pOwner)
+Activity CWeaponKnife::ChooseIntersectionPointAndActivity(
+	trace_t &hitTrace, const Vector &mins, const Vector &maxs, CBasePlayer *pOwner)
 {
-	int			i, j, k;
-	float		distance;
-	const float* minmaxs[2] = { mins.Base(), maxs.Base() };
-	trace_t		tmpTrace;
-	Vector		vecHullEnd = hitTrace.endpos;
-	Vector		vecEnd;
+	int i, j, k;
+	float distance;
+	const float *minmaxs[2] = {mins.Base(), maxs.Base()};
+	trace_t tmpTrace;
+	Vector vecHullEnd = hitTrace.endpos;
+	Vector vecEnd;
 
 	distance = 1e6f;
 	Vector vecSrc = hitTrace.startpos;
@@ -277,7 +272,7 @@ Activity CWeaponKnife::ChooseIntersectionPointAndActivity(trace_t& hitTrace, con
 	return KNIFE_VM_ATTACK_ACT;
 }
 
-void CWeaponKnife::Hit(trace_t& traceHit, [[maybe_unused]] Activity nHitActivity)
+void CWeaponKnife::Hit(trace_t &traceHit, [[maybe_unused]] Activity nHitActivity)
 {
 	Assert(nHitActivity == KNIFE_VM_ATTACK_ACT);
 
@@ -321,7 +316,7 @@ void CWeaponKnife::Hit(trace_t& traceHit, [[maybe_unused]] Activity nHitActivity
 		CalculateMeleeDamageForce(&info, hitDirection, traceHit.endpos, 0.05f);
 
 		if (currentAngle <= maxBackStabAngle)
-		{	// increase damage if backstabbing only after melee damage force has been calculated, so objects cannot be "backstabbed" to launch them further
+		{ // increase damage if backstabbing only after melee damage force has been calculated, so objects cannot be "backstabbed" to launch them further
 			info.SetDamage(damageToOneShotSupport);
 		}
 
@@ -360,14 +355,14 @@ bool CWeaponKnife::ImpactWater(const Vector &start, const Vector &end)
 	if (!(UTIL_PointContents(end) & (CONTENTS_WATER | CONTENTS_SLIME)))
 		return false;
 
-	trace_t	waterTrace;
+	trace_t waterTrace;
 
 	UTIL_TraceLine(start, end, (CONTENTS_WATER | CONTENTS_SLIME), GetOwner(), COLLISION_GROUP_NONE, &waterTrace);
 
 	if (waterTrace.fraction < 1.0f)
 	{
 #ifndef CLIENT_DLL
-		CEffectData	data;
+		CEffectData data;
 
 		data.m_fFlags = 0;
 		data.m_vOrigin = waterTrace.endpos;

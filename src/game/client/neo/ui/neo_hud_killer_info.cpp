@@ -68,16 +68,13 @@ void CNEOHud_KillerInfo::UpdateStateForNeoHudElementDraw()
 {
 	// If to show or not
 	const C_NEO_Player *pLocalPlayer = C_NEO_Player::GetLocalNEOPlayer();
-	m_bPlayerShownHud = pLocalPlayer
-			&& (const_cast<C_NEO_Player *>(pLocalPlayer)->IsPlayerDead() && g_neoKillerInfos.bHasDmgInfos)
-			&& (pLocalPlayer->GetTeamNumber() == TEAM_JINRAI
-					|| pLocalPlayer->GetTeamNumber() == TEAM_NSF)
-			&& (gpGlobals->curtime < (const_cast<C_NEO_Player *>(pLocalPlayer)->GetDeathTime() + DEATH_ANIMATION_TIME));
+	m_bPlayerShownHud = pLocalPlayer &&
+		(const_cast<C_NEO_Player *>(pLocalPlayer)->IsPlayerDead() && g_neoKillerInfos.bHasDmgInfos) &&
+		(pLocalPlayer->GetTeamNumber() == TEAM_JINRAI || pLocalPlayer->GetTeamNumber() == TEAM_NSF) &&
+		(gpGlobals->curtime < (const_cast<C_NEO_Player *>(pLocalPlayer)->GetDeathTime() + DEATH_ANIMATION_TIME));
 
 	const CSteamID steamID = GetSteamIDForPlayerIndex(g_neoKillerInfos.iEntIndex);
-	m_avatar.SetSteamID(
-			(steamID.IsValid() && (CNEOScoreBoard::ShowAvatars()))
-				? steamID : CSteamID{});
+	m_avatar.SetSteamID((steamID.IsValid() && (CNEOScoreBoard::ShowAvatars())) ? steamID : CSteamID{});
 	m_avatar.Fetch(184);
 }
 
@@ -104,8 +101,7 @@ void CNEOHud_KillerInfo::DrawNeoHudElement()
 	int wide, tall;
 	vgui::surface()->GetScreenSize(wide, tall);
 
-	const bool bSuicideKill = (iKillerEntIndex == pLocalPlayer->entindex()) ||
-			(iKillerEntIndex == NEO_ENVIRON_KILLED);
+	const bool bSuicideKill = (iKillerEntIndex == pLocalPlayer->entindex()) || (iKillerEntIndex == NEO_ENVIRON_KILLED);
 	const bool bValidAvatar = m_avatar.m_iTextureID > 0;
 
 	// NEO NOTE (nullsystem): Similar sizing to how the scoreboard popup card is
@@ -135,9 +131,7 @@ void CNEOHud_KillerInfo::DrawNeoHudElement()
 	vgui::surface()->GetTextSize(m_hFontNormal, L"A", iNormalWide, iNormalTall);
 
 	const int iBoxWide = Max(wide / 4, iTextOffsetX + iTitleWide + iMargin);
-	const int iBoxHeight = (bValidAvatar)
-			? (2 * iMargin) + iAvatarWT
-			: iMargin + iTitleTall + iNormalTall + iMargin;
+	const int iBoxHeight = (bValidAvatar) ? (2 * iMargin) + iAvatarWT : iMargin + iTitleTall + iNormalTall + iMargin;
 
 	const vgui::IntRect rect = {
 		.x0 = (wide / 2) - (iBoxWide / 2),
@@ -154,9 +148,7 @@ void CNEOHud_KillerInfo::DrawNeoHudElement()
 
 	vgui::surface()->DrawSetTextFont(m_hFontTitle);
 	vgui::surface()->DrawSetTextColor(COLOR_NEO_WHITE);
-	vgui::surface()->DrawSetTextPos(
-			rect.x0 + iTextOffsetX,
-			rect.y0 + iMargin);
+	vgui::surface()->DrawSetTextPos(rect.x0 + iTextOffsetX, rect.y0 + iMargin);
 	vgui::surface()->DrawPrintText(wszText, V_wcslen(wszText));
 
 	// Killer info
@@ -166,9 +158,8 @@ void CNEOHud_KillerInfo::DrawNeoHudElement()
 		// If it's an empty weapon, it's generally a suicide command kill
 		if (g_neoKillerInfos.wszKilledWith[0] == L'\0')
 		{
-			V_wcscpy_safe(wszText, (iKillerEntIndex == NEO_ENVIRON_KILLED)
-					? L"Killed by map"
-					: L"Killed by map or used suicide command");
+			V_wcscpy_safe(wszText,
+				(iKillerEntIndex == NEO_ENVIRON_KILLED) ? L"Killed by map" : L"Killed by map or used suicide command");
 		}
 		else
 		{
@@ -187,9 +178,7 @@ void CNEOHud_KillerInfo::DrawNeoHudElement()
 	}
 
 	vgui::surface()->DrawSetTextFont(m_hFontNormal);
-	vgui::surface()->DrawSetTextPos(
-			rect.x0 + iTextOffsetX,
-			rect.y0 + iMargin + iTitleTall);
+	vgui::surface()->DrawSetTextPos(rect.x0 + iTextOffsetX, rect.y0 + iMargin + iTitleTall);
 	vgui::surface()->DrawPrintText(wszText, V_wcslen(wszText));
 }
 
@@ -200,4 +189,3 @@ void CNEOHud_KillerInfo::Paint()
 	vgui::Panel::Paint();
 	PaintNeoElement();
 }
-

@@ -42,14 +42,16 @@
 // clang-format on
 
 // SCOPEDWEAPON - Scoped weapons should OR this in their flags.
-// THROWABLE - Generic for grenades 
+// THROWABLE - Generic for grenades
 // SUPPRESSED - Suppressed weapons
 // EXPLOSIVE - Generic for weapons that count as explosive kills on killfeed.
 
 #define NEO_WEP_BITS_UNDERLYING_TYPE long long int
 
 #define DEFINE_ENUM(name, ...) NEO_WIDX_##name,
-#define DEFINE_BITENUM(name, ...) NEO_WEP_##name = (static_cast<NEO_WEP_BITS_UNDERLYING_TYPE>(1) << static_cast<NEO_WEP_BITS_UNDERLYING_TYPE>(NEO_WIDX_##name - 1)),
+#define DEFINE_BITENUM(name, ...) \
+	NEO_WEP_##name = (static_cast<NEO_WEP_BITS_UNDERLYING_TYPE>(1) \
+		<< static_cast<NEO_WEP_BITS_UNDERLYING_TYPE>(NEO_WIDX_##name - 1)),
 
 // Weapon bit flags
 enum NeoWepBits : NEO_WEP_BITS_UNDERLYING_TYPE
@@ -84,4 +86,3 @@ static_assert(NEO_WEP_INVALID == 0);
 
 #undef DEFINE_ENUM
 #undef DEFINE_BITENUM
-

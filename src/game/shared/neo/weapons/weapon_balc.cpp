@@ -37,7 +37,7 @@ BEGIN_NETWORK_TABLE(CWeaponBALC, DT_WeaponBALC)
 	SendPropTime(SENDINFO(m_flChargeStartTime)),
 #endif
 END_NETWORK_TABLE()
-// clang-format on
+	// clang-format on
 
 #ifdef CLIENT_DLL
 // clang-format off
@@ -235,7 +235,8 @@ void CWeaponBALC::SecondaryAttack(void)
 void CWeaponBALC::ItemPostFrame(void)
 {
 	auto pOwner = ToBasePlayer(GetOwner());
-	if (!m_bIsPrimaryFireMode && pOwner && !m_bOverheated && !ShootingIsPrevented() && !(pOwner->m_nButtons & IN_ATTACK2))
+	if (!m_bIsPrimaryFireMode && pOwner && !m_bOverheated && !ShootingIsPrevented() &&
+		!(pOwner->m_nButtons & IN_ATTACK2))
 	{
 		if (pOwner->m_afButtonPressed & IN_ATTACK && !m_bCharging)
 		{
@@ -296,7 +297,7 @@ void CWeaponBALC::Think(void)
 	{
 		SetPrimaryAmmoCount(GetPrimaryAmmoCount() + 1);
 	}
-	
+
 	SetNextThink(gpGlobals->curtime + GetCoolingRate());
 }
 

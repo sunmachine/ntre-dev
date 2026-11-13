@@ -10,18 +10,18 @@
 extern ConVar sv_neo_bot_cmdr_debug_pause_uncommanded;
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotPause::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotPause::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
-	if ( sv_neo_bot_cmdr_debug_pause_uncommanded.GetBool() )
+	if (sv_neo_bot_cmdr_debug_pause_uncommanded.GetBool())
 	{
-		me->SetAttribute( CNEOBot::IGNORE_ENEMIES );
+		me->SetAttribute(CNEOBot::IGNORE_ENEMIES);
 		me->StopLookingAroundForEnemies();
 	}
 	return Continue();
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotPause::Update( CNEOBot* me, float interval )
+ActionResult<CNEOBot> CNEOBotPause::Update(CNEOBot *me, float interval)
 {
 	// If the bot gets commanded, transition to CommandFollow immediately
 	if (me->m_hLeadingPlayer.Get() || me->m_hCommandingPlayer.Get())
@@ -35,18 +35,18 @@ ActionResult< CNEOBot > CNEOBotPause::Update( CNEOBot* me, float interval )
 	}
 	else
 	{
-		if ( !me->HasAttribute( CNEOBot::IGNORE_ENEMIES ) )
+		if (!me->HasAttribute(CNEOBot::IGNORE_ENEMIES))
 		{
 			// Ensure these are set if cvar changed while in state
-			me->SetAttribute( CNEOBot::IGNORE_ENEMIES );
+			me->SetAttribute(CNEOBot::IGNORE_ENEMIES);
 			me->StopLookingAroundForEnemies();
 		}
 	}
 
 	// Stop moving
-	if ( me->GetCurrentPath() )
+	if (me->GetCurrentPath())
 	{
-		me->SetCurrentPath( NULL );
+		me->SetCurrentPath(NULL);
 	}
 
 	me->GetLocomotionInterface()->Reset();
@@ -54,8 +54,8 @@ ActionResult< CNEOBot > CNEOBotPause::Update( CNEOBot* me, float interval )
 }
 
 //---------------------------------------------------------------------------------------------
-void CNEOBotPause::OnEnd( CNEOBot *me, Action< CNEOBot > *nextAction )
+void CNEOBotPause::OnEnd(CNEOBot *me, Action<CNEOBot> *nextAction)
 {
-	me->ClearAttribute( CNEOBot::IGNORE_ENEMIES );
+	me->ClearAttribute(CNEOBot::IGNORE_ENEMIES);
 	me->StartLookingAroundForEnemies();
 }

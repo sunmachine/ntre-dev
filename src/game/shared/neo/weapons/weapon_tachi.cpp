@@ -18,7 +18,7 @@ SendPropTime(SENDINFO(m_flSoonestFiremodeSwitch)),
 SendPropBool(SENDINFO(m_bIsPrimaryFireMode)),
 #endif
 END_NETWORK_TABLE()
-// clang-format on
+	// clang-format on
 
 #ifdef CLIENT_DLL
 // clang-format off
@@ -69,7 +69,7 @@ CWeaponTachi::CWeaponTachi()
 	};
 }
 
-void CWeaponTachi::SwitchFireMode( void )
+void CWeaponTachi::SwitchFireMode(void)
 {
 	if (m_flSoonestFiremodeSwitch > gpGlobals->curtime)
 	{
@@ -78,39 +78,38 @@ void CWeaponTachi::SwitchFireMode( void )
 
 	m_bIsPrimaryFireMode = !m_bIsPrimaryFireMode;
 
-	WeaponSound( SPECIAL1 );
-	SendWeaponAnim( ACT_VM_DRAW_SPECIAL );
+	WeaponSound(SPECIAL1);
+	SendWeaponAnim(ACT_VM_DRAW_SPECIAL);
 }
 
-void CWeaponTachi::ForceSetFireMode( Tachi::Firemode primaryMode, bool bPlaySound,
-	float flSoonestSwitch )
+void CWeaponTachi::ForceSetFireMode(Tachi::Firemode primaryMode, bool bPlaySound, float flSoonestSwitch)
 {
 	m_bIsPrimaryFireMode = (bool)primaryMode;
 	m_flSoonestFiremodeSwitch = flSoonestSwitch;
 
 	if (bPlaySound)
 	{
-		WeaponSound( SPECIAL1 );
+		WeaponSound(SPECIAL1);
 	}
 }
 
-void CWeaponTachi::ItemPostFrame( void )
+void CWeaponTachi::ItemPostFrame(void)
 {
 	BaseClass::ItemPostFrame();
 
-	if ( m_bInReload )
+	if (m_bInReload)
 	{
 		return;
 	}
 
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 
-	if ( pOwner == NULL )
+	if (pOwner == NULL)
 	{
 		return;
 	}
 
-	if ( (pOwner->m_nButtons & IN_ATTACK2) && (!(pOwner->m_afButtonLast & IN_ATTACK2)) )
+	if ((pOwner->m_nButtons & IN_ATTACK2) && (!(pOwner->m_afButtonLast & IN_ATTACK2)))
 	{
 		if (m_flSoonestFiremodeSwitch < gpGlobals->curtime)
 		{

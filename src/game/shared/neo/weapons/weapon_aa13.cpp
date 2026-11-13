@@ -23,7 +23,7 @@ IMPLEMENT_NETWORKCLASS_ALIASED(WeaponAA13, DT_WeaponAA13)
 BEGIN_NETWORK_TABLE(CWeaponAA13, DT_WeaponAA13)
 	DEFINE_NEO_BASE_WEP_NETWORK_TABLE
 END_NETWORK_TABLE()
-// clang-format on
+	// clang-format on
 
 #ifdef CLIENT_DLL
 // clang-format off
@@ -83,7 +83,7 @@ void CWeaponAA13::PrimaryAttack(void)
 	}
 
 	// Only the player fires this way so we can cast
-	auto* pPlayer = static_cast<CNEO_Player*>(GetOwner());
+	auto *pPlayer = static_cast<CNEO_Player *>(GetOwner());
 
 	if (!pPlayer)
 	{
@@ -93,7 +93,8 @@ void CWeaponAA13::PrimaryAttack(void)
 	// MUST call sound before removing a round from the clip of a CMachineGun
 	WeaponSound(SINGLE);
 #ifdef GAME_DLL
-	CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_PISTOL, 0.2, GetOwner(), SOUNDENT_CHANNEL_WEAPON);
+	CSoundEnt::InsertSound(
+		SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_PISTOL, 0.2, GetOwner(), SOUNDENT_CHANNEL_WEAPON);
 #endif
 	pPlayer->DoMuzzleFlash();
 

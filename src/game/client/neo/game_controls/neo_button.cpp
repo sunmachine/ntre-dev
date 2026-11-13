@@ -6,10 +6,10 @@
 
 using namespace vgui;
 
-DECLARE_BUILD_FACTORY_DEFAULT_TEXT( CNeoButton, NeoButton );
+DECLARE_BUILD_FACTORY_DEFAULT_TEXT(CNeoButton, NeoButton);
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNeoButton::GetButtonTextures()
 {
@@ -45,17 +45,15 @@ void CNeoButton::GetButtonTextures()
 	}
 }
 
-void CNeoButton::PaintBackground()
-{
-}
+void CNeoButton::PaintBackground() {}
 
 //-----------------------------------------------------------------------------
 // Purpose:	Paint NeoButton on screen
 //-----------------------------------------------------------------------------
 void CNeoButton::Paint(void)
 {
-	if ( !ShouldPaint() )
-		return; 
+	if (!ShouldPaint())
+		return;
 
 	int wide, tall;
 	GetSize(wide, tall);
@@ -80,9 +78,7 @@ void CNeoButton::Paint(void)
 	BaseClass::Paint();
 }
 
-void CNeoButton::PaintBorder()
-{
-}
+void CNeoButton::PaintBorder() {}
 
 void CNeoButton::DrawFocusBorder(int tx0, int ty0, int tx1, int ty1)
 {

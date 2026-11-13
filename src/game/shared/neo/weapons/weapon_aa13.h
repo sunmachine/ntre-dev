@@ -13,6 +13,7 @@
 class CWeaponAA13 : public CNEOBaseCombatWeapon
 {
 	DECLARE_CLASS(CWeaponAA13, CNEOBaseCombatWeapon);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -23,7 +24,7 @@ public:
 
 	CWeaponAA13(void);
 
-	virtual void	PrimaryAttack(void) OVERRIDE;
+	virtual void PrimaryAttack(void) OVERRIDE;
 
 	NEO_WEP_BITS_UNDERLYING_TYPE WeaponIndex() const override { return NEO_WIDX_AA13; }
 	virtual NEO_WEP_BITS_UNDERLYING_TYPE GetNeoWepBits(void) const OVERRIDE { return NEO_WEP_AA13 | NEO_WEP_FIREARM; }
@@ -32,6 +33,7 @@ public:
 	virtual float GetSpeedScale(void) const OVERRIDE { return 0.725f; }
 
 	bool CanBePickedUpByClass(int classId) OVERRIDE;
+
 protected:
 	virtual float GetFastestDryRefireTime() const OVERRIDE { return 0.2f; }
 

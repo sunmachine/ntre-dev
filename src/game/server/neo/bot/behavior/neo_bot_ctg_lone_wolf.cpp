@@ -15,107 +15,110 @@
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotCtgLoneWolf::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotCtgLoneWolf::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
 	return Continue();
 }
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotCtgLoneWolf::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotCtgLoneWolf::Update(CNEOBot *me, float interval)
 {
-	ActionResult< CNEOBot > result = ConsiderGhostCaptureTransition( me );
-	if ( result.IsRequestingChange() )
+	ActionResult<CNEOBot> result = ConsiderGhostCaptureTransition(me);
+	if (result.IsRequestingChange())
 	{
 		return result;
 	}
 
-	if ( me->DropGhost() )
+	if (me->DropGhost())
 	{
 		return Continue(); // ghost drop in progress
 	}
 
-	ActionResult< CNEOBot > interceptionResult = ConsiderGhostInterception( me );
-	if ( interceptionResult.IsRequestingChange() )
+	ActionResult<CNEOBot> interceptionResult = ConsiderGhostInterception(me);
+	if (interceptionResult.IsRequestingChange())
 	{
 		return interceptionResult;
 	}
 
-	const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat( true );
-	if ( threat && threat->GetEntity() && threat->GetEntity()->IsAlive() )
+	const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat(true);
+	if (threat && threat->GetEntity() && threat->GetEntity()->IsAlive())
 	{
-		return ChangeTo( new CNEOBotAttack(), "Engaging enemy" );
+		return ChangeTo(new CNEOBotAttack(), "Engaging enemy");
 	}
 
-	if ( !threat && me->GetActiveWeapon() )
+	if (!threat && me->GetActiveWeapon())
 	{
 		// Aggressively reload due to lack of backup
 		me->ReloadIfLowClip(true); // force reload true
 	}
 
-	const CWeaponDetpack *pDetpackWeapon = assert_cast<CWeaponDetpack*>( me->Weapon_OwnsThisType( "weapon_remotedet" ) );
+	const CWeaponDetpack *pDetpackWeapon = assert_cast<CWeaponDetpack *>(me->Weapon_OwnsThisType("weapon_remotedet"));
 
-	if ( pDetpackWeapon && pDetpackWeapon->m_bThisDetpackHasBeenThrown && !pDetpackWeapon->m_bRemoteHasBeenTriggered )
+	if (pDetpackWeapon && pDetpackWeapon->m_bThisDetpackHasBeenThrown && !pDetpackWeapon->m_bRemoteHasBeenTriggered)
 	{
-		return ChangeTo( new CNEOBotCtgLoneWolfAmbush(), "Detpack deployed, transitioning to ambush" );
+		return ChangeTo(new CNEOBotCtgLoneWolfAmbush(), "Detpack deployed, transitioning to ambush");
 	}
 
-	const CNavArea *ghostArea = TheNavMesh->GetNearestNavArea( NEORules()->GetGhostPos() );
+	const CNavArea *ghostArea = TheNavMesh->GetNearestNavArea(NEORules()->GetGhostPos());
 	const CNavArea *myArea = me->GetLastKnownArea();
-	if ( ghostArea && myArea && ghostArea->IsPotentiallyVisible( myArea ) )
+	if (ghostArea && myArea && ghostArea->IsPotentiallyVisible(myArea))
 	{
-		if ( pDetpackWeapon && !pDetpackWeapon->m_bThisDetpackHasBeenThrown && NEORules()->m_pGhost )
+		if (pDetpackWeapon && !pDetpackWeapon->m_bThisDetpackHasBeenThrown && NEORules()->m_pGhost)
 		{
-			const float fDetpackDeployPrepDistSq = Square( 200.0f );
-			if ( me->GetAbsOrigin().DistToSqr( NEORules()->GetGhostPos() ) < fDetpackDeployPrepDistSq )
+			const float fDetpackDeployPrepDistSq = Square(200.0f);
+			if (me->GetAbsOrigin().DistToSqr(NEORules()->GetGhostPos()) < fDetpackDeployPrepDistSq)
 			{
-				return ChangeTo( new CNEOBotDetpackDeploy( NEORules()->GetGhostPos(), new CNEOBotCtgLoneWolfAmbush() ), "Moving to plant detpack" );
+				return ChangeTo(new CNEOBotDetpackDeploy(NEORules()->GetGhostPos(), new CNEOBotCtgLoneWolfAmbush()),
+					"Moving to plant detpack");
 			}
 		}
 		else
 		{
-			return ChangeTo( new CNEOBotCtgLoneWolfAmbush(), "Waiting in ambush near ghost" );
+			return ChangeTo(new CNEOBotCtgLoneWolfAmbush(), "Waiting in ambush near ghost");
 		}
 	}
 
-	return ConsiderGhostVisualCheck( me );
+	return ConsiderGhostVisualCheck(me);
 }
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotCtgLoneWolf::ConsiderGhostInterception( CNEOBot *me, const CBaseCombatCharacter *pGhostOwner )
+ActionResult<CNEOBot> CNEOBotCtgLoneWolf::ConsiderGhostInterception(
+	CNEOBot *me, const CBaseCombatCharacter *pGhostOwner)
 {
-	if ( !pGhostOwner )
+	if (!pGhostOwner)
 	{
 		CWeaponGhost *pGhostWeapon = NEORules()->m_pGhost;
 		pGhostOwner = pGhostWeapon ? pGhostWeapon->GetOwner() : nullptr;
 	}
 
-	bool bGhostHeldByEnemy = ( pGhostOwner && !me->InSameTeam( pGhostOwner ) );
-	if ( !bGhostHeldByEnemy )
+	bool bGhostHeldByEnemy = (pGhostOwner && !me->InSameTeam(pGhostOwner));
+	if (!bGhostHeldByEnemy)
 	{
 		return Continue();
 	}
 
 	// intercept enemy carrier
-	const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat( true );
-	if ( threat && threat->GetEntity() == pGhostOwner && me->IsLineOfFireClear( threat->GetEntity()->WorldSpaceCenter(), CNEOBot::LINE_OF_FIRE_FLAGS_DEFAULT ) )
+	const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat(true);
+	if (threat && threat->GetEntity() == pGhostOwner &&
+		me->IsLineOfFireClear(threat->GetEntity()->WorldSpaceCenter(), CNEOBot::LINE_OF_FIRE_FLAGS_DEFAULT))
 	{
-		me->EnableCloak( 3.0f );
-		return SuspendFor( new CNEOBotAttack, "Attacking the ghost carrier!" );
+		me->EnableCloak(3.0f);
+		return SuspendFor(new CNEOBotAttack, "Attacking the ghost carrier!");
 	}
 
-	const Vector& vecInterceptGoal = NEORules()->GetGhostPos();
-	if ( vecInterceptGoal != CNEO_Player::VECTOR_INVALID_WAYPOINT )
+	const Vector &vecInterceptGoal = NEORules()->GetGhostPos();
+	if (vecInterceptGoal != CNEO_Player::VECTOR_INVALID_WAYPOINT)
 	{
-		if ( !m_path.IsValid() )
+		if (!m_path.IsValid())
 		{
-			CNEOBotPathCompute( me, m_path, vecInterceptGoal, FASTEST_ROUTE );
-			m_path.Update( me );
+			CNEOBotPathCompute(me, m_path, vecInterceptGoal, FASTEST_ROUTE);
+			m_path.Update(me);
 		}
 		else
 		{
-			m_path.Update( me );
+			m_path.Update(me);
 		}
 	}
 	return Continue();
@@ -123,35 +126,35 @@ ActionResult< CNEOBot > CNEOBotCtgLoneWolf::ConsiderGhostInterception( CNEOBot *
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotCtgLoneWolf::ConsiderGhostVisualCheck( CNEOBot *me )
+ActionResult<CNEOBot> CNEOBotCtgLoneWolf::ConsiderGhostVisualCheck(CNEOBot *me)
 {
-	if ( me->IsCarryingGhost() )
+	if (me->IsCarryingGhost())
 	{
 		return Continue();
 	}
 
 	CWeaponGhost *pGhostWeapon = NEORules()->m_pGhost;
 	CBaseCombatCharacter *pGhostOwner = pGhostWeapon ? pGhostWeapon->GetOwner() : nullptr;
-	bool bGhostHeldByEnemy = ( pGhostOwner && !me->InSameTeam( pGhostOwner ) );
+	bool bGhostHeldByEnemy = (pGhostOwner && !me->InSameTeam(pGhostOwner));
 
-	if ( bGhostHeldByEnemy )
+	if (bGhostHeldByEnemy)
 	{
 		return Continue();
 	}
 
 	// Move to ghost's location to gain visual contact
-	const Vector& vecAcquireGoal = NEORules()->GetGhostPos();
-	if ( vecAcquireGoal != CNEO_Player::VECTOR_INVALID_WAYPOINT )
+	const Vector &vecAcquireGoal = NEORules()->GetGhostPos();
+	if (vecAcquireGoal != CNEO_Player::VECTOR_INVALID_WAYPOINT)
 	{
 		// Proof-of-concept: only recompute the path when the current path is invalid.
-		if ( !m_path.IsValid() )
+		if (!m_path.IsValid())
 		{
-			CNEOBotPathCompute( me, m_path, vecAcquireGoal, FASTEST_ROUTE );
-			m_path.Update( me );
+			CNEOBotPathCompute(me, m_path, vecAcquireGoal, FASTEST_ROUTE);
+			m_path.Update(me);
 		}
 		else
 		{
-			m_path.Update( me );
+			m_path.Update(me);
 		}
 	}
 
@@ -160,14 +163,14 @@ ActionResult< CNEOBot > CNEOBotCtgLoneWolf::ConsiderGhostVisualCheck( CNEOBot *m
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotCtgLoneWolf::ConsiderGhostCaptureTransition( CNEOBot *me )
+ActionResult<CNEOBot> CNEOBotCtgLoneWolf::ConsiderGhostCaptureTransition(CNEOBot *me)
 {
 	if (NEORules()->GhostExists())
 	{
 		int iGhosterPlayer = NEORules()->GetGhosterPlayer();
 		if (iGhosterPlayer > 0 && iGhosterPlayer <= gpGlobals->maxClients)
 		{
-			CNEO_Player* pGhostCarrier = ToNEOPlayer(UTIL_PlayerByIndex(iGhosterPlayer));
+			CNEO_Player *pGhostCarrier = ToNEOPlayer(UTIL_PlayerByIndex(iGhosterPlayer));
 			if (pGhostCarrier && pGhostCarrier != me)
 			{
 				// We sometimes flow into CNEOBotCtgLoneWolf if this bot failed to get the ghost
@@ -193,41 +196,40 @@ ActionResult< CNEOBot > CNEOBotCtgLoneWolf::ConsiderGhostCaptureTransition( CNEO
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotCtgLoneWolf::OnSuspend( CNEOBot *me, Action< CNEOBot > *interruptingAction )
+ActionResult<CNEOBot> CNEOBotCtgLoneWolf::OnSuspend(CNEOBot *me, Action<CNEOBot> *interruptingAction)
 {
 	m_path.Invalidate();
 	return Continue();
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotCtgLoneWolf::OnResume( CNEOBot *me, Action< CNEOBot > *interruptingAction )
+ActionResult<CNEOBot> CNEOBotCtgLoneWolf::OnResume(CNEOBot *me, Action<CNEOBot> *interruptingAction)
 {
 	return Continue();
 }
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotCtgLoneWolf::OnStuck( CNEOBot *me )
+EventDesiredResult<CNEOBot> CNEOBotCtgLoneWolf::OnStuck(CNEOBot *me)
 {
 	m_path.Invalidate();
 	me->GetLocomotionInterface()->Jump();
 	return TryContinue();
 }
 
-EventDesiredResult< CNEOBot > CNEOBotCtgLoneWolf::OnMoveToFailure( CNEOBot *me, const Path *path, MoveToFailureType reason )
+EventDesiredResult<CNEOBot> CNEOBotCtgLoneWolf::OnMoveToFailure(CNEOBot *me, const Path *path, MoveToFailureType reason)
 {
 	m_path.Invalidate();
 	return TryContinue();
 }
 
 //---------------------------------------------------------------------------------------------
-Vector CNEOBotCtgLoneWolf::GetNearestEnemyCapPoint( CNEOBot *me ) const
+Vector CNEOBotCtgLoneWolf::GetNearestEnemyCapPoint(CNEOBot *me) const
 {
-	if ( !me )
+	if (!me)
 	{
 		return CNEO_Player::VECTOR_INVALID_WAYPOINT;
 	}
 
-	const int iEnemyTeam = NEORules()->GetOpposingTeam( me->GetTeamNumber() );
-	return NEORules()->GetNearestGhostCapPoint( iEnemyTeam, me->GetAbsOrigin() );
+	const int iEnemyTeam = NEORules()->GetOpposingTeam(me->GetTeamNumber());
+	return NEORules()->GetNearestGhostCapPoint(iEnemyTeam, me->GetAbsOrigin());
 }
-

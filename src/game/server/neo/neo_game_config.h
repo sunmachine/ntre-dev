@@ -21,9 +21,9 @@ public:
 	bool m_Cyberspace = false;
 
 	// Inputs
-	void InputFireTeamWin(inputdata_t& inputData);
-	void InputFireDMPlayerWin(inputdata_t& inputData);
-	void InputFireRoundTie(inputdata_t& inputData);
+	void InputFireTeamWin(inputdata_t &inputData);
+	void InputFireDMPlayerWin(inputdata_t &inputData);
+	void InputFireRoundTie(inputdata_t &inputData);
 
 	COutputInt m_OnRoundEnd;
 	COutputEvent m_OnDMRoundEnd;

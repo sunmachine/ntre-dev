@@ -5,22 +5,23 @@
 #include "Path/NextBotChasePath.h"
 
 //--------------------------------------------------------------------------------------------------------
-class CNEOBotCtgEscort : public Action< CNEOBot >
+class CNEOBotCtgEscort : public Action<CNEOBot>
 {
 public:
-	CNEOBotCtgEscort( void );
+	CNEOBotCtgEscort(void);
 
-	virtual ActionResult< CNEOBot >	OnStart( CNEOBot *me, Action< CNEOBot > *priorAction ) override;
-	virtual ActionResult< CNEOBot >	Update( CNEOBot *me, float interval ) override;
-	virtual ActionResult< CNEOBot >	OnResume( CNEOBot *me, Action< CNEOBot > *interruptingAction ) override;
+	virtual ActionResult<CNEOBot> OnStart(CNEOBot *me, Action<CNEOBot> *priorAction) override;
+	virtual ActionResult<CNEOBot> Update(CNEOBot *me, float interval) override;
+	virtual ActionResult<CNEOBot> OnResume(CNEOBot *me, Action<CNEOBot> *interruptingAction) override;
 
-	virtual EventDesiredResult< CNEOBot > OnStuck( CNEOBot *me ) override;
-	virtual EventDesiredResult< CNEOBot > OnMoveToSuccess( CNEOBot *me, const Path *path ) override;
-	virtual EventDesiredResult< CNEOBot > OnMoveToFailure( CNEOBot *me, const Path *path, MoveToFailureType reason ) override;
+	virtual EventDesiredResult<CNEOBot> OnStuck(CNEOBot *me) override;
+	virtual EventDesiredResult<CNEOBot> OnMoveToSuccess(CNEOBot *me, const Path *path) override;
+	virtual EventDesiredResult<CNEOBot> OnMoveToFailure(
+		CNEOBot *me, const Path *path, MoveToFailureType reason) override;
 
-	virtual QueryResultType ShouldHurry( const INextBot *me ) const override;
+	virtual QueryResultType ShouldHurry(const INextBot *me) const override;
 
-	virtual const char *GetName( void ) const override { return "ctgEscort"; }
+	virtual const char *GetName(void) const override { return "ctgEscort"; }
 
 private:
 	PathFollower m_path;
@@ -35,9 +36,9 @@ private:
 		ROLE_BODYGUARD,
 	};
 	EscortRole m_role;
-	
-	EscortRole UpdateRoleAssignment( CNEOBot *me, CNEO_Player *pGhostCarrier, const Vector &vecGoalPos );
-	void UpdateGoalPosition( CNEOBot *me, CNEO_Player *pGhostCarrier );
+
+	EscortRole UpdateRoleAssignment(CNEOBot *me, CNEO_Player *pGhostCarrier, const Vector &vecGoalPos);
+	void UpdateGoalPosition(CNEOBot *me, CNEO_Player *pGhostCarrier);
 
 	Vector m_vecGoalPos;
 	bool m_bHasGoal;

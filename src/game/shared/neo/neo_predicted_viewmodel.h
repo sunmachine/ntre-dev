@@ -21,15 +21,15 @@ class CNEO_Player;
 class CNEOPredictedViewModel : public CPredictedViewModel
 {
 	DECLARE_CLASS(CNEOPredictedViewModel, CPredictedViewModel);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
 
 	CNEOPredictedViewModel(void);
-	virtual ~CNEOPredictedViewModel( void );
+	virtual ~CNEOPredictedViewModel(void);
 
-	virtual void CalcViewModelView(CBasePlayer *pOwner,
-		const Vector& eyePosition, const QAngle& eyeAngles);
+	virtual void CalcViewModelView(CBasePlayer *pOwner, const Vector &eyePosition, const QAngle &eyeAngles);
 
 	float freeRoomForLean(float leanAmount, CNEO_Player *player);
 
@@ -48,16 +48,12 @@ public:
 #endif
 
 #ifdef CLIENT_DLL
-	float GetLeanInterp()
-	{
-		return GetInterpolationAmount(m_LagAnglesHistory.GetType());
-	}
+	float GetLeanInterp() { return GetInterpolationAmount(m_LagAnglesHistory.GetType()); }
 #endif
 
 #ifdef CLIENT_DLL
-	void DrawRenderToTextureDebugInfo(IClientRenderable* pRenderable,
-		const Vector& mins, const Vector& maxs, const Vector &rgbColor,
-		const char *message = "", const Vector &vecOrigin = vec3_origin);
+	void DrawRenderToTextureDebugInfo(IClientRenderable *pRenderable, const Vector &mins, const Vector &maxs,
+		const Vector &rgbColor, const char *message = "", const Vector &vecOrigin = vec3_origin);
 #endif
 
 #ifdef GAME_DLL

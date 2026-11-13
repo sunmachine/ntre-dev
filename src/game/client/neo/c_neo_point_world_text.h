@@ -20,16 +20,24 @@ class PointWorldText
 {
 public:
 	PointWorldText();
-	PointWorldText(char* pszText, Vector pos, CMaterialReference* font);
+	PointWorldText(char *pszText, Vector pos, CMaterialReference *font);
 	~PointWorldText();
 
 	void DrawModel();
 
 	void SetAbsOrigin(Vector origin) { m_vecAbsOrigin = origin; };
-	void SetText(const char* pszText);
+	void SetText(const char *pszText);
 	void SetAlpha(const float alpha) { m_colTextColor.a = alpha; };
-	void SetTextSize(const float size) { m_flTextSize = size; UpdateTextWorldSize(); };
-	void SetTextSpacingX(const float spacing) { m_flTextSpacingX = spacing; UpdateTextWorldSize(); };
+	void SetTextSize(const float size)
+	{
+		m_flTextSize = size;
+		UpdateTextWorldSize();
+	};
+	void SetTextSpacingX(const float spacing)
+	{
+		m_flTextSpacingX = spacing;
+		UpdateTextWorldSize();
+	};
 	void SetOrientation(const PointWorldTextOrientation orientation) { m_nOrientation = orientation; };
 
 	Vector GetAbsOrigin() { return m_vecAbsOrigin; }
@@ -50,13 +58,14 @@ private:
 	float m_flTextSize = 64.f;
 	float m_flTextSpacingX = 0.f;
 	float m_flTextSpacingY = 0.f;
-	color32 m_colTextColor = {(byte)COLOR_NEO_WHITE.r(), (byte)COLOR_NEO_WHITE.g(), (byte)COLOR_NEO_WHITE.b(), (byte)COLOR_NEO_WHITE.a()};
+	color32 m_colTextColor = {
+		(byte)COLOR_NEO_WHITE.r(), (byte)COLOR_NEO_WHITE.g(), (byte)COLOR_NEO_WHITE.b(), (byte)COLOR_NEO_WHITE.a()};
 	PointWorldTextOrientation m_nOrientation = POINTWORLDTEXTORIENTATION_VIEW_ORIGIN_Z_ALIGNED;
-	
-	char m_szText[ MAX_PLACE_NAME_LENGTH ];
+
+	char m_szText[MAX_PLACE_NAME_LENGTH];
 	int m_nTextLength = 0;
 	float m_flTextWorldWidth = 0.f;
 	float m_flTextWorldHeight = 0.f;
-	
-	CMaterialReference* m_Font;
+
+	CMaterialReference *m_Font;
 };

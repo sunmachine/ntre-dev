@@ -23,6 +23,7 @@
 class CWeaponKnife : public CNEOBaseCombatWeapon
 {
 	DECLARE_CLASS(CWeaponKnife, CNEOBaseCombatWeapon);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -49,7 +50,7 @@ public:
 	virtual bool IsViewable() final;
 #endif
 
-	virtual	void Spawn() final;
+	virtual void Spawn() final;
 	virtual void ItemPostFrame() final;
 
 	virtual Activity GetPrimaryAttackActivity() final { return ACT_VM_HITCENTER; }
@@ -59,11 +60,13 @@ public:
 	virtual NEO_WEP_BITS_UNDERLYING_TYPE GetNeoWepBits() const { return NEO_WEP_KNIFE; }
 
 protected:
-	void		ImpactEffect(trace_t &traceHit);
-	void		Swing();
-	Activity	ChooseIntersectionPointAndActivity(trace_t& hitTrace, const Vector& mins, const Vector& maxs, CBasePlayer* pOwner);
-	bool		ImpactWater(const Vector &start, const Vector &end);
-	void		Hit(trace_t& traceHit, Activity nHitActivity);
+	void ImpactEffect(trace_t &traceHit);
+	void Swing();
+	Activity ChooseIntersectionPointAndActivity(
+		trace_t &hitTrace, const Vector &mins, const Vector &maxs, CBasePlayer *pOwner);
+	bool ImpactWater(const Vector &start, const Vector &end);
+	void Hit(trace_t &traceHit, Activity nHitActivity);
+
 private:
 	CWeaponKnife(const CWeaponKnife &other);
 };

@@ -14,14 +14,11 @@
 #define GIVEXP_SESSION_RESTORE_KV_ROOT "neo_match_session"
 
 static ConVar sv_neo_restore_xp_death_any_round("sv_neo_restore_xp_death_any_round", "0",
-		FCVAR_REPLICATED | FCVAR_CHEAT | FCVAR_DONTRECORD,
-		"Permit giving XP at any round rather than restricting to only readyup stage",
-		true, 0.0f, true, 1.0f);
+	FCVAR_REPLICATED | FCVAR_CHEAT | FCVAR_DONTRECORD,
+	"Permit giving XP at any round rather than restricting to only readyup stage", true, 0.0f, true, 1.0f);
 
 static ConVar sv_neo_restore_session_allow_name_match("sv_neo_restore_session_allow_name_match", "0",
-		FCVAR_REPLICATED | FCVAR_DONTRECORD,
-		"Permit restoring session with matching players name",
-		true, 0.0f, true, 1.0f);
+	FCVAR_REPLICATED | FCVAR_DONTRECORD, "Permit restoring session with matching players name", true, 0.0f, true, 1.0f);
 
 extern ConVar sv_neo_comp;
 
@@ -94,9 +91,8 @@ static void ErrorToWarningAndTalk(PRINTF_FORMAT_STRING const char *pFormat, ...)
 
 static bool SetNextRestore()
 {
-	return NEORules()->InReadyUpState()
-			|| NEORules()->IsRoundOn()
-			|| NeoRoundStatus::Pause == NEORules()->GetRoundStatus();
+	return NEORules()->InReadyUpState() || NEORules()->IsRoundOn() ||
+		NeoRoundStatus::Pause == NEORules()->GetRoundStatus();
 }
 
 static void RestoreSetRoundNumber(const int iRoundNumber, const char *pszFuncName)
@@ -185,8 +181,7 @@ static void RestoreSetScore(const int iScoreJinrai, const int iScoreNSF, const c
 }
 
 // NEO NOTE (nullsystem): If iDeaths < 0, it won't be set
-static void RestoreSetXPDeath(CNEO_Player *pNeoPlayer, const int iXP, const int iDeaths,
-		const char *pszFuncName)
+static void RestoreSetXPDeath(CNEO_Player *pNeoPlayer, const int iXP, const int iDeaths, const char *pszFuncName)
 {
 	if (false == NEORules()->IsRoundOn())
 	{
@@ -214,51 +209,42 @@ static void RestoreSetXPDeath(CNEO_Player *pNeoPlayer, const int iXP, const int 
 	}
 	else
 	{
-		pNeoPlayer->m_iNextRestore.flags &=
-				~(NEXT_ROUND_PLAYER_RESTORE_FLAG_XP | NEXT_ROUND_PLAYER_RESTORE_FLAG_DEATH);
+		pNeoPlayer->m_iNextRestore.flags &= ~(NEXT_ROUND_PLAYER_RESTORE_FLAG_XP | NEXT_ROUND_PLAYER_RESTORE_FLAG_DEATH);
 	}
 
 	if (iDeaths >= 0)
 	{
 		PrintToMsgAndTalk("%s: Given %d XP and %d deaths to %s%s", pszFuncName, iXP, iDeaths,
-				pNeoPlayer->GetNeoPlayerName(), NEORules()->IsRoundOn() ? " next round" : "");
+			pNeoPlayer->GetNeoPlayerName(), NEORules()->IsRoundOn() ? " next round" : "");
 	}
 	else
 	{
-		PrintToMsgAndTalk("%s: Given %d XP to %s%s", pszFuncName, iXP,
-				pNeoPlayer->GetNeoPlayerName(), NEORules()->IsRoundOn() ? " next round" : "");
+		PrintToMsgAndTalk("%s: Given %d XP to %s%s", pszFuncName, iXP, pNeoPlayer->GetNeoPlayerName(),
+			NEORules()->IsRoundOn() ? " next round" : "");
 	}
 }
 
-static void RestoreSetSpawn(CNEO_Player *pNeoPlayer,
-		const int iSpawnEntIdx,
-		const char *pszFuncName)
+static void RestoreSetSpawn(CNEO_Player *pNeoPlayer, const int iSpawnEntIdx, const char *pszFuncName)
 {
 	if (SetNextRestore())
 	{
 		pNeoPlayer->m_iNextRestore.iSpawnEntIdx = iSpawnEntIdx;
 		pNeoPlayer->m_iNextRestore.flags |= NEXT_ROUND_PLAYER_RESTORE_FLAG_SPAWN;
-		PrintToMsgAndTalk("%s: Set spawn %d for %s", pszFuncName,
-				iSpawnEntIdx,
-				pNeoPlayer->GetNeoPlayerName());
+		PrintToMsgAndTalk("%s: Set spawn %d for %s", pszFuncName, iSpawnEntIdx, pNeoPlayer->GetNeoPlayerName());
 	}
 	else
 	{
 		// Never going to make sense for this scenario
 		pNeoPlayer->m_iNextRestore.flags &= ~(NEXT_ROUND_PLAYER_RESTORE_FLAG_SPAWN);
-		ErrorToWarningAndTalk("%s: Cannot set spawn for %s", pszFuncName,
-				pNeoPlayer->GetNeoPlayerName());
+		ErrorToWarningAndTalk("%s: Cannot set spawn for %s", pszFuncName, pNeoPlayer->GetNeoPlayerName());
 	}
 }
 
-static void RestoreLoadoutWepChoice(CNEO_Player *pNeoPlayer,
-		const int iLoadoutWepChoice,
-		const char *pszFuncName)
+static void RestoreLoadoutWepChoice(CNEO_Player *pNeoPlayer, const int iLoadoutWepChoice, const char *pszFuncName)
 {
 	pNeoPlayer->m_iNextRestore.iLoadoutWepChoice = iLoadoutWepChoice;
 	pNeoPlayer->m_iNextRestore.flags |= NEXT_ROUND_PLAYER_RESTORE_FLAG_WEAPON;
-	PrintToMsgAndTalk("%s: Set loadout %d for %s", pszFuncName, iLoadoutWepChoice,
-			pNeoPlayer->GetNeoPlayerName());
+	PrintToMsgAndTalk("%s: Set loadout %d for %s", pszFuncName, iLoadoutWepChoice, pNeoPlayer->GetNeoPlayerName());
 }
 
 CON_COMMAND(sv_neo_restore_round_snapshot, "Restore the current match's recorded round snapshot")
@@ -273,8 +259,7 @@ CON_COMMAND(sv_neo_restore_round_snapshot, "Restore the current match's recorded
 	const bool bUnsupported = (Warmup == eRoundStatus || Countdown == eRoundStatus);
 	if (bUnsupported)
 	{
-		ErrorToWarningAndTalk("%s: error: Cannot restore snapshot while in warmup/countdown",
-				__func__);
+		ErrorToWarningAndTalk("%s: error: Cannot restore snapshot while in warmup/countdown", __func__);
 		return;
 	}
 
@@ -331,15 +316,11 @@ CON_COMMAND(sv_neo_restore_round_snapshot, "Restore the current match's recorded
 		NEORules()->StartNextRound();
 	}
 	char szCenterPrint[64];
-	V_sprintf_safe(szCenterPrint,
-			"- MATCH RESTORED TO ROUND %d SNAPSHOT%s -\n",
-			iRoundNumber,
-			bPaused ? " ON UNPAUSE" : "");
+	V_sprintf_safe(
+		szCenterPrint, "- MATCH RESTORED TO ROUND %d SNAPSHOT%s -\n", iRoundNumber, bPaused ? " ON UNPAUSE" : "");
 	UTIL_CenterPrintAll(szCenterPrint);
 
-	PrintToMsgAndTalk("Match restored to round %d snapshot%s",
-			iRoundNumber,
-			bPaused ? " on unpause" : "");
+	PrintToMsgAndTalk("Match restored to round %d snapshot%s", iRoundNumber, bPaused ? " on unpause" : "");
 }
 
 CON_COMMAND(sv_neo_restore_session, "Restore the previous session")
@@ -365,8 +346,8 @@ CON_COMMAND(sv_neo_restore_session, "Restore the previous session")
 		const char *pszCurMap = gpGlobals->mapname.ToCStr();
 		if (0 != V_strcmp(pszInfileMap, pszCurMap))
 		{
-			ErrorToWarningAndTalk("%s: Will not restore since map session differs: in file %s vs current %s",
-					__func__, pszInfileMap, pszCurMap);
+			ErrorToWarningAndTalk("%s: Will not restore since map session differs: in file %s vs current %s", __func__,
+				pszInfileMap, pszCurMap);
 			kv->deleteThis();
 			return;
 		}
@@ -386,9 +367,8 @@ CON_COMMAND(sv_neo_restore_session, "Restore the previous session")
 
 	if (KeyValues *kvPlayersList = kv->FindKey("players_list"))
 	{
-		for (KeyValues *kvPlayer = kvPlayersList->GetFirstTrueSubKey();
-				kvPlayer;
-				kvPlayer = kvPlayer->GetNextTrueSubKey())
+		for (KeyValues *kvPlayer = kvPlayersList->GetFirstTrueSubKey(); kvPlayer;
+			kvPlayer = kvPlayer->GetNextTrueSubKey())
 		{
 			if (0 != V_strcmp(kvPlayer->GetName(), "player"))
 			{
@@ -401,8 +381,7 @@ CON_COMMAND(sv_neo_restore_session, "Restore the previous session")
 			const char *pszName = kvPlayer->GetString("name");
 
 			CSteamID fileSteamID;
-			if (fileSteamID.SetFromStringStrict(pszSteamID3, k_EUniversePublic)
-					&& fileSteamID.IsValid())
+			if (fileSteamID.SetFromStringStrict(pszSteamID3, k_EUniversePublic) && fileSteamID.IsValid())
 			{
 				for (int i = 1; i <= gpGlobals->maxClients; i++)
 				{
@@ -445,8 +424,8 @@ CON_COMMAND(sv_neo_restore_session, "Restore the previous session")
 			}
 			else
 			{
-				ErrorToWarningAndTalk("%s: Player steamID: %s, name: %s skipped: not found",
-						__func__, pszSteamID3, pszName);
+				ErrorToWarningAndTalk(
+					"%s: Player steamID: %s, name: %s skipped: not found", __func__, pszSteamID3, pszName);
 			}
 		}
 	}
@@ -473,9 +452,8 @@ void MatchSessionBackup()
 			const time_t timeVal = time(nullptr);
 			std::tm tmd{};
 			Plat_localtime(&timeVal, &tmd);
-			V_sprintf_safe(szDateTime, "%04d-%02d-%02d %02d:%02d:%02d",
-					tmd.tm_year + 1900, tmd.tm_mon + 1, tmd.tm_mday,
-					tmd.tm_hour, tmd.tm_min, tmd.tm_sec);
+			V_sprintf_safe(szDateTime, "%04d-%02d-%02d %02d:%02d:%02d", tmd.tm_year + 1900, tmd.tm_mon + 1, tmd.tm_mday,
+				tmd.tm_hour, tmd.tm_min, tmd.tm_sec);
 			kvInfo->SetString("datetime", szDateTime);
 		}
 		kv->AddSubKey(kvInfo);
@@ -524,9 +502,7 @@ void MatchSessionBackup()
 		for (int i = 1; i <= gpGlobals->maxClients && pSnapshot->iPlayersSize < MAX_PLAYERS_ARRAY_SAFE; i++)
 		{
 			auto pNeoPlayer = static_cast<CNEO_Player *>(UTIL_PlayerByIndex(i));
-			if (pNeoPlayer
-					&& (pNeoPlayer->GetTeamNumber() == TEAM_JINRAI
-						|| pNeoPlayer->GetTeamNumber() == TEAM_NSF))
+			if (pNeoPlayer && (pNeoPlayer->GetTeamNumber() == TEAM_JINRAI || pNeoPlayer->GetTeamNumber() == TEAM_NSF))
 			{
 				MatchSnapshotPlayer *pSnPlayer = &pSnapshot->players[pSnapshot->iPlayersSize++];
 				pSnPlayer->steamID = GetSteamIDForPlayerIndex(pNeoPlayer->entindex());
@@ -609,8 +585,8 @@ CON_COMMAND(sv_neo_restore_team_scores, "Set the scores for each team (not used 
 CON_COMMAND(sv_neo_restore_xp, "Give a player XP (and death) count")
 {
 	static constexpr const char SZ_COMMON_USAGE_PF[] =
-			"Usage: %s <player name|steamid3> <xp> <deaths (optional)>\n"
-			"steamid3 = uniqueid in \"status\" command, must be surrounded with quotes";
+		"Usage: %s <player name|steamid3> <xp> <deaths (optional)>\n"
+		"steamid3 = uniqueid in \"status\" command, must be surrounded with quotes";
 
 	if (!IN_BETWEEN_EQ(3, args.ArgC(), 4))
 	{
@@ -640,7 +616,7 @@ CON_COMMAND(sv_neo_restore_xp, "Give a player XP (and death) count")
 
 	for (int i = 1; i <= gpGlobals->maxClients; ++i)
 	{
-		auto pNeoPlayer = static_cast<CNEO_Player*>(UTIL_PlayerByIndex(i));
+		auto pNeoPlayer = static_cast<CNEO_Player *>(UTIL_PlayerByIndex(i));
 		if (pNeoPlayer)
 		{
 			bool bFoundPlayer = false;
@@ -665,4 +641,3 @@ CON_COMMAND(sv_neo_restore_xp, "Give a player XP (and death) count")
 
 	ErrorToWarningAndTalk("%s: error: Cannot find player \"%s\"", __func__, pszNameFind);
 }
-

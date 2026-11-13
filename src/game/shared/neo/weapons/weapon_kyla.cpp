@@ -18,7 +18,7 @@ IMPLEMENT_NETWORKCLASS_ALIASED(WeaponKyla, DT_WeaponKyla);
 // clang-format off
 BEGIN_NETWORK_TABLE(CWeaponKyla, DT_WeaponKyla)
 END_NETWORK_TABLE()
-// clang-format on
+	// clang-format on
 
 #ifdef CLIENT_DLL
 // clang-format off

@@ -10,7 +10,7 @@ IMPLEMENT_NETWORKCLASS_ALIASED(WeaponMX_S, DT_WeaponMX_S)
 BEGIN_NETWORK_TABLE(CWeaponMX_S, DT_WeaponMX_S)
 	DEFINE_NEO_BASE_WEP_NETWORK_TABLE
 END_NETWORK_TABLE()
-// clang-format on
+	// clang-format on
 
 #ifdef CLIENT_DLL
 // clang-format off

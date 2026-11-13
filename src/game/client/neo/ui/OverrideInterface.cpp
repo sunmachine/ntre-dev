@@ -7,7 +7,7 @@ class COverrideInterface : public IOverrideInterface
 {
 private:
 	CNeoRoot *MainMenu = nullptr;
- 
+
 public:
 	void Create(vgui::VPANEL parent) override
 	{
@@ -17,10 +17,11 @@ public:
 
 	vgui::VPANEL GetPanel() override
 	{
-		if (!MainMenu) return 0U;
+		if (!MainMenu)
+			return 0U;
 		return MainMenu->GetVPanel();
 	}
- 
+
 	void Destroy() override
 	{
 		if (MainMenu)
@@ -30,6 +31,6 @@ public:
 		}
 	}
 };
- 
+
 static COverrideInterface g_SMenu;
 IOverrideInterface *OverrideUI = (IOverrideInterface *)&g_SMenu;

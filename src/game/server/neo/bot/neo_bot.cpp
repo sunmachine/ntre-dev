@@ -26,7 +26,8 @@
 
 ConVar neo_bot_notice_gunfire_range("neo_bot_notice_gunfire_range", "3000", FCVAR_GAMEDLL);
 ConVar neo_bot_notice_quiet_gunfire_range("neo_bot_notice_quiet_gunfire_range", "500", FCVAR_GAMEDLL);
-ConVar neo_bot_near_point_travel_distance("neo_bot_near_point_travel_distance", "750", FCVAR_CHEAT, "If within this travel distance to the current point, bot is 'near' it");
+ConVar neo_bot_near_point_travel_distance("neo_bot_near_point_travel_distance", "750", FCVAR_CHEAT,
+	"If within this travel distance to the current point, bot is 'near' it");
 
 ConVar neo_bot_debug_tags("neo_bot_debug_tags", "0", FCVAR_CHEAT, "ent_text will only show tags on bots");
 
@@ -45,9 +46,8 @@ extern ConVar sv_neo_ctg_ghost_beacons_when_inactive;
 extern ConVar neo_bot_path_around_friendly_cooldown;
 
 
-
 //-----------------------------------------------------------------------------------------------------
-bool IsTeamName(const char* string)
+bool IsTeamName(const char *string)
 {
 	if (!V_stricmp(string, TEAM_STR_JINRAI))
 		return true;
@@ -59,9 +59,8 @@ bool IsTeamName(const char* string)
 }
 
 
-
 //-----------------------------------------------------------------------------------------------------
-int Bot_GetTeamByName(const char* string)
+int Bot_GetTeamByName(const char *string)
 {
 	if (!V_stricmp(string, TEAM_STR_JINRAI))
 	{
@@ -77,7 +76,7 @@ int Bot_GetTeamByName(const char* string)
 
 
 //-----------------------------------------------------------------------------------------------------
-CNEOBot::DifficultyType StringToDifficultyLevel(const char* string)
+CNEOBot::DifficultyType StringToDifficultyLevel(const char *string)
 {
 	if (!V_stricmp(string, "easy"))
 		return CNEOBot::EASY;
@@ -104,9 +103,10 @@ CON_COMMAND_F(neo_bot_add, "Add a bot.", FCVAR_GAMEDLL)
 
 	bool bQuotaManaged = true;
 	int botCount = 1;
-	const char* teamname = "auto";
-	const char* pszBotNameViaArg = NULL;
-	CNEOBot::DifficultyType skill = clamp((CNEOBot::DifficultyType)neo_bot_difficulty.GetInt(), CNEOBot::EASY, CNEOBot::EXPERT);
+	const char *teamname = "auto";
+	const char *pszBotNameViaArg = NULL;
+	CNEOBot::DifficultyType skill =
+		clamp((CNEOBot::DifficultyType)neo_bot_difficulty.GetInt(), CNEOBot::EASY, CNEOBot::EXPERT);
 
 	int i;
 	for (i = 1; i < args.ArgC(); ++i)
@@ -146,8 +146,8 @@ CON_COMMAND_F(neo_bot_add, "Add a bot.", FCVAR_GAMEDLL)
 	int iTeam = Bot_GetTeamByName(teamname);
 	if (NEORules()->IsTeamplay() && iTeam == TEAM_UNASSIGNED)
 	{
-		CTeam* pJinrai = GetGlobalTeam(TEAM_JINRAI);
-		CTeam* pNSF = GetGlobalTeam(TEAM_NSF);
+		CTeam *pJinrai = GetGlobalTeam(TEAM_JINRAI);
+		CTeam *pNSF = GetGlobalTeam(TEAM_NSF);
 		if (pJinrai && pNSF)
 		{
 			const int numJinrai = pJinrai->GetNumPlayers();
@@ -162,7 +162,7 @@ CON_COMMAND_F(neo_bot_add, "Add a bot.", FCVAR_GAMEDLL)
 	}
 
 	int classFlag = BOT_CLASS_FLAG_NONE;
-	if (CTeam* team = GetGlobalTeam(iTeam))
+	if (CTeam *team = GetGlobalTeam(iTeam))
 	{
 		for (int i = NEO_CLASS_RECON; i <= NEO_CLASS_SUPPORT; i++)
 		{
@@ -177,23 +177,20 @@ CON_COMMAND_F(neo_bot_add, "Add a bot.", FCVAR_GAMEDLL)
 		Assert(false);
 	}
 
-	const CNEOBotProfileFilter botFilter = {
-		.flagTargetDifficulty = (1 << skill),
-		.flagTargetClass = classFlag
-	};
+	const CNEOBotProfileFilter botFilter = {.flagTargetDifficulty = (1 << skill), .flagTargetClass = classFlag};
 
 	int iNumAdded = 0;
 	for (i = 0; i < botCount; ++i)
 	{
-		CNEOBot* pBot = NULL;
+		CNEOBot *pBot = NULL;
 
 		const CNEOBotProfileReturn retProfile = NEOBotProfileNextPick(botFilter);
 
 		char szBotName[MAX_PLAYER_NAME_LENGTH];
 		const auto curBotSkill = static_cast<CNEOBot::DifficultyType>(
-				NEOBotProfileCreateNameRetSkill(szBotName, retProfile.profile, skill, pszBotNameViaArg));
+			NEOBotProfileCreateNameRetSkill(szBotName, retProfile.profile, skill, pszBotNameViaArg));
 
-		pBot = NextBotCreatePlayerBot< CNEOBot >(szBotName);
+		pBot = NextBotCreatePlayerBot<CNEOBot>(szBotName);
 
 		if (pBot)
 		{
@@ -204,7 +201,7 @@ CON_COMMAND_F(neo_bot_add, "Add a bot.", FCVAR_GAMEDLL)
 				pBot->SetAttribute(CNEOBot::QUOTA_MANANGED);
 			}
 
-			engine->SetFakeClientConVarValue(pBot->edict(), "name", pBot->GetPlayerName() );
+			engine->SetFakeClientConVarValue(pBot->edict(), "name", pBot->GetPlayerName());
 			pBot->RequestSetSkin(RandomInt(0, 2));
 			pBot->HandleCommand_JoinTeam(iTeam);
 			pBot->SetDifficulty(curBotSkill);
@@ -237,7 +234,7 @@ CON_COMMAND_F(neo_bot_kick, "Remove a NEOBot by name, or all bots (\"all\").", F
 	bool bMoveToSpectatorTeam = false;
 	int iTeam = TEAM_UNASSIGNED;
 	int i;
-	const char* pPlayerName = "";
+	const char *pPlayerName = "";
 	for (i = 1; i < args.ArgC(); ++i)
 	{
 		// each argument could be a classname, a team, or a count
@@ -266,7 +263,7 @@ CON_COMMAND_F(neo_bot_kick, "Remove a NEOBot by name, or all bots (\"all\").", F
 	int iNumKicked = 0;
 	for (int i = 1; i <= gpGlobals->maxClients; ++i)
 	{
-		CBasePlayer* player = static_cast<CBasePlayer*>(UTIL_PlayerByIndex(i));
+		CBasePlayer *player = static_cast<CBasePlayer *>(UTIL_PlayerByIndex(i));
 
 		if (!player)
 			continue;
@@ -276,10 +273,8 @@ CON_COMMAND_F(neo_bot_kick, "Remove a NEOBot by name, or all bots (\"all\").", F
 
 		if (player->MyNextBotPointer())
 		{
-			if (iTeam == TEAM_ANY ||
-				FStrEq(pPlayerName, player->GetPlayerName()) ||
-				(player->GetTeamNumber() == iTeam) ||
-				(player->GetTeamNumber() == iTeam))
+			if (iTeam == TEAM_ANY || FStrEq(pPlayerName, player->GetPlayerName()) ||
+				(player->GetTeamNumber() == iTeam) || (player->GetTeamNumber() == iTeam))
 			{
 				if (bMoveToSpectatorTeam)
 				{
@@ -289,7 +284,7 @@ CON_COMMAND_F(neo_bot_kick, "Remove a NEOBot by name, or all bots (\"all\").", F
 				{
 					engine->ServerCommand(UTIL_VarArgs("kickid %d\n", player->GetUserID()));
 				}
-				CNEOBot* pBot = dynamic_cast<CNEOBot*>(player);
+				CNEOBot *pBot = dynamic_cast<CNEOBot *>(player);
 				if (pBot && pBot->HasAttribute(CNEOBot::QUOTA_MANANGED))
 				{
 					++iNumKicked;
@@ -316,7 +311,7 @@ CON_COMMAND_F(neo_bot_kill, "Kill a NEOBot by name, or all bots (\"all\").", FCV
 
 	int iTeam = TEAM_UNASSIGNED;
 	int i;
-	const char* pPlayerName = "";
+	const char *pPlayerName = "";
 	for (i = 1; i < args.ArgC(); ++i)
 	{
 		// each argument could be a classname, a team, or a count
@@ -344,7 +339,7 @@ CON_COMMAND_F(neo_bot_kill, "Kill a NEOBot by name, or all bots (\"all\").", FCV
 
 	for (int i = 1; i <= gpGlobals->maxClients; ++i)
 	{
-		CBasePlayer* player = static_cast<CBasePlayer*>(UTIL_PlayerByIndex(i));
+		CBasePlayer *player = static_cast<CBasePlayer *>(UTIL_PlayerByIndex(i));
 
 		if (!player)
 			continue;
@@ -354,10 +349,8 @@ CON_COMMAND_F(neo_bot_kill, "Kill a NEOBot by name, or all bots (\"all\").", FCV
 
 		if (player->MyNextBotPointer())
 		{
-			if (iTeam == TEAM_ANY ||
-				FStrEq(pPlayerName, player->GetPlayerName()) ||
-				(player->GetTeamNumber() == iTeam) ||
-				(player->GetTeamNumber() == iTeam))
+			if (iTeam == TEAM_ANY || FStrEq(pPlayerName, player->GetPlayerName()) ||
+				(player->GetTeamNumber() == iTeam) || (player->GetTeamNumber() == iTeam))
 			{
 				CTakeDamageInfo info(player, player, 9999999.9f, DMG_ENERGYBEAM);
 				player->TakeDamage(info);
@@ -369,11 +362,11 @@ CON_COMMAND_F(neo_bot_kill, "Kill a NEOBot by name, or all bots (\"all\").", FCV
 //-----------------------------------------------------------------------------------------------------
 void CMD_BotWarpTeamToMe(void)
 {
-	CBasePlayer* player = UTIL_GetListenServerHost();
+	CBasePlayer *player = UTIL_GetListenServerHost();
 	if (!player)
 		return;
 
-	CTeam* myTeam = player->GetTeam();
+	CTeam *myTeam = player->GetTeam();
 	for (int i = 0; i < myTeam->GetNumPlayers(); ++i)
 	{
 		if (!myTeam->GetPlayer(i)->IsAlive())
@@ -382,7 +375,8 @@ void CMD_BotWarpTeamToMe(void)
 		myTeam->GetPlayer(i)->SetAbsOrigin(player->GetAbsOrigin());
 	}
 }
-static ConCommand neo_bot_warp_team_to_me("neo_bot_warp_team_to_me", CMD_BotWarpTeamToMe, "", FCVAR_GAMEDLL | FCVAR_CHEAT);
+static ConCommand neo_bot_warp_team_to_me(
+	"neo_bot_warp_team_to_me", CMD_BotWarpTeamToMe, "", FCVAR_GAMEDLL | FCVAR_CHEAT);
 
 
 //-----------------------------------------------------------------------------------------------------
@@ -487,10 +481,10 @@ END_SCRIPTDESC();
 /**
  * Allocate a bot and bind it to the edict
  */
-CBasePlayer* CNEOBot::AllocatePlayerEntity(edict_t* edict, const char* playerName)
+CBasePlayer *CNEOBot::AllocatePlayerEntity(edict_t *edict, const char *playerName)
 {
 	CBasePlayer::s_PlayerEdict = edict;
-	return static_cast<CBasePlayer*>(CreateEntityByName("neo_bot"));
+	return static_cast<CBasePlayer *>(CreateEntityByName("neo_bot"));
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -498,7 +492,7 @@ void CNEOBot::PressFireButton(float duration)
 {
 	// can't fire if stunned
 	// @todo Tom Bui: Eventually, we'll probably want to check the actual weapon for supress fire
-	if ( GetBotPauseFiring() || HasAttribute(CNEOBot::SUPPRESS_FIRE) )
+	if (GetBotPauseFiring() || HasAttribute(CNEOBot::SUPPRESS_FIRE))
 	{
 		ReleaseFireButton();
 		return;
@@ -643,7 +637,7 @@ void CNEOBot::Spawn()
 {
 	// CNEOBot do m_iNeoClass a bit earlier
 	// so that we get correct loadout choices for the class
-	if (m_iNextSpawnClassChoice == NEO_CLASS_RANDOM) 
+	if (m_iNextSpawnClassChoice == NEO_CLASS_RANDOM)
 	{
 		SetClass(ChooseRandomClass()); // also refreshes the team's class counts
 	}
@@ -684,45 +678,45 @@ void CNEOBot::Spawn()
 
 int CNEOBot::ChooseRandomWeaponIndex() const
 {
-    const int iEffectiveXP = CNEOWeaponLoadout::GetEffectiveXP(m_iXP);
-    const ENeoRank eRank = static_cast<ENeoRank>(GetRank(iEffectiveXP) - 1);
-    if (eRank == NEO_RANK_RANKLESS_DOG || (false == IN_BETWEEN_EQ(NEO_CLASS_RECON, m_iNeoClass, NEO_CLASS_VIP)))
-    {
-        return 0;
-    }
-    const NEO_WEP_BITS_UNDERLYING_TYPE wepPrefsForCurRank = m_profile.flagsWepPrefs[m_iNeoClass][eRank];
+	const int iEffectiveXP = CNEOWeaponLoadout::GetEffectiveXP(m_iXP);
+	const ENeoRank eRank = static_cast<ENeoRank>(GetRank(iEffectiveXP) - 1);
+	if (eRank == NEO_RANK_RANKLESS_DOG || (false == IN_BETWEEN_EQ(NEO_CLASS_RECON, m_iNeoClass, NEO_CLASS_VIP)))
+	{
+		return 0;
+	}
+	const NEO_WEP_BITS_UNDERLYING_TYPE wepPrefsForCurRank = m_profile.flagsWepPrefs[m_iNeoClass][eRank];
 
-    int iChosenWeps[MAX_WEAPON_LOADOUTS] = {};
-    int iChosenWepsSize = 0;
-    for (int i = 0; i < MAX_WEAPON_LOADOUTS; ++i)
-    {
-        if (wepPrefsForCurRank & CNEOWeaponLoadout::s_LoadoutWeapons[m_iNeoClass][i].info.m_iWepBit)
-        {
-            iChosenWeps[iChosenWepsSize++] = i;
-        }
-    }
+	int iChosenWeps[MAX_WEAPON_LOADOUTS] = {};
+	int iChosenWepsSize = 0;
+	for (int i = 0; i < MAX_WEAPON_LOADOUTS; ++i)
+	{
+		if (wepPrefsForCurRank & CNEOWeaponLoadout::s_LoadoutWeapons[m_iNeoClass][i].info.m_iWepBit)
+		{
+			iChosenWeps[iChosenWepsSize++] = i;
+		}
+	}
 
-    if (iChosenWepsSize == 0)
-    {
+	if (iChosenWepsSize == 0)
+	{
 		// Generally shouldn't happen, but if so, just pick from any under the XP limit
-        for (int i = 0; i < MAX_WEAPON_LOADOUTS; ++i)
-        {
-            if (CNEOWeaponLoadout::s_LoadoutWeapons[m_iNeoClass][i].m_iWeaponPrice > iEffectiveXP)
-            {
-                break;
-            }
-            iChosenWeps[iChosenWepsSize++] = i;
-        }
-    }
+		for (int i = 0; i < MAX_WEAPON_LOADOUTS; ++i)
+		{
+			if (CNEOWeaponLoadout::s_LoadoutWeapons[m_iNeoClass][i].m_iWeaponPrice > iEffectiveXP)
+			{
+				break;
+			}
+			iChosenWeps[iChosenWepsSize++] = i;
+		}
+	}
 
-    if (iChosenWepsSize == 1)
-    {
-        return iChosenWeps[0];
-    }
-    else
-    {
-        return iChosenWeps[RandomInt(0, iChosenWepsSize - 1)];
-    }
+	if (iChosenWepsSize == 1)
+	{
+		return iChosenWeps[0];
+	}
+	else
+	{
+		return iChosenWeps[RandomInt(0, iChosenWepsSize - 1)];
+	}
 }
 
 void CNEOBot::ChooseRandomWeapon()
@@ -752,7 +746,7 @@ void CNEOBot::SetMission(MissionType mission, bool resetBehaviorSystem)
 
 
 //-----------------------------------------------------------------------------------------------------
-extern void respawn(CBaseEntity* pEdict, bool fCopyCorpse);
+extern void respawn(CBaseEntity *pEdict, bool fCopyCorpse);
 void CNEOBot::PhysicsSimulate(void)
 {
 	BaseClass::PhysicsSimulate();
@@ -784,11 +778,11 @@ void CNEOBot::PhysicsSimulate(void)
 
 
 //-----------------------------------------------------------------------------------------------------
-void CNEOBot::Touch(CBaseEntity* pOther)
+void CNEOBot::Touch(CBaseEntity *pOther)
 {
 	BaseClass::Touch(pOther);
 
-	CNEO_Player* them = ToNEOPlayer(pOther);
+	CNEO_Player *them = ToNEOPlayer(pOther);
 	if (them && IsEnemy(them))
 	{
 		// always notice if we bump an enemy
@@ -798,13 +792,13 @@ void CNEOBot::Touch(CBaseEntity* pOther)
 
 
 //-----------------------------------------------------------------------------------------------------
-void CNEOBot::AvoidPlayers(CUserCmd* pCmd)
+void CNEOBot::AvoidPlayers(CUserCmd *pCmd)
 {
 #ifdef AVOID_PLAYERS_TEST
 	Vector forward, right;
 	EyeVectors(&forward, &right);
 
-	CUtlVector< CNEO_Player* > playerVector;
+	CUtlVector<CNEO_Player *> playerVector;
 	CollectPlayers(&playerVector, GetTeamNumber(), COLLECT_ONLY_LIVING_PLAYERS);
 
 	Vector avoidVector = vec3_origin;
@@ -813,7 +807,7 @@ void CNEOBot::AvoidPlayers(CUserCmd* pCmd)
 
 	for (int i = 0; i < playerVector.Count(); ++i)
 	{
-		CNEO_Player* them = playerVector[i];
+		CNEO_Player *them = playerVector[i];
 
 		if (IsSelf(them))
 		{
@@ -863,7 +857,7 @@ void CNEOBot::UpdateOnRemove(void)
 
 
 //-----------------------------------------------------------------------------------------------------
-int CNEOBot::ShouldTransmit(const CCheckTransmitInfo* pInfo)
+int CNEOBot::ShouldTransmit(const CCheckTransmitInfo *pInfo)
 {
 	return BaseClass::ShouldTransmit(pInfo);
 }
@@ -882,21 +876,19 @@ void CNEOBot::ModifyMaxHealth(int nNewMaxHealth, bool bSetCurrentHealth /*= true
 /**
  * Invoked when a game event occurs
  */
-void CNEOBot::FireGameEvent(IGameEvent* event)
-{
-}
+void CNEOBot::FireGameEvent(IGameEvent *event) {}
 
 extern ConVar nb_update_frequency;
 void CNEOBot::Update()
 {
 	if (!TheNavMesh->IsLoaded())
 	{
-		if ( IsDebugging( NEXTBOT_DEBUG_ALL ) )
+		if (IsDebugging(NEXTBOT_DEBUG_ALL))
 		{
 			CFmtStr msg;
 			const float messageTime = nb_update_frequency.GetFloat() + (gpGlobals->frametime * 2);
-			GetEntity()->EntityText( 0, msg.sprintf( "#%d", GetEntity()->entindex() ), messageTime );
-			GetEntity()->EntityText( 1, msg.sprintf( "No navigation mesh, updates frozen" ), messageTime );
+			GetEntity()->EntityText(0, msg.sprintf("#%d", GetEntity()->entindex()), messageTime);
+			GetEntity()->EntityText(1, msg.sprintf("No navigation mesh, updates frozen"), messageTime);
 		}
 		return;
 	}
@@ -904,7 +896,7 @@ void CNEOBot::Update()
 }
 
 //-----------------------------------------------------------------------------------------------------
-void CNEOBot::Event_Killed(const CTakeDamageInfo& info)
+void CNEOBot::Event_Killed(const CTakeDamageInfo &info)
 {
 	BaseClass::Event_Killed(info);
 
@@ -923,7 +915,7 @@ void CNEOBot::Event_Killed(const CTakeDamageInfo& info)
 		LeaveSquad();
 	}
 
-	CNavArea* lastArea = (CNavArea*)GetLastKnownArea();
+	CNavArea *lastArea = (CNavArea *)GetLastKnownArea();
 	if (lastArea)
 	{
 		// remove us from old visible set
@@ -939,19 +931,21 @@ void CNEOBot::Event_Killed(const CTakeDamageInfo& info)
 class CCollectReachableObjects : public ISearchSurroundingAreasFunctor
 {
 public:
-	CCollectReachableObjects(const CNEOBot* me, float maxRange, const CUtlVector< CHandle< CBaseEntity > >& potentialVector, CUtlVector< CHandle< CBaseEntity > >* collectionVector) : m_potentialVector(potentialVector)
+	CCollectReachableObjects(const CNEOBot *me, float maxRange, const CUtlVector<CHandle<CBaseEntity>> &potentialVector,
+		CUtlVector<CHandle<CBaseEntity>> *collectionVector)
+		: m_potentialVector(potentialVector)
 	{
 		m_me = me;
 		m_maxRange = maxRange;
 		m_collectionVector = collectionVector;
 	}
 
-	virtual bool operator() (CNavArea* area, CNavArea* priorArea, float travelDistanceSoFar)
+	virtual bool operator()(CNavArea *area, CNavArea *priorArea, float travelDistanceSoFar)
 	{
 		// do any of the potential objects overlap this area?
 		FOR_EACH_VEC(m_potentialVector, it)
 		{
-			CBaseEntity* obj = m_potentialVector[it];
+			CBaseEntity *obj = m_potentialVector[it];
 
 			if (obj && area->Contains(obj->WorldSpaceCenter()))
 			{
@@ -965,7 +959,7 @@ public:
 		return true;
 	}
 
-	virtual bool ShouldSearch(CNavArea* adjArea, CNavArea* currentArea, float travelDistanceSoFar)
+	virtual bool ShouldSearch(CNavArea *adjArea, CNavArea *currentArea, float travelDistanceSoFar)
 	{
 		if (adjArea->IsBlocked(m_me->GetTeamNumber()))
 		{
@@ -981,10 +975,10 @@ public:
 		return currentArea->IsContiguous(adjArea);
 	}
 
-	const CNEOBot* m_me;
+	const CNEOBot *m_me;
 	float m_maxRange;
-	const CUtlVector< CHandle< CBaseEntity > >& m_potentialVector;
-	CUtlVector< CHandle< CBaseEntity > >* m_collectionVector;
+	const CUtlVector<CHandle<CBaseEntity>> &m_potentialVector;
+	CUtlVector<CHandle<CBaseEntity>> *m_collectionVector;
 };
 
 
@@ -992,10 +986,8 @@ public:
 // Search outwards from startSearchArea and collect all reachable objects from the given list that pass the given filter
 // Items in selectedObjectVector will be approximately sorted in nearest-to-farthest order (because of SearchSurroundingAreas)
 //
-void CNEOBot::SelectReachableObjects(const CUtlVector< CHandle< CBaseEntity > >& candidateObjectVector,
-	CUtlVector< CHandle< CBaseEntity > >* selectedObjectVector,
-	const INextBotFilter& filter,
-	CNavArea* startSearchArea,
+void CNEOBot::SelectReachableObjects(const CUtlVector<CHandle<CBaseEntity>> &candidateObjectVector,
+	CUtlVector<CHandle<CBaseEntity>> *selectedObjectVector, const INextBotFilter &filter, CNavArea *startSearchArea,
 	float maxRange) const
 {
 	if (startSearchArea == NULL || selectedObjectVector == NULL)
@@ -1004,7 +996,7 @@ void CNEOBot::SelectReachableObjects(const CUtlVector< CHandle< CBaseEntity > >&
 	selectedObjectVector->RemoveAll();
 
 	// filter candidate objects
-	CUtlVector< CHandle< CBaseEntity > > filteredObjectVector;
+	CUtlVector<CHandle<CBaseEntity>> filteredObjectVector;
 	for (int i = 0; i < candidateObjectVector.Count(); ++i)
 	{
 		if (filter.IsSelected(candidateObjectVector[i]))
@@ -1022,7 +1014,7 @@ void CNEOBot::SelectReachableObjects(const CUtlVector< CHandle< CBaseEntity > >&
 //---------------------------------------------------------------------------------------------
 bool CNEOBot::IsAmmoLow(void) const
 {
-	CNEOBaseCombatWeapon* myWeapon = static_cast<CNEOBaseCombatWeapon*>(GetActiveWeapon());
+	CNEOBaseCombatWeapon *myWeapon = static_cast<CNEOBaseCombatWeapon *>(GetActiveWeapon());
 	if (!myWeapon)
 	{
 		return false;
@@ -1050,7 +1042,7 @@ bool CNEOBot::IsAmmoLow(void) const
 //-----------------------------------------------------------------------------------------------------
 bool CNEOBot::IsAmmoFull(void) const
 {
-	CNEOBaseCombatWeapon* myWeapon = static_cast<CNEOBaseCombatWeapon*>(GetActiveWeapon());
+	CNEOBaseCombatWeapon *myWeapon = static_cast<CNEOBaseCombatWeapon *>(GetActiveWeapon());
 	if (!myWeapon)
 	{
 		return false;
@@ -1068,8 +1060,10 @@ bool CNEOBot::IsAmmoFull(void) const
 	}
 
 	FileWeaponInfo_t weaponInfo = myWeapon->GetWpnData();
-	bool isPrimaryFull = myWeapon->m_iClip1 == weaponInfo.iMaxClip1 && myWeapon->m_iPrimaryAmmoCount == weaponInfo.iDefaultClip1;
-	bool isSecondaryFull = myWeapon->m_iClip2 == weaponInfo.iMaxClip2 && myWeapon->m_iSecondaryAmmoCount == weaponInfo.iDefaultClip2;
+	bool isPrimaryFull =
+		myWeapon->m_iClip1 == weaponInfo.iMaxClip1 && myWeapon->m_iPrimaryAmmoCount == weaponInfo.iDefaultClip1;
+	bool isSecondaryFull =
+		myWeapon->m_iClip2 == weaponInfo.iMaxClip2 && myWeapon->m_iSecondaryAmmoCount == weaponInfo.iDefaultClip2;
 
 	return isPrimaryFull && isSecondaryFull;
 }
@@ -1089,19 +1083,18 @@ float CNEOBot::GetCloakPower(void) const
 void CNEOBot::EnableCloak(float threshold)
 {
 	// cloak in freeze time only drains the charge the bot needs when the round goes live
-	if ( GetNeoFlags() & NEO_FL_FREEZETIME )
+	if (GetNeoFlags() & NEO_FL_FREEZETIME)
 	{
 		return;
 	}
 
 	// the ghost beacon shows a carrier anyway, so leave the charge to recharge
-	if ( IsCarryingGhost() )
+	if (IsCarryingGhost())
 	{
 		return;
 	}
 
-	if ( (GetCloakPower() >= threshold)
-		&& !IsCloakEnabled() )
+	if ((GetCloakPower() >= threshold) && !IsCloakEnabled())
 	{
 		ToggleCloak();
 	}
@@ -1109,7 +1102,7 @@ void CNEOBot::EnableCloak(float threshold)
 
 void CNEOBot::DisableCloak(void)
 {
-	if ( IsCloakEnabled() )
+	if (IsCloakEnabled())
 	{
 		ToggleCloak();
 	}
@@ -1119,7 +1112,7 @@ void CNEOBot::ToggleCloak(void)
 {
 	// the player toggles cloak only on a fresh press, and a press is held until the next bot update,
 	// so after a press last update leave the button up for one update, or the press only extends the hold
-	if ( m_prevInputButtons & IN_THERMOPTIC )
+	if (m_prevInputButtons & IN_THERMOPTIC)
 	{
 		return;
 	}
@@ -1131,7 +1124,7 @@ void CNEOBot::ToggleCloak(void)
 bool CNEOBot::IsDormantWhenDead(void) const
 {
 	// When a bot becomes an Observer (e.g., in Juggernaut mode after death without respawn), it should become dormant.
-	// This stops the NextBot update loop (INextBot::Update), preventing it from trying to run behaviors 
+	// This stops the NextBot update loop (INextBot::Update), preventing it from trying to run behaviors
 	// on a non-existent or spectator body, which causes crashes (use-after-free/dangling pointers).
 	return IsObserver();
 }
@@ -1141,7 +1134,7 @@ bool CNEOBot::IsDormantWhenDead(void) const
 /**
  * When someone fires their weapon
  */
-void CNEOBot::OnWeaponFired(CBaseCombatCharacter* whoFired, CBaseCombatWeapon* weapon)
+void CNEOBot::OnWeaponFired(CBaseCombatCharacter *whoFired, CBaseCombatWeapon *weapon)
 {
 	VPROF_BUDGET("CNEOBot::OnWeaponFired", "NextBot");
 
@@ -1153,7 +1146,7 @@ void CNEOBot::OnWeaponFired(CBaseCombatCharacter* whoFired, CBaseCombatWeapon* w
 	if (IsRangeGreaterThan(whoFired, neo_bot_notice_gunfire_range.GetFloat()))
 		return;
 
-	CNEOBaseCombatWeapon* neoWeapon = static_cast<CNEOBaseCombatWeapon*>(weapon);
+	CNEOBaseCombatWeapon *neoWeapon = static_cast<CNEOBaseCombatWeapon *>(weapon);
 	if (!neoWeapon)
 	{
 		return;
@@ -1217,16 +1210,16 @@ void CNEOBot::OnWeaponFired(CBaseCombatCharacter* whoFired, CBaseCombatWeapon* w
 class CNEOFindClosestPotentiallyVisibleAreaToPos
 {
 public:
-	CNEOFindClosestPotentiallyVisibleAreaToPos(const Vector& pos)
+	CNEOFindClosestPotentiallyVisibleAreaToPos(const Vector &pos)
 	{
 		m_pos = pos;
 		m_closeArea = NULL;
 		m_closeRangeSq = FLT_MAX;
 	}
 
-	bool operator() (CNavArea* baseArea)
+	bool operator()(CNavArea *baseArea)
 	{
-		CNavArea* area = (CNavArea*)baseArea;
+		CNavArea *area = (CNavArea *)baseArea;
 
 		Vector close;
 		area->GetClosestPointOnArea(m_pos, &close);
@@ -1242,36 +1235,36 @@ public:
 	}
 
 	Vector m_pos;
-	CNavArea* m_closeArea;
+	CNavArea *m_closeArea;
 	float m_closeRangeSq;
 };
 
 
 //-----------------------------------------------------------------------------------------------------
-Vector CNEOBot::FindVisibleThrowPointNear( const Vector &vecPos ) const
+Vector CNEOBot::FindVisibleThrowPointNear(const Vector &vecPos) const
 {
 	CNavArea *myArea = GetLastKnownArea();
-	if ( !myArea )
+	if (!myArea)
 	{
 		return vec3_invalid;
 	}
 
-	CNEOFindClosestPotentiallyVisibleAreaToPos find( vecPos );
-	myArea->ForAllPotentiallyVisibleAreas( find );
-	if ( !find.m_closeArea )
+	CNEOFindClosestPotentiallyVisibleAreaToPos find(vecPos);
+	myArea->ForAllPotentiallyVisibleAreas(find);
+	if (!find.m_closeArea)
 	{
 		return vec3_invalid;
 	}
 
 	Vector vecPoint;
-	find.m_closeArea->GetClosestPointOnArea( vecPos, &vecPoint );
-	if ( IsThrowLineClear( vecPoint ) )
+	find.m_closeArea->GetClosestPointOnArea(vecPos, &vecPoint);
+	if (IsThrowLineClear(vecPoint))
 	{
 		return vecPoint;
 	}
 
 	const Vector &vecCenter = find.m_closeArea->GetCenter();
-	return IsThrowLineClear( vecCenter ) ? vecCenter : vec3_invalid;
+	return IsThrowLineClear(vecCenter) ? vecCenter : vec3_invalid;
 }
 
 
@@ -1301,7 +1294,7 @@ void CNEOBot::UpdateLookingAroundForEnemies(void)
 
 	const float maxLookInterval = 1.0f;
 
-	const CKnownEntity* known = GetVisionInterface()->GetPrimaryKnownThreat();
+	const CKnownEntity *known = GetVisionInterface()->GetPrimaryKnownThreat();
 
 	if (known)
 	{
@@ -1316,7 +1309,8 @@ void CNEOBot::UpdateLookingAroundForEnemies(void)
 			}
 
 			// I see you!
-			GetBodyInterface()->AimHeadTowards(known->GetEntity(), IBody::CRITICAL, 1.0f, NULL, "Aiming at a visible threat");
+			GetBodyInterface()->AimHeadTowards(
+				known->GetEntity(), IBody::CRITICAL, 1.0f, NULL, "Aiming at a visible threat");
 			return;
 		}
 
@@ -1335,9 +1329,8 @@ void CNEOBot::UpdateLookingAroundForEnemies(void)
 		// but an enemy ghost carrier's live position shows on every HUD
 		const CNEO_Player *pThreatPlayer = ToNEOPlayer(known->GetEntity());
 		const bool bLivePosition = pThreatPlayer && pThreatPlayer->IsCarryingGhost();
-		const Vector vecThreatSpot = bLivePosition
-			? known->GetEntity()->WorldSpaceCenter()
-			: known->GetLastKnownPosition() + Vector(0, 0, HalfHumanHeight);
+		const Vector vecThreatSpot = bLivePosition ? known->GetEntity()->WorldSpaceCenter()
+												   : known->GetLastKnownPosition() + Vector(0, 0, HalfHumanHeight);
 
 		// if there is unobstructed space between us, turn around
 		if (bLivePosition || IsLineOfSightClear(vecThreatSpot, IGNORE_ACTORS))
@@ -1355,16 +1348,17 @@ void CNEOBot::UpdateLookingAroundForEnemies(void)
 			imperfectAimSpot.x += RandomFloat(-error, error);
 			imperfectAimSpot.y += RandomFloat(-error, error);
 
-			GetBodyInterface()->AimHeadTowards(imperfectAimSpot, IBody::IMPORTANT, 1.0f, NULL, "Turning around to find threat out of our FOV");
+			GetBodyInterface()->AimHeadTowards(
+				imperfectAimSpot, IBody::IMPORTANT, 1.0f, NULL, "Turning around to find threat out of our FOV");
 			return;
 		}
 
 		{
 			// look toward potentially visible area nearest the last known position
-			CNavArea* myArea = GetLastKnownArea();
+			CNavArea *myArea = GetLastKnownArea();
 			if (myArea)
 			{
-				const CNavArea* closeArea = NULL;
+				const CNavArea *closeArea = NULL;
 				CNEOFindClosestPotentiallyVisibleAreaToPos find(known->GetLastKnownPosition());
 				myArea->ForAllPotentiallyVisibleAreas(find);
 
@@ -1381,7 +1375,8 @@ void CNEOBot::UpdateLookingAroundForEnemies(void)
 						if (GetVisionInterface()->IsLineOfSightClear(gazeSpot))
 						{
 							// use maxLookInterval so these looks override body aiming from path following
-							GetBodyInterface()->AimHeadTowards(gazeSpot, IBody::IMPORTANT, maxLookInterval, NULL, "Looking toward potentially visible area near known but hidden threat");
+							GetBodyInterface()->AimHeadTowards(gazeSpot, IBody::IMPORTANT, maxLookInterval, NULL,
+								"Looking toward potentially visible area near known but hidden threat");
 							return;
 						}
 					}
@@ -1389,19 +1384,17 @@ void CNEOBot::UpdateLookingAroundForEnemies(void)
 					// can't find a clear line to look along
 					if (IsDebugging(NEXTBOT_VISION | NEXTBOT_ERRORS))
 					{
-						ConColorMsg(Color(255, 255, 0, 255), "%3.2f: %s can't find clear line to look at potentially visible near known but hidden entity %s(#%d)\n",
-							gpGlobals->curtime,
-							GetDebugIdentifier(),
-							known->GetEntity()->GetClassname(),
+						ConColorMsg(Color(255, 255, 0, 255),
+							"%3.2f: %s can't find clear line to look at potentially visible near known but hidden entity %s(#%d)\n",
+							gpGlobals->curtime, GetDebugIdentifier(), known->GetEntity()->GetClassname(),
 							known->GetEntity()->entindex());
 					}
 				}
 				else if (IsDebugging(NEXTBOT_VISION | NEXTBOT_ERRORS))
 				{
-					ConColorMsg(Color(255, 255, 0, 255), "%3.2f: %s no potentially visible area to look toward known but hidden entity %s(#%d)\n",
-						gpGlobals->curtime,
-						GetDebugIdentifier(),
-						known->GetEntity()->GetClassname(),
+					ConColorMsg(Color(255, 255, 0, 255),
+						"%3.2f: %s no potentially visible area to look toward known but hidden entity %s(#%d)\n",
+						gpGlobals->curtime, GetDebugIdentifier(), known->GetEntity()->GetClassname(),
 						known->GetEntity()->entindex());
 				}
 			}
@@ -1419,7 +1412,7 @@ void CNEOBot::UpdateLookingAroundForEnemies(void)
 class CFindVantagePoint : public ISearchSurroundingAreasFunctor
 {
 public:
-	CFindVantagePoint(const CNEOBot* me)
+	CFindVantagePoint(const CNEOBot *me)
 	{
 		m_vantageArea = NULL;
 
@@ -1427,7 +1420,7 @@ public:
 
 		for (int i = 1; i <= gpGlobals->maxClients; ++i)
 		{
-			CNEO_Player* enemy = ToNEOPlayer(UTIL_PlayerByIndex(i));
+			CNEO_Player *enemy = ToNEOPlayer(UTIL_PlayerByIndex(i));
 
 			if (!enemy || !me->IsEnemy(enemy))
 				continue;
@@ -1439,13 +1432,13 @@ public:
 		}
 	}
 
-	virtual bool operator() (CNavArea* baseArea, CNavArea* priorArea, float travelDistanceSoFar)
+	virtual bool operator()(CNavArea *baseArea, CNavArea *priorArea, float travelDistanceSoFar)
 	{
-		CNavArea* area = (CNavArea*)baseArea;
+		CNavArea *area = (CNavArea *)baseArea;
 
 		for (int i = 0; i < m_enemies.Count(); ++i)
 		{
-			CNavArea* enemyArea = m_enemies[i]->GetLastKnownArea();
+			CNavArea *enemyArea = m_enemies[i]->GetLastKnownArea();
 			if (enemyArea->IsCompletelyVisible(area))
 			{
 				// nearby area from which we can see an enemy
@@ -1457,14 +1450,14 @@ public:
 		return true;
 	}
 
-	CUtlVector< CNEO_Player* > m_enemies;
-	CNavArea* m_vantageArea;
+	CUtlVector<CNEO_Player *> m_enemies;
+	CNavArea *m_vantageArea;
 };
 
 
 //-----------------------------------------------------------------------------------------------------
 // Return a nearby area where we can see an enemy
-CNavArea* CNEOBot::FindVantagePoint(float maxTravelDistance) const
+CNavArea *CNEOBot::FindVantagePoint(float maxTravelDistance) const
 {
 	CFindVantagePoint find(this);
 	SearchSurroundingAreas(GetLastKnownArea(), find, maxTravelDistance);
@@ -1478,18 +1471,19 @@ CNavArea* CNEOBot::FindVantagePoint(float maxTravelDistance) const
  * @todo: Move this to contextual query
  * @todo: Differentiate between potential threats (that sentry up ahead along our route) and immediate threats (the sentry I'm in range of)
  */
-float CNEOBot::GetThreatDanger(CBaseCombatCharacter* who) const
+float CNEOBot::GetThreatDanger(CBaseCombatCharacter *who) const
 {
 	if (who == NULL)
 		return 0.0f;
 
 	if (who->IsPlayer())
 	{
-		CNEO_Player* player = static_cast<CNEO_Player*>(who);
+		CNEO_Player *player = static_cast<CNEO_Player *>(who);
 
 #if 1
 		CNEOBaseCombatWeapon *whoWeapon = static_cast<CNEOBaseCombatWeapon *>(player->GetActiveWeapon());
-		if (whoWeapon && (whoWeapon->GetNeoWepBits() & (NEO_WEP_AA13 | NEO_WEP_SUPA7))) // NEO TODO (Adam) NEO_WEP_SHOTGUN
+		if (whoWeapon &&
+			(whoWeapon->GetNeoWepBits() & (NEO_WEP_AA13 | NEO_WEP_SUPA7))) // NEO TODO (Adam) NEO_WEP_SHOTGUN
 		{
 			// Shotgunners are scary at close range
 			if (IsRangeLessThan(player, neo_bot_shotgunner_range.GetFloat()))
@@ -1529,7 +1523,7 @@ float CNEOBot::GetThreatDanger(CBaseCombatCharacter* who) const
  */
 float CNEOBot::GetMaxAttackRange(void) const
 {
-	CNEOBaseCombatWeapon* myWeapon = static_cast<CNEOBaseCombatWeapon *>(GetActiveWeapon());
+	CNEOBaseCombatWeapon *myWeapon = static_cast<CNEOBaseCombatWeapon *>(GetActiveWeapon());
 	if (!myWeapon)
 	{
 		return 0.0f;
@@ -1552,7 +1546,7 @@ float CNEOBot::GetMaxAttackRange(void) const
  */
 float CNEOBot::GetDesiredAttackRange(void) const
 {
-	CNEOBaseCombatWeapon* myWeapon = static_cast<CNEOBaseCombatWeapon*>(GetActiveWeapon());
+	CNEOBaseCombatWeapon *myWeapon = static_cast<CNEOBaseCombatWeapon *>(GetActiveWeapon());
 	if (!myWeapon)
 	{
 		return 0.0f;
@@ -1568,7 +1562,9 @@ float CNEOBot::GetDesiredAttackRange(void) const
 		return 100.0f;
 	}
 
-	if (myWeapon->GetNeoWepBits() & (NEO_WEP_JITTE | NEO_WEP_JITTE_S | NEO_WEP_KYLA | NEO_WEP_MILSO | NEO_WEP_MPN | NEO_WEP_MPN_S | NEO_WEP_SRM | NEO_WEP_SRM_S | NEO_WEP_TACHI))
+	if (myWeapon->GetNeoWepBits() &
+		(NEO_WEP_JITTE | NEO_WEP_JITTE_S | NEO_WEP_KYLA | NEO_WEP_MILSO | NEO_WEP_MPN | NEO_WEP_MPN_S | NEO_WEP_SRM |
+			NEO_WEP_SRM_S | NEO_WEP_TACHI))
 	{
 		return 250.0f;
 	}
@@ -1590,7 +1586,7 @@ bool CNEOBot::EquipRequiredWeapon(void)
 	// if we have a required weapon on our stack, it takes precedence (items, etc)
 	if (m_requiredWeaponStack.Count())
 	{
-		CBaseCombatWeapon* pWeapon = m_requiredWeaponStack.Top().Get();
+		CBaseCombatWeapon *pWeapon = m_requiredWeaponStack.Top().Get();
 		return Weapon_Switch(pWeapon);
 	}
 
@@ -1608,12 +1604,12 @@ bool CNEOBot::EquipRequiredWeapon(void)
 //-----------------------------------------------------------------------------------------------------
 void CNEOBot::DropPrimaryWeapon(void)
 {
-	CBaseCombatWeapon *pPrimary = Weapon_GetSlot( 0 );
-	if ( pPrimary )
+	CBaseCombatWeapon *pPrimary = Weapon_GetSlot(0);
+	if (pPrimary)
 	{
-		if ( GetActiveWeapon() != pPrimary )
+		if (GetActiveWeapon() != pPrimary)
 		{
-			Weapon_Switch( pPrimary );
+			Weapon_Switch(pPrimary);
 		}
 		else
 		{
@@ -1625,26 +1621,25 @@ void CNEOBot::DropPrimaryWeapon(void)
 
 //-----------------------------------------------------------------------------------------------------
 // Equip the best weapon we have to attack the given threat
-void CNEOBot::EquipBestWeaponForThreat(const CKnownEntity* threat, const bool bNotPrimary)
+void CNEOBot::EquipBestWeaponForThreat(const CKnownEntity *threat, const bool bNotPrimary)
 {
 	if (EquipRequiredWeapon())
 		return;
 
 	// -------------------------------------------------------------------------------
 
-	CNEOBaseCombatWeapon* primaryWeapon = static_cast<CNEOBaseCombatWeapon *>(Weapon_GetSlot(0));
-	CNEOBaseCombatWeapon* secondaryWeapon = static_cast<CNEOBaseCombatWeapon *>(Weapon_GetSlot(1));
-	CNEOBaseCombatWeapon* knife = static_cast<CNEOBaseCombatWeapon *>(Weapon_GetSlot(2));
-	CNEOBaseCombatWeapon* throwable = static_cast<CNEOBaseCombatWeapon *>(Weapon_GetSlot(3));
+	CNEOBaseCombatWeapon *primaryWeapon = static_cast<CNEOBaseCombatWeapon *>(Weapon_GetSlot(0));
+	CNEOBaseCombatWeapon *secondaryWeapon = static_cast<CNEOBaseCombatWeapon *>(Weapon_GetSlot(1));
+	CNEOBaseCombatWeapon *knife = static_cast<CNEOBaseCombatWeapon *>(Weapon_GetSlot(2));
+	CNEOBaseCombatWeapon *throwable = static_cast<CNEOBaseCombatWeapon *>(Weapon_GetSlot(3));
 
 	// --------------------------------------------------------------------------------
 	// Don't consider weapons that we have no ammo for (or filter out primary like shotgun + glass scenario)
 	// We do not care about slugs
 	if (bNotPrimary ||
-			(primaryWeapon &&
-			 	((primaryWeapon->GetNeoWepBits() & NEO_WEP_GHOST) ||
-			 	 !primaryWeapon->m_iPrimaryAmmoType ||
-				 (primaryWeapon->Clip1() + primaryWeapon->m_iPrimaryAmmoCount) <= 0)))
+		(primaryWeapon &&
+			((primaryWeapon->GetNeoWepBits() & NEO_WEP_GHOST) || !primaryWeapon->m_iPrimaryAmmoType ||
+				(primaryWeapon->Clip1() + primaryWeapon->m_iPrimaryAmmoCount) <= 0)))
 	{
 		primaryWeapon = NULL;
 	}
@@ -1656,7 +1651,7 @@ void CNEOBot::EquipBestWeaponForThreat(const CKnownEntity* threat, const bool bN
 
 	if (!threat || !threat->WasEverVisible() || threat->GetTimeSinceLastSeen() > 5.0f)
 	{
-		CNEOBaseCombatWeapon* pChosen = NULL;
+		CNEOBaseCombatWeapon *pChosen = NULL;
 
 		// Pull out weapons we want to reload.
 		if (!pChosen && primaryWeapon && !primaryWeapon->Clip1())
@@ -1687,7 +1682,7 @@ void CNEOBot::EquipBestWeaponForThreat(const CKnownEntity* threat, const bool bN
 		return;
 	}
 
-	CNEOBaseCombatWeapon* pChosen = NULL;
+	CNEOBaseCombatWeapon *pChosen = NULL;
 
 #if 0
 	bool bCanSeeTarget = threat->GetTimeSinceLastSeen() < 0.2f;
@@ -1713,23 +1708,19 @@ void CNEOBot::EquipBestWeaponForThreat(const CKnownEntity* threat, const bool bN
 	{
 		// passthrough
 	}
-	else if (secondaryWeapon
-		&& primaryWeapon->GetNeoWepBits() & (NEO_WEP_AA13 | NEO_WEP_SUPA7)
-		&& IsRangeGreaterThan(threat->GetLastKnownPosition(), 1000.0f))
+	else if (secondaryWeapon && primaryWeapon->GetNeoWepBits() & (NEO_WEP_AA13 | NEO_WEP_SUPA7) &&
+		IsRangeGreaterThan(threat->GetLastKnownPosition(), 1000.0f))
 	{
 		// passthrough
 	}
-	else if (secondaryWeapon
-		&& primaryWeapon->GetNeoWepBits() & (NEO_WEP_SCOPEDWEAPON)
-		&& IsRangeLessThan(threat->GetLastKnownPosition(), 250.0f))
+	else if (secondaryWeapon && primaryWeapon->GetNeoWepBits() & (NEO_WEP_SCOPEDWEAPON) &&
+		IsRangeLessThan(threat->GetLastKnownPosition(), 250.0f))
 	{
 		// passthrough
 	}
 	// Ideally for close range empty primary reaction
-	else if ( secondaryWeapon
-		&& primaryWeapon->Clip1() <= 0
-		&& secondaryWeapon->Clip1() > 0
-		&& IsRangeLessThan(threat->GetLastKnownPosition(), 250.0f) )
+	else if (secondaryWeapon && primaryWeapon->Clip1() <= 0 && secondaryWeapon->Clip1() > 0 &&
+		IsRangeLessThan(threat->GetLastKnownPosition(), 250.0f))
 	{
 		// passthrough
 	}
@@ -1747,49 +1738,50 @@ void CNEOBot::EquipBestWeaponForThreat(const CKnownEntity* threat, const bool bN
 
 //-----------------------------------------------------------------------------------------------------
 // Returns whether the conditions are satisfied for the ghost revealing the subject
-bool CNEOBot::IsRevealedByMyGhost( CBaseEntity *subject ) const
+bool CNEOBot::IsRevealedByMyGhost(CBaseEntity *subject) const
 {
-	if ( !subject )
+	if (!subject)
 	{
 		return false;
 	}
 
 	const CWeaponGhost *pGhost = GetBeaconingGhost();
-	if ( !pGhost )
+	if (!pGhost)
 	{
 		return false;
 	}
 
 	float flDistIgnored;
-	return pGhost->BeaconRange( subject, flDistIgnored );
+	return pGhost->BeaconRange(subject, flDistIgnored);
 }
 
 
 //-----------------------------------------------------------------------------------------------------
 bool CNEOBot::DropGhost()
 {
-	if ( !IsCarryingGhost() )
+	if (!IsCarryingGhost())
 	{
 		return false;
 	}
 
-	CBaseCombatWeapon *pGhost = Weapon_GetSlot( 0 );
-	if ( pGhost )
+	CBaseCombatWeapon *pGhost = Weapon_GetSlot(0);
+	if (pGhost)
 	{
-		if ( GetActiveWeapon() != pGhost )
+		if (GetActiveWeapon() != pGhost)
 		{
-			Weapon_Switch( pGhost );
+			Weapon_Switch(pGhost);
 		}
 		else
 		{
 			// Look behind where we are moving
 			Vector moveDir = GetLocomotionInterface()->GetMotionVector();
 			Vector lookDir = -moveDir;
-			GetBodyInterface()->AimHeadTowards( EyePosition() + lookDir * 100.0f, IBody::IMPORTANT, 0.2f, nullptr, "Preparing to drop ghost away from path" );
+			GetBodyInterface()->AimHeadTowards(EyePosition() + lookDir * 100.0f, IBody::IMPORTANT, 0.2f, nullptr,
+				"Preparing to drop ghost away from path");
 
 			// Drop the ghost if we are looking anywhere but the front
 			Vector viewDir = GetBodyInterface()->GetViewVector();
-			if ( moveDir.Dot( viewDir ) < 0.4f )
+			if (moveDir.Dot(viewDir) < 0.4f)
 			{
 				PressDropButton();
 			}
@@ -1800,10 +1792,10 @@ bool CNEOBot::DropGhost()
 }
 
 //-----------------------------------------------------------------------------------------------------
-// Reload the active weapon if it makes sense for the situation 
+// Reload the active weapon if it makes sense for the situation
 void CNEOBot::ReloadIfLowClip(bool bForceReload)
 {
-	CNEOBaseCombatWeapon* myWeapon = static_cast<CNEOBaseCombatWeapon*>(GetActiveWeapon());
+	CNEOBaseCombatWeapon *myWeapon = static_cast<CNEOBaseCombatWeapon *>(GetActiveWeapon());
 
 	if (!myWeapon)
 	{
@@ -1840,7 +1832,7 @@ void CNEOBot::ReloadIfLowClip(bool bForceReload)
 	if (wepBits & NEO_WEP_SUPA7)
 	{
 		// Consider loading slug
-		if ( (myWeapon->m_iSecondaryAmmoCount > 0) && (myWeapon->Clip1() == myWeapon->GetMaxClip1() - 1))
+		if ((myWeapon->m_iSecondaryAmmoCount > 0) && (myWeapon->Clip1() == myWeapon->GetMaxClip1() - 1))
 		{
 			ReleaseFireButton();
 			PressAltFireButton();
@@ -1879,7 +1871,7 @@ void CNEOBot::ReloadIfLowClip(bool bForceReload)
 
 //-----------------------------------------------------------------------------------------------------
 // Force us to equip and use this weapon until popped off the required stack
-void CNEOBot::PushRequiredWeapon(CNEOBaseCombatWeapon* weapon)
+void CNEOBot::PushRequiredWeapon(CNEOBaseCombatWeapon *weapon)
 {
 	m_requiredWeaponStack.Push(weapon);
 }
@@ -1895,7 +1887,7 @@ void CNEOBot::PopRequiredWeapon(void)
 
 //-----------------------------------------------------------------------------------------------------
 // return true if given weapon can be used to attack
-bool CNEOBot::IsCombatWeapon(CNEOBaseCombatWeapon* weapon) const
+bool CNEOBot::IsCombatWeapon(CNEOBaseCombatWeapon *weapon) const
 {
 	if (!weapon)
 	{
@@ -1913,7 +1905,7 @@ bool CNEOBot::IsCombatWeapon(CNEOBaseCombatWeapon* weapon) const
 
 //-----------------------------------------------------------------------------------------------------
 // return true if given weapon is a "hitscan" weapon
-bool CNEOBot::IsHitScanWeapon(CNEOBaseCombatWeapon* weapon) const
+bool CNEOBot::IsHitScanWeapon(CNEOBaseCombatWeapon *weapon) const
 {
 	if (!weapon)
 	{
@@ -1931,7 +1923,7 @@ bool CNEOBot::IsHitScanWeapon(CNEOBaseCombatWeapon* weapon) const
 
 //-----------------------------------------------------------------------------------------------------
 // return true if given weapon "sprays" bullets/fire/etc continuously (ie: not individual rockets/etc)
-bool CNEOBot::IsContinuousFireWeapon(CNEOBaseCombatWeapon* weapon) const
+bool CNEOBot::IsContinuousFireWeapon(CNEOBaseCombatWeapon *weapon) const
 {
 	if (!weapon)
 	{
@@ -1941,7 +1933,10 @@ bool CNEOBot::IsContinuousFireWeapon(CNEOBaseCombatWeapon* weapon) const
 	if (!IsCombatWeapon(weapon))
 		return false;
 
-	if (weapon && weapon->GetNeoWepBits() & (NEO_WEP_THROWABLE | NEO_WEP_KYLA | NEO_WEP_SRS | NEO_WEP_M41 | NEO_WEP_M41_L | NEO_WEP_M41_S | NEO_WEP_MILSO | NEO_WEP_TACHI | NEO_WEP_ZR68_L))
+	if (weapon &&
+		weapon->GetNeoWepBits() &
+			(NEO_WEP_THROWABLE | NEO_WEP_KYLA | NEO_WEP_SRS | NEO_WEP_M41 | NEO_WEP_M41_L | NEO_WEP_M41_S |
+				NEO_WEP_MILSO | NEO_WEP_TACHI | NEO_WEP_ZR68_L))
 	{
 		return false;
 	}
@@ -1952,7 +1947,7 @@ bool CNEOBot::IsContinuousFireWeapon(CNEOBaseCombatWeapon* weapon) const
 
 //-----------------------------------------------------------------------------------------------------
 // return true if given weapon launches explosive projectiles with splash damage
-bool CNEOBot::IsExplosiveProjectileWeapon(CNEOBaseCombatWeapon* weapon) const
+bool CNEOBot::IsExplosiveProjectileWeapon(CNEOBaseCombatWeapon *weapon) const
 {
 	return false;
 }
@@ -1960,7 +1955,7 @@ bool CNEOBot::IsExplosiveProjectileWeapon(CNEOBaseCombatWeapon* weapon) const
 
 //-----------------------------------------------------------------------------------------------------
 // return true if given weapon has small clip and long reload cost (ie: rocket launcher, etc)
-bool CNEOBot::IsBarrageAndReloadWeapon(CNEOBaseCombatWeapon* weapon) const
+bool CNEOBot::IsBarrageAndReloadWeapon(CNEOBaseCombatWeapon *weapon) const
 {
 	if (!weapon)
 	{
@@ -1978,7 +1973,7 @@ bool CNEOBot::IsBarrageAndReloadWeapon(CNEOBaseCombatWeapon* weapon) const
 
 //-----------------------------------------------------------------------------------------------------
 // Return true if given weapon doesn't make much sound when used (ie: spy knife, etc)
-bool CNEOBot::IsQuietWeapon(CNEOBaseCombatWeapon* weapon) const
+bool CNEOBot::IsQuietWeapon(CNEOBaseCombatWeapon *weapon) const
 {
 	if (!IsCombatWeapon(weapon))
 	{
@@ -2007,8 +2002,8 @@ unsigned int CNEOBot::LineOfFireMask(const LineOfFireFlags flags)
 // A very basic penetration material check, it doesn't do the full penetration
 // check and just simply base it on the material that it traced in front of the bot
 // and a short distance.
-bool CNEOBot::IsLineOfFirePenetrationClear(const trace_t &tr, const Vector &from, const Vector &to,
-		const ELineOfFirePenetrationMode eMode) const
+bool CNEOBot::IsLineOfFirePenetrationClear(
+	const trace_t &tr, const Vector &from, const Vector &to, const ELineOfFirePenetrationMode eMode) const
 {
 	// Min is making sure at least the distance under it is considered
 	// Max is scaling up to penetration value of 100.0f which no weapon have, but
@@ -2033,9 +2028,8 @@ bool CNEOBot::IsLineOfFirePenetrationClear(const trace_t &tr, const Vector &from
 	bool bAttemptPenTest = (eMode == LINE_OF_FIRE_PENETRATION_MODE_GLASS);
 	if (!bAttemptPenTest)
 	{
-		const float flMaxTryDist = Clamp(
-				(neoWeapon->GetPenetration() / 100.0f) * FL_METERS_TRY_PENETRATE_MAX,
-				FL_METERS_TRY_PENETRATE_MIN, FL_METERS_TRY_PENETRATE_MAX);
+		const float flMaxTryDist = Clamp((neoWeapon->GetPenetration() / 100.0f) * FL_METERS_TRY_PENETRATE_MAX,
+			FL_METERS_TRY_PENETRATE_MIN, FL_METERS_TRY_PENETRATE_MAX);
 
 		const float flMeters = METERS_PER_INCH * from.DistTo(to);
 		bAttemptPenTest = (flMeters <= flMaxTryDist);
@@ -2048,18 +2042,17 @@ bool CNEOBot::IsLineOfFirePenetrationClear(const trace_t &tr, const Vector &from
 			// Just for simplicity, only try to fire against materials that can be penetrated
 			if (PENETRATION_RESISTANCE[material] < 1.0f)
 			{
-				CNEOShotManipulator manipulator(0,
-						const_cast<CNEOBot *>(this)->GetAutoaimVector(AUTOAIM_SCALE_DEFAULT),
-						const_cast<CNEOBot *>(this),
-						neoWeapon);
+				CNEOShotManipulator manipulator(0, const_cast<CNEOBot *>(this)->GetAutoaimVector(AUTOAIM_SCALE_DEFAULT),
+					const_cast<CNEOBot *>(this), neoWeapon);
 
 				Vector vecDir = manipulator.ApplySpread(const_cast<CNEOBot *>(this)->GetAttackSpread(neoWeapon));
 
-				trace_t	penetrationTrace;
+				trace_t penetrationTrace;
 				TestPenetrationTrace(penetrationTrace, tr, vecDir, nullptr);
 
 				// See if we found the surface again
-				const bool bFoundSurface = (penetrationTrace.startsolid || tr.fraction == 0.0f || penetrationTrace.fraction == 1.0f);
+				const bool bFoundSurface =
+					(penetrationTrace.startsolid || tr.fraction == 0.0f || penetrationTrace.fraction == 1.0f);
 				return !bFoundSurface;
 			}
 		}
@@ -2078,7 +2071,7 @@ bool CNEOBot::IsLineOfSightClear(CBaseEntity *entity, LineOfSightCheckType check
 
 //-----------------------------------------------------------------------------------------------------
 // Return true if a weapon has no obstructions along the line between the given points
-bool CNEOBot::IsLineOfFireClear(const Vector& from, const Vector& to, const LineOfFireFlags flags) const
+bool CNEOBot::IsLineOfFireClear(const Vector &from, const Vector &to, const LineOfFireFlags flags) const
 {
 	trace_t trace;
 	NextBotTraceFilterIgnoreActors botFilter(NULL, COLLISION_GROUP_NONE);
@@ -2114,16 +2107,16 @@ bool CNEOBot::IsLineOfFireClear(const Vector& from, const Vector& to, const Line
 
 //-----------------------------------------------------------------------------------------------------
 // Return true if a weapon has no obstructions along the line from our eye to the given position
-bool CNEOBot::IsLineOfFireClear(const Vector& where, const LineOfFireFlags flags) const
+bool CNEOBot::IsLineOfFireClear(const Vector &where, const LineOfFireFlags flags) const
 {
-	return IsLineOfFireClear(const_cast<CNEOBot*>(this)->EyePosition(), where, flags);
+	return IsLineOfFireClear(const_cast<CNEOBot *>(this)->EyePosition(), where, flags);
 }
 
 
 //-----------------------------------------------------------------------------------------------------
 // Return true if a thrown object (like a grenade) has a completely unobstructed physical line to the target.
 // Unlike IsLineOfFireClear, this requires !trace.DidHit() and will NOT treat breakable entities (like glass) as clear.
-bool CNEOBot::IsThrowLineClear(const Vector& from, const Vector& to) const
+bool CNEOBot::IsThrowLineClear(const Vector &from, const Vector &to) const
 {
 	trace_t trace;
 	NextBotTraceFilterIgnoreActors filter(NULL, COLLISION_GROUP_NONE);
@@ -2132,15 +2125,15 @@ bool CNEOBot::IsThrowLineClear(const Vector& from, const Vector& to) const
 }
 
 //-----------------------------------------------------------------------------------------------------
-bool CNEOBot::IsThrowLineClear(const Vector& where) const
+bool CNEOBot::IsThrowLineClear(const Vector &where) const
 {
-	return IsThrowLineClear(const_cast<CNEOBot*>(this)->EyePosition(), where);
+	return IsThrowLineClear(const_cast<CNEOBot *>(this)->EyePosition(), where);
 }
 
 
 //-----------------------------------------------------------------------------------------------------
 // Return whether there is a friendly player blocking the line of fire
-bool CNEOBot::IsLineOfFireClearOfFriendlies(const Vector& from, CBaseEntity* who) const
+bool CNEOBot::IsLineOfFireClearOfFriendlies(const Vector &from, CBaseEntity *who) const
 {
 	if (NEORules()->IsTeamplay())
 	{
@@ -2166,7 +2159,7 @@ bool CNEOBot::IsLineOfFireClearOfFriendlies(const Vector& from, CBaseEntity* who
 
 
 //-----------------------------------------------------------------------------------------------------
-bool CNEOBot::IsFriendlyNearLineOfFire(const Vector& from, const Vector& to) const
+bool CNEOBot::IsFriendlyNearLineOfFire(const Vector &from, const Vector &to) const
 {
 	if (!NEORules()->IsTeamplay())
 	{
@@ -2182,14 +2175,14 @@ bool CNEOBot::IsFriendlyNearLineOfFire(const Vector& from, const Vector& to) con
 
 	for (int i = 1; i <= gpGlobals->maxClients; ++i)
 	{
-		CBasePlayer* mate = UTIL_PlayerByIndex(i);
+		CBasePlayer *mate = UTIL_PlayerByIndex(i);
 		if (!mate || mate == this || !mate->IsAlive() || !IsFriend(mate))
 		{
 			continue;
 		}
 
 		const Vector matePos = mate->WorldSpaceCenter();
-		for (const Vector& pos : { matePos, matePos + mate->GetAbsVelocity() * lookAheadTime })
+		for (const Vector &pos : {matePos, matePos + mate->GetAbsVelocity() * lookAheadTime})
 		{
 			const Vector toMate = pos - from;
 			const float along = DotProduct(toMate, line);
@@ -2212,7 +2205,7 @@ bool CNEOBot::IsFriendlyNearLineOfFire(const Vector& from, const Vector& to) con
 //-----------------------------------------------------------------------------------------------------
 bool CNEOBot::IsFriendlyNearBarrel(float range) const
 {
-	CNEOBot* me = const_cast<CNEOBot*>(this);
+	CNEOBot *me = const_cast<CNEOBot *>(this);
 	Vector forward;
 	me->EyeVectors(&forward);
 	const Vector eyes = me->EyePosition();
@@ -2221,7 +2214,7 @@ bool CNEOBot::IsFriendlyNearBarrel(float range) const
 
 //-----------------------------------------------------------------------------------------------------
 // Return true if a weapon has no obstructions along the line between the given point and entity
-bool CNEOBot::IsLineOfFireClear(const Vector& from, CBaseEntity* who, const LineOfFireFlags flags) const
+bool CNEOBot::IsLineOfFireClear(const Vector &from, CBaseEntity *who, const LineOfFireFlags flags) const
 {
 	if (!IsLineOfFireClearOfFriendlies(from, who))
 	{
@@ -2263,14 +2256,14 @@ bool CNEOBot::IsLineOfFireClear(const Vector& from, CBaseEntity* who, const Line
 
 //-----------------------------------------------------------------------------------------------------
 // Return true if a weapon has no obstructions along the line from our eye to the given entity
-bool CNEOBot::IsLineOfFireClear(CBaseEntity* who, const LineOfFireFlags flags) const
+bool CNEOBot::IsLineOfFireClear(CBaseEntity *who, const LineOfFireFlags flags) const
 {
-	return IsLineOfFireClear(const_cast<CNEOBot*>(this)->EyePosition(), who, flags);
+	return IsLineOfFireClear(const_cast<CNEOBot *>(this)->EyePosition(), who, flags);
 }
 
 
 //-----------------------------------------------------------------------------------------------------
-bool CNEOBot::IsEntityBetweenTargetAndSelf(CBaseEntity* other, CBaseEntity* target)
+bool CNEOBot::IsEntityBetweenTargetAndSelf(CBaseEntity *other, CBaseEntity *target)
 {
 	Vector toTarget = target->GetAbsOrigin() - GetAbsOrigin();
 	float rangeToTarget = toTarget.NormalizeInPlace();
@@ -2284,17 +2277,17 @@ bool CNEOBot::IsEntityBetweenTargetAndSelf(CBaseEntity* other, CBaseEntity* targ
 
 //-----------------------------------------------------------------------------------------------------
 // Return the nearest human player on the given team who is looking directly at me
-CNEO_Player* CNEOBot::GetClosestHumanLookingAtMe(int team)
+CNEO_Player *CNEOBot::GetClosestHumanLookingAtMe(int team)
 {
-	CUtlVector< CNEO_Player* > otherVector;
+	CUtlVector<CNEO_Player *> otherVector;
 	CollectPlayers(&otherVector, team, COLLECT_ONLY_LIVING_PLAYERS);
 
 	float closeRange = FLT_MAX;
-	CNEO_Player* close = NULL;
+	CNEO_Player *close = NULL;
 
 	for (int i = 0; i < otherVector.Count(); ++i)
 	{
-		CNEO_Player* other = otherVector[i];
+		CNEO_Player *other = otherVector[i];
 
 		if (other->IsBot())
 			continue;
@@ -2326,7 +2319,7 @@ CNEO_Player* CNEOBot::GetClosestHumanLookingAtMe(int team)
 
 //-----------------------------------------------------------------------------------------------------
 // become a member of the given squad
-void CNEOBot::JoinSquad(CNEOBotSquad* squad)
+void CNEOBot::JoinSquad(CNEOBotSquad *squad)
 {
 	if (squad)
 	{
@@ -2358,7 +2351,7 @@ void CNEOBot::DeleteSquad(void)
 }
 
 //---------------------------------------------------------------------------------------------
-bool CNEOBot::IsWeaponRestricted(CNEOBaseCombatWeapon* weapon) const
+bool CNEOBot::IsWeaponRestricted(CNEOBaseCombatWeapon *weapon) const
 {
 	if (!weapon)
 	{
@@ -2375,11 +2368,11 @@ bool CNEOBot::IsWeaponRestricted(CNEOBaseCombatWeapon* weapon) const
 
 bool CNEOBot::ScriptIsWeaponRestricted(HSCRIPT script) const
 {
-	CBaseEntity* pEntity = ToEnt(script);
+	CBaseEntity *pEntity = ToEnt(script);
 	if (!pEntity)
 		return true;
 
-	CNEOBaseCombatWeapon* pWeapon = dynamic_cast<CNEOBaseCombatWeapon*>(pEntity);
+	CNEOBaseCombatWeapon *pWeapon = dynamic_cast<CNEOBaseCombatWeapon *>(pEntity);
 	if (!pWeapon)
 		return true;
 
@@ -2388,11 +2381,11 @@ bool CNEOBot::ScriptIsWeaponRestricted(HSCRIPT script) const
 
 
 //---------------------------------------------------------------------------------------------
-// Compute a pseudo random value (0-1) that stays consistent for the 
+// Compute a pseudo random value (0-1) that stays consistent for the
 // given period of time, but changes unpredictably each period.
 float CNEOBot::TransientlyConsistentRandomValue(float period, int seedValue) const
 {
-	CNavArea* area = GetLastKnownArea();
+	CNavArea *area = GetLastKnownArea();
 	if (!area)
 	{
 		return 0.0f;
@@ -2407,7 +2400,7 @@ float CNEOBot::TransientlyConsistentRandomValue(float period, int seedValue) con
 //---------------------------------------------------------------------------------------------
 // Given a target entity, find a target within 'maxSplashRadius' that has clear line of fire
 // to both the target entity and to me.
-bool CNEOBot::FindSplashTarget(CBaseEntity* target, float maxSplashRadius, Vector* splashTarget) const
+bool CNEOBot::FindSplashTarget(CBaseEntity *target, float maxSplashRadius, Vector *splashTarget) const
 {
 	if (!target || !splashTarget)
 		return false;
@@ -2448,7 +2441,7 @@ bool CNEOBot::FindSplashTarget(CBaseEntity* target, float maxSplashRadius, Vecto
 
 //---------------------------------------------------------------------------------------------
 // Restrict bot's attention to only this entity (or radius around this entity) to the exclusion of everything else
-void CNEOBot::SetAttentionFocus(CBaseEntity* focusOn)
+void CNEOBot::SetAttentionFocus(CBaseEntity *focusOn)
 {
 	m_attentionFocusEntity = focusOn;
 }
@@ -2470,7 +2463,7 @@ bool CNEOBot::IsAttentionFocused(void) const
 
 
 //---------------------------------------------------------------------------------------------
-bool CNEOBot::IsAttentionFocusedOn(CBaseEntity* who) const
+bool CNEOBot::IsAttentionFocusedOn(CBaseEntity *who) const
 {
 	if (m_attentionFocusEntity == NULL || who == NULL)
 	{
@@ -2483,7 +2476,7 @@ bool CNEOBot::IsAttentionFocusedOn(CBaseEntity* who) const
 		return true;
 	}
 
-	CNEOBotActionPoint* actionPoint = dynamic_cast<CNEOBotActionPoint*>(m_attentionFocusEntity.Get());
+	CNEOBotActionPoint *actionPoint = dynamic_cast<CNEOBotActionPoint *>(m_attentionFocusEntity.Get());
 	if (actionPoint)
 	{
 		// we attend to everything within the action point's radius
@@ -2496,7 +2489,7 @@ bool CNEOBot::IsAttentionFocusedOn(CBaseEntity* who) const
 
 //---------------------------------------------------------------------------------------------
 // Notice the given threat after the given number of seconds have elapsed
-void CNEOBot::DelayedThreatNotice(CHandle< CBaseEntity > who, float noticeDelay)
+void CNEOBot::DelayedThreatNotice(CHandle<CBaseEntity> who, float noticeDelay)
 {
 	float when = gpGlobals->curtime + noticeDelay;
 
@@ -2530,7 +2523,7 @@ void CNEOBot::UpdateDelayedThreatNotices(void)
 		if (m_delayedNoticeVector[i].m_when <= gpGlobals->curtime)
 		{
 			// delay is up - notice this threat
-			CBaseEntity* who = m_delayedNoticeVector[i].m_who;
+			CBaseEntity *who = m_delayedNoticeVector[i].m_who;
 
 			if (who)
 			{
@@ -2545,7 +2538,7 @@ void CNEOBot::UpdateDelayedThreatNotices(void)
 
 
 //---------------------------------------------------------------------------------------------
-bool CNEOBot::IsSquadmate(CNEO_Player* who) const
+bool CNEOBot::IsSquadmate(CNEO_Player *who) const
 {
 	if (!m_squad || !who || !who->IsBotOfType(NEO_BOT_TYPE))
 		return false;
@@ -2562,7 +2555,7 @@ void CNEOBot::ClearTags(void)
 
 
 //---------------------------------------------------------------------------------------------
-void CNEOBot::AddTag(const char* tag)
+void CNEOBot::AddTag(const char *tag)
 {
 	if (!HasTag(tag))
 	{
@@ -2572,7 +2565,7 @@ void CNEOBot::AddTag(const char* tag)
 
 
 //---------------------------------------------------------------------------------------------
-void CNEOBot::RemoveTag(const char* tag)
+void CNEOBot::RemoveTag(const char *tag)
 {
 	for (int i = 0; i < m_tags.Count(); ++i)
 	{
@@ -2587,7 +2580,7 @@ void CNEOBot::RemoveTag(const char* tag)
 
 //---------------------------------------------------------------------------------------------
 // TODO: Make this an efficient lookup/match
-bool CNEOBot::HasTag(const char* tag)
+bool CNEOBot::HasTag(const char *tag)
 {
 	for (int i = 0; i < m_tags.Count(); ++i)
 	{
@@ -2612,7 +2605,7 @@ void CNEOBot::ScriptGetAllTags(HSCRIPT hTable)
 
 
 //-----------------------------------------------------------------------------------------
-Action< CNEOBot >* CNEOBot::OpportunisticallyUseWeaponAbilities(void)
+Action<CNEOBot> *CNEOBot::OpportunisticallyUseWeaponAbilities(void)
 {
 	if (!m_opportunisticTimer.IsElapsed())
 	{
@@ -2623,7 +2616,7 @@ Action< CNEOBot >* CNEOBot::OpportunisticallyUseWeaponAbilities(void)
 
 	for (int w = 0; w < MAX_WEAPONS; ++w)
 	{
-		CBaseHL2MPCombatWeapon* weapon = (CBaseHL2MPCombatWeapon*)GetWeapon(w);
+		CBaseHL2MPCombatWeapon *weapon = (CBaseHL2MPCombatWeapon *)GetWeapon(w);
 		if (!weapon)
 			continue;
 
@@ -2636,15 +2629,15 @@ Action< CNEOBot >* CNEOBot::OpportunisticallyUseWeaponAbilities(void)
 
 //-----------------------------------------------------------------------------------------
 // mostly for MvM - pick a random enemy player that is not in their spawn room
-CNEO_Player* CNEOBot::SelectRandomReachableEnemy(void)
+CNEO_Player *CNEOBot::SelectRandomReachableEnemy(void)
 {
-	CUtlVector< CNEO_Player* > livePlayerVector;
+	CUtlVector<CNEO_Player *> livePlayerVector;
 	CollectPlayers(&livePlayerVector, GetEnemyTeam(GetTeamNumber()), COLLECT_ONLY_LIVING_PLAYERS);
 
-	CUtlVector< CNEO_Player* > playerVector;
+	CUtlVector<CNEO_Player *> playerVector;
 	for (int i = 0; i < livePlayerVector.Count(); ++i)
 	{
-		CNEO_Player* player = livePlayerVector[i];
+		CNEO_Player *player = livePlayerVector[i];
 
 		if (neo_bot_ignore_real_players.GetBool())
 		{
@@ -2728,13 +2721,13 @@ int CNEOBot::DrawDebugTextOverlays(void)
 }
 
 
-void CNEOBot::AddEventChangeAttributes(const CNEOBot::EventChangeAttributes_t* newEvent)
+void CNEOBot::AddEventChangeAttributes(const CNEOBot::EventChangeAttributes_t *newEvent)
 {
 	m_eventChangeAttributes.AddToTail(newEvent);
 }
 
 
-const CNEOBot::EventChangeAttributes_t* CNEOBot::GetEventChangeAttributes(const char* pszEventName) const
+const CNEOBot::EventChangeAttributes_t *CNEOBot::GetEventChangeAttributes(const char *pszEventName) const
 {
 	for (int i = 0; i < m_eventChangeAttributes.Count(); ++i)
 	{
@@ -2747,7 +2740,7 @@ const CNEOBot::EventChangeAttributes_t* CNEOBot::GetEventChangeAttributes(const 
 }
 
 
-void CNEOBot::OnEventChangeAttributes(const CNEOBot::EventChangeAttributes_t* pEvent)
+void CNEOBot::OnEventChangeAttributes(const CNEOBot::EventChangeAttributes_t *pEvent)
 {
 	if (pEvent)
 	{
@@ -2782,7 +2775,7 @@ void CNEOBot::OnEventChangeAttributes(const CNEOBot::EventChangeAttributes_t* pE
 	}
 }
 
-bool CNEOBot::IsEnemy(const CBaseEntity* them) const
+bool CNEOBot::IsEnemy(const CBaseEntity *them) const
 {
 	if (them == NULL)
 		return false;
@@ -2795,7 +2788,7 @@ bool CNEOBot::IsEnemy(const CBaseEntity* them) const
 
 	if (neo_bot_ignore_real_players.GetBool())
 	{
-		CBasePlayer* pPlayer = (CBasePlayer*)them;
+		CBasePlayer *pPlayer = (CBasePlayer *)them;
 		if (!pPlayer->IsBot())
 			return false;
 	}
@@ -2825,29 +2818,27 @@ bool CNEOBot::IsEnemy(const CBaseEntity* them) const
 bool CNEOBot::IsOnPreciseArea() const
 {
 	const CNavArea *area = GetLastKnownArea();
-	return area && area->HasAttributes( NAV_MESH_PRECISE | NAV_MESH_CLIFF );
+	return area && area->HasAttributes(NAV_MESH_PRECISE | NAV_MESH_CLIFF);
 }
 
 bool CNEOBot::IsBotOnLadder() const
 {
-	ILocomotion* mover = GetLocomotionInterface();
-	if ( !mover )
+	ILocomotion *mover = GetLocomotionInterface();
+	if (!mover)
 	{
 		return false;
 	}
-	
-	return ( GetMoveType() == MOVETYPE_LADDER ) ||
-		mover->IsUsingLadder() ||
-		mover->IsAscendingOrDescendingLadder();
+
+	return (GetMoveType() == MOVETYPE_LADDER) || mover->IsUsingLadder() || mover->IsAscendingOrDescendingLadder();
 }
 
 
-CNEOBaseCombatWeapon* CNEOBot::GetBludgeonWeapon(void)
+CNEOBaseCombatWeapon *CNEOBot::GetBludgeonWeapon(void)
 {
 	return static_cast<CNEOBaseCombatWeapon *>(Weapon_GetSlot(2));
 }
 
-/*static*/ bool CNEOBot::IsCloseRange(CNEOBaseCombatWeapon* pWeapon)
+/*static*/ bool CNEOBot::IsCloseRange(CNEOBaseCombatWeapon *pWeapon)
 {
 	if (!pWeapon)
 		return false;
@@ -2855,7 +2846,7 @@ CNEOBaseCombatWeapon* CNEOBot::GetBludgeonWeapon(void)
 	return (pWeapon->IsMeleeWeapon() || pWeapon->GetNeoWepBits() & (NEO_WEP_AA13 | NEO_WEP_SUPA7));
 }
 
-/*static*/ bool CNEOBot::IsBludgeon(CNEOBaseCombatWeapon* pWeapon)
+/*static*/ bool CNEOBot::IsBludgeon(CNEOBaseCombatWeapon *pWeapon)
 {
 	if (!pWeapon)
 		return false;
@@ -2863,7 +2854,7 @@ CNEOBaseCombatWeapon* CNEOBot::GetBludgeonWeapon(void)
 	return pWeapon->IsMeleeWeapon();
 }
 
-/*static*/ bool CNEOBot::IsRanged(CNEOBaseCombatWeapon* pWeapon)
+/*static*/ bool CNEOBot::IsRanged(CNEOBaseCombatWeapon *pWeapon)
 {
 	if (!pWeapon)
 		return false;
@@ -2871,7 +2862,7 @@ CNEOBaseCombatWeapon* CNEOBot::GetBludgeonWeapon(void)
 	return (!(pWeapon->GetNeoWepBits() & NEO_WEP_KNIFE));
 }
 
-bool CNEOBot::PrefersLongRange(CNEOBaseCombatWeapon* pWeapon)
+bool CNEOBot::PrefersLongRange(CNEOBaseCombatWeapon *pWeapon)
 {
 	if (!pWeapon)
 		return false;
@@ -2903,9 +2894,8 @@ NeoClass CNEOBot::ChooseRandomClass() const
 
 	// On a respawn the team's count still holds this bot in its current class,
 	// so that class is only full for it when the count is over the limit, not at it
-	const auto isClassFull = [this, team](int neoClass) {
-		return (GetClass() == neoClass) ? team->IsClassOverThreshold(neoClass) : team->IsClassFull(neoClass);
-	};
+	const auto isClassFull = [this, team](int neoClass)
+	{ return (GetClass() == neoClass) ? team->IsClassOverThreshold(neoClass) : team->IsClassFull(neoClass); };
 
 	bool bValidClasses[NEO_CLASS__ENUM_COUNT] = {};
 	int iClassCounts = 0;
@@ -2949,9 +2939,7 @@ NeoClass CNEOBot::ChooseRandomClass() const
 	bool bHasPicked = false;
 	if (iClassCounts > 1)
 	{
-		for (int iRollCount = 0;
-				iRollCount < 3 && !bHasPicked;
-				++iRollCount)
+		for (int iRollCount = 0; iRollCount < 3 && !bHasPicked; ++iRollCount)
 		{
 			float flDice = RandomFloat();
 			if (flDice <= neo_bot_recon_ratio.GetFloat())
@@ -2993,8 +2981,7 @@ NeoClass CNEOBot::ChooseRandomClass() const
 	return NEO_CLASS_RECON;
 }
 
-CNEOBotIntention::CNEOBotIntention(CNEOBot *bot)
-	: IIntention(bot)
+CNEOBotIntention::CNEOBotIntention(CNEOBot *bot) : IIntention(bot)
 {
 	m_behavior = new CNEOBotBehavior(new CNEOBotMainAction);
 }
@@ -3004,30 +2991,31 @@ CNEOBotIntention::~CNEOBotIntention()
 	delete m_behavior;
 }
 
-static void CNEOBotApplyOnStuckAreaPenalty( CNEOBot *me )
+static void CNEOBotApplyOnStuckAreaPenalty(CNEOBot *me)
 {
 	// NEO Jank: For the current round, all bots share where they get stuck.
 	// The reasoning is that bots on either team will get stuck in their respective half of the map
 	// so the overall fairness may balance out for both teams sharing common sticking points.
-	if ( const CNavArea *navArea = me->GetLastKnownArea() )
+	if (const CNavArea *navArea = me->GetLastKnownArea())
 	{
-		CNEOBotPathReservations()->IncrementAreaAvoidPenalty( navArea->GetID(), neo_bot_path_reservation_onstuck_penalty.GetFloat() );
+		CNEOBotPathReservations()->IncrementAreaAvoidPenalty(
+			navArea->GetID(), neo_bot_path_reservation_onstuck_penalty.GetFloat());
 	}
 }
 
 void CNEOBotIntention::OnStuck()
 {
-	CNEOBotApplyOnStuckAreaPenalty( static_cast<CNEOBot *>( GetBot() ) );
+	CNEOBotApplyOnStuckAreaPenalty(static_cast<CNEOBot *>(GetBot()));
 	INextBotEventResponder::OnStuck();
 }
 
-void CNEOBotIntention::OnMoveToFailure( const Path *path, MoveToFailureType reason )
+void CNEOBotIntention::OnMoveToFailure(const Path *path, MoveToFailureType reason)
 {
-	if ( reason == FAIL_STUCK )
+	if (reason == FAIL_STUCK)
 	{
-		CNEOBotApplyOnStuckAreaPenalty( static_cast<CNEOBot *>( GetBot() ) );
+		CNEOBotApplyOnStuckAreaPenalty(static_cast<CNEOBot *>(GetBot()));
 	}
-	INextBotEventResponder::OnMoveToFailure( path, reason );
+	INextBotEventResponder::OnMoveToFailure(path, reason);
 }
 
 void CNEOBotIntention::Reset()
@@ -3060,24 +3048,24 @@ QueryResultType CNEOBotBehavior::ShouldWalk(const CNEOBot *me, const QueryResult
 {
 	QueryResultType result = ANSWER_UNDEFINED;
 
-	Action< CNEOBot > *root = m_action;
-	if ( root )
+	Action<CNEOBot> *root = m_action;
+	if (root)
 	{
 		// find innermost child action
-		Action< CNEOBot > *action;
-		for( action = root; action->m_child; action = action->m_child )
+		Action<CNEOBot> *action;
+		for (action = root; action->m_child; action = action->m_child)
 			;
 
 		// work our way through our containers
-		while( action && result == ANSWER_UNDEFINED )
+		while (action && result == ANSWER_UNDEFINED)
 		{
-			Action< CNEOBot > *containingAction = action->m_parent;
+			Action<CNEOBot> *containingAction = action->m_parent;
 
 			// work our way up the stack, asking only the actions that answer this query
-			while( action && result == ANSWER_UNDEFINED )
+			while (action && result == ANSWER_UNDEFINED)
 			{
-				const auto *query = dynamic_cast< const CNEOBotContextualQueryInterface * >( action );
-				if ( query )
+				const auto *query = dynamic_cast<const CNEOBotContextualQueryInterface *>(action);
+				if (query)
 				{
 					result = query->ShouldWalk(me, qShouldAimQuery);
 				}
@@ -3093,31 +3081,31 @@ QueryResultType CNEOBotBehavior::ShouldWalk(const CNEOBot *me, const QueryResult
 
 QueryResultType CNEOBotIntention::ShouldAim(const CNEOBot *me, const bool bWepHasClip) const
 {
-	return m_behavior->ShouldAim( me, bWepHasClip );
+	return m_behavior->ShouldAim(me, bWepHasClip);
 }
 
 QueryResultType CNEOBotBehavior::ShouldAim(const CNEOBot *me, const bool bWepHasClip) const
 {
 	QueryResultType result = ANSWER_UNDEFINED;
 
-	Action< CNEOBot > *root = m_action;
-	if ( root )
+	Action<CNEOBot> *root = m_action;
+	if (root)
 	{
 		// find innermost child action
-		Action< CNEOBot > *action;
-		for( action = root; action->m_child; action = action->m_child )
+		Action<CNEOBot> *action;
+		for (action = root; action->m_child; action = action->m_child)
 			;
 
 		// work our way through our containers
-		while( action && result == ANSWER_UNDEFINED )
+		while (action && result == ANSWER_UNDEFINED)
 		{
-			Action< CNEOBot > *containingAction = action->m_parent;
+			Action<CNEOBot> *containingAction = action->m_parent;
 
 			// work our way up the stack, asking only the actions that answer this query
-			while( action && result == ANSWER_UNDEFINED )
+			while (action && result == ANSWER_UNDEFINED)
 			{
-				const auto *query = dynamic_cast< const CNEOBotContextualQueryInterface * >( action );
-				if ( query )
+				const auto *query = dynamic_cast<const CNEOBotContextualQueryInterface *>(action);
+				if (query)
 				{
 					result = query->ShouldAim(me, bWepHasClip);
 				}
@@ -3130,6 +3118,3 @@ QueryResultType CNEOBotBehavior::ShouldAim(const CNEOBot *me, const bool bWepHas
 
 	return result;
 }
-
-
-

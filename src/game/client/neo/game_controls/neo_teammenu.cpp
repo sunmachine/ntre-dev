@@ -25,7 +25,7 @@
 #include <game/client/iviewport.h>
 #include "commandmenu.h"
 #include "hltvcamera.h"
-#if defined( REPLAY_ENABLED )
+#if defined(REPLAY_ENABLED)
 #include "replay/replaycamera.h"
 #endif
 
@@ -85,8 +85,7 @@ extern IGameUIFuncs *gameuifuncs; // for key binding details
 
 CNeoTeamMenu *g_pNeoTeamMenu = NULL;
 
-CNeoTeamMenu::CNeoTeamMenu(IViewPort *pViewPort)
-	: BaseClass(NULL, PANEL_TEAM)
+CNeoTeamMenu::CNeoTeamMenu(IViewPort *pViewPort) : BaseClass(NULL, PANEL_TEAM)
 {
 	Assert(pViewPort);
 	// Quiet "parent not sized yet" spew
@@ -116,7 +115,8 @@ CNeoTeamMenu::CNeoTeamMenu(IViewPort *pViewPort)
 
 CNeoTeamMenu::~CNeoTeamMenu()
 {
-	for (vgui::CNeoButton*button : {m_pJinrai_Button, m_pNSF_Button, m_pSpectator_Button, m_pAutoAssign_Button, m_pCancel_Button})
+	for (vgui::CNeoButton *button :
+		{m_pJinrai_Button, m_pNSF_Button, m_pSpectator_Button, m_pAutoAssign_Button, m_pCancel_Button})
 	{
 		if (button)
 		{
@@ -127,9 +127,9 @@ CNeoTeamMenu::~CNeoTeamMenu()
 	g_pNeoTeamMenu = nullptr;
 }
 
-void CNeoTeamMenu::FireGameEvent(IGameEvent* event)
+void CNeoTeamMenu::FireGameEvent(IGameEvent *event)
 {
-	const char* type = event->GetName();
+	const char *type = event->GetName();
 
 	if (!Q_strcmp(type, "team_score"))
 	{ // team score increased, update score label
@@ -147,7 +147,7 @@ void CNeoTeamMenu::FireGameEvent(IGameEvent* event)
 		}
 	}
 	else //if (!Q_strcmp(type, "player_team"))
-	{ // player joined a new team (also handles disconnects)
+	{    // player joined a new team (also handles disconnects)
 		const int oldTeamID = event->GetInt("oldteam");
 		const int newTeamID = event->GetInt("team");
 
@@ -203,7 +203,7 @@ void CNeoTeamMenu::OnClose()
 }
 
 void CNeoTeamMenu::CommandCompletion()
-{	
+{
 	SetControlEnabled(CONTROL_JINRAI_BUTTON, false);
 	SetControlEnabled(CONTROL_NSF_BUTTON, false);
 	SetControlEnabled(CONTROL_SPEC_BUTTON, false);
@@ -234,7 +234,9 @@ void CNeoTeamMenu::OnCommand(const char *command)
 		auto pNsf = GetGlobalTeam(TEAM_NSF);
 		const int jinNumPlayers = (pJinrai != NULL ? pJinrai->Get_Number_Players() : 0);
 		const int nsfNumPlayers = (pNsf != NULL ? pNsf->Get_Number_Players() : 0);
-		int randomTeam = jinNumPlayers > nsfNumPlayers ? TEAM_NSF : (nsfNumPlayers > jinNumPlayers ? TEAM_JINRAI : RandomInt(TEAM_JINRAI, TEAM_NSF));
+		int randomTeam = jinNumPlayers > nsfNumPlayers
+			? TEAM_NSF
+			: (nsfNumPlayers > jinNumPlayers ? TEAM_JINRAI : RandomInt(TEAM_JINRAI, TEAM_NSF));
 		V_sprintf_safe(commandBuffer, "jointeam %i", randomTeam);
 		CloseMenu();
 		engine->ClientCmd(commandBuffer);
@@ -247,8 +249,9 @@ void CNeoTeamMenu::OnCommand(const char *command)
 		engine->ClientCmd(commandBuffer);
 		return;
 	}
-	if (Q_stristr(commandBuffer, "jointeam") != 0) // Note using stristr, not strcmp. Equates to true when jointeam in commandBuffer
-	{ // joining jinrai or nsf
+	if (Q_stristr(commandBuffer, "jointeam") !=
+		0) // Note using stristr, not strcmp. Equates to true when jointeam in commandBuffer
+	{      // joining jinrai or nsf
 		CloseMenu();
 		engine->ClientCmd(commandBuffer);
 		NextMenu();
@@ -260,7 +263,7 @@ void CNeoTeamMenu::OnCommand(const char *command)
 	{ // cancel, close menu
 		CloseMenu();
 	}
-	
+
 	// new command, should we sanitize and return without executing? (Players can edit button commands with ctrl-alt-shift-b) NEO FIXME
 	engine->ClientCmd(command);
 }
@@ -307,7 +310,7 @@ void CNeoTeamMenu::OnKeyCodeReleased(vgui::KeyCode code)
 
 void CNeoTeamMenu::ApplySchemeSettings(vgui::IScheme *pScheme)
 {
-    BaseClass::ApplySchemeSettings(pScheme);
+	BaseClass::ApplySchemeSettings(pScheme);
 	LoadControlSettings(GetResFile());
 	SetPaintBorderEnabled(false);
 	SetPaintBackgroundEnabled(false);
@@ -317,25 +320,25 @@ void CNeoTeamMenu::ApplySchemeSettings(vgui::IScheme *pScheme)
 
 	const bool bUseCaptureMouse = true, bMouseInputEnabled = true;
 
-	m_pJinrai_Button		->SetUseCaptureMouse(bUseCaptureMouse);
-	m_pNSF_Button			->SetUseCaptureMouse(bUseCaptureMouse);
-	m_pSpectator_Button		->SetUseCaptureMouse(bUseCaptureMouse);
-	m_pAutoAssign_Button	->SetUseCaptureMouse(bUseCaptureMouse);
-	m_pCancel_Button		->SetUseCaptureMouse(bUseCaptureMouse);
+	m_pJinrai_Button->SetUseCaptureMouse(bUseCaptureMouse);
+	m_pNSF_Button->SetUseCaptureMouse(bUseCaptureMouse);
+	m_pSpectator_Button->SetUseCaptureMouse(bUseCaptureMouse);
+	m_pAutoAssign_Button->SetUseCaptureMouse(bUseCaptureMouse);
+	m_pCancel_Button->SetUseCaptureMouse(bUseCaptureMouse);
 
-	m_pJinrai_Button		->SetMouseInputEnabled(bMouseInputEnabled);
-	m_pNSF_Button			->SetMouseInputEnabled(bMouseInputEnabled);
-	m_pSpectator_Button		->SetMouseInputEnabled(bMouseInputEnabled);
-	m_pAutoAssign_Button	->SetMouseInputEnabled(bMouseInputEnabled);
-	m_pCancel_Button		->SetMouseInputEnabled(bMouseInputEnabled);
+	m_pJinrai_Button->SetMouseInputEnabled(bMouseInputEnabled);
+	m_pNSF_Button->SetMouseInputEnabled(bMouseInputEnabled);
+	m_pSpectator_Button->SetMouseInputEnabled(bMouseInputEnabled);
+	m_pAutoAssign_Button->SetMouseInputEnabled(bMouseInputEnabled);
+	m_pCancel_Button->SetMouseInputEnabled(bMouseInputEnabled);
 
-	m_pJinrai_Button		->AddActionSignalTarget(this);
-	m_pNSF_Button			->AddActionSignalTarget(this);
-	m_pSpectator_Button		->AddActionSignalTarget(this);
-	m_pAutoAssign_Button	->AddActionSignalTarget(this);
-	m_pCancel_Button		->AddActionSignalTarget(this);
+	m_pJinrai_Button->AddActionSignalTarget(this);
+	m_pNSF_Button->AddActionSignalTarget(this);
+	m_pSpectator_Button->AddActionSignalTarget(this);
+	m_pAutoAssign_Button->AddActionSignalTarget(this);
+	m_pCancel_Button->AddActionSignalTarget(this);
 
-	m_pCancel_Button		->SetEnabled(GetLocalPlayerTeam() != TEAM_UNASSIGNED);
+	m_pCancel_Button->SetEnabled(GetLocalPlayerTeam() != TEAM_UNASSIGNED);
 
 	auto pJinrai = GetGlobalTeam(TEAM_JINRAI);
 	auto pNsf = GetGlobalTeam(TEAM_NSF);
@@ -373,42 +376,42 @@ void CNeoTeamMenu::ApplySchemeSettings(vgui::IScheme *pScheme)
 
 void CNeoTeamMenu::MoveLabelToFront(const char *textEntryName)
 {
-    Label *entry = dynamic_cast<Label *>(FindChildByName(textEntryName));
-    if (entry)
-    {
-        entry->MoveToFront();
-    }
+	Label *entry = dynamic_cast<Label *>(FindChildByName(textEntryName));
+	if (entry)
+	{
+		entry->MoveToFront();
+	}
 }
 
 void CNeoTeamMenu::SetLabelText(const char *textEntryName, const char *text)
 {
-    Label *entry = dynamic_cast<Label *>(FindChildByName(textEntryName));
-    if (entry)
-    {
-        entry->SetText(text);
-    }
+	Label *entry = dynamic_cast<Label *>(FindChildByName(textEntryName));
+	if (entry)
+	{
+		entry->SetText(text);
+	}
 }
 
 void CNeoTeamMenu::SetLabelText(const char *textEntryName, wchar_t *text)
 {
-    Label *entry = dynamic_cast<Label *>(FindChildByName(textEntryName));
-    if (entry)
-    {
-        entry->SetText(text);
-    }
+	Label *entry = dynamic_cast<Label *>(FindChildByName(textEntryName));
+	if (entry)
+	{
+		entry->SetText(text);
+	}
 }
 
-void CNeoTeamMenu::ShowPanel( bool bShow )
+void CNeoTeamMenu::ShowPanel(bool bShow)
 {
-    if (bShow && !IsVisible())
-    {
-        m_bTeamMenu = false;
-    }
+	if (bShow && !IsVisible())
+	{
+		m_bTeamMenu = false;
+	}
 
-    SetVisible(bShow);
+	SetVisible(bShow);
 
-    if (!bShow && m_bTeamMenu)
-    {
-        gViewPortInterface->ShowPanel(PANEL_TEAM, false);
-    }
+	if (!bShow && m_bTeamMenu)
+	{
+		gViewPortInterface->ShowPanel(PANEL_TEAM, false);
+	}
 }

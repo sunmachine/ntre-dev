@@ -19,8 +19,8 @@ public:
 
 	virtual void ApplySchemeSettings(vgui::IScheme *pScheme) override;
 	virtual void Paint() override;
-	
-    float GetHudCentreSize() const override;
+
+	float GetHudCentreSize() const override;
 
 protected:
 	virtual void UpdateStateForNeoHudElementDraw() override;
@@ -28,8 +28,8 @@ protected:
 	virtual ConVar *GetUpdateFrequencyConVar() const override;
 
 private:
-	float m_fMarkerScalesStart[4] = { 0.78f, 0.6f, 0.38f, 0.0f };
-	float m_fMarkerScalesCurrent[4] = { 0.78f, 0.6f, 0.38f, 0.0f };
+	float m_fMarkerScalesStart[4] = {0.78f, 0.6f, 0.38f, 0.0f};
+	float m_fMarkerScalesCurrent[4] = {0.78f, 0.6f, 0.38f, 0.0f};
 
 	wchar_t m_wszMarkerTextUnicode[32 + 1];
 

@@ -13,12 +13,14 @@ ConVar neo_ghost_cap_point_hud_scale_factor("neo_ghost_cap_point_hud_scale_facto
 
 static float ghostCapViewCentreSize = 0;
 extern ConVar cl_neo_hud_centre_ghost_cap_size;
-void ghostCapViewCentreSizeChangeCallBack(IConVar* pConVar [[maybe_unused]] = nullptr, char const* pOldString [[maybe_unused]] = nullptr, float flOldValue [[maybe_unused]] = 0.f) {
+void ghostCapViewCentreSizeChangeCallBack(IConVar *pConVar [[maybe_unused]] = nullptr,
+	char const *pOldString [[maybe_unused]] = nullptr, float flOldValue [[maybe_unused]] = 0.f)
+{
 	int w, h;
-    vgui::surface()->GetScreenSize(w, h);
+	vgui::surface()->GetScreenSize(w, h);
 
-    const auto widerAxis = Max(w, h);
-    ghostCapViewCentreSize = widerAxis * (cl_neo_hud_centre_ghost_cap_size.GetFloat() / 100);
+	const auto widerAxis = Max(w, h);
+	ghostCapViewCentreSize = widerAxis * (cl_neo_hud_centre_ghost_cap_size.GetFloat() / 100);
 }
 ConVar cl_neo_hud_centre_ghost_cap_size("cl_neo_hud_centre_ghost_cap_size", "12.5", FCVAR_ARCHIVE,
 	"HUD center size in percentage to fade ghost cap point.", true, 1, false, 0, ghostCapViewCentreSizeChangeCallBack);
@@ -58,7 +60,7 @@ void CNEOHud_GhostCapPoint::ApplySchemeSettings(vgui::IScheme *pScheme)
 
 	vgui::surface()->GetScreenSize(m_iPosX, m_iPosY);
 	SetBounds(0, 0, m_iPosX, m_iPosY);
-	
+
 	ghostCapViewCentreSizeChangeCallBack();
 }
 
@@ -71,12 +73,14 @@ extern ConVar cl_neo_hud_worldpos_verbose;
 void CNEOHud_GhostCapPoint::UpdateStateForNeoHudElementDraw()
 {
 	auto *player = C_NEO_Player::GetLocalNEOPlayer();
-	if (!player) return;
+	if (!player)
+		return;
 
 	m_flDistance = METERS_PER_INCH * Max(0.0f, (player->GetAbsOrigin().DistTo(m_vecMyPos) - m_flMyRadius));
 	if (cl_neo_hud_worldpos_verbose.GetBool())
 	{
-		V_snwprintf(m_wszMarkerTextUnicode, ARRAYSIZE(m_wszMarkerTextUnicode), L"RETRIEVAL ZONE DISTANCE: %.0f m", m_flDistance);
+		V_snwprintf(m_wszMarkerTextUnicode, ARRAYSIZE(m_wszMarkerTextUnicode), L"RETRIEVAL ZONE DISTANCE: %.0f m",
+			m_flDistance);
 	}
 	else
 	{
@@ -94,7 +98,8 @@ void CNEOHud_GhostCapPoint::DrawNeoHudElement()
 	auto *player = C_NEO_Player::GetLocalNEOPlayer();
 	const int playerTeam = player->GetTeamNumber();
 
-	Color targetColor = (m_iCapTeam == TEAM_ANY) ? COLOR_SPEC : ((m_iCapTeam == TEAM_JINRAI) ? COLOR_JINRAI : COLOR_NSF);
+	Color targetColor =
+		(m_iCapTeam == TEAM_ANY) ? COLOR_SPEC : ((m_iCapTeam == TEAM_JINRAI) ? COLOR_JINRAI : COLOR_NSF);
 
 	const bool playerIsPlaying = (playerTeam == TEAM_JINRAI || playerTeam == TEAM_NSF);
 	if (playerIsPlaying && m_iCapTeam != TEAM_ANY)
@@ -131,7 +136,8 @@ void CNEOHud_GhostCapPoint::DrawNeoHudElement()
 
 	// The 4 arrows that slowly expand and disappear
 	vgui::surface()->DrawSetTexture(m_hCapTex);
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++)
+	{
 		m_fMarkerScalesCurrent[i] = (remainder(gpGlobals->curtime, 2) / 2) + 0.5 + m_fMarkerScalesStart[i];
 		if (m_fMarkerScalesCurrent[i] > 1)
 			m_fMarkerScalesCurrent[i] -= 1;
@@ -145,10 +151,7 @@ void CNEOHud_GhostCapPoint::DrawNeoHudElement()
 
 		const float halfArrowLength = HALF_BASE_TEX_LENGTH * m_fMarkerScalesCurrent[i] * scale;
 		vgui::surface()->DrawTexturedRect(
-			x - halfArrowLength,
-			y - halfArrowLength,
-			x + halfArrowLength,
-			y + halfArrowLength);
+			x - halfArrowLength, y - halfArrowLength, x + halfArrowLength, y + halfArrowLength);
 	}
 
 	// The increase and decrease in alpha over 6 seconds
@@ -164,10 +167,7 @@ void CNEOHud_GhostCapPoint::DrawNeoHudElement()
 	const float halfArrowLength = HALF_BASE_TEX_LENGTH * scale;
 	vgui::surface()->DrawSetColor(targetColor);
 	vgui::surface()->DrawTexturedRect(
-		x - halfArrowLength,
-		y - halfArrowLength,
-		x + halfArrowLength,
-		y + halfArrowLength);
+		x - halfArrowLength, y - halfArrowLength, x + halfArrowLength, y + halfArrowLength);
 }
 
 void CNEOHud_GhostCapPoint::Paint()

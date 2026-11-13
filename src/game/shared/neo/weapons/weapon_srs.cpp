@@ -15,7 +15,7 @@ BEGIN_NETWORK_TABLE(CWeaponSRS, DT_WeaponSRS)
 	SendPropBool(SENDINFO(m_bNeedsBolting)),
 #endif
 END_NETWORK_TABLE()
-// clang-format on
+	// clang-format on
 
 #ifdef CLIENT_DLL
 // clang-format off
@@ -56,8 +56,7 @@ void CWeaponSRS::PrimaryAttack()
 		return BaseClass::PrimaryAttack();
 	}
 
-	const bool tryingToShootTooFast =
-		(gpGlobals->curtime < m_flLastAttackTime + GetFireRate());
+	const bool tryingToShootTooFast = (gpGlobals->curtime < m_flLastAttackTime + GetFireRate());
 	if (tryingToShootTooFast)
 	{
 		return;
@@ -76,7 +75,8 @@ void CWeaponSRS::ItemPreFrame()
 
 	if (m_flLastAttackTime + 0.08f <= gpGlobals->curtime)
 	{ // Primary attack animation finished, begin chambering a round
-		if (auto* pOwner = ToNEOPlayer(GetOwner())) {
+		if (auto *pOwner = ToNEOPlayer(GetOwner()))
+		{
 			if (pOwner->m_nButtons & IN_ATTACK)
 			{
 				return BaseClass::ItemPreFrame();

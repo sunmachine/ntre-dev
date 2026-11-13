@@ -45,14 +45,14 @@ public:
 	virtual void ReleaseVoice(VoiceHandle voice) = 0;
 
 	// Spatialise one block. `origin` is the source position in the listener's frame of reference.
-	virtual void Process(VoiceHandle voice, const Vec3 &origin, const float *monoIn,
-						 float *outLeft, float *outRight) = 0;
+	virtual void Process(
+		VoiceHandle voice, const Vec3 &origin, const float *monoIn, float *outLeft, float *outRight) = 0;
 };
 
 // Loads phonon.dll / libphonon.so from `phononLibraryPath` at runtime (it is never linked) and
 // initialises it. Returns nullptr and fills errorOut on failure, so a missing or incompatible
 // library only disables HRTF. Destroy the result with delete.
-ISpatializer *CreateSteamAudioSpatializer(const char *phononLibraryPath, int sampleRate, int frameSize,
-										  char *errorOut, int errorLen);
+ISpatializer *CreateSteamAudioSpatializer(
+	const char *phononLibraryPath, int sampleRate, int frameSize, char *errorOut, int errorLen);
 
 } // namespace NeoSpatial

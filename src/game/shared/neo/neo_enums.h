@@ -1,6 +1,7 @@
 #pragma once
 
-enum NeoSkin {
+enum NeoSkin
+{
 	NEO_SKIN_FIRST = 0,
 	NEO_SKIN_SECOND,
 	NEO_SKIN_THIRD,
@@ -9,7 +10,8 @@ enum NeoSkin {
 };
 static constexpr int NEO_SKIN_ENUM_COUNT = NEO_SKIN__ENUM_COUNT;
 
-enum NeoClass {
+enum NeoClass
+{
 	NEO_CLASS_RANDOM = -1,
 
 	NEO_CLASS_RECON = 0,
@@ -27,7 +29,8 @@ enum NeoClass {
 static constexpr int NEO_CLASS_ENUM_COUNT = NEO_CLASS__ENUM_COUNT;
 static constexpr int NEO_CLASS_LOADOUTABLE_COUNT = NEO_CLASS__LOADOUTABLE_COUNT;
 
-enum NeoStar {
+enum NeoStar
+{
 	STAR_ALPHA = 0,
 	STAR_BRAVO,
 	STAR_CHARLIE,

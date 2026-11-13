@@ -18,8 +18,7 @@
 
 extern NeoUI::Context g_uiCtx;
 
-CNeoLoading::CNeoLoading()
-	: vgui::EditablePanel(nullptr, "NeoLoadingPanel")
+CNeoLoading::CNeoLoading() : vgui::EditablePanel(nullptr, "NeoLoadingPanel")
 {
 	SetParent(enginevgui->GetPanel(PANEL_GAMEUIDLL));
 	InvalidateLayout(false, true);
@@ -54,9 +53,7 @@ void CNeoLoading::ApplySchemeSettings(vgui::IScheme *pScheme)
 	SetBgColor(COLOR_TRANSPARENT);
 
 	static constexpr const char *FONT_NAMES[NeoUI::FONT__TOTAL] = {
-		"NeoUINormal", "NHudOCR", "NHudOCRSmallNoAdditive", "ClientTitleFont", "ClientTitleFontSmall",
-		"NeoUILarge"
-	};
+		"NeoUINormal", "NHudOCR", "NHudOCRSmallNoAdditive", "ClientTitleFont", "ClientTitleFontSmall", "NeoUILarge"};
 	for (int i = 0; i < NeoUI::FONT__TOTAL; ++i)
 	{
 		m_uiCtx.fonts[i].hdl = pScheme->GetFont(FONT_NAMES[i], true);
@@ -75,7 +72,8 @@ void CNeoLoading::ResetSizes(const int wide, const int tall)
 	m_uiCtx.iMarginY = tall / 108;
 	const float flWide = static_cast<float>(wide);
 	float flWideAs43 = static_cast<float>(tall) * (4.0f / 3.0f);
-	if (flWideAs43 > flWide) flWideAs43 = flWide;
+	if (flWideAs43 > flWide)
+		flWideAs43 = flWide;
 	m_iRootSubPanelWide = static_cast<int>(flWideAs43 * 0.9f);
 }
 
@@ -100,7 +98,8 @@ void CNeoLoading::OnMessage(const KeyValues *params, vgui::VPANEL fromPanel)
 
 		if (engine->IsConnected() && !engine->IsLevelMainMenuBackground())
 		{
-			g_pNeoRoot->m_flTimeLoadingScreenTransition -= (NEO_MENU_SECONDS_DELAY + NEO_MENU_SECONDS_TILL_FULLY_OPAQUE); // Don't fade in the menu on disconnect
+			g_pNeoRoot->m_flTimeLoadingScreenTransition -=
+				(NEO_MENU_SECONDS_DELAY + NEO_MENU_SECONDS_TILL_FULLY_OPAQUE); // Don't fade in the menu on disconnect
 		}
 	}
 }
@@ -195,7 +194,7 @@ void CNeoLoading::OnMainLoop(const NeoUI::Mode eMode)
 	// NEO JANK (nullsystem): Since we don't have proper access to loading internals,
 	// determining by localization text index should be good enough to differ between
 	// loading and disconnect state.
-	vgui::TextImage* pTITitle = m_pLoadingPanel ? m_pLoadingPanel->TITitlePtr() : nullptr;
+	vgui::TextImage *pTITitle = m_pLoadingPanel ? m_pLoadingPanel->TITitlePtr() : nullptr;
 	const StringIndex_t iStrIdx = pTITitle ? pTITitle->GetUnlocalizedTextSymbol() : INVALID_LOCALIZE_STRING_INDEX;
 
 	static bool bStaticInitNeoUI = false;
@@ -260,8 +259,10 @@ void CNeoLoading::OnMainLoop(const NeoUI::Mode eMode)
 			NeoUI::BeginSection(NeoUI::SECTIONFLAG_DEFAULTFOCUS);
 			{
 				NeoUI::Label(NeoUI::HintAlt(L"Press ESC to cancel", L"Press SELECT to cancel"));
-				if (m_pLabelInfo) NeoUI::Label(m_pLabelInfo->GetTextImage()->GetUText());
-				if (m_pProgressBarMain) NeoUI::Progress(m_pProgressBarMain->GetProgress(), 0.0f, 1.0f);
+				if (m_pLabelInfo)
+					NeoUI::Label(m_pLabelInfo->GetTextImage()->GetUText());
+				if (m_pProgressBarMain)
+					NeoUI::Progress(m_pProgressBarMain->GetProgress(), 0.0f, 1.0f);
 			}
 			NeoUI::EndSection();
 		}
@@ -272,7 +273,8 @@ void CNeoLoading::OnMainLoop(const NeoUI::Mode eMode)
 			m_uiCtx.colors.sectionBg = COLOR_BLACK_TRANSPARENT;
 			NeoUI::BeginSection(NeoUI::SECTIONFLAG_DEFAULTFOCUS);
 			{
-				if (m_pLabelInfo) NeoUI::LabelWrap(m_pLabelInfo->GetTextImage()->GetUText());
+				if (m_pLabelInfo)
+					NeoUI::LabelWrap(m_pLabelInfo->GetTextImage()->GetUText());
 				NeoUI::Pad();
 				NeoUI::Label(NeoUI::HintAlt(L"Press ESC to go back", L"Press SELECT to go back"));
 			}
@@ -285,7 +287,7 @@ void CNeoLoading::OnMainLoop(const NeoUI::Mode eMode)
 	// The usual OnKey... functions doesn't work so will have to do this. The ESC key is already
 	// handled by the SDK.
 	if (vgui::input()->WasKeyPressed(KEY_XBUTTON_BACK) || vgui::input()->IsKeyDown(KEY_XBUTTON_BACK) ||
-			vgui::input()->WasKeyPressed(STEAMCONTROLLER_SELECT) || vgui::input()->IsKeyDown(STEAMCONTROLLER_SELECT))
+		vgui::input()->WasKeyPressed(STEAMCONTROLLER_SELECT) || vgui::input()->IsKeyDown(STEAMCONTROLLER_SELECT))
 	{
 		g_pNeoRoot->m_bOnLoadingScreen = false;
 		m_pButtonCancel->DoClick();

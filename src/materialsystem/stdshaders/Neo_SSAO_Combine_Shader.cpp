@@ -36,7 +36,7 @@ SHADER_INIT
 	}
 }
 
-#if(0)
+#if (0)
 bool NeedsFullFrameBufferTexture(IMaterialVar **params, bool bCheckSpecificToThisFrame /* = true */) const
 {
 	return true;

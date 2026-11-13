@@ -39,8 +39,7 @@ void ServerBlacklistRead(const char *szPath)
 
 	for (KeyValues *pSubKey = kv->GetFirstTrueSubKey(); pSubKey; pSubKey = pSubKey->GetNextTrueSubKey())
 	{
-		if (V_strcmp(pSubKey->GetName(), "server") == 0 ||
-				V_strcmp(pSubKey->GetName(), "Server") == 0)
+		if (V_strcmp(pSubKey->GetName(), "server") == 0 || V_strcmp(pSubKey->GetName(), "Server") == 0)
 		{
 			ServerBlacklistInfo sbInfo = {};
 
@@ -48,7 +47,8 @@ void ServerBlacklistRead(const char *szPath)
 			sbInfo.timeVal = pSubKey->GetUint64("date");
 			sbInfo.netAdr.SetFromString(pSubKey->GetString("addr", "0.0.0.0:0"));
 			const int iType = pSubKey->GetInt("type", SBLIST_TYPE_NETADR);
-			sbInfo.eType = (iType >= 0 && iType < SBLIST_TYPE__TOTAL) ? static_cast<EServerBlacklistType>(iType) : SBLIST_TYPE_NETADR;
+			sbInfo.eType = (iType >= 0 && iType < SBLIST_TYPE__TOTAL) ? static_cast<EServerBlacklistType>(iType)
+																	  : SBLIST_TYPE_NETADR;
 			ServerBlacklistCacheWsz(&sbInfo);
 
 			g_blacklistedServers.AddToTail(sbInfo);
@@ -119,7 +119,8 @@ bool ServerBlacklisted(const gameserveritem_t &server)
 					return true;
 				}
 			}
-		} break;
+		}
+		break;
 		case SBLIST_TYPE_SUBNAME:
 		{
 			char szBlacklistName[128] = {};
@@ -128,7 +129,8 @@ bool ServerBlacklisted(const gameserveritem_t &server)
 			{
 				return true;
 			}
-		} break;
+		}
+		break;
 		}
 	}
 	return false;
@@ -149,37 +151,39 @@ void ServerBlacklistUpdateSortedList(const GameServerSortContext &sortCtx)
 	}
 
 	std::sort(g_blacklistedServers.begin(), g_blacklistedServers.end(),
-			[&sortCtx](const ServerBlacklistInfo &blLeft, const ServerBlacklistInfo &blRight) -> bool {
-		// Always set wszLeft/wszRight to name as fallback
-		const wchar_t *wszLeft = blLeft.wszName;
-		const wchar_t *wszRight = blRight.wszName;
-		[[maybe_unused]] int64 iLeft{}, iRight{};
-		switch (sortCtx.col)
+		[&sortCtx](const ServerBlacklistInfo &blLeft, const ServerBlacklistInfo &blRight) -> bool
 		{
-		case SBLIST_COL_TYPE:
-			iLeft = narrow_cast<decltype(iLeft)>(blLeft.eType);
-			iRight = narrow_cast<decltype(iRight)>(blRight.eType);
-			break;
-		case SBLIST_COL_DATETIME:
-			iLeft = blLeft.timeVal;
-			iRight = blRight.timeVal;
-			break;
-		default:
-			break;
-		}
+			// Always set wszLeft/wszRight to name as fallback
+			const wchar_t *wszLeft = blLeft.wszName;
+			const wchar_t *wszRight = blRight.wszName;
+			[[maybe_unused]] int64 iLeft{}, iRight{};
+			switch (sortCtx.col)
+			{
+			case SBLIST_COL_TYPE:
+				iLeft = narrow_cast<decltype(iLeft)>(blLeft.eType);
+				iRight = narrow_cast<decltype(iRight)>(blRight.eType);
+				break;
+			case SBLIST_COL_DATETIME:
+				iLeft = blLeft.timeVal;
+				iRight = blRight.timeVal;
+				break;
+			default:
+				break;
+			}
 
-		switch (sortCtx.col)
-		{
-		case SBLIST_COL_TYPE:
-		case SBLIST_COL_DATETIME:
-			if (iLeft != iRight) return (sortCtx.bDescending) ? iLeft < iRight : iLeft > iRight;
-			break;
-		default:
-			break;
-		}
+			switch (sortCtx.col)
+			{
+			case SBLIST_COL_TYPE:
+			case SBLIST_COL_DATETIME:
+				if (iLeft != iRight)
+					return (sortCtx.bDescending) ? iLeft < iRight : iLeft > iRight;
+				break;
+			default:
+				break;
+			}
 
-		return (sortCtx.bDescending) ? (V_wcscmp(wszRight, wszLeft) > 0) : (V_wcscmp(wszLeft, wszRight) > 0);
-	});
+			return (sortCtx.bDescending) ? (V_wcscmp(wszRight, wszLeft) > 0) : (V_wcscmp(wszLeft, wszRight) > 0);
+		});
 
 	if (IN_BETWEEN_AR(0, g_pNeoRoot->m_iSelectedServer, g_blacklistedServers.Count()))
 	{
@@ -219,72 +223,75 @@ void CNeoServerList::UpdateFilteredList()
 	}
 
 	std::sort(m_filteredServers.begin(), m_filteredServers.end(),
-			  [this](const gameserveritem_t &gsiLeft, const gameserveritem_t &gsiRight) -> bool {
-		// Always set szLeft/szRight to name as fallback
-		const char *szLeft = gsiLeft.GetName();
-		const char *szRight = gsiRight.GetName();
-		[[maybe_unused]] int iLeft{}, iRight{};
-		[[maybe_unused]] bool bLeft{}, bRight{};
-		switch (m_pSortCtx->col)
+		[this](const gameserveritem_t &gsiLeft, const gameserveritem_t &gsiRight) -> bool
 		{
-		case GSIW_LOCKED:
-			bLeft = gsiLeft.m_bPassword;
-			bRight = gsiRight.m_bPassword;
-			break;
-		case GSIW_VAC:
-			bLeft = gsiLeft.m_bSecure;
-			bRight = gsiRight.m_bSecure;
-			break;
-		case GSIW_MAP:
-		{
-			const char *szMapLeft = gsiLeft.m_szMap;
-			const char *szMapRight = gsiRight.m_szMap;
-			if (V_strcmp(szMapLeft, szMapRight) != 0)
+			// Always set szLeft/szRight to name as fallback
+			const char *szLeft = gsiLeft.GetName();
+			const char *szRight = gsiRight.GetName();
+			[[maybe_unused]] int iLeft{}, iRight{};
+			[[maybe_unused]] bool bLeft{}, bRight{};
+			switch (m_pSortCtx->col)
 			{
-				szLeft = szMapLeft;
-				szRight = szMapRight;
-			}
-			break;
-		}
-		case GSIW_PLAYERS:
-			iLeft = gsiLeft.m_nPlayers - gsiLeft.m_nBotPlayers;
-			iRight = gsiRight.m_nPlayers - gsiRight.m_nBotPlayers;
-			if (iLeft == iRight)
+			case GSIW_LOCKED:
+				bLeft = gsiLeft.m_bPassword;
+				bRight = gsiRight.m_bPassword;
+				break;
+			case GSIW_VAC:
+				bLeft = gsiLeft.m_bSecure;
+				bRight = gsiRight.m_bSecure;
+				break;
+			case GSIW_MAP:
 			{
-				iLeft = gsiLeft.m_nMaxPlayers;
-				iRight = gsiRight.m_nMaxPlayers;
+				const char *szMapLeft = gsiLeft.m_szMap;
+				const char *szMapRight = gsiRight.m_szMap;
+				if (V_strcmp(szMapLeft, szMapRight) != 0)
+				{
+					szLeft = szMapLeft;
+					szRight = szMapRight;
+				}
+				break;
 			}
-			break;
-		case GSIW_PING:
-			iLeft = gsiLeft.m_nPing;
-			iRight = gsiRight.m_nPing;
-			break;
-		case GSIW_IP_ADDRESS:
-			iLeft = gsiLeft.m_NetAdr.GetIP();
-			iRight = gsiRight.m_NetAdr.GetIP();
-			break;
-		case GSIW_NAME:
-		default:
-			// no-op, already assigned (default)
-			break;
-		}
+			case GSIW_PLAYERS:
+				iLeft = gsiLeft.m_nPlayers - gsiLeft.m_nBotPlayers;
+				iRight = gsiRight.m_nPlayers - gsiRight.m_nBotPlayers;
+				if (iLeft == iRight)
+				{
+					iLeft = gsiLeft.m_nMaxPlayers;
+					iRight = gsiRight.m_nMaxPlayers;
+				}
+				break;
+			case GSIW_PING:
+				iLeft = gsiLeft.m_nPing;
+				iRight = gsiRight.m_nPing;
+				break;
+			case GSIW_IP_ADDRESS:
+				iLeft = gsiLeft.m_NetAdr.GetIP();
+				iRight = gsiRight.m_NetAdr.GetIP();
+				break;
+			case GSIW_NAME:
+			default:
+				// no-op, already assigned (default)
+				break;
+			}
 
-		switch (m_pSortCtx->col)
-		{
-		case GSIW_LOCKED:
-		case GSIW_VAC:
-			if (bLeft != bRight) return (m_pSortCtx->bDescending) ? bLeft < bRight : bLeft > bRight;
-			break;
-		case GSIW_PLAYERS:
-		case GSIW_PING:
-		case GSIW_IP_ADDRESS:
-			if (iLeft != iRight) return (m_pSortCtx->bDescending) ? iLeft < iRight : iLeft > iRight;
-			break;
-		default:
-			break;
-		}
-		return (m_pSortCtx->bDescending) ? (V_strcmp(szRight, szLeft) > 0) : (V_strcmp(szLeft, szRight) > 0);
-	});
+			switch (m_pSortCtx->col)
+			{
+			case GSIW_LOCKED:
+			case GSIW_VAC:
+				if (bLeft != bRight)
+					return (m_pSortCtx->bDescending) ? bLeft < bRight : bLeft > bRight;
+				break;
+			case GSIW_PLAYERS:
+			case GSIW_PING:
+			case GSIW_IP_ADDRESS:
+				if (iLeft != iRight)
+					return (m_pSortCtx->bDescending) ? iLeft < iRight : iLeft > iRight;
+				break;
+			default:
+				break;
+			}
+			return (m_pSortCtx->bDescending) ? (V_strcmp(szRight, szLeft) > 0) : (V_strcmp(szLeft, szRight) > 0);
+		});
 
 	if (IN_BETWEEN_AR(0, g_pNeoRoot->m_iSelectedServer, m_filteredServers.size()))
 	{
@@ -315,7 +322,7 @@ void CNeoServerList::RequestList()
 	MatchMakingKeyValuePair_t *pMMFilters = mmFilters;
 
 	static constexpr HServerListRequest (ISteamMatchmakingServers::*P_FN_REQ[GS__TOTAL])(
-				AppId_t, MatchMakingKeyValuePair_t **, uint32, ISteamMatchmakingServerListResponse *) = {
+		AppId_t, MatchMakingKeyValuePair_t **, uint32, ISteamMatchmakingServerListResponse *) = {
 		&ISteamMatchmakingServers::RequestInternetServerList,
 		nullptr,
 		&ISteamMatchmakingServers::RequestFriendsServerList,
@@ -326,24 +333,24 @@ void CNeoServerList::RequestList()
 	};
 
 	ISteamMatchmakingServers *steamMM = steamapicontext->SteamMatchmakingServers();
-	m_hdlRequest = (m_iType == GS_LAN) ?
-				steamMM->RequestLANServerList(engine->GetAppID(), this) :
-				(steamMM->*P_FN_REQ[m_iType])(engine->GetAppID(), &pMMFilters, ARRAYSIZE(mmFilters), this);
+	m_hdlRequest = (m_iType == GS_LAN)
+		? steamMM->RequestLANServerList(engine->GetAppID(), this)
+		: (steamMM->*P_FN_REQ[m_iType])(engine->GetAppID(), &pMMFilters, ARRAYSIZE(mmFilters), this);
 	m_bSearching = true;
 }
 
 // Server has responded ok with updated data
 void CNeoServerList::ServerResponded(HServerListRequest hRequest, int iServer)
 {
-	if (m_iType == GS_BLACKLIST || hRequest != m_hdlRequest) return;
+	if (m_iType == GS_BLACKLIST || hRequest != m_hdlRequest)
+		return;
 
 	ISteamMatchmakingServers *steamMM = steamapicontext->SteamMatchmakingServers();
 	gameserveritem_t *pServerDetails = steamMM->GetServerDetails(hRequest, iServer);
 	if (pServerDetails)
 	{
 		wchar_t wszServerName[k_cbMaxGameServerName] = {};
-		g_pVGuiLocalize->ConvertANSIToUnicode(
-				pServerDetails->GetName(), wszServerName, sizeof(wszServerName));
+		g_pVGuiLocalize->ConvertANSIToUnicode(pServerDetails->GetName(), wszServerName, sizeof(wszServerName));
 		const int iWszLen = V_wcslen(wszServerName);
 		// NEO TODO (nullsystem): Need to implement fallback fonts in NeoUI or otherwise
 		// without fallback unicode fonts can corrupt the memory on drawing the text somehow
@@ -366,13 +373,15 @@ void CNeoServerList::ServerResponded(HServerListRequest hRequest, int iServer)
 // Server has failed to respond
 void CNeoServerList::ServerFailedToRespond(HServerListRequest hRequest, [[maybe_unused]] int iServer)
 {
-	if (m_iType == GS_BLACKLIST || hRequest != m_hdlRequest) return;
+	if (m_iType == GS_BLACKLIST || hRequest != m_hdlRequest)
+		return;
 }
 
 // A list refresh you had initiated is now 100% completed
 void CNeoServerList::RefreshComplete(HServerListRequest hRequest, EMatchMakingServerResponse response)
 {
-	if (m_iType == GS_BLACKLIST || hRequest != m_hdlRequest) return;
+	if (m_iType == GS_BLACKLIST || hRequest != m_hdlRequest)
+		return;
 
 	m_bSearching = false;
 	if (response == eNoServersListedOnMasterServer && m_servers.empty())
@@ -398,31 +407,36 @@ void CNeoServerPlayers::UpdateSortedList()
 	}
 
 	std::sort(m_sortedPlayers.begin(), m_sortedPlayers.end(),
-			  [this](const PlayerInfo &gspsLeft, const PlayerInfo &gspsRight) -> bool {
-		switch (m_sortCtx.col)
+		[this](const PlayerInfo &gspsLeft, const PlayerInfo &gspsRight) -> bool
 		{
-		case GSPS_SCORE:
-		{
-			const int iLeft = gspsLeft.iScore;
-			const int iRight = gspsRight.iScore;
-			if (iLeft != iRight) return (m_sortCtx.bDescending) ? iLeft < iRight : iLeft > iRight;
-		} break;
-		case GSPS_TIME:
-		{
-			const float flLeft = gspsLeft.flTimePlayed;
-			const float flRight = gspsRight.flTimePlayed;
-			if (flLeft != flRight) return (m_sortCtx.bDescending) ? flLeft < flRight : flLeft > flRight;
-		} break;
-		default:
-			// no-op, already assigned (default)
+			switch (m_sortCtx.col)
+			{
+			case GSPS_SCORE:
+			{
+				const int iLeft = gspsLeft.iScore;
+				const int iRight = gspsRight.iScore;
+				if (iLeft != iRight)
+					return (m_sortCtx.bDescending) ? iLeft < iRight : iLeft > iRight;
+			}
 			break;
-		}
+			case GSPS_TIME:
+			{
+				const float flLeft = gspsLeft.flTimePlayed;
+				const float flRight = gspsRight.flTimePlayed;
+				if (flLeft != flRight)
+					return (m_sortCtx.bDescending) ? flLeft < flRight : flLeft > flRight;
+			}
+			break;
+			default:
+				// no-op, already assigned (default)
+				break;
+			}
 
-		// Always set wszLeft/wszRight to name as fallback
-		const wchar_t *wszLeft = gspsLeft.wszName;
-		const wchar_t *wszRight = gspsRight.wszName;
-		return (m_sortCtx.bDescending) ? (V_wcscmp(wszRight, wszLeft) > 0) : (V_wcscmp(wszLeft, wszRight) > 0);
-	});
+			// Always set wszLeft/wszRight to name as fallback
+			const wchar_t *wszLeft = gspsLeft.wszName;
+			const wchar_t *wszRight = gspsRight.wszName;
+			return (m_sortCtx.bDescending) ? (V_wcscmp(wszRight, wszLeft) > 0) : (V_wcscmp(wszLeft, wszRight) > 0);
+		});
 }
 
 void CNeoServerPlayers::RequestList(uint32 unIP, uint16 usPort)
@@ -480,4 +494,3 @@ void CNeoServerPing::ServerFailedToRespond()
 {
 	m_ePingState = PINGSTATE_FAILED;
 }
-

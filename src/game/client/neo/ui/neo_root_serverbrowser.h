@@ -60,7 +60,7 @@ void ServerBlacklistRead(const char *szPath);
 void ServerBlacklistWrite(const char *szPath);
 void ServerBlacklistCacheWsz(ServerBlacklistInfo *sbInfo);
 bool ServerBlacklisted(const gameserveritem_t &server);
-void ServerBlacklistUpdateSortedList(const GameServerSortContext& sortCtx);
+void ServerBlacklistUpdateSortedList(const GameServerSortContext &sortCtx);
 
 enum GameServerType
 {
@@ -188,7 +188,7 @@ public:
 
 	enum EPingState
 	{
-		PINGSTATE_NIL = 0,	// Either pinging or inactive
+		PINGSTATE_NIL = 0, // Either pinging or inactive
 		PINGSTATE_SUCCESS,
 		PINGSTATE_FAILED,
 	};
@@ -207,4 +207,3 @@ struct ServerBrowserFilters
 	int iTagsFilterType = 0;
 	wchar_t wszTagsFilter[k_cbMaxGameServerTags] = {};
 };
-

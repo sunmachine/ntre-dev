@@ -10,9 +10,7 @@
 extern ConVar sv_neo_grenade_blast_radius;
 
 //---------------------------------------------------------------------------------------------
-CNEOBotCtgEscort::CNEOBotCtgEscort( void ) : 
-	m_role( ROLE_SCREEN ),
-	m_bHasGoal( false )
+CNEOBotCtgEscort::CNEOBotCtgEscort(void) : m_role(ROLE_SCREEN), m_bHasGoal(false)
 {
 	m_vecGoalPos = CNEO_Player::VECTOR_INVALID_WAYPOINT;
 	m_repathTimer.Invalidate();
@@ -20,7 +18,7 @@ CNEOBotCtgEscort::CNEOBotCtgEscort( void ) :
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotCtgEscort::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotCtgEscort::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
 	m_chasePath.Invalidate();
 	m_path.Invalidate();
@@ -35,36 +33,36 @@ ActionResult< CNEOBot >	CNEOBotCtgEscort::OnStart( CNEOBot *me, Action< CNEOBot 
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotCtgEscort::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotCtgEscort::Update(CNEOBot *me, float interval)
 {
-	if ( !NEORules()->GhostExists() )
+	if (!NEORules()->GhostExists())
 	{
-		return Done( "Ghost does not exist" );
+		return Done("Ghost does not exist");
 	}
 
-	if ( NEORules()->GetGhosterPlayer() <= 0 )
+	if (NEORules()->GetGhosterPlayer() <= 0)
 	{
-		return Done( "Ghost is not held by a player" );
+		return Done("Ghost is not held by a player");
 	}
 
-	CNEO_Player* pGhostCarrier = ToNEOPlayer( UTIL_PlayerByIndex( NEORules()->GetGhosterPlayer() ) );
-	if ( !pGhostCarrier || pGhostCarrier->GetTeamNumber() != me->GetTeamNumber() || pGhostCarrier == me )
+	CNEO_Player *pGhostCarrier = ToNEOPlayer(UTIL_PlayerByIndex(NEORules()->GetGhosterPlayer()));
+	if (!pGhostCarrier || pGhostCarrier->GetTeamNumber() != me->GetTeamNumber() || pGhostCarrier == me)
 	{
-		return Done( "Ghost carrier is not a teammate anymore" );
-	}
-	
-	if ( NEORules()->IsRoundOver() )
-	{
-		return Done( "Round Over: seek enemies instead of escorting CTG carrier" );
+		return Done("Ghost carrier is not a teammate anymore");
 	}
 
-	if ( m_repathTimer.IsElapsed() )
+	if (NEORules()->IsRoundOver())
 	{
-		UpdateGoalPosition( me, pGhostCarrier );
+		return Done("Round Over: seek enemies instead of escorting CTG carrier");
+	}
 
-		if ( m_bHasGoal )
+	if (m_repathTimer.IsElapsed())
+	{
+		UpdateGoalPosition(me, pGhostCarrier);
+
+		if (m_bHasGoal)
 		{
-			m_role = UpdateRoleAssignment( me, pGhostCarrier, m_vecGoalPos );
+			m_role = UpdateRoleAssignment(me, pGhostCarrier, m_vecGoalPos);
 		}
 		else
 		{
@@ -72,51 +70,52 @@ ActionResult< CNEOBot >	CNEOBotCtgEscort::Update( CNEOBot *me, float interval )
 		}
 	}
 
-	if ( const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat(true) )
+	if (const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat(true))
 	{
-		const Vector& ghosterPos = pGhostCarrier->GetAbsOrigin();
-		const Vector& threatPos = threat->GetLastKnownPosition();
-		if ( me->GetAbsOrigin().DistToSqr( threatPos ) > ghosterPos.DistToSqr( threatPos ) )
+		const Vector &ghosterPos = pGhostCarrier->GetAbsOrigin();
+		const Vector &threatPos = threat->GetLastKnownPosition();
+		if (me->GetAbsOrigin().DistToSqr(threatPos) > ghosterPos.DistToSqr(threatPos))
 		{
-			return SuspendFor( new CNEOBotAttack( ghosterPos ), "Engaging threats while regrouping with ghoster" );
+			return SuspendFor(new CNEOBotAttack(ghosterPos), "Engaging threats while regrouping with ghoster");
 		}
 		else
 		{
-			return SuspendFor( new CNEOBotAttack(), "Intercepting threat while protecting ghoster" );
+			return SuspendFor(new CNEOBotAttack(), "Intercepting threat while protecting ghoster");
 		}
 	}
-	
-	bool bCanSeeCarrier = me->GetVisionInterface()->IsLineOfSightClear( pGhostCarrier->WorldSpaceCenter() );
-	if ( bCanSeeCarrier )
+
+	bool bCanSeeCarrier = me->GetVisionInterface()->IsLineOfSightClear(pGhostCarrier->WorldSpaceCenter());
+	if (bCanSeeCarrier)
 	{
 		m_lostSightOfCarrierTimer.Invalidate();
 
-		if ( !m_bHasGoal )
+		if (!m_bHasGoal)
 		{
 			// Asymmetric defense: No goal cap zone, so defend the carrier.
 			// Look away from the carrier to cover their blind spots
 			Vector vecFromCarrier = me->GetAbsOrigin() - pGhostCarrier->GetAbsOrigin();
 			vecFromCarrier.z = 0.0f; // Bias towards horizontal scanning
 			// CNEOBotTacticalMonitor::AvoidBumpingFriends handles <32hu distance
-			if ( VectorNormalize( vecFromCarrier ) > 32.0f )
+			if (VectorNormalize(vecFromCarrier) > 32.0f)
 			{
 				// Look at a point far away in the opposite direction of the carrier
-				Vector vecLookTarget = me->EyePosition() + ( vecFromCarrier * 500.0f );
-				me->GetBodyInterface()->AimHeadTowards( vecLookTarget, IBody::IMPORTANT, 0.2f, nullptr, "Escort: Scanning away from carrier" );
+				Vector vecLookTarget = me->EyePosition() + (vecFromCarrier * 500.0f);
+				me->GetBodyInterface()->AimHeadTowards(
+					vecLookTarget, IBody::IMPORTANT, 0.2f, nullptr, "Escort: Scanning away from carrier");
 			}
 		}
 	}
 	else
 	{
 		// If we can't see them, check if we are in grace period
-		if ( !m_lostSightOfCarrierTimer.HasStarted() )
+		if (!m_lostSightOfCarrierTimer.HasStarted())
 		{
 			// JUST lost sight
-			m_lostSightOfCarrierTimer.Start( 3.0f );
+			m_lostSightOfCarrierTimer.Start(3.0f);
 			// Treat as visible for now
 			bCanSeeCarrier = true;
 		}
-		else if ( !m_lostSightOfCarrierTimer.IsElapsed() )
+		else if (!m_lostSightOfCarrierTimer.IsElapsed())
 		{
 			// Still in grace period
 			bCanSeeCarrier = true;
@@ -129,38 +128,38 @@ ActionResult< CNEOBot >	CNEOBotCtgEscort::Update( CNEOBot *me, float interval )
 	}
 
 	// Check again based on grace period checks above
-	if ( !bCanSeeCarrier )
+	if (!bCanSeeCarrier)
 	{
 		m_path.Invalidate();
-		CNEOBotPathUpdateChase( me, m_chasePath, pGhostCarrier, SAFEST_ROUTE );
+		CNEOBotPathUpdateChase(me, m_chasePath, pGhostCarrier, SAFEST_ROUTE);
 	}
 	else
 	{
 		const float flSafeRadius = sv_neo_grenade_blast_radius.GetFloat();
 		const float flSafeRadiusSq = flSafeRadius * flSafeRadius;
 
-		if ( m_role == ROLE_BODYGUARD )
+		if (m_role == ROLE_BODYGUARD)
 		{
 			// Dont crowd the carrier
-			if ( me->GetAbsOrigin().DistToSqr( pGhostCarrier->GetAbsOrigin() ) < flSafeRadiusSq )
+			if (me->GetAbsOrigin().DistToSqr(pGhostCarrier->GetAbsOrigin()) < flSafeRadiusSq)
 			{
 				m_path.Invalidate();
 				m_chasePath.Invalidate();
 				return Continue();
 			}
 
-			CNEOBotPathUpdateChase( me, m_chasePath, pGhostCarrier, SAFEST_ROUTE );
+			CNEOBotPathUpdateChase(me, m_chasePath, pGhostCarrier, SAFEST_ROUTE);
 			return Continue();
 		}
 
-		if ( !m_bHasGoal )
+		if (!m_bHasGoal)
 		{
 			// No active threats to carrier
-			float flDistToCarrierSq = me->GetAbsOrigin().DistToSqr( pGhostCarrier->GetAbsOrigin() );
-			if ( flDistToCarrierSq > flSafeRadiusSq )
+			float flDistToCarrierSq = me->GetAbsOrigin().DistToSqr(pGhostCarrier->GetAbsOrigin());
+			if (flDistToCarrierSq > flSafeRadiusSq)
 			{
 				// Regroup
-				CNEOBotPathUpdateChase( me, m_chasePath, pGhostCarrier, SAFEST_ROUTE );
+				CNEOBotPathUpdateChase(me, m_chasePath, pGhostCarrier, SAFEST_ROUTE);
 			}
 			else
 			{
@@ -173,44 +172,43 @@ ActionResult< CNEOBot >	CNEOBotCtgEscort::Update( CNEOBot *me, float interval )
 
 		m_chasePath.Invalidate();
 
-		Vector& vecMoveTarget = m_vecGoalPos;
+		Vector &vecMoveTarget = m_vecGoalPos;
 
 
-		CNEOBot *pBotGhostCarrier = ToNEOBot( pGhostCarrier );
-		if ( m_role == ROLE_SCREEN && pBotGhostCarrier )
+		CNEOBot *pBotGhostCarrier = ToNEOBot(pGhostCarrier);
+		if (m_role == ROLE_SCREEN && pBotGhostCarrier)
 		{
-			CWeaponGhost *pGhost = dynamic_cast<CWeaponGhost*>( pBotGhostCarrier->Weapon_GetSlot( 0 ) );
+			CWeaponGhost *pGhost = dynamic_cast<CWeaponGhost *>(pBotGhostCarrier->Weapon_GetSlot(0));
 			// Only screen the threat if the ghost is actually booted up and ready to reveal enemies
 			// Otherwise just stick to the goal path
-			if ( pGhost && pGhost->IsBootupCompleted() )
+			if (pGhost && pGhost->IsBootupCompleted())
 			{
 				const CKnownEntity *carrierThreat = pBotGhostCarrier->GetVisionInterface()->GetPrimaryKnownThreat();
-				if ( carrierThreat && carrierThreat->GetEntity() && carrierThreat->GetEntity()->IsAlive() )
+				if (carrierThreat && carrierThreat->GetEntity() && carrierThreat->GetEntity()->IsAlive())
 				{
 					vecMoveTarget = carrierThreat->GetLastKnownPosition();
-
 				}
 			}
 		}
 
 		// Move to Target (Goal or Threat)
 		// Throttling repath to avoid excessive computations
-		if ( m_repathTimer.IsElapsed() )
+		if (m_repathTimer.IsElapsed())
 		{
 			m_chasePath.Invalidate();
 
 			// when using m_repathTimer approach, use FASTEST_ROUTE for path consistency
-			CNEOBotPathCompute( me, m_path, vecMoveTarget, FASTEST_ROUTE );
-			m_repathTimer.Start( RandomFloat( 1.0f, 2.0f ) );
+			CNEOBotPathCompute(me, m_path, vecMoveTarget, FASTEST_ROUTE);
+			m_repathTimer.Start(RandomFloat(1.0f, 2.0f));
 		}
-		m_path.Update( me );
+		m_path.Update(me);
 	}
 
 	return Continue();
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotCtgEscort::OnResume( CNEOBot *me, Action< CNEOBot > *interruptingAction )
+ActionResult<CNEOBot> CNEOBotCtgEscort::OnResume(CNEOBot *me, Action<CNEOBot> *interruptingAction)
 {
 	m_chasePath.Invalidate();
 	m_path.Invalidate();
@@ -219,7 +217,7 @@ ActionResult< CNEOBot > CNEOBotCtgEscort::OnResume( CNEOBot *me, Action< CNEOBot
 }
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotCtgEscort::OnStuck( CNEOBot *me )
+EventDesiredResult<CNEOBot> CNEOBotCtgEscort::OnStuck(CNEOBot *me)
 {
 	m_chasePath.Invalidate();
 	m_path.Invalidate();
@@ -228,50 +226,50 @@ EventDesiredResult< CNEOBot > CNEOBotCtgEscort::OnStuck( CNEOBot *me )
 }
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotCtgEscort::OnMoveToSuccess( CNEOBot *me, const Path *path )
+EventDesiredResult<CNEOBot> CNEOBotCtgEscort::OnMoveToSuccess(CNEOBot *me, const Path *path)
 {
 	return TryContinue();
 }
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotCtgEscort::OnMoveToFailure( CNEOBot *me, const Path *path, MoveToFailureType reason )
+EventDesiredResult<CNEOBot> CNEOBotCtgEscort::OnMoveToFailure(CNEOBot *me, const Path *path, MoveToFailureType reason)
 {
-	m_repathTimer.Invalidate(); 
+	m_repathTimer.Invalidate();
 	return TryContinue();
 }
 
 //---------------------------------------------------------------------------------------------
 // Hurry back to friendly ghost carrier if there are enemies closer to them
-QueryResultType CNEOBotCtgEscort::ShouldHurry( const INextBot *me ) const
+QueryResultType CNEOBotCtgEscort::ShouldHurry(const INextBot *me) const
 {
-	const CNEOBot *meBot = static_cast<const CNEOBot *>( me );
+	const CNEOBot *meBot = static_cast<const CNEOBot *>(me);
 
-	CNEO_Player *pCarrier = ToNEOPlayer( UTIL_PlayerByIndex( NEORules()->GetGhosterPlayer() ) );
-	if ( !pCarrier || !pCarrier->IsAlive() || pCarrier->GetTeamNumber() != meBot->GetTeamNumber() || pCarrier == meBot )
+	CNEO_Player *pCarrier = ToNEOPlayer(UTIL_PlayerByIndex(NEORules()->GetGhosterPlayer()));
+	if (!pCarrier || !pCarrier->IsAlive() || pCarrier->GetTeamNumber() != meBot->GetTeamNumber() || pCarrier == meBot)
 	{
 		return ANSWER_UNDEFINED;
 	}
 
 	const Vector &vecCarrierPos = pCarrier->GetAbsOrigin();
-	const float flMyDistToCarrierSq = meBot->GetAbsOrigin().DistToSqr( vecCarrierPos );
+	const float flMyDistToCarrierSq = meBot->GetAbsOrigin().DistToSqr(vecCarrierPos);
 
-	CUtlVector< CKnownEntity > knownVector;
-	meBot->GetVisionInterface()->CollectKnownEntities( &knownVector );
+	CUtlVector<CKnownEntity> knownVector;
+	meBot->GetVisionInterface()->CollectKnownEntities(&knownVector);
 
-	for ( int i = 0; i < knownVector.Count(); ++i )
+	for (int i = 0; i < knownVector.Count(); ++i)
 	{
 		CBaseEntity *pKnown = knownVector[i].GetEntity();
-		if ( !pKnown || !pKnown->IsPlayer() || !pKnown->IsAlive() )
+		if (!pKnown || !pKnown->IsPlayer() || !pKnown->IsAlive())
 		{
 			continue;
 		}
 
-		if ( pKnown->GetTeamNumber() == meBot->GetTeamNumber() )
+		if (pKnown->GetTeamNumber() == meBot->GetTeamNumber())
 		{
 			continue;
 		}
 
-		if ( pKnown->GetAbsOrigin().DistToSqr( vecCarrierPos ) < flMyDistToCarrierSq )
+		if (pKnown->GetAbsOrigin().DistToSqr(vecCarrierPos) < flMyDistToCarrierSq)
 		{
 			return ANSWER_YES;
 		}
@@ -281,47 +279,48 @@ QueryResultType CNEOBotCtgEscort::ShouldHurry( const INextBot *me ) const
 }
 
 //---------------------------------------------------------------------------------------------
-CNEOBotCtgEscort::EscortRole CNEOBotCtgEscort::UpdateRoleAssignment( CNEOBot *me, CNEO_Player *pGhostCarrier, const Vector &vecGoalPos )
+CNEOBotCtgEscort::EscortRole CNEOBotCtgEscort::UpdateRoleAssignment(
+	CNEOBot *me, CNEO_Player *pGhostCarrier, const Vector &vecGoalPos)
 {
 	// Roles:
 	// 1. Scout/Vanguard: Closest to Goal.
 	// 2. Bodyguard: Closest to Carrier.
 	// 3. Wall/Screen: Everyone else.
 
-	CNEO_Player* pScout = nullptr;
-	CNEO_Player* pBodyguard = nullptr;
+	CNEO_Player *pScout = nullptr;
+	CNEO_Player *pBodyguard = nullptr;
 	const int iMyTeam = me->GetTeamNumber();
 
 	// Collect candidates and process roles in one pass
 	float flBestDistToGoal = FLT_MAX;
 	float flBestDistToCarrier = FLT_MAX;
 	float flSecondBestDistToCarrier = FLT_MAX;
-	CNEO_Player* pBestToCarrier = nullptr;
-	CNEO_Player* pSecondBestToCarrier = nullptr;
+	CNEO_Player *pBestToCarrier = nullptr;
+	CNEO_Player *pSecondBestToCarrier = nullptr;
 
-	const Vector& vecCarrierOrigin = pGhostCarrier->GetAbsOrigin();
+	const Vector &vecCarrierOrigin = pGhostCarrier->GetAbsOrigin();
 
-	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
+	for (int i = 1; i <= gpGlobals->maxClients; i++)
 	{
-		CNEO_Player *pPlayer = ToNEOPlayer( UTIL_PlayerByIndex( i ) );
-		if ( !pPlayer || !pPlayer->IsAlive() || pPlayer->GetTeamNumber() != iMyTeam || pPlayer == pGhostCarrier )
+		CNEO_Player *pPlayer = ToNEOPlayer(UTIL_PlayerByIndex(i));
+		if (!pPlayer || !pPlayer->IsAlive() || pPlayer->GetTeamNumber() != iMyTeam || pPlayer == pGhostCarrier)
 		{
 			continue;
 		}
 
-		const Vector& vecPlayerOrigin = pPlayer->GetAbsOrigin();
+		const Vector &vecPlayerOrigin = pPlayer->GetAbsOrigin();
 
 		// Check for Scout (Best dist to goal)
-		float goalDist = vecPlayerOrigin.DistToSqr( vecGoalPos );
-		if ( goalDist < flBestDistToGoal )
+		float goalDist = vecPlayerOrigin.DistToSqr(vecGoalPos);
+		if (goalDist < flBestDistToGoal)
 		{
 			flBestDistToGoal = goalDist;
 			pScout = pPlayer;
 		}
 
 		// Check for Bodyguard candidates (Dist to carrier)
-		float carrierDist = vecPlayerOrigin.DistToSqr( vecCarrierOrigin );
-		if ( carrierDist < flBestDistToCarrier )
+		float carrierDist = vecPlayerOrigin.DistToSqr(vecCarrierOrigin);
+		if (carrierDist < flBestDistToCarrier)
 		{
 			flSecondBestDistToCarrier = flBestDistToCarrier;
 			pSecondBestToCarrier = pBestToCarrier;
@@ -329,7 +328,7 @@ CNEOBotCtgEscort::EscortRole CNEOBotCtgEscort::UpdateRoleAssignment( CNEOBot *me
 			flBestDistToCarrier = carrierDist;
 			pBestToCarrier = pPlayer;
 		}
-		else if ( carrierDist < flSecondBestDistToCarrier )
+		else if (carrierDist < flSecondBestDistToCarrier)
 		{
 			flSecondBestDistToCarrier = carrierDist;
 			pSecondBestToCarrier = pPlayer;
@@ -337,7 +336,7 @@ CNEOBotCtgEscort::EscortRole CNEOBotCtgEscort::UpdateRoleAssignment( CNEOBot *me
 	}
 
 	// If the best bodyguard candidate is the scout, take the second best.
-	if ( pBestToCarrier && pBestToCarrier == pScout )
+	if (pBestToCarrier && pBestToCarrier == pScout)
 	{
 		pBodyguard = pSecondBestToCarrier;
 	}
@@ -346,11 +345,11 @@ CNEOBotCtgEscort::EscortRole CNEOBotCtgEscort::UpdateRoleAssignment( CNEOBot *me
 		pBodyguard = pBestToCarrier;
 	}
 
-	if ( me == pScout )
+	if (me == pScout)
 	{
 		return ROLE_SCOUT;
 	}
-	else if ( me == pBodyguard )
+	else if (me == pBodyguard)
 	{
 		return ROLE_BODYGUARD;
 	}
@@ -361,8 +360,8 @@ CNEOBotCtgEscort::EscortRole CNEOBotCtgEscort::UpdateRoleAssignment( CNEOBot *me
 }
 
 //---------------------------------------------------------------------------------------------
-void CNEOBotCtgEscort::UpdateGoalPosition( CNEOBot *me, CNEO_Player *pGhostCarrier )
+void CNEOBotCtgEscort::UpdateGoalPosition(CNEOBot *me, CNEO_Player *pGhostCarrier)
 {
-	m_vecGoalPos = NEORules()->GetNearestGhostCapPoint( me->GetTeamNumber(), pGhostCarrier->GetAbsOrigin() );
-	m_bHasGoal = ( m_vecGoalPos != CNEO_Player::VECTOR_INVALID_WAYPOINT );
+	m_vecGoalPos = NEORules()->GetNearestGhostCapPoint(me->GetTeamNumber(), pGhostCarrier->GetAbsOrigin());
+	m_bHasGoal = (m_vecGoalPos != CNEO_Player::VECTOR_INVALID_WAYPOINT);
 }

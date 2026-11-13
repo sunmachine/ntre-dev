@@ -57,48 +57,47 @@ void NeoVersionPrint()
 #endif
 }
 
-namespace {
+namespace
+{
 #ifdef CLIENT_DLL
 constexpr int NEO_VERSION_FLAGS = 0;
 #else
 constexpr int NEO_VERSION_FLAGS = FCVAR_HIDDEN;
 #endif
-ConCommand neo_version("neo_version", NeoVersionPrint, "Print out client/server's build's information.", NEO_VERSION_FLAGS);
+ConCommand neo_version(
+	"neo_version", NeoVersionPrint, "Print out client/server's build's information.", NEO_VERSION_FLAGS);
 
 #ifdef CLIENT_DLL
 ConVar __cl_neo_git_hash("__cl_neo_git_hash", GIT_LONGHASH,
-						 FCVAR_USERINFO | FCVAR_HIDDEN | FCVAR_DONTRECORD | FCVAR_NOT_CONNECTED
+	FCVAR_USERINFO | FCVAR_HIDDEN | FCVAR_DONTRECORD | FCVAR_NOT_CONNECTED
 #ifndef DEBUG
-						 | FCVAR_PRINTABLEONLY
+		| FCVAR_PRINTABLEONLY
 #endif
-						 );
+);
 #endif
 
 #ifdef CLIENT_DLL
 ConVar __cl_neo_version_tag("__cl_neo_version_tag", GIT_LATESTTAG,
-						 FCVAR_USERINFO | FCVAR_HIDDEN | FCVAR_DONTRECORD | FCVAR_NOT_CONNECTED
+	FCVAR_USERINFO | FCVAR_HIDDEN | FCVAR_DONTRECORD | FCVAR_NOT_CONNECTED
 #ifndef DEBUG
-						 | FCVAR_PRINTABLEONLY
+		| FCVAR_PRINTABLEONLY
 #endif
-						 );
+);
 #endif
 
 #ifdef CLIENT_DLL
 ConVar __cl_neo_renderer("__cl_neo_renderer", "",
-						 FCVAR_USERINFO | FCVAR_HIDDEN | FCVAR_DONTRECORD | FCVAR_NOT_CONNECTED | FCVAR_PRINTABLEONLY
-						 );
+	FCVAR_USERINFO | FCVAR_HIDDEN | FCVAR_DONTRECORD | FCVAR_NOT_CONNECTED | FCVAR_PRINTABLEONLY);
 ConVar __cl_neo_opengl_version("__cl_neo_opengl_version", "",
-						 FCVAR_USERINFO | FCVAR_HIDDEN | FCVAR_DONTRECORD | FCVAR_NOT_CONNECTED | FCVAR_PRINTABLEONLY
-						 );
+	FCVAR_USERINFO | FCVAR_HIDDEN | FCVAR_DONTRECORD | FCVAR_NOT_CONNECTED | FCVAR_PRINTABLEONLY);
 #endif
 }
 
 #ifdef CLIENT_DLL
 
 // Mainly to just prevent edit of those convar fully
-static void NeoConVarEnforceDefault(IConVar *cvar,
-		[[maybe_unused]] const char *pOldVal,
-		[[maybe_unused]] float flOldVal)
+static void NeoConVarEnforceDefault(
+	IConVar *cvar, [[maybe_unused]] const char *pOldVal, [[maybe_unused]] float flOldVal)
 {
 	ConVarRef cvarRef(cvar);
 	cvarRef.SetValue(cvarRef.GetDefault());
@@ -134,4 +133,3 @@ void InitializeDbgNeoClGitHashTagEdit()
 }
 #endif // DEBUG
 #endif // CLIENT_DLL
-

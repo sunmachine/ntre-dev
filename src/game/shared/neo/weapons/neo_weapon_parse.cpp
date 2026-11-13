@@ -8,7 +8,7 @@
 #include "neo_weapon_parse.h"
 
 
-FileWeaponInfo_t* CreateWeaponInfo()
+FileWeaponInfo_t *CreateWeaponInfo()
 {
 	return new CNEOWeaponInfo;
 }
@@ -31,14 +31,14 @@ CNEOWeaponInfo::CNEOWeaponInfo()
 }
 
 
-void CNEOWeaponInfo::Parse( KeyValues *pKeyValuesData, const char *szWeaponName )
+void CNEOWeaponInfo::Parse(KeyValues *pKeyValuesData, const char *szWeaponName)
 {
-	BaseClass::Parse( pKeyValuesData, szWeaponName );
+	BaseClass::Parse(pKeyValuesData, szWeaponName);
 
-	m_iPlayerDamage = pKeyValuesData->GetInt( "Damage", 42 ); // Douglas Adams 1952 - 2001
-	m_iBullets = pKeyValuesData->GetInt( "Bullets", 1 );
-	m_flCycleTime = pKeyValuesData->GetFloat( "CycleTime", 0.15 );
-	m_flReloadReadyBeforeEnd = pKeyValuesData->GetFloat( "ReloadReadyBeforeEnd", 0.0f );
+	m_iPlayerDamage = pKeyValuesData->GetInt("Damage", 42); // Douglas Adams 1952 - 2001
+	m_iBullets = pKeyValuesData->GetInt("Bullets", 1);
+	m_flCycleTime = pKeyValuesData->GetFloat("CycleTime", 0.15);
+	m_flReloadReadyBeforeEnd = pKeyValuesData->GetFloat("ReloadReadyBeforeEnd", 0.0f);
 
 	const char *notFoundStr = "notfound";
 	Q_strncpy(szViewModel2, pKeyValuesData->GetString("team2viewmodel", notFoundStr), MAX_WEAPON_STRING);
@@ -49,8 +49,8 @@ void CNEOWeaponInfo::Parse( KeyValues *pKeyValuesData, const char *szWeaponName 
 		Q_strncpy(szViewModel2, pKeyValuesData->GetString("viewmodel"), MAX_WEAPON_STRING);
 	}
 
-	Q_strncpy( szBulletCharacter, pKeyValuesData->GetString("BulletCharacter", "a"), MAX_BULLET_CHARACTER);
-	Q_strncpy( szDeathIcon, pKeyValuesData->GetString("iDeathIcon", ""), MAX_BULLET_CHARACTER);
+	Q_strncpy(szBulletCharacter, pKeyValuesData->GetString("BulletCharacter", "a"), MAX_BULLET_CHARACTER);
+	Q_strncpy(szDeathIcon, pKeyValuesData->GetString("iDeathIcon", ""), MAX_BULLET_CHARACTER);
 	m_flPenetration = pKeyValuesData->GetFloat("Penetration", 0);
 	m_bDropOnDeath = pKeyValuesData->GetBool("DropOnDeath", true);
 	iAimFOV = pKeyValuesData->GetInt("AimFov", 45);
@@ -77,7 +77,7 @@ void CNEOWeaponInfo::Parse( KeyValues *pKeyValuesData, const char *szWeaponName 
 #if 0
 	KeyValues *pAimOffset = pKeyValuesData->FindKey("AimOffset");
 #else
-	KeyValues* pAimOffset = pKeyValuesData->FindKey("ZoomOffset");
+	KeyValues *pAimOffset = pKeyValuesData->FindKey("ZoomOffset");
 #endif
 	if (pAimOffset)
 	{
@@ -92,5 +92,3 @@ void CNEOWeaponInfo::Parse( KeyValues *pKeyValuesData, const char *szWeaponName 
 		m_angVMAimAngOffset[ROLL] = pAimOffset->GetFloat("roll", 0);
 	}
 }
-
-

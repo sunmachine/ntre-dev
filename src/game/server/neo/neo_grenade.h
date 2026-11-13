@@ -25,23 +25,23 @@ class CNEOGrenadeFrag : public CBaseGrenadeProjectile
 #endif
 
 public:
-	virtual void	Explode(trace_t* pTrace, int bitsDamageType);
-	virtual	float	GetShakeAmplitude() { return 0; };
+	virtual void Explode(trace_t *pTrace, int bitsDamageType);
+	virtual float GetShakeAmplitude() { return 0; };
 
-	void	Spawn(void);
-	void	Precache(void);
-	int		OnTakeDamage(const CTakeDamageInfo &inputInfo);
-	void	DelayThink();
-	void	SetPunted(bool punt) { m_punted = punt; }
-	bool	WasPunted(void) const { return m_punted; }
-	void	OnPhysGunPickup(CBasePlayer *pPhysGunUser, PhysGunPickup_t reason);
+	void Spawn(void);
+	void Precache(void);
+	int OnTakeDamage(const CTakeDamageInfo &inputInfo);
+	void DelayThink();
+	void SetPunted(bool punt) { m_punted = punt; }
+	bool WasPunted(void) const { return m_punted; }
+	void OnPhysGunPickup(CBasePlayer *pPhysGunUser, PhysGunPickup_t reason);
 
-	void	InputSetTimer(inputdata_t &inputdata);
+	void InputSetTimer(inputdata_t &inputdata);
 
 protected:
-	bool	m_inSolid;
-	bool	m_punted;
-	float	m_flNextSoundTime;
+	bool m_inSolid;
+	bool m_punted;
+	float m_flNextSoundTime;
 };
 
 CBaseGrenadeProjectile *NEOFraggrenade_Create(const Vector &position, const QAngle &angles, const Vector &velocity,

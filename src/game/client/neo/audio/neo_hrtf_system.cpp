@@ -20,7 +20,7 @@ namespace
 
 constexpr int kHrtfOutputChannels = 2;
 constexpr float kHrtfMetresPerUnit = 0.0254f; // 1 Source unit = 1 inch
-constexpr int kHrtfMaxCachedSeconds = 30; // longer sounds (music-like loops) stay with the engine
+constexpr int kHrtfMaxCachedSeconds = 30;     // longer sounds (music-like loops) stay with the engine
 constexpr int kHrtfMaxCachedFrames = kHrtfMaxCachedSeconds * CNeoHrtfSystem::kSampleRate;
 
 // The engine mixer (snd_dma.cpp) attenuates with an inverse-distance law normalised so a
@@ -79,8 +79,8 @@ int HrtfParseWavLoopStart(const uint8 *pData, int size)
 		{
 			sourceRate = HrtfReadLE32(pBody + kWavFmtSampleRateOffset);
 		}
-		else if (V_memcmp(pChunk, "cue ", 4) == 0 && chunkSize >= kWavCueCountSize + kWavCuePointSize
-				 && HrtfReadLE32(pBody) > 0)
+		else if (V_memcmp(pChunk, "cue ", 4) == 0 && chunkSize >= kWavCueCountSize + kWavCuePointSize &&
+			HrtfReadLE32(pBody) > 0)
 		{
 			cueSampleOffset = HrtfReadLE32(pBody + kWavCueCountSize + kWavCueSampleOffsetOffset);
 		}
@@ -112,22 +112,22 @@ void HrtfNormaliseSoundName(const char *pszName, char *pszOut, int outSize)
 // and distance-variant sounds are encoded stereo pairs rather than mono sources.
 bool HrtfIsEngineOnlyName(const char *pszRawName)
 {
-	return TestSoundChar(pszRawName, CHAR_STREAM) || TestSoundChar(pszRawName, CHAR_OMNI)
-		|| TestSoundChar(pszRawName, CHAR_DOPPLER) || TestSoundChar(pszRawName, CHAR_DIRECTIONAL)
-		|| TestSoundChar(pszRawName, CHAR_DISTVARIANT);
+	return TestSoundChar(pszRawName, CHAR_STREAM) || TestSoundChar(pszRawName, CHAR_OMNI) ||
+		TestSoundChar(pszRawName, CHAR_DOPPLER) || TestSoundChar(pszRawName, CHAR_DIRECTIONAL) ||
+		TestSoundChar(pszRawName, CHAR_DISTVARIANT);
 }
 
 bool HrtfIsSpatialCandidate(const SndInfo_t &info, int localPlayerIndex)
 {
 	// Sentences, dry-mix and speaker sounds are not positional; the local player's own weapon and
 	// viewmodel sounds are non-positional by design; UI sounds have no source entity or position.
-	return !info.m_bIsSentence && !info.m_bDryMix && !info.m_bSpeaker && info.m_pOrigin
-		&& info.m_nSoundSource != localPlayerIndex && (info.m_nSoundSource > 0 || *info.m_pOrigin != vec3_origin);
+	return !info.m_bIsSentence && !info.m_bDryMix && !info.m_bSpeaker && info.m_pOrigin &&
+		info.m_nSoundSource != localPlayerIndex && (info.m_nSoundSource > 0 || *info.m_pOrigin != vec3_origin);
 }
 
 NeoSpatial::Vec3 HrtfToVec3(const Vector &v, float scale = 1.0f)
 {
-	return { v.x * scale, v.y * scale, v.z * scale };
+	return {v.x * scale, v.y * scale, v.z * scale};
 }
 
 // Once the engine copy is muted its reported volume is our 0, not the sound's, so only a
@@ -144,7 +144,8 @@ void HrtfMuteEngineCopy(float &sourceVolume, const SndInfo_t &info)
 void HrtfDataCallback(ma_device *pDevice, void *pOutput, const void *pInput, ma_uint32 frameCount)
 {
 	(void)pInput;
-	static_cast<CNeoHrtfSystem *>(pDevice->pUserData)->Render(static_cast<float *>(pOutput), static_cast<int>(frameCount));
+	static_cast<CNeoHrtfSystem *>(pDevice->pUserData)
+		->Render(static_cast<float *>(pOutput), static_cast<int>(frameCount));
 }
 
 } // namespace
@@ -289,13 +290,13 @@ void CNeoHrtfSystem::PollEngineSounds()
 			m_ignoredGuidsNext.AddToTail(info.m_nGuid);
 			continue;
 		}
-		m_pending[pendingCount++] = { i, pSound, -1 };
+		m_pending[pendingCount++] = {i, pSound, -1};
 	}
 
 	{
 		AUTO_LOCK(m_mutex);
-		m_listener = { HrtfToVec3(m_listenerOrigin, kHrtfMetresPerUnit), HrtfToVec3(m_listenerForward),
-					   HrtfToVec3(m_listenerRight), HrtfToVec3(listenerUp) };
+		m_listener = {HrtfToVec3(m_listenerOrigin, kHrtfMetresPerUnit), HrtfToVec3(m_listenerForward),
+			HrtfToVec3(m_listenerRight), HrtfToVec3(listenerUp)};
 
 		for (int v = 0; v < kMaxVoices; ++v)
 		{
@@ -367,8 +368,8 @@ void CNeoHrtfSystem::StartDevice()
 	char path[MAX_PATH];
 	V_snprintf(path, sizeof(path), "%s/%s", engine->GetGameDirectory(), kHrtfPhononLibrary);
 	V_FixSlashes(path);
-	m_pSpatializer = NeoSpatial::CreateSteamAudioSpatializer(path, kSampleRate, kFrameSize,
-															 m_szStartError, sizeof(m_szStartError));
+	m_pSpatializer =
+		NeoSpatial::CreateSteamAudioSpatializer(path, kSampleRate, kFrameSize, m_szStartError, sizeof(m_szStartError));
 	if (m_pSpatializer)
 	{
 		ma_device_config config = ma_device_config_init(ma_device_type_playback);
@@ -478,16 +479,16 @@ void CNeoHrtfSystem::LoadSound(CachedSound &sound)
 	CUtlBuffer file;
 	ma_decoder decoder;
 	const ma_decoder_config config = ma_decoder_config_init(ma_format_f32, 1, kSampleRate);
-	if (!filesystem->ReadFile(path, "GAME", file) || file.TellPut() <= 0
-		|| ma_decoder_init_memory(file.Base(), file.TellPut(), &config, &decoder) != MA_SUCCESS)
+	if (!filesystem->ReadFile(path, "GAME", file) || file.TellPut() <= 0 ||
+		ma_decoder_init_memory(file.Base(), file.TellPut(), &config, &decoder) != MA_SUCCESS)
 	{
 		DevMsg("NEO HRTF: cannot read or decode %s, leaving it to the engine\n", path);
 		return;
 	}
 
 	ma_uint64 length = 0;
-	if (ma_decoder_get_length_in_pcm_frames(&decoder, &length) == MA_SUCCESS
-		&& length > 0 && length <= static_cast<ma_uint64>(kHrtfMaxCachedFrames))
+	if (ma_decoder_get_length_in_pcm_frames(&decoder, &length) == MA_SUCCESS && length > 0 &&
+		length <= static_cast<ma_uint64>(kHrtfMaxCachedFrames))
 	{
 		sound.m_samples.SetCount(static_cast<int>(length));
 		ma_uint64 framesRead = 0;
@@ -551,8 +552,8 @@ float CNeoHrtfSystem::LookupDistMult(const char *pszNormalisedName)
 	return powf(10.0f, (kHrtfEngineRefDb - static_cast<float>(level)) / 20.0f) / kHrtfEngineRefDistUnits;
 }
 
-CNeoHrtfSystem::VoiceParams CNeoHrtfSystem::ComputeParams(const SndInfo_t &info, float sourceVolume,
-														  const CachedSound &sound, float outputScale) const
+CNeoHrtfSystem::VoiceParams CNeoHrtfSystem::ComputeParams(
+	const SndInfo_t &info, float sourceVolume, const CachedSound &sound, float outputScale) const
 {
 	// The engine refreshes this every frame for channels that follow their entity
 	// (GetSoundSpatialization), so it already tracks moving players.
@@ -569,8 +570,8 @@ CNeoHrtfSystem::VoiceParams CNeoHrtfSystem::ComputeParams(const SndInfo_t &info,
 	}
 
 	Assert(info.m_nPitch > 0);
-	return { HrtfToVec3(position, kHrtfMetresPerUnit), sourceVolume * distanceGain * outputScale,
-			 static_cast<float>(Max(info.m_nPitch, 1)) / PITCH_NORM };
+	return {HrtfToVec3(position, kHrtfMetresPerUnit), sourceVolume * distanceGain * outputScale,
+		static_cast<float>(Max(info.m_nPitch, 1)) / PITCH_NORM};
 }
 
 int CNeoHrtfSystem::FindVoice(int guid) const
@@ -605,12 +606,13 @@ void CNeoHrtfSystem::PrintDebug() const
 		++liveVoices;
 		const NeoSpatial::Vec3 &origin = voice.m_params.m_origin;
 		const Vector toSource = Vector(origin.x, origin.y, origin.z) - listenerMetres;
-		const float azimuthDeg = RAD2DEG(atan2f(DotProduct(toSource, m_listenerRight), DotProduct(toSource, m_listenerForward)));
+		const float azimuthDeg =
+			RAD2DEG(atan2f(DotProduct(toSource, m_listenerRight), DotProduct(toSource, m_listenerForward)));
 		engine->Con_NPrintf(v + 1, "hrtf %s  %.1f m  gain %.2f  az %+.0f", voice.m_pSound->m_name.Get(),
 			toSource.Length(), voice.m_params.m_gain, azimuthDeg);
 	}
-	engine->Con_NPrintf(0, "hrtf: Steam Audio, voices %d/%d, cached sounds %d, scripted wave levels %d",
-		liveVoices, kMaxVoices, m_cache.Count(), m_soundLevels.Count());
+	engine->Con_NPrintf(0, "hrtf: Steam Audio, voices %d/%d, cached sounds %d, scripted wave levels %d", liveVoices,
+		kMaxVoices, m_cache.Count(), m_soundLevels.Count());
 }
 
 void CNeoHrtfSystem::Render(float *pOutInterleaved, int frameCount)
@@ -626,7 +628,8 @@ void CNeoHrtfSystem::Render(float *pOutInterleaved, int frameCount)
 			m_carryAvailable = kFrameSize;
 		}
 		const int frames = Min(frameCount, m_carryAvailable);
-		V_memcpy(pOutInterleaved, m_carry + m_carryRead * kHrtfOutputChannels, frames * kHrtfOutputChannels * sizeof(float));
+		V_memcpy(
+			pOutInterleaved, m_carry + m_carryRead * kHrtfOutputChannels, frames * kHrtfOutputChannels * sizeof(float));
 		pOutInterleaved += frames * kHrtfOutputChannels;
 		frameCount -= frames;
 		m_carryRead += frames;
@@ -650,7 +653,8 @@ void CNeoHrtfSystem::RenderBlock()
 
 			// Process even inaudible voices: skipping would freeze the backend's filter
 			// history and click when the voice becomes audible again.
-			m_pSpatializer->Process(voice.m_hSpatial, voice.m_params.m_origin, m_scratchMono, m_scratchLeft, m_scratchRight);
+			m_pSpatializer->Process(
+				voice.m_hSpatial, voice.m_params.m_origin, m_scratchMono, m_scratchLeft, m_scratchRight);
 			const float gain = voice.m_params.m_gain;
 			if (gain <= 0.0f)
 			{

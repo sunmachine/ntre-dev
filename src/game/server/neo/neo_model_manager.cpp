@@ -8,190 +8,102 @@
 const int numTeams = 2;
 const int numClasses = 3;
 
-const char *playerModels[NEO_SKIN_ENUM_COUNT * numClasses * numTeams] {
-	///////////////
+const char *playerModels[NEO_SKIN_ENUM_COUNT * numClasses * numTeams]{///////////////
 	// NSF start //
 	///////////////
 
 	// Recons
-	"models/player/nsf_gsf.mdl",
-	"models/player/nsf_gsf2.mdl",
-	"models/player/nsf_gsf3.mdl",
+	"models/player/nsf_gsf.mdl", "models/player/nsf_gsf2.mdl", "models/player/nsf_gsf3.mdl",
 
 	// Assaults
-	"models/player/nsf_gam.mdl",
-	"models/player/nsf_gam2.mdl",
-	"models/player/nsf_gam3.mdl",
+	"models/player/nsf_gam.mdl", "models/player/nsf_gam2.mdl", "models/player/nsf_gam3.mdl",
 
 	// Supports
-	"models/player/nsf_ghm.mdl",
-	"models/player/nsf_ghm2.mdl",
-	"models/player/nsf_ghm3.mdl",
+	"models/player/nsf_ghm.mdl", "models/player/nsf_ghm2.mdl", "models/player/nsf_ghm3.mdl",
 
 	//////////////////
 	// Jinrai start //
 	//////////////////
 
 	// Recons
-	"models/player/jinrai_msf.mdl",
-	"models/player/jinrai_msf2.mdl",
-	"models/player/jinrai_msf3.mdl",
+	"models/player/jinrai_msf.mdl", "models/player/jinrai_msf2.mdl", "models/player/jinrai_msf3.mdl",
 
 	// Assaults
-	"models/player/jinrai_mam.mdl",
-	"models/player/jinrai_mam2.mdl",
-	"models/player/jinrai_mam3.mdl",
+	"models/player/jinrai_mam.mdl", "models/player/jinrai_mam2.mdl", "models/player/jinrai_mam3.mdl",
 
 	// Supports
-	"models/player/jinrai_mhm.mdl",
-	"models/player/jinrai_mhm2.mdl",
-	"models/player/jinrai_mhm3.mdl"
-};
+	"models/player/jinrai_mhm.mdl", "models/player/jinrai_mhm2.mdl", "models/player/jinrai_mhm3.mdl"};
 
-const char *gibs[NEO_GIB_ENUM_COUNT * NEO_SKIN_ENUM_COUNT * numClasses * numTeams] {
-	///////////////
+const char *gibs[NEO_GIB_ENUM_COUNT * NEO_SKIN_ENUM_COUNT * numClasses * numTeams]{///////////////
 	// NSF start //
 	///////////////
 
 	// Recons
-	"models/player/gsf_dead_all.mdl",
-	"models/player/gsf_dead_head.mdl",
-	"models/player/gsf_dead_larm.mdl",
-	"models/player/gsf_dead_lleg.mdl",
-	"models/player/gsf_dead_rarm.mdl",
-	"models/player/gsf_dead_rleg.mdl",
+	"models/player/gsf_dead_all.mdl", "models/player/gsf_dead_head.mdl", "models/player/gsf_dead_larm.mdl",
+	"models/player/gsf_dead_lleg.mdl", "models/player/gsf_dead_rarm.mdl", "models/player/gsf_dead_rleg.mdl",
 
-	"models/player/gsf2_dead_all.mdl",
-	"models/player/gsf2_dead_head.mdl",
-	"models/player/gsf2_dead_larm.mdl",
-	"models/player/gsf2_dead_lleg.mdl",
-	"models/player/gsf2_dead_rarm.mdl",
-	"models/player/gsf2_dead_rleg.mdl",
+	"models/player/gsf2_dead_all.mdl", "models/player/gsf2_dead_head.mdl", "models/player/gsf2_dead_larm.mdl",
+	"models/player/gsf2_dead_lleg.mdl", "models/player/gsf2_dead_rarm.mdl", "models/player/gsf2_dead_rleg.mdl",
 
-	"models/player/gsf3_dead_all.mdl",
-	"models/player/gsf3_dead_head.mdl",
-	"models/player/gsf3_dead_larm.mdl",
-	"models/player/gsf3_dead_lleg.mdl",
-	"models/player/gsf3_dead_rarm.mdl",
-	"models/player/gsf3_dead_rleg.mdl",
+	"models/player/gsf3_dead_all.mdl", "models/player/gsf3_dead_head.mdl", "models/player/gsf3_dead_larm.mdl",
+	"models/player/gsf3_dead_lleg.mdl", "models/player/gsf3_dead_rarm.mdl", "models/player/gsf3_dead_rleg.mdl",
 
 	// Assaults
-	"models/player/gam_dead_all.mdl",
-	"models/player/gam_dead_head.mdl",
-	"models/player/gam_dead_larm.mdl",
-	"models/player/gam_dead_lleg.mdl",
-	"models/player/gam_dead_rarm.mdl",
-	"models/player/gam_dead_rleg.mdl",
+	"models/player/gam_dead_all.mdl", "models/player/gam_dead_head.mdl", "models/player/gam_dead_larm.mdl",
+	"models/player/gam_dead_lleg.mdl", "models/player/gam_dead_rarm.mdl", "models/player/gam_dead_rleg.mdl",
 
-	"models/player/gam2_dead_all.mdl",
-	"models/player/gam2_dead_head.mdl",
-	"models/player/gam2_dead_larm.mdl",
-	"models/player/gam2_dead_lleg.mdl",
-	"models/player/gam2_dead_rarm.mdl",
-	"models/player/gam2_dead_rleg.mdl",
+	"models/player/gam2_dead_all.mdl", "models/player/gam2_dead_head.mdl", "models/player/gam2_dead_larm.mdl",
+	"models/player/gam2_dead_lleg.mdl", "models/player/gam2_dead_rarm.mdl", "models/player/gam2_dead_rleg.mdl",
 
-	"models/player/gam3_dead_all.mdl",
-	"models/player/gam3_dead_head.mdl",
-	"models/player/gam3_dead_larm.mdl",
-	"models/player/gam3_dead_lleg.mdl",
-	"models/player/gam3_dead_rarm.mdl",
-	"models/player/gam3_dead_rleg.mdl",
+	"models/player/gam3_dead_all.mdl", "models/player/gam3_dead_head.mdl", "models/player/gam3_dead_larm.mdl",
+	"models/player/gam3_dead_lleg.mdl", "models/player/gam3_dead_rarm.mdl", "models/player/gam3_dead_rleg.mdl",
 
 	// Supports
-	"models/player/ghm_dead_all.mdl",
-	"models/player/ghm_dead_head.mdl",
-	"models/player/ghm_dead_larm.mdl",
-	"models/player/ghm_dead_lleg.mdl",
-	"models/player/ghm_dead_rarm.mdl",
-	"models/player/ghm_dead_rleg.mdl",
+	"models/player/ghm_dead_all.mdl", "models/player/ghm_dead_head.mdl", "models/player/ghm_dead_larm.mdl",
+	"models/player/ghm_dead_lleg.mdl", "models/player/ghm_dead_rarm.mdl", "models/player/ghm_dead_rleg.mdl",
 
-	"models/player/ghm2_dead_all.mdl",
-	"models/player/ghm2_dead_head.mdl",
-	"models/player/ghm2_dead_larm.mdl",
-	"models/player/ghm2_dead_lleg.mdl",
-	"models/player/ghm2_dead_rarm.mdl",
-	"models/player/ghm2_dead_rleg.mdl",
+	"models/player/ghm2_dead_all.mdl", "models/player/ghm2_dead_head.mdl", "models/player/ghm2_dead_larm.mdl",
+	"models/player/ghm2_dead_lleg.mdl", "models/player/ghm2_dead_rarm.mdl", "models/player/ghm2_dead_rleg.mdl",
 
-	"models/player/ghm3_dead_all.mdl",
-	"models/player/ghm3_dead_head.mdl",
-	"models/player/ghm3_dead_larm.mdl",
-	"models/player/ghm3_dead_lleg.mdl",
-	"models/player/ghm3_dead_rarm.mdl",
-	"models/player/ghm3_dead_rleg.mdl",
+	"models/player/ghm3_dead_all.mdl", "models/player/ghm3_dead_head.mdl", "models/player/ghm3_dead_larm.mdl",
+	"models/player/ghm3_dead_lleg.mdl", "models/player/ghm3_dead_rarm.mdl", "models/player/ghm3_dead_rleg.mdl",
 
 	//////////////////
 	// Jinrai start //
 	//////////////////
 
 	// Recons
-	"models/player/msf_dead_all.mdl",
-	"models/player/msf_dead_head.mdl",
-	"models/player/msf_dead_larm.mdl",
-	"models/player/msf_dead_lleg.mdl",
-	"models/player/msf_dead_rarm.mdl",
-	"models/player/msf_dead_rleg.mdl",
+	"models/player/msf_dead_all.mdl", "models/player/msf_dead_head.mdl", "models/player/msf_dead_larm.mdl",
+	"models/player/msf_dead_lleg.mdl", "models/player/msf_dead_rarm.mdl", "models/player/msf_dead_rleg.mdl",
 
-	"models/player/msf2_dead_all.mdl",
-	"models/player/msf2_dead_head.mdl",
-	"models/player/msf2_dead_larm.mdl",
-	"models/player/msf2_dead_lleg.mdl",
-	"models/player/msf2_dead_rarm.mdl",
-	"models/player/msf2_dead_rleg.mdl",
+	"models/player/msf2_dead_all.mdl", "models/player/msf2_dead_head.mdl", "models/player/msf2_dead_larm.mdl",
+	"models/player/msf2_dead_lleg.mdl", "models/player/msf2_dead_rarm.mdl", "models/player/msf2_dead_rleg.mdl",
 
-	"models/player/msf3_dead_all.mdl",
-	"models/player/msf3_dead_head.mdl",
-	"models/player/msf3_dead_larm.mdl",
-	"models/player/msf3_dead_lleg.mdl",
-	"models/player/msf3_dead_rarm.mdl",
-	"models/player/msf3_dead_rleg.mdl",
+	"models/player/msf3_dead_all.mdl", "models/player/msf3_dead_head.mdl", "models/player/msf3_dead_larm.mdl",
+	"models/player/msf3_dead_lleg.mdl", "models/player/msf3_dead_rarm.mdl", "models/player/msf3_dead_rleg.mdl",
 
 	// Assaults
-	"models/player/mam_dead_all.mdl",
-	"models/player/mam_dead_head.mdl",
-	"models/player/mam_dead_larm.mdl",
-	"models/player/mam_dead_lleg.mdl",
-	"models/player/mam_dead_rarm.mdl",
-	"models/player/mam_dead_rleg.mdl",
+	"models/player/mam_dead_all.mdl", "models/player/mam_dead_head.mdl", "models/player/mam_dead_larm.mdl",
+	"models/player/mam_dead_lleg.mdl", "models/player/mam_dead_rarm.mdl", "models/player/mam_dead_rleg.mdl",
 
-	"models/player/mam2_dead_all.mdl",
-	"models/player/mam2_dead_head.mdl",
-	"models/player/mam2_dead_larm.mdl",
-	"models/player/mam2_dead_lleg.mdl",
-	"models/player/mam2_dead_rarm.mdl",
-	"models/player/mam2_dead_rleg.mdl",
+	"models/player/mam2_dead_all.mdl", "models/player/mam2_dead_head.mdl", "models/player/mam2_dead_larm.mdl",
+	"models/player/mam2_dead_lleg.mdl", "models/player/mam2_dead_rarm.mdl", "models/player/mam2_dead_rleg.mdl",
 
-	"models/player/mam3_dead_all.mdl",
-	"models/player/mam3_dead_head.mdl",
-	"models/player/mam3_dead_larm.mdl",
-	"models/player/mam3_dead_lleg.mdl",
-	"models/player/mam3_dead_rarm.mdl",
-	"models/player/mam3_dead_rleg.mdl",
+	"models/player/mam3_dead_all.mdl", "models/player/mam3_dead_head.mdl", "models/player/mam3_dead_larm.mdl",
+	"models/player/mam3_dead_lleg.mdl", "models/player/mam3_dead_rarm.mdl", "models/player/mam3_dead_rleg.mdl",
 
 	// Supports
-	"models/player/mhm_dead_all.mdl",
-	"models/player/mhm_dead_head.mdl",
-	"models/player/mhm_dead_larm.mdl",
-	"models/player/mhm_dead_lleg.mdl",
-	"models/player/mhm_dead_rarm.mdl",
-	"models/player/mhm_dead_rleg.mdl",
+	"models/player/mhm_dead_all.mdl", "models/player/mhm_dead_head.mdl", "models/player/mhm_dead_larm.mdl",
+	"models/player/mhm_dead_lleg.mdl", "models/player/mhm_dead_rarm.mdl", "models/player/mhm_dead_rleg.mdl",
 
-	"models/player/mhm2_dead_all.mdl",
-	"models/player/mhm2_dead_head.mdl",
-	"models/player/mhm2_dead_larm.mdl",
-	"models/player/mhm2_dead_lleg.mdl",
-	"models/player/mhm2_dead_rarm.mdl",
-	"models/player/mhm2_dead_rleg.mdl",
+	"models/player/mhm2_dead_all.mdl", "models/player/mhm2_dead_head.mdl", "models/player/mhm2_dead_larm.mdl",
+	"models/player/mhm2_dead_lleg.mdl", "models/player/mhm2_dead_rarm.mdl", "models/player/mhm2_dead_rleg.mdl",
 
-	"models/player/mhm3_dead_all.mdl",
-	"models/player/mhm3_dead_head.mdl",
-	"models/player/mhm3_dead_larm.mdl",
-	"models/player/mhm3_dead_lleg.mdl",
-	"models/player/mhm3_dead_rarm.mdl",
-	"models/player/mhm3_dead_rleg.mdl"
-};
+	"models/player/mhm3_dead_all.mdl", "models/player/mhm3_dead_head.mdl", "models/player/mhm3_dead_larm.mdl",
+	"models/player/mhm3_dead_lleg.mdl", "models/player/mhm3_dead_rarm.mdl", "models/player/mhm3_dead_rleg.mdl"};
 
 // nsf recons have two gib limb varieties (male and female)
-static const char* gibLimbs[(NEO_GIB_LIMB_ENUM_COUNT * numClasses * numTeams) + NEO_GIB_LIMB_ENUM_COUNT] {
+static const char *gibLimbs[(NEO_GIB_LIMB_ENUM_COUNT * numClasses * numTeams) + NEO_GIB_LIMB_ENUM_COUNT]{
 	///////////////
 	// NSF start //
 	///////////////
@@ -250,7 +162,7 @@ static const char* gibLimbs[(NEO_GIB_LIMB_ENUM_COUNT * numClasses * numTeams) + 
 	"models/player/playergib/mhm_rightLeg_gib.mdl",
 };
 
-const char *viewModels[NEO_VM_ENUM_COUNT * numTeams] {
+const char *viewModels[NEO_VM_ENUM_COUNT * numTeams]{
 	///////////////
 	// NSF start //
 	///////////////
@@ -324,7 +236,7 @@ const char *viewModels[NEO_VM_ENUM_COUNT * numTeams] {
 #endif
 };
 
-const char *weapons[NEO_WEP_MDL_ENUM_COUNT] {
+const char *weapons[NEO_WEP_MDL_ENUM_COUNT]{
 	"models/weapons/w_aa13.mdl",
 	"models/weapons/w_detpack.mdl",
 	"models/weapons/w_detremote.mdl",
@@ -366,7 +278,7 @@ const char *weapons[NEO_WEP_MDL_ENUM_COUNT] {
 #endif
 };
 
-const char *dummyModels [numClasses] {
+const char *dummyModels[numClasses]{
 	"models/tutorial/dummy_small.mdl",
 	"models/tutorial/dummy_medium.mdl",
 	"models/tutorial/dummy_large.mdl",
@@ -378,7 +290,7 @@ const char *vipSmacViewModel = "models/weapons/v_vip_smac.mdl";
 
 const char *jgrModel = "models/player/jgr.mdl";
 
-static inline void PrecachePlayerModels( void )
+static inline void PrecachePlayerModels(void)
 {
 	const int pmsize = ARRAYSIZE(playerModels);
 	for (int i = 0; i < pmsize; i++)
@@ -396,7 +308,7 @@ static inline void PrecachePlayerModels( void )
 	CBaseEntity::PrecacheModel(jgrModel);
 }
 
-static inline void PrecacheGibs( void )
+static inline void PrecacheGibs(void)
 {
 	const int size = ARRAYSIZE(gibs);
 	for (int i = 0; i < size; i++)
@@ -416,7 +328,7 @@ static inline void PrecacheGibLimbs(void)
 	}
 }
 
-static inline void PrecacheViewModels( void )
+static inline void PrecacheViewModels(void)
 {
 	const int size = ARRAYSIZE(viewModels);
 	for (int i = 0; i < size; i++)
@@ -427,7 +339,7 @@ static inline void PrecacheViewModels( void )
 	CBaseEntity::PrecacheModel(vipSmacViewModel);
 }
 
-static inline void PrecacheWeapons( void )
+static inline void PrecacheWeapons(void)
 {
 	const int size = ARRAYSIZE(weapons);
 	for (int i = 0; i < size; i++)
@@ -437,7 +349,7 @@ static inline void PrecacheWeapons( void )
 }
 
 // Precaches all Neotokyo player and weapon related models.
-void CNEOModelManager::Precache( void ) const
+void CNEOModelManager::Precache(void) const
 {
 	DevMsg("CNEOModelManager::Precache\n");
 
@@ -481,19 +393,15 @@ static inline int GetTeamArrOffset(int iTeam)
 }
 
 // Returns a third person corpse, or if defined, a related gib body part.
-const char* CNEOModelManager::GetCorpseModel(NeoSkin nSkin, NeoClass nClass,
-	int iTeam, NeoGib nGib) const
+const char *CNEOModelManager::GetCorpseModel(NeoSkin nSkin, NeoClass nClass, int iTeam, NeoGib nGib) const
 {
 	if (nClass == NEO_CLASS_VIP)
 	{
 		return vipModelDead;
 	}
 
-	const int index =
-		(NEO_GIB_ENUM_COUNT * NEO_SKIN_ENUM_COUNT * numClasses * GetTeamArrOffset(iTeam))
-		+ (NEO_GIB_ENUM_COUNT * NEO_SKIN_ENUM_COUNT * nClass)
-		+ (NEO_GIB_ENUM_COUNT * nSkin)
-		+ nGib;
+	const int index = (NEO_GIB_ENUM_COUNT * NEO_SKIN_ENUM_COUNT * numClasses * GetTeamArrOffset(iTeam)) +
+		(NEO_GIB_ENUM_COUNT * NEO_SKIN_ENUM_COUNT * nClass) + (NEO_GIB_ENUM_COUNT * nSkin) + nGib;
 
 	if (index < 0 || index >= ARRAYSIZE(gibs))
 	{
@@ -505,23 +413,19 @@ const char* CNEOModelManager::GetCorpseModel(NeoSkin nSkin, NeoClass nClass,
 }
 
 // Returns a gib body part.
-const char* CNEOModelManager::GetGibModel(NeoSkin nSkin, NeoClass nClass,
-	int iTeam, NeoGibLimb nGib) const
+const char *CNEOModelManager::GetGibModel(NeoSkin nSkin, NeoClass nClass, int iTeam, NeoGibLimb nGib) const
 {
 	// NEO FIXME (Rain): Shouldn't we get the "models/nt/vipgib..." variants here?
 	if (nClass == NEO_CLASS_VIP)
 	{
 		return "models/player/playergib/gsf3_head_gib.mdl";
 	}
-	
-	const auto isMaleNsfRecon = (nSkin == NEO_SKIN_THIRD) &&
-		(iTeam == TEAM_NSF) &&
-		(nClass == NEO_CLASS_RECON);
 
-	const int index =
-		(NEO_GIB_LIMB_ENUM_COUNT * numClasses * GetTeamArrOffset(iTeam))
-		+ (NEO_GIB_LIMB_ENUM_COUNT * nClass)
-		+ nGib
+	const auto isMaleNsfRecon = (nSkin == NEO_SKIN_THIRD) && (iTeam == TEAM_NSF) && (nClass == NEO_CLASS_RECON);
+
+	const int index = (NEO_GIB_LIMB_ENUM_COUNT * numClasses * GetTeamArrOffset(iTeam)) +
+		(NEO_GIB_LIMB_ENUM_COUNT * nClass) +
+		nGib
 		// Because the NSF recon has gender specific gibs,
 		// offset all gibs except the male NSF recon ones.
 		+ (isMaleNsfRecon ? 0 : NEO_GIB_LIMB_ENUM_COUNT);
@@ -537,8 +441,7 @@ const char* CNEOModelManager::GetGibModel(NeoSkin nSkin, NeoClass nClass,
 
 // Returns a third person player model.
 // NEO FIXME (Rain): this is sometimes off. Are we indexing incorrectly, or is the cvar logic flawed?
-const char *CNEOModelManager::GetPlayerModel(NeoSkin nSkin,
-	NeoClass nClass, int iTeam) const
+const char *CNEOModelManager::GetPlayerModel(NeoSkin nSkin, NeoClass nClass, int iTeam) const
 {
 	if (nClass == NEO_CLASS_VIP)
 	{
@@ -569,9 +472,7 @@ const char *CNEOModelManager::GetPlayerModel(NeoSkin nSkin,
 	}
 
 	const int index =
-		(NEO_SKIN_ENUM_COUNT * numClasses * GetTeamArrOffset(iTeam))
-		+ (NEO_SKIN_ENUM_COUNT * nClass)
-		+ nSkin;
+		(NEO_SKIN_ENUM_COUNT * numClasses * GetTeamArrOffset(iTeam)) + (NEO_SKIN_ENUM_COUNT * nClass) + nSkin;
 
 	if (index < 0 || index >= ARRAYSIZE(playerModels))
 	{

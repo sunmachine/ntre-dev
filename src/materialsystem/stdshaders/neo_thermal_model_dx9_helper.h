@@ -22,7 +22,7 @@ class IShaderShadow;
 //-----------------------------------------------------------------------------
 struct NeoThermalModel_DX9_Vars_t
 {
-	NeoThermalModel_DX9_Vars_t() { memset( this, 0xFF, sizeof(*this) ); }
+	NeoThermalModel_DX9_Vars_t() { memset(this, 0xFF, sizeof(*this)); }
 
 	int m_nBaseTexture;
 	int m_nBaseTextureFrame;
@@ -32,15 +32,13 @@ struct NeoThermalModel_DX9_Vars_t
 	int m_nFlashlightTextureFrame;
 };
 
-void InitParamsNeoThermalModel_DX9( CBaseVSShader *pShader, IMaterialVar** params,
-						 const char *pMaterialName, NeoThermalModel_DX9_Vars_t &info );
+void InitParamsNeoThermalModel_DX9(
+	CBaseVSShader *pShader, IMaterialVar **params, const char *pMaterialName, NeoThermalModel_DX9_Vars_t &info);
 
-void InitNeoThermalModel_DX9( CBaseVSShader *pShader, IMaterialVar** params, 
-				   NeoThermalModel_DX9_Vars_t &info );
+void InitNeoThermalModel_DX9(CBaseVSShader *pShader, IMaterialVar **params, NeoThermalModel_DX9_Vars_t &info);
 
-void DrawNeoThermalModel_DX9( CBaseVSShader *pShader, IMaterialVar** params, IShaderDynamicAPI *pShaderAPI,
-				   IShaderShadow* pShaderShadow,
-				   NeoThermalModel_DX9_Vars_t &info, VertexCompressionType_t vertexCompression,
-				   CBasePerMaterialContextData **pContextDataPtr );
+void DrawNeoThermalModel_DX9(CBaseVSShader *pShader, IMaterialVar **params, IShaderDynamicAPI *pShaderAPI,
+	IShaderShadow *pShaderShadow, NeoThermalModel_DX9_Vars_t &info, VertexCompressionType_t vertexCompression,
+	CBasePerMaterialContextData **pContextDataPtr);
 
 #endif // NEO_THERMAL_MODEL_DX9_HELPER_H

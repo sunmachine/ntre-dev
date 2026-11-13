@@ -13,19 +13,21 @@ public:
 	// It does have a base, but we'll never network anything below here..
 	DECLARE_CLASS_NOBASE(CNEOTraceFilterCollisionGroupDelta);
 
-	CNEOTraceFilterCollisionGroupDelta(const IHandleEntity* passentity, int collisionGroupAlreadyChecked, int newCollisionGroup)
-		: m_pPassEnt(passentity), m_collisionGroupAlreadyChecked(collisionGroupAlreadyChecked), m_newCollisionGroup(newCollisionGroup)
+	CNEOTraceFilterCollisionGroupDelta(
+		const IHandleEntity *passentity, int collisionGroupAlreadyChecked, int newCollisionGroup)
+		: m_pPassEnt(passentity), m_collisionGroupAlreadyChecked(collisionGroupAlreadyChecked),
+		  m_newCollisionGroup(newCollisionGroup)
 	{
 	}
 
-	virtual bool ShouldHitEntity(IHandleEntity* pHandleEntity, int contentsMask)
+	virtual bool ShouldHitEntity(IHandleEntity *pHandleEntity, int contentsMask)
 	{
 		if (!PassServerEntityFilter(pHandleEntity, m_pPassEnt))
 		{
 			return false;
 		}
 
-		CBaseEntity* pEntity = EntityFromEntityHandle(pHandleEntity);
+		CBaseEntity *pEntity = EntityFromEntityHandle(pHandleEntity);
 
 		if (pEntity)
 		{
@@ -43,9 +45,9 @@ public:
 	}
 
 protected:
-	const IHandleEntity* m_pPassEnt;
-	int		m_collisionGroupAlreadyChecked;
-	int		m_newCollisionGroup;
+	const IHandleEntity *m_pPassEnt;
+	int m_collisionGroupAlreadyChecked;
+	int m_newCollisionGroup;
 };
 
 #endif // NEO_TRACEFILTER_COLLISIONGROUPDELTA_H

@@ -19,8 +19,8 @@ public:
 	virtual void UpdateStateForNeoHudElementDraw() override;
 	virtual void DrawNeoHudElement() override;
 	virtual ConVar *GetUpdateFrequencyConVar() const override;
-	
-    float GetHudCentreSize() const override;
+
+	float GetHudCentreSize() const override;
 
 	void SetTeam(const int team) { m_iCapTeam = team; }
 	void SetRadius(const float radius) { m_flMyRadius = radius; }
@@ -32,8 +32,8 @@ private:
 	int m_flMyRadius = 0;
 	int m_iCapTeam = TEAM_INVALID;
 	float m_flDistance = 0.0f;
-	float m_fMarkerScalesStart[4] = { 0.78f, 0.6f, 0.38f, 0.0f };
-	float m_fMarkerScalesCurrent[4] = { 0.78f, 0.6f, 0.38f, 0.0f };
+	float m_fMarkerScalesStart[4] = {0.78f, 0.6f, 0.38f, 0.0f};
+	float m_fMarkerScalesCurrent[4] = {0.78f, 0.6f, 0.38f, 0.0f};
 	wchar_t m_wszMarkerTextUnicode[64 + 1] = {};
 	Vector m_vecMyPos = Vector(0, 0, 0);
 	vgui::HFont m_hFont = 0UL;

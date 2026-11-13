@@ -62,7 +62,7 @@ void CNEO_NPCTargetSystem::Spawn()
 {
 	if (m_iFilterName != NULL_STRING)
 	{
-		m_pFilter = dynamic_cast<CBaseFilter*>(gEntList.FindEntityByName(nullptr, m_iFilterName));
+		m_pFilter = dynamic_cast<CBaseFilter *>(gEntList.FindEntityByName(nullptr, m_iFilterName));
 	}
 
 	if (m_strDamageSourceName != NULL_STRING)
@@ -98,7 +98,7 @@ void CNEO_NPCTargetSystem::Think()
 
 	for (int i = 1; i <= gpGlobals->maxClients; i++)
 	{
-		CBasePlayer* pPlayer = UTIL_PlayerByIndex(i);
+		CBasePlayer *pPlayer = UTIL_PlayerByIndex(i);
 		if (!pPlayer || !pPlayer->IsAlive())
 		{
 			continue;
@@ -175,18 +175,21 @@ void CNEO_NPCTargetSystem::Think()
 	enum TargetZone_e iNewZone = ZONE_NONE;
 	if (pBestTarget)
 	{
-		if (flBestForward >= m_flDeadzone && flBestLateral <= m_flMiddleBoundsHalf) // If the player is outside the deadzone and inside the middle volume
+		if (flBestForward >= m_flDeadzone &&
+			flBestLateral <= m_flMiddleBoundsHalf) // If the player is outside the deadzone and inside the middle volume
 		{
 			iNewZone = ZONE_MIDDLE;
 		}
 		else if (flBestLateral > m_flMiddleBoundsHalf)
 		{
 			float flDotRight = DotProduct(vBestLateral, vecRight);
-			iNewZone = (flDotRight > 0.0f) ? ZONE_RIGHT : ZONE_LEFT; // If the dot product is negative, the playa is on the left side
+			iNewZone = (flDotRight > 0.0f) ? ZONE_RIGHT
+										   : ZONE_LEFT; // If the dot product is negative, the playa is on the left side
 		}
 	}
 
-	bool bMiddleIgnore = pBestTarget && (flBestLateral <= m_flMiddleBoundsHalf); // Its just the middle zone ignoring the deadzone.
+	bool bMiddleIgnore =
+		pBestTarget && (flBestLateral <= m_flMiddleBoundsHalf); // Its just the middle zone ignoring the deadzone.
 
 	// Fire outputs
 	if (pBestTarget)
@@ -258,10 +261,11 @@ void CNEO_NPCTargetSystem::Think()
 			VectorNormalize(vecDir);
 
 			// This intentionally should not create any tracer / decal effects being a server side only operation
-			FireBulletsInfo_t info( 1, vecSrc, vecDir, vec3_origin, MAX_TRACE_LENGTH, GetAmmoDef()->Index("AMMO_PRI"), 28.0f, true, false );
+			FireBulletsInfo_t info(
+				1, vecSrc, vecDir, vec3_origin, MAX_TRACE_LENGTH, GetAmmoDef()->Index("AMMO_PRI"), 28.0f, true, false);
 			info.m_flDamage = m_flDamage;
 			FireBullets(info);
-			
+
 			if (m_flFireRate > 0)
 			{
 				m_flNextFireTime = gpGlobals->curtime + (1.0f / m_flFireRate);

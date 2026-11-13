@@ -8,10 +8,11 @@
 
 extern ConVar neo_ghost_cap_point_hud_scale_factor;
 
-NEO_HUD_ELEMENT_DECLARE_FREQ_CVAR( WorldPosMarker_Generic, 0 )
+NEO_HUD_ELEMENT_DECLARE_FREQ_CVAR(WorldPosMarker_Generic, 0)
 
-CNEOHud_WorldPosMarker_Generic::CNEOHud_WorldPosMarker_Generic( const char *pElementName, C_NEOWorldPosMarkerEnt *src, vgui::Panel *parent )
-	: CNEOHud_WorldPosMarker (pElementName, parent )
+CNEOHud_WorldPosMarker_Generic::CNEOHud_WorldPosMarker_Generic(
+	const char *pElementName, C_NEOWorldPosMarkerEnt *src, vgui::Panel *parent)
+	: CNEOHud_WorldPosMarker(pElementName, parent)
 {
 	SetAutoDelete(true);
 	m_iHideHudElementNumber = NEO_HUD_ELEMENT_WORLDPOS_MARKER_ENT;
@@ -30,20 +31,20 @@ CNEOHud_WorldPosMarker_Generic::CNEOHud_WorldPosMarker_Generic( const char *pEle
 
 	m_pSource = src;
 
-	for ( int i = 0; i < MAX_SCREEN_OVERLAYS; i++ )
+	for (int i = 0; i < MAX_SCREEN_OVERLAYS; i++)
 	{
-		if ( m_pSource->m_iszSpriteNames[i][0] )
+		if (m_pSource->m_iszSpriteNames[i][0])
 		{
 			m_hSprite[i] = vgui::surface()->CreateNewTextureID();
 			Assert(m_hSprite[i] > 0);
-			vgui::surface()->DrawSetTextureFile( m_hSprite[i], m_pSource->m_iszSpriteNames[i], 1, false );
+			vgui::surface()->DrawSetTextureFile(m_hSprite[i], m_pSource->m_iszSpriteNames[i], 1, false);
 		}
 	}
 
 	SetVisible(false);
 }
 
-void CNEOHud_WorldPosMarker_Generic::ApplySchemeSettings( vgui::IScheme *pScheme )
+void CNEOHud_WorldPosMarker_Generic::ApplySchemeSettings(vgui::IScheme *pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 
@@ -56,27 +57,27 @@ void CNEOHud_WorldPosMarker_Generic::ApplySchemeSettings( vgui::IScheme *pScheme
 void CNEOHud_WorldPosMarker_Generic::UpdateStateForNeoHudElementDraw()
 {
 	auto *player = C_NEO_Player::GetLocalNEOPlayer();
-	if ( !player || !m_pSource )
+	if (!player || !m_pSource)
 	{
 		return;
 	}
-	
-	m_vecMyPos = m_pSource->GetAbsOrigin();
-	m_flDistance = METERS_PER_INCH * player->GetAbsOrigin().DistTo( m_vecMyPos );
 
-	g_pVGuiLocalize->ConvertANSIToUnicode( m_pSource->m_szText, m_wszMarkerTextUnicode, sizeof( m_wszMarkerTextUnicode ) );
-	if ( m_wszMarkerTextUnicode[0] != L'\0' && m_pSource->m_bShowDistance )
+	m_vecMyPos = m_pSource->GetAbsOrigin();
+	m_flDistance = METERS_PER_INCH * player->GetAbsOrigin().DistTo(m_vecMyPos);
+
+	g_pVGuiLocalize->ConvertANSIToUnicode(m_pSource->m_szText, m_wszMarkerTextUnicode, sizeof(m_wszMarkerTextUnicode));
+	if (m_wszMarkerTextUnicode[0] != L'\0' && m_pSource->m_bShowDistance)
 	{
 		wchar_t wszTemp[ARRAYSIZE(m_wszMarkerTextUnicode)];
-		V_wcsncpy( wszTemp, m_wszMarkerTextUnicode, sizeof( wszTemp ) );
+		V_wcsncpy(wszTemp, m_wszMarkerTextUnicode, sizeof(wszTemp));
 
-		V_snwprintf( m_wszMarkerTextUnicode, ARRAYSIZE( m_wszMarkerTextUnicode ), L"%ls %.0f m", wszTemp, m_flDistance );
+		V_snwprintf(m_wszMarkerTextUnicode, ARRAYSIZE(m_wszMarkerTextUnicode), L"%ls %.0f m", wszTemp, m_flDistance);
 	}
 }
 
 void CNEOHud_WorldPosMarker_Generic::DrawNeoHudElement()
 {
-	if ( !ShouldDraw() )
+	if (!ShouldDraw())
 	{
 		return;
 	}
@@ -85,17 +86,17 @@ void CNEOHud_WorldPosMarker_Generic::DrawNeoHudElement()
 	const int playerTeam = player->GetTeamNumber();
 
 	const color32 rCol = m_pSource->GetRenderColor();
-	Color targetColor( rCol.r, rCol.g, rCol.b, rCol.a );
-	
-	const bool playerIsPlaying = ( playerTeam == TEAM_JINRAI || playerTeam == TEAM_NSF );
+	Color targetColor(rCol.r, rCol.g, rCol.b, rCol.a);
+
+	const bool playerIsPlaying = (playerTeam == TEAM_JINRAI || playerTeam == TEAM_NSF);
 
 	int x, y;
 	GetVectorInScreenSpace(m_vecMyPos, x, y);
 
-	const float scale = neo_ghost_cap_point_hud_scale_factor.GetFloat() * ( m_pSource->m_flScale / 0.5f );
+	const float scale = neo_ghost_cap_point_hud_scale_factor.GetFloat() * (m_pSource->m_flScale / 0.5f);
 
 	constexpr float HALF_BASE_TEX_LENGTH = 64;
-	if ( playerIsPlaying && m_wszMarkerTextUnicode[0] != L'\0' )
+	if (playerIsPlaying && m_wszMarkerTextUnicode[0] != L'\0')
 	{
 		const float fadeTextMultiplier = GetFadeValueTowardsScreenCentre(x, y);
 		if (m_flDistance > 0.2f && fadeTextMultiplier > 0.001f)
@@ -111,10 +112,11 @@ void CNEOHud_WorldPosMarker_Generic::DrawNeoHudElement()
 		}
 	}
 
-	vgui::surface()->DrawSetTexture( m_hSprite[m_pSource->m_iCurrentSprite] );
-	if ( m_pSource->m_bCapzoneEffect )
+	vgui::surface()->DrawSetTexture(m_hSprite[m_pSource->m_iCurrentSprite]);
+	if (m_pSource->m_bCapzoneEffect)
 	{
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++)
+		{
 			m_fMarkerScalesCurrent[i] = (remainder(gpGlobals->curtime, 2) / 2) + 0.5 + m_fMarkerScalesStart[i];
 			if (m_fMarkerScalesCurrent[i] > 1)
 				m_fMarkerScalesCurrent[i] -= 1;
@@ -128,10 +130,7 @@ void CNEOHud_WorldPosMarker_Generic::DrawNeoHudElement()
 
 			const float halfArrowLength = HALF_BASE_TEX_LENGTH * m_fMarkerScalesCurrent[i] * scale;
 			vgui::surface()->DrawTexturedRect(
-				x - halfArrowLength,
-				y - halfArrowLength,
-				x + halfArrowLength,
-				y + halfArrowLength);
+				x - halfArrowLength, y - halfArrowLength, x + halfArrowLength, y + halfArrowLength);
 		}
 
 		float alpha6 = remainder(gpGlobals->curtime, 6) + 3;
@@ -144,25 +143,22 @@ void CNEOHud_WorldPosMarker_Generic::DrawNeoHudElement()
 	}
 
 	const float halfArrowLength = HALF_BASE_TEX_LENGTH * scale;
-	vgui::surface()->DrawSetColor( targetColor );
+	vgui::surface()->DrawSetColor(targetColor);
 	vgui::surface()->DrawTexturedRect(
-		x - halfArrowLength,
-		y - halfArrowLength,
-		x + halfArrowLength,
-		y + halfArrowLength);
+		x - halfArrowLength, y - halfArrowLength, x + halfArrowLength, y + halfArrowLength);
 }
 
 void CNEOHud_WorldPosMarker_Generic::Paint()
 {
-	SetFgColor( COLOR_TRANSPARENT );
-	SetBgColor( COLOR_TRANSPARENT );
+	SetFgColor(COLOR_TRANSPARENT);
+	SetBgColor(COLOR_TRANSPARENT);
 	BaseClass::Paint();
 	PaintNeoElement();
 }
 
 bool CNEOHud_WorldPosMarker_Generic::ShouldDraw()
 {
-	if ( !BaseClass::ShouldDraw() || NEORules()->IsRoundOver() || !m_pSource || !m_pSource->m_bEnabled )
+	if (!BaseClass::ShouldDraw() || NEORules()->IsRoundOver() || !m_pSource || !m_pSource->m_bEnabled)
 	{
 		return false;
 	}
