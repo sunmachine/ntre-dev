@@ -86,7 +86,7 @@
 3	src/game/server/baseanimating.h
 5	src/game/server/basecombatcharacter.cpp
 5	src/game/server/basecombatcharacter.h
-27	src/game/server/baseentity.cpp
+6	src/game/server/baseentity.cpp
 6	src/game/server/baseentity.h
 5	src/game/server/baseflex.cpp
 6	src/game/server/basemultiplayerplayer.cpp
