@@ -108,12 +108,14 @@ ConCommand neo_toggleconsole("neo_toggleconsole", NeoToggleconsole, "toggle the 
 
 struct YMD
 {
+	// clang-format off
 	YMD(const struct tm tm)
 		: year(tm.tm_year + 1900)
 		, month(tm.tm_mon + 1)
 		, day(tm.tm_mday)
 	{
 	}
+	// clang-format on
 
 	bool operator==(const YMD &other) const
 	{
@@ -221,9 +223,11 @@ static void AddToBlacklist(const gameserveritem_t *gameServer)
 	g_blacklistedServers.AddToTail(sbInfo);
 }
 
+// clang-format off
 CNeoRootInput::CNeoRootInput(CNeoRoot *rootPanel)
 	: Panel(rootPanel, "NeoRootPanelInput")
 	, m_pNeoRoot(rootPanel)
+// clang-format on
 {
 	MakePopup(true);
 	SetKeyBoardInputEnabled(true);
@@ -356,9 +360,11 @@ static const char *BINDNAME_TO_ROOTBUTTONACTION_MAP[CNeoRoot::ROOTBUTTONACTION__
 	"neo_mp3",				// ROOTBUTTONACTION_MP3
 };
 
+// clang-format off
 CNeoRoot::CNeoRoot(VPANEL parent)
 	: EditablePanel(nullptr, "NeoRootPanel")
 	, m_panelCaptureInput(new CNeoRootInput(this))
+// clang-format on
 {
 	SetParent(parent);
 	g_pNeoRoot = this;

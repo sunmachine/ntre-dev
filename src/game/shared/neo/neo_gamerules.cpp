@@ -188,11 +188,13 @@ ConVar cl_neo_client_autorecord_allow("cl_neo_client_autorecord_allow", "1", FCV
 
 #ifdef GAME_DLL
 // NEO JANK (nullsystem): REASON/BUG (GH-ISSUE #1717): Linux OpenGL + mesa driver clients can wallhack weapons in thermal vision
+// clang-format off
 ConVar sv_neo_reject_opengl_mesa_check("sv_neo_reject_opengl_mesa_check", "0", 0,
 									"If enabled, when the server checks the client rendering backend, it will reject OpenGL. "
 									"This is due to a combination of Linux, NT;RE running in OpenGL, and Mesa driver currently having shaders issues. "
 									"OpenGL rendering is only used on Linux."
 									, true, 0.0f, true, 1.0f);
+// clang-format on
 #endif
 
 extern ConVar sv_neo_comp;
@@ -210,11 +212,13 @@ static void neoSvCompCallback(IConVar* var, const char* pOldValue, float flOldVa
 #endif
 }
 
+// clang-format off
 ConVar sv_neo_comp("sv_neo_comp", "0", FCVAR_REPLICATED, "Enables competitive gamerules", true, 0.f, true, 1.f
 	#ifdef GAME_DLL
 	, neoSvCompCallback
 	#endif // GAME_DLL
 );
+// clang-format on
 
 ConVar sv_neo_comp_name("sv_neo_comp_name", "", FCVAR_REPLICATED, "Name of the competition. Leave blank if unused.");
 
@@ -479,6 +483,7 @@ static void neoRoundLimitLegacyCallback(IConVar* var, const char* pOldValue, flo
 	sv_neo_ctg_round_limit.SetValue(neo_round_limit.GetInt());
 }
 
+// clang-format off
 ConVar neo_score_limit("neo_score_limit", "7", FCVAR_REPLICATED | FCVAR_HIDDEN, "(Legacy) Neo score limit.", true, 0.0f, true, 99.0f
 #ifdef GAME_DLL
 	, neoScoreLimitLegacyCallback
@@ -489,6 +494,7 @@ ConVar neo_round_limit("neo_round_limit", "0", FCVAR_REPLICATED | FCVAR_HIDDEN, 
 	, neoRoundLimitLegacyCallback
 #endif
 );
+// clang-format on
 
 ConVar neo_round_sudden_death("neo_round_sudden_death", "1", FCVAR_REPLICATED, "If neo_round_limit is not 0 and round is past "
 	"neo_round_limit, go into sudden death where match won't end until a team won.", true, 0.0f, true, 1.0f);
@@ -5267,9 +5273,11 @@ void CNEORules::ReadyToggle(CNEO_Player *pNeoPlayer, const ReadyToggleFlags flag
 				continue;
 			}
 
+			// clang-format off
 			V_sprintf_safe(szReadyPrint, "Player %s now %s"
 					, pNeoPlayer->GetNeoPlayerName(pNeoOtherPlayer)
 					, (flags & READYTOGGLEFLAG_UNREADY) ? "unready" : "ready");
+			// clang-format on
 			ClientPrint(pNeoOtherPlayer, HUD_PRINTTALK, szReadyPrint);
 		}
 	}

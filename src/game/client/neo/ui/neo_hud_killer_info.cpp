@@ -22,9 +22,11 @@ DECLARE_NAMED_HUDELEMENT(CNEOHud_KillerInfo, neo_killer_info)
 
 NEO_HUD_ELEMENT_DECLARE_FREQ_CVAR(KillerInfo, 0.25)
 
+// clang-format off
 CNEOHud_KillerInfo::CNEOHud_KillerInfo(const char *pszName, vgui::Panel *parent)
 	: CHudElement(pszName)
 	, vgui::Panel(parent, pszName)
+// clang-format on
 {
 	SetAutoDelete(true);
 	if (parent)
@@ -175,11 +177,13 @@ void CNEOHud_KillerInfo::DrawNeoHudElement()
 	}
 	else
 	{
+		// clang-format off
 		V_swprintf_safe(wszText, L"%dhp %ls at %.2fm with %ls"
 				, g_neoKillerInfos.iHP
 				, GetNeoClassNameW(g_neoKillerInfos.iClass)
 				, g_neoKillerInfos.flDistance
 				, g_neoKillerInfos.wszKilledWith);
+		// clang-format on
 	}
 
 	vgui::surface()->DrawSetTextFont(m_hFontNormal);
