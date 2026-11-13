@@ -58,7 +58,7 @@
 2045	src/game/client/mp3player.cpp
 13	src/game/client/particlemgr.cpp
 14	src/game/client/playerspawncache.h
-44	src/game/client/smoke_fog_overlay.cpp
+4	src/game/client/smoke_fog_overlay.cpp
 2	src/game/client/text_message.cpp
 2	src/game/client/vgui_bitmapimage.cpp
 1	src/game/client/vgui_fpspanel.cpp
