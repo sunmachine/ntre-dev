@@ -25,6 +25,7 @@ FOR_LIST_WEAPONS(WEAPON_DEF, WEAPON_DEF_ALT)
 WEAPON_DEF(PBK56S, pbk56s, "PBK56")
 #endif
 
+// clang-format off
 inline const CLoadoutWeapon s_LoadoutWeapons[NEO_LOADOUT__COUNT][MAX_WEAPON_LOADOUTS] =
 {
 	// Recon
@@ -85,6 +86,7 @@ inline const CLoadoutWeapon s_LoadoutWeapons[NEO_LOADOUT__COUNT][MAX_WEAPON_LOAD
 		{XP_EMPTY, WEAPON(empty)},		{XP_EMPTY, WEAPON(empty)},		{XP_EMPTY, WEAPON(empty)},
 	},
 };
+// clang-format on
 
 int GetNumberOfLoadoutWeapons(const int rank, const int classType)
 {
