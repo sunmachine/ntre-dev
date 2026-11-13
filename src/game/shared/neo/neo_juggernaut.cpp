@@ -27,23 +27,28 @@ float CNEO_Juggernaut::GetUseDistanceSquared()
 }
 
 #ifdef GAME_DLL
+// clang-format off
 IMPLEMENT_SERVERCLASS_ST(CNEO_Juggernaut, DT_NEO_Juggernaut)
 	SendPropBool(SENDINFO(m_bLocked)),
 	SendPropBool(SENDINFO(m_bIsHolding)),
 	SendPropEHandle(SENDINFO(m_hHoldingPlayer)),
 END_SEND_TABLE()
+// clang-format on
 #else
 #ifdef CNEO_Juggernaut
 #undef CNEO_Juggernaut
 #endif
+// clang-format off
 IMPLEMENT_CLIENTCLASS_DT(C_NEO_Juggernaut, DT_NEO_Juggernaut, CNEO_Juggernaut)
 	RecvPropBool(RECVINFO(m_bLocked)),
 	RecvPropBool(RECVINFO(m_bIsHolding)),
 	RecvPropEHandle(RECVINFO(m_hHoldingPlayer)),
 END_RECV_TABLE()
+// clang-format on
 #define CNEO_Juggernaut C_NEO_Juggernaut
 #endif
 
+// clang-format off
 BEGIN_DATADESC(CNEO_Juggernaut)
 #ifdef GAME_DLL
 	DEFINE_USEFUNC(CNEO_Juggernaut::Use),
@@ -57,6 +62,7 @@ BEGIN_DATADESC(CNEO_Juggernaut)
 	DEFINE_OUTPUT(m_OnPlayerActivate, "OnPlayerActivate")
 #endif
 END_DATADESC()
+// clang-format on
 
 #ifdef GAME_DLL
 CNEO_Juggernaut::~CNEO_Juggernaut()

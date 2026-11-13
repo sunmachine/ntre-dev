@@ -6,6 +6,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+// clang-format off
 BEGIN_DATADESC(CNEOObjectiveSpawnPoint)
 	DEFINE_KEYFIELD(m_bStartDisabled, FIELD_BOOLEAN, "StartDisabled"),
 
@@ -14,6 +15,7 @@ BEGIN_DATADESC(CNEOObjectiveSpawnPoint)
 
 	DEFINE_OUTPUT(m_OnSpawnedHere, "OnSpawnedHere"),
 END_DATADESC()
+// clang-format on
 
 void CNEOObjectiveSpawnPoint::Spawn()
 {

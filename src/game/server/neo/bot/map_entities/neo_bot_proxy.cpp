@@ -5,6 +5,7 @@
 #include "neo_bot_generator.h"
 
 
+// clang-format off
 BEGIN_DATADESC( CNEOBotProxy )
 	DEFINE_KEYFIELD( m_botName,				FIELD_STRING,	"bot_name" ),
 	DEFINE_KEYFIELD( m_teamName,			FIELD_STRING,	"team" ),
@@ -25,6 +26,7 @@ BEGIN_DATADESC( CNEOBotProxy )
 
 	DEFINE_THINKFUNC( Think ),
 END_DATADESC()
+// clang-format on
 
 LINK_ENTITY_TO_CLASS( bot_proxy, CNEOBotProxy );
 

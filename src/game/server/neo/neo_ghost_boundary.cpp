@@ -11,9 +11,11 @@
 
 LINK_ENTITY_TO_CLASS(neo_trigger_weapon, CNEO_TriggerWeapon);
 
+// clang-format off
 BEGIN_DATADESC(CNEO_TriggerWeapon)
     DEFINE_THINKFUNC(Think),
 END_DATADESC()
+// clang-format on
 
 void CNEO_TriggerWeapon::Spawn()
 {
@@ -79,9 +81,11 @@ bool CNEO_TriggerWeapon::IsEntityInside(CBaseEntity* pEnt)
 
 LINK_ENTITY_TO_CLASS(neo_ghost_boundary, CNEO_GhostBoundary);
 
+// clang-format off
 BEGIN_DATADESC(CNEO_GhostBoundary)
     DEFINE_THINKFUNC(Think),
 END_DATADESC()
+// clang-format on
 
 void CNEO_GhostBoundary::Think()
 {

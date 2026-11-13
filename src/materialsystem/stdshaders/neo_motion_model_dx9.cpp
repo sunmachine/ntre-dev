@@ -5,11 +5,13 @@
 DEFINE_FALLBACK_SHADER( Neo_Motion_Model, Neo_Motion_Model_DX9 )
 BEGIN_VS_SHADER( Neo_Motion_Model_DX9, "Help for motion model shader" )
 
+	// clang-format off
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( ALPHATESTREFERENCE, SHADER_PARAM_TYPE_FLOAT, "0.0", "" )
 		SHADER_PARAM( MVMGRADTEXTURE, SHADER_PARAM_TYPE_TEXTURE, "dev/tvmgrad", "")
 		SHADER_PARAM( SPEED, SHADER_PARAM_TYPE_FLOAT, "0.0", "")
 	END_SHADER_PARAMS
+	// clang-format on
 
 	void SetupVars( NeoMotionModel_DX9_Vars_t& info )
 	{

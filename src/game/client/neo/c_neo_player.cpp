@@ -69,6 +69,7 @@
 
 LINK_ENTITY_TO_CLASS(player, C_NEO_Player);
 
+// clang-format off
 IMPLEMENT_CLIENTCLASS_DT(C_NEO_Player, DT_NEO_Player, CNEO_Player)
 	RecvPropInt(RECVINFO(m_iNeoClass)),
 	RecvPropInt(RECVINFO(m_iNeoSkin)),
@@ -110,7 +111,9 @@ IMPLEMENT_CLIENTCLASS_DT(C_NEO_Player, DT_NEO_Player, CNEO_Player)
 	RecvPropEHandle(RECVINFO(m_hSpectatorTakeoverPlayerTarget)),
 	RecvPropEHandle(RECVINFO(m_hSpectatorTakeoverPlayerImpersonatingMe))
 END_RECV_TABLE()
+// clang-format on
 
+// clang-format off
 BEGIN_PREDICTION_DATA(C_NEO_Player)
 	DEFINE_PRED_FIELD_TOL(m_flCamoAuxLastTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE, TD_MSECTOLERANCE),
 	
@@ -133,6 +136,7 @@ BEGIN_PREDICTION_DATA(C_NEO_Player)
 	DEFINE_FIELD(m_bFootstepLanding, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_vecFootstepAvgVelocity, FIELD_VECTOR),
 END_PREDICTION_DATA()
+// clang-format on
 
 static void __MsgFunc_IdleRespawnShowMenu(bf_read &)
 {

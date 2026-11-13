@@ -14,6 +14,7 @@
 
 LINK_ENTITY_TO_CLASS(neo_grenade_smoke, CNEOGrenadeSmoke);
 
+// clang-format off
 BEGIN_DATADESC(CNEOGrenadeSmoke)
 // Fields
 DEFINE_FIELD(m_inSolid, FIELD_BOOLEAN),
@@ -26,6 +27,7 @@ DEFINE_THINKFUNC(DelayThink),
 // Inputs
 DEFINE_INPUTFUNC(FIELD_FLOAT, "SetTimer", InputSetTimer),
 END_DATADESC()
+// clang-format on
 
 ConVar sv_neo_smoke_bloom_duration("sv_neo_smoke_bloom_duration", "25", FCVAR_CHEAT, "How long should the smoke bloom be up, in seconds.", true, 0.0, true, 60.0);
 ConVar sv_neo_smoke_bloom_layers("sv_neo_smoke_bloom_layers", "2", FCVAR_CHEAT, "Amount of smoke layers atop each other.", true, 0.0, true, 32.0);

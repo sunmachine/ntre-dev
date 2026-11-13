@@ -30,6 +30,7 @@
 
 IMPLEMENT_NETWORKCLASS_ALIASED(WeaponDetpack, DT_WeaponDetpack)
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CWeaponDetpack, DT_WeaponDetpack)
 #ifdef CLIENT_DLL
 	RecvPropBool(RECVINFO(m_fDrawbackFinished)),
@@ -43,14 +44,17 @@ BEGIN_NETWORK_TABLE(CWeaponDetpack, DT_WeaponDetpack)
 	SendPropBool(SENDINFO(m_bRemoteHasBeenTriggered)),
 #endif
 END_NETWORK_TABLE()
+// clang-format on
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CWeaponDetpack)
 	DEFINE_PRED_FIELD(m_fDrawbackFinished, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_bWantsToThrowThisDetpack, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_bThisDetpackHasBeenThrown, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_bRemoteHasBeenTriggered, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
 NEO_IMPLEMENT_ACTTABLE(CWeaponDetpack)
@@ -58,12 +62,14 @@ NEO_IMPLEMENT_ACTTABLE(CWeaponDetpack)
 LINK_ENTITY_TO_CLASS(weapon_remotedet, CWeaponDetpack);
 
 #ifdef GAME_DLL
+// clang-format off
 BEGIN_DATADESC(CWeaponDetpack)
 	DEFINE_FIELD(m_fDrawbackFinished, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_bWantsToThrowThisDetpack, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_bThisDetpackHasBeenThrown, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_bRemoteHasBeenTriggered, FIELD_BOOLEAN),
 END_DATADESC()
+// clang-format on
 #endif
 
 PRECACHE_WEAPON_REGISTER(weapon_remotedet);

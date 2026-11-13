@@ -5,11 +5,13 @@
 DEFINE_FALLBACK_SHADER( Neo_Thermal_Model, Neo_Thermal_Model_DX9 )
 BEGIN_VS_SHADER( Neo_Thermal_Model_DX9, "Help for thermal model shader" )
 
+	// clang-format off
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( ALPHATESTREFERENCE, SHADER_PARAM_TYPE_FLOAT, "0.0", "" )
 		SHADER_PARAM( TVMGRADTEXTURE, SHADER_PARAM_TYPE_TEXTURE, "dev/tvmgrad2", "")
 		SHADER_PARAM( TEMPERATURE, SHADER_PARAM_TYPE_FLOAT, "0.0", "")
 	END_SHADER_PARAMS
+	// clang-format on
 
 	void SetupVars( NeoThermalModel_DX9_Vars_t& info )
 	{

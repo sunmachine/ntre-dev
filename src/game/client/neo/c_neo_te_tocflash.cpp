@@ -9,6 +9,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+// clang-format off
 IMPLEMENT_CLIENTCLASS_EVENT_DT(C_NEO_TE_TocFlash, DT_NEO_TE_TocFlash, CNEO_TE_TocFlash)
 	RecvPropVector(RECVINFO(m_vecOrigin)),
 	RecvPropInt(RECVINFO(r)),
@@ -19,6 +20,7 @@ IMPLEMENT_CLIENTCLASS_EVENT_DT(C_NEO_TE_TocFlash, DT_NEO_TE_TocFlash, CNEO_TE_To
 	RecvPropFloat(RECVINFO(m_fTime)),
 	RecvPropFloat(RECVINFO(m_fDecay)),
 END_RECV_TABLE()
+// clang-format on
 
 C_NEO_TE_TocFlash::C_NEO_TE_TocFlash() : C_BaseTempEntity()
 {

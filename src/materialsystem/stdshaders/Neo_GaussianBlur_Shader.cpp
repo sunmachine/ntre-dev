@@ -8,9 +8,11 @@
 #include "tier0/memdbgon.h"
 
 BEGIN_VS_SHADER_FLAGS(Neo_GaussianBlur, "Help for Neo_GaussianBlur", SHADER_NOT_EDITABLE)
+// clang-format off
 BEGIN_SHADER_PARAMS
 SHADER_PARAM(BASETEXTURE, SHADER_PARAM_TYPE_TEXTURE, "_rt_FullFrameFB", "Render target")
 END_SHADER_PARAMS
+// clang-format on
 
 SHADER_FALLBACK
 {

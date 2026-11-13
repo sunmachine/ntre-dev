@@ -5,6 +5,7 @@
 
 LINK_ENTITY_TO_CLASS(neo_game_config, CNEOGameConfig);
 
+// clang-format off
 BEGIN_DATADESC(CNEOGameConfig)
 	DEFINE_KEYFIELD(m_GameType, FIELD_INTEGER, "GameType"),
 	DEFINE_KEYFIELD(m_HiddenHudElements, FIELD_INTEGER, "spawnflags"),
@@ -23,6 +24,7 @@ BEGIN_DATADESC(CNEOGameConfig)
 	DEFINE_OUTPUT(m_OnRoundStart, "OnRoundStart"),
 	DEFINE_OUTPUT(m_OnCompetitive, "OnCompetitive")
 END_DATADESC()
+// clang-format on
 
 extern ConVar sv_neo_comp;
 

@@ -389,6 +389,7 @@ static ConCommand neo_bot_warp_team_to_me("neo_bot_warp_team_to_me", CMD_BotWarp
 LINK_ENTITY_TO_CLASS(neo_bot, CNEOBot);
 
 //-----------------------------------------------------------------------------------------------------
+// clang-format off
 BEGIN_ENT_SCRIPTDESC( CNEOBot, CNEO_Player, "Beep boop beep boop :3" )
 DEFINE_SCRIPTFUNC_NAMED( SetAttribute, "AddBotAttribute", "Sets attribute flags on this HL2MPBot" )
 DEFINE_SCRIPTFUNC_NAMED( ClearAttribute, "RemoveBotAttribute", "Removes attribute flags on this HL2MPBot" )
@@ -480,6 +481,7 @@ DEFINE_SCRIPTFUNC_WRAPPED( SetActionPoint, "Set the given action point for this 
 DEFINE_SCRIPTFUNC_WRAPPED( GetActionPoint, "Get the given action point for this bot" )
 
 END_SCRIPTDESC();
+// clang-format on
 
 //-----------------------------------------------------------------------------------------------------
 /**

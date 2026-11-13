@@ -15,12 +15,16 @@
 
 IMPLEMENT_NETWORKCLASS_ALIASED(WeaponKyla, DT_WeaponKyla);
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CWeaponKyla, DT_WeaponKyla)
 END_NETWORK_TABLE()
+// clang-format on
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CWeaponKyla)
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
 NEO_IMPLEMENT_ACTTABLE(CWeaponKyla)

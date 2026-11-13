@@ -18,19 +18,25 @@ static const Vector g_bludgeonMaxs(KNIFE_HULL_DIM, KNIFE_HULL_DIM, KNIFE_HULL_DI
 
 IMPLEMENT_NETWORKCLASS_ALIASED (WeaponKnife, DT_WeaponKnife)
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CWeaponKnife, DT_WeaponKnife)
 END_NETWORK_TABLE()
+// clang-format on
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CWeaponKnife)
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
 LINK_ENTITY_TO_CLASS(weapon_knife, CWeaponKnife);
 
 #ifdef GAME_DLL
+// clang-format off
 BEGIN_DATADESC(CWeaponKnife)
 END_DATADESC()
+// clang-format on
 #endif
 
 PRECACHE_WEAPON_REGISTER(weapon_knife);

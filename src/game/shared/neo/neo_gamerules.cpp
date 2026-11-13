@@ -292,6 +292,7 @@ void CNEOGameRulesProxy::OnDataChanged(DataUpdateType_t updateType)
 
 REGISTER_GAMERULES_CLASS( CNEORules );
 
+// clang-format off
 BEGIN_NETWORK_TABLE_NOBASE( CNEORules, DT_NEORules )
 // NEO TODO (Rain): NEO specific game modes var (CTG/TDM/...)
 #ifdef CLIENT_DLL
@@ -382,6 +383,7 @@ BEGIN_NETWORK_TABLE_NOBASE( CNEORules, DT_NEORules )
 	SendPropInt(SENDINFO(m_iNsfSupportCount)),
 #endif
 END_NETWORK_TABLE()
+// clang-format on
 
 LINK_ENTITY_TO_CLASS( neo_gamerules, CNEOGameRulesProxy );
 IMPLEMENT_NETWORKCLASS_ALIASED( NEOGameRulesProxy, DT_NEOGameRulesProxy );
@@ -432,11 +434,13 @@ const NeoGameTypeSettings NEO_GAME_TYPE_SETTINGS[NEO_GAME_TYPE__TOTAL] = {
 		*pOut = pRules;
 	}
 
+	// clang-format off
 	BEGIN_RECV_TABLE( CNEOGameRulesProxy, DT_NEOGameRulesProxy )
 		RecvPropDataTable( "neo_gamerules_data", 0, 0,
 			&REFERENCE_RECV_TABLE( DT_NEORules ),
 			RecvProxy_NEORules )
 	END_RECV_TABLE()
+	// clang-format on
 #else
 	void *SendProxy_NEORules( const SendProp *pProp,
 		const void *pStructBase, const void *pData,
@@ -447,11 +451,13 @@ const NeoGameTypeSettings NEO_GAME_TYPE_SETTINGS[NEO_GAME_TYPE__TOTAL] = {
 		return pRules;
 	}
 
+	// clang-format off
 	BEGIN_SEND_TABLE(CNEOGameRulesProxy, DT_NEOGameRulesProxy)
 		SendPropDataTable("neo_gamerules_data", 0,
 			&REFERENCE_SEND_TABLE(DT_NEORules),
 			SendProxy_NEORules)
 		END_SEND_TABLE()
+	// clang-format on
 #endif
 
 		// NEO NOTE (Rain): These are copied over from hl2mp gamerules implementation.

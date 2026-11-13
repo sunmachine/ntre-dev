@@ -14,6 +14,7 @@
 
 LINK_ENTITY_TO_CLASS(neo_deployed_detpack, CNEODeployedDetpack);
 
+// clang-format off
 BEGIN_DATADESC(CNEODeployedDetpack)
 	// Fields
 	DEFINE_FIELD(m_inSolid, FIELD_BOOLEAN),
@@ -27,6 +28,7 @@ BEGIN_DATADESC(CNEODeployedDetpack)
 	// Inputs
 	DEFINE_INPUTFUNC(FIELD_VOID, "RemoteDetonate", InputRemoteDetonate),
 END_DATADESC()
+// clang-format on
 
 extern ConVar sv_neo_grenade_cor;
 extern ConVar sv_neo_grenade_gravity;

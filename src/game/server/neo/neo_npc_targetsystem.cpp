@@ -16,6 +16,7 @@ static constexpr float BOT_HAZARD_DURATION = 2.0f;
 
 LINK_ENTITY_TO_CLASS(neo_npc_targetsystem, CNEO_NPCTargetSystem);
 
+// clang-format off
 BEGIN_DATADESC(CNEO_NPCTargetSystem)
 	DEFINE_KEYFIELD(m_flFOV, FIELD_FLOAT, "fov"),
 	DEFINE_KEYFIELD(m_flTopClip, FIELD_FLOAT, "topclip"),
@@ -44,6 +45,7 @@ BEGIN_DATADESC(CNEO_NPCTargetSystem)
 
 	DEFINE_THINKFUNC(Think),
 END_DATADESC()
+// clang-format on
 
 // This entity is a built-for-purpose recreation of the HT tank's "vision"
 // But it can be used for general machines in maps that require precise player tracking.

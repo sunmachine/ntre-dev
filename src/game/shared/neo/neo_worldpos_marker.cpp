@@ -15,6 +15,7 @@ LINK_ENTITY_TO_CLASS( neo_controlpoint, CNEOWorldPosMarkerEnt );
 #ifdef GAME_DLL
 extern void SendProxy_StringT_To_String( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID );
 
+// clang-format off
 IMPLEMENT_SERVERCLASS_ST( CNEOWorldPosMarkerEnt, DT_NEOWorldPosMarkerEnt )
 	SendPropArray( SendPropString( SENDINFO_ARRAY( m_iszSpriteNames ), 0, SendProxy_StringT_To_String ), m_iszSpriteNames ),
 	SendPropInt(SENDINFO( m_iCurrentSprite ), NumBitsForCount( MAX_SCREEN_OVERLAYS ), SPROP_UNSIGNED ),
@@ -24,10 +25,12 @@ IMPLEMENT_SERVERCLASS_ST( CNEOWorldPosMarkerEnt, DT_NEOWorldPosMarkerEnt )
 	SendPropBool(SENDINFO( m_bCapzoneEffect )),
 	SendPropBool(SENDINFO( m_bEnabled ))
 END_SEND_TABLE()
+// clang-format on
 #else
 #ifdef CNEOWorldPosMarkerEnt
 #undef CNEOWorldPosMarkerEnt
 #endif
+// clang-format off
 IMPLEMENT_CLIENTCLASS_DT( C_NEOWorldPosMarkerEnt, DT_NEOWorldPosMarkerEnt, CNEOWorldPosMarkerEnt )
 	RecvPropArray( RecvPropString( RECVINFO( m_iszSpriteNames[0]) ), m_iszSpriteNames ),
 	RecvPropInt(RECVINFO( m_iCurrentSprite )),
@@ -37,9 +40,11 @@ IMPLEMENT_CLIENTCLASS_DT( C_NEOWorldPosMarkerEnt, DT_NEOWorldPosMarkerEnt, CNEOW
 	RecvPropBool(RECVINFO( m_bCapzoneEffect )),
 	RecvPropBool(RECVINFO( m_bEnabled ))
 END_RECV_TABLE()
+// clang-format on
 #define CNEOWorldPosMarkerEnt C_NEOWorldPosMarkerEnt
 #endif
 
+// clang-format off
 BEGIN_DATADESC( CNEOWorldPosMarkerEnt )
 #ifdef GAME_DLL
 	DEFINE_KEYFIELD( m_iszSpriteNames[0], FIELD_STRING, "SpriteName1" ),
@@ -69,6 +74,7 @@ BEGIN_DATADESC( CNEOWorldPosMarkerEnt )
 	DEFINE_INPUTFUNC( FIELD_VOID, "Disable", InputDisable ),
 #endif
 END_DATADESC()
+// clang-format on
 
 static const char *ICON_PATHS[] =
 {

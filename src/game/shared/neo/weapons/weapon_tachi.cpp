@@ -6,6 +6,7 @@
 
 IMPLEMENT_NETWORKCLASS_ALIASED(WeaponTachi, DT_WeaponTachi)
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CWeaponTachi, DT_WeaponTachi)
 DEFINE_NEO_BASE_WEP_NETWORK_TABLE
 
@@ -17,14 +18,17 @@ SendPropTime(SENDINFO(m_flSoonestFiremodeSwitch)),
 SendPropBool(SENDINFO(m_bIsPrimaryFireMode)),
 #endif
 END_NETWORK_TABLE()
+// clang-format on
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CWeaponTachi)
 DEFINE_NEO_BASE_WEP_PREDICTION
 
 DEFINE_PRED_FIELD(m_flSoonestFiremodeSwitch, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
 DEFINE_PRED_FIELD(m_bIsPrimaryFireMode, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
 NEO_IMPLEMENT_ACTTABLE(CWeaponTachi)
@@ -32,10 +36,12 @@ NEO_IMPLEMENT_ACTTABLE(CWeaponTachi)
 LINK_ENTITY_TO_CLASS(weapon_tachi, CWeaponTachi);
 
 #ifdef GAME_DLL
+// clang-format off
 BEGIN_DATADESC(CWeaponTachi)
 DEFINE_FIELD(m_flSoonestFiremodeSwitch, FIELD_TIME),
 DEFINE_FIELD(m_bIsPrimaryFireMode, FIELD_BOOLEAN),
 END_DATADESC()
+// clang-format on
 #endif
 
 PRECACHE_WEAPON_REGISTER(weapon_tachi);

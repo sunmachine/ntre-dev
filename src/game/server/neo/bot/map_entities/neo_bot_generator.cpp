@@ -12,6 +12,7 @@ extern ConVar neo_bot_difficulty;
 
 //------------------------------------------------------------------------------
 
+// clang-format off
 BEGIN_DATADESC( CNEOBotGenerator )
 	DEFINE_KEYFIELD( m_spawnCount,		FIELD_INTEGER,	"count" ),
 	DEFINE_KEYFIELD( m_maxActiveCount,	FIELD_INTEGER,	"maxActive" ),
@@ -46,6 +47,7 @@ BEGIN_DATADESC( CNEOBotGenerator )
 
 	DEFINE_THINKFUNC( GeneratorThink ),
 END_DATADESC()
+// clang-format on
 
 LINK_ENTITY_TO_CLASS( bot_generator, CNEOBotGenerator );
 
@@ -400,6 +402,7 @@ void CNEOBotGenerator::SpawnBot( void )
 
 //------------------------------------------------------------------------------
 
+// clang-format off
 BEGIN_DATADESC( CNEOBotActionPoint )
 	DEFINE_KEYFIELD( m_stayTime,			FIELD_FLOAT,	"stay_time" ),
 	DEFINE_KEYFIELD( m_desiredDistance,		FIELD_FLOAT,	"desired_distance" ),
@@ -407,6 +410,7 @@ BEGIN_DATADESC( CNEOBotActionPoint )
 	DEFINE_KEYFIELD( m_command,				FIELD_STRING,	"command" ),
 	DEFINE_OUTPUT( m_onReachedActionPoint, "OnBotReached" ),
 END_DATADESC()
+// clang-format on
 
 LINK_ENTITY_TO_CLASS( bot_action_point, CNEOBotActionPoint );
 

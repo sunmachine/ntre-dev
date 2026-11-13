@@ -14,9 +14,11 @@ ConVar mat_neo_colorblind_deuteranopia_saturation("mat_neo_colorblind_deuteranop
 ConVar mat_neo_colorblind_deuteranopia_saturation_b("mat_neo_colorblind_deuteranopia_saturation_b", "1.0", FCVAR_CHEAT | FCVAR_ARCHIVE, "Post-effect saturation adjust exclusively for the blue channel", true, 0.0f, true, 2.0f);
 
 BEGIN_VS_SHADER_FLAGS(Neo_ColorBlind, "Help for Neo_ColorBlind", SHADER_NOT_EDITABLE)
+// clang-format off
 BEGIN_SHADER_PARAMS
 SHADER_PARAM(BASETEXTURE, SHADER_PARAM_TYPE_TEXTURE, "_rt_ColorBlind", "Render target")
 END_SHADER_PARAMS
+// clang-format on
 
 SHADER_FALLBACK
 {

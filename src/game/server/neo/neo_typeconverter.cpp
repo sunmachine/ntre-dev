@@ -26,6 +26,7 @@ public:
 // An entity to convert with string conversion support to get around that pesky "Bad I/O link!!" error
 LINK_ENTITY_TO_CLASS(neo_type_converter, CNEO_TypeConverter);
 
+// clang-format off
 BEGIN_DATADESC(CNEO_TypeConverter)
 
 DEFINE_KEYFIELD(m_iOutputType, FIELD_INTEGER, "outputtype"),
@@ -41,6 +42,7 @@ DEFINE_OUTPUT(m_OutInteger, "OutInteger"),
 DEFINE_OUTPUT(m_OutString, "OutString"),
 
 END_DATADESC()
+// clang-format on
 
 void CNEO_TypeConverter::InputSendData(inputdata_t& inputdata)
 {
