@@ -148,7 +148,7 @@
 15	src/game/shared/basecombatcharacter_shared.cpp
 67	src/game/shared/basecombatweapon_shared.cpp
 9	src/game/shared/basecombatweapon_shared.h
-29	src/game/shared/baseentity_shared.cpp
+2	src/game/shared/baseentity_shared.cpp
 3	src/game/shared/basegrenade_shared.cpp
 2	src/game/shared/baseplayer_shared.cpp
 2	src/game/shared/baseviewmodel_shared.cpp
