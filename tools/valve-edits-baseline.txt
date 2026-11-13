@@ -44,7 +44,7 @@
 2	src/game/client/hud.cpp
 9	src/game/client/hud_basechat.cpp
 2	src/game/client/hud_closecaption.cpp
-244	src/game/client/hud_crosshair.cpp
+2	src/game/client/hud_crosshair.cpp
 2	src/game/client/hud_pdump.cpp
 4	src/game/client/hud_squadstatus.cpp
 6	src/game/client/in_camera.cpp
