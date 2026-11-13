@@ -132,7 +132,6 @@
 2	src/game/server/nav_merge.cpp
 4	src/game/server/npc_talker.cpp
 2	src/game/server/npc_talker.h
-42	src/game/server/physics_impact_damage.cpp
 48	src/game/server/player.cpp
 1	src/game/server/player.h
 1	src/game/server/player_resource.cpp
