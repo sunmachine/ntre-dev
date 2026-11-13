@@ -6572,12 +6572,13 @@ float CAI_BaseNPC::ThrowLimit(	const Vector &vecStart,
 //-----------------------------------------------------------------------------
 void CAI_BaseNPC::SetupVPhysicsHull()
 {
+#ifdef NEO
 	if ( GetModelPtr() == NULL )
 	{
 		UTIL_Remove(this);
 		return;
 	}
-
+#endif // NEO
 	if ( GetMoveType() == MOVETYPE_VPHYSICS || GetMoveType() == MOVETYPE_NONE )
 		return;
 

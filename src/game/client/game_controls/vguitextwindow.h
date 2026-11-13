@@ -18,6 +18,7 @@
 #include <game/client/iviewport.h>
 #include "shareddefs.h"
 
+#ifdef NEO
 enum MotdPreference {
 	ShowFullHtml = 0,
 	ShowTextOnly,
@@ -25,7 +26,7 @@ enum MotdPreference {
 
 	EnumCount,
 };
-
+#endif // NEO
 namespace vgui
 {
 	class TextEntry;

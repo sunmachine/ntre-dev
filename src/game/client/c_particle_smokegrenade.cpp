@@ -737,11 +737,12 @@ void C_ParticleSmokeGrenade::RenderParticles( CParticleRenderIterator *pIterator
 			// Apply the precalculated fade alpha from world geometry.
 			alpha *= pParticle->m_FadeAlpha;
 
+#ifdef NEO
 			if (CanSeeThroughSmokeGrenades())
 			{
 				alpha *= r_neo_thermal_smoke_alpha.GetFloat();
 			}
-
+#endif // NEO
 			// TODO: optimize this whole routine!
 			Vector color = m_MinColor + (m_MaxColor - m_MinColor) * (pParticle->m_ColorInterp / 255.1f);
 			color.x *= pParticle->m_Color[0] / 255.0f;
@@ -863,7 +864,15 @@ void C_ParticleSmokeGrenade::FillVolume()
 				{
 					continue;
 				}
-#endif
+#else
+//				int contents = enginetrace->GetPointContents( vPos );
+
+				// Culling out particles in solid makes smoke not fill up small passageways.
+				//if( contents & CONTENTS_SOLID )
+				//{
+				//	continue;
+				//}
+#endif // NEO
 
 				if(SmokeParticleInfo *pInfo = GetSmokeParticleInfo(x,y,z))
 				{

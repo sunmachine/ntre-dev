@@ -394,10 +394,14 @@ void CSpectatorMenu::Update( void )
 		const char *selectedPlayerName = gr->GetPlayerName(playernum); // NEO
 		for (iPlayerIndex = 0; iPlayerIndex<m_pPlayerList->GetItemCount(); ++iPlayerIndex) // NEO
 		{
+#ifdef NEO
 			KeyValues *kv = m_pPlayerList->GetItemUserData(iPlayerIndex);
 			if (kv && FStrEq(kv->GetString("player"), selectedPlayerName))
 			{
 				m_pPlayerList->ActivateItemByRow(iPlayerIndex);
+#else
+			m_pPlayerList->ActivateItemByRow( iPlayerIndex );
+#endif // NEO
 				break;
 			} // NEO
 		}

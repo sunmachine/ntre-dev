@@ -276,6 +276,7 @@ void CBasePlayerAnimState::ComputeMainSequence()
 		return;
 #endif
 
+#ifdef NEO
 	if (animDesired < 0)
 	{
 #ifdef DEBUG
@@ -283,6 +284,10 @@ void CBasePlayerAnimState::ComputeMainSequence()
 #endif
 		animDesired = 3; // defaulting to some reasonable value. we should T-pose here (0) once this is properly fixed
 	}
+#else
+	if ( animDesired < 0 )
+		 animDesired = 0;
+#endif // NEO
 
 	pPlayer->ResetSequence( animDesired );
 

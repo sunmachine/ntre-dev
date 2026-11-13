@@ -109,12 +109,13 @@ public:
 // Inlines.
 // ----------------------------------------------------------------------- //
 
+#ifdef NEO
 template<class T>
 inline bool operator==(const CHandle<T>& lhs, const CHandle<T>& rhs)
 {
 	return lhs.Get() == rhs.Get();
 }
-
+#endif // NEO
 template<class T>
 inline CHandle<T>::CHandle()
 {
