@@ -157,8 +157,8 @@
 2	src/game/shared/gamerules.cpp
 1	src/game/shared/hl2/hl2_usermessages.cpp
 4	src/game/shared/hl2/hl_gamemovement.cpp
-26	src/game/shared/hl2mp/hl2mp_gamerules.cpp
-12	src/game/shared/hl2mp/hl2mp_gamerules.h
+5	src/game/shared/hl2mp/hl2mp_gamerules.cpp
+2	src/game/shared/hl2mp/hl2mp_gamerules.h
 2	src/game/shared/hl2mp/weapon_ar2.h
 2	src/game/shared/hl2mp/weapon_crowbar.h
 11	src/game/shared/hl2mp/weapon_hl2mpbase.cpp
