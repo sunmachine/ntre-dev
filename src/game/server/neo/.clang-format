@@ -1,0 +1,40 @@
+# Style for NEO-owned code. clang-format 19 syntax.
+Language: Cpp
+BasedOnStyle: LLVM
+Standard: c++20
+# Wrapped lines continue one tab deeper instead of aligning with spaces.
+UseTab: ForContinuationAndIndentation
+AlignAfterOpenBracket: DontAlign
+AlignOperands: DontAlign
+ContinuationIndentWidth: 4
+PenaltyBreakBeforeFirstCallParameter: 100
+IndentWidth: 4
+TabWidth: 4
+# tier0/memdbgon.h must stay the last include in every .cpp.
+SortIncludes: Never
+BreakBeforeBraces: Allman
+ColumnLimit: 120
+SpacesInParens: Never
+PointerAlignment: Right
+AccessModifierOffset: -4
+IndentCaseLabels: false
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: Inline
+# The SDK's table macros open and close a block without braces. Tables are
+# fenced with clang-format off and on, and these keep an unfenced one indented.
+MacroBlockBegin: "^(BEGIN_(DATADESC|SIMPLE_DATADESC|NETWORK_TABLE|NETWORK_TABLE_NOBASE|PREDICTION_DATA|SEND_TABLE|RECV_TABLE|ENT_SCRIPTDESC|SHADER_PARAMS)|IMPLEMENT_(SERVERCLASS_ST|CLIENTCLASS_DT|CLIENTCLASS_EVENT_DT))$"
+MacroBlockEnd: "^END_(DATADESC|NETWORK_TABLE|PREDICTION_DATA|SEND_TABLE|RECV_TABLE|SCRIPTDESC|SHADER_PARAMS)$"
+# Comments keep their own line breaks and hanging indents, so text copied from
+# the SDK stays searchable.
+ReflowComments: false
+# Namespace closing comments stay as written, so a formatting pass changes
+# only whitespace.
+FixNamespaceComments: false
+# Long string literals stay whole, so their text can be searched for.
+BreakStringLiterals: false
+# A macro's line continuation sits one space after the code. Padding every
+# continuation to one column reflows the whole macro when its longest line
+# changes.
+AlignEscapedNewlines: DontAlign
+# Up to two blank lines in a row are kept as section breaks.
+MaxEmptyLinesToKeep: 2
