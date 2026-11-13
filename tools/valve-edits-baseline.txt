@@ -7,7 +7,6 @@
 2	src/game/client/ViewConeImage.cpp
 8	src/game/client/c_baseanimating.cpp
 2	src/game/client/c_baseanimating.h
-40	src/game/client/c_baseanimatingoverlay.cpp
 5	src/game/client/c_basecombatcharacter.cpp
 4	src/game/client/c_basecombatcharacter.h
 2	src/game/client/c_basecombatweapon.cpp
