@@ -83,7 +83,7 @@ CLoadingDiscPanel::CLoadingDiscPanel( vgui::VPANEL parent ) : BaseClass( NULL, "
 	SetProportional( true );
 	SetScheme( "ClientScheme" );
 	SetVisible( false );
-	SetCursor( 0 );
+	SetCursor( 0 ); // NEO
 
 	m_pLoadingLabel = vgui::SETUP_PANEL(new vgui::Label( this, "LoadingLabel", "" ));
 	m_pLoadingLabel->SetPaintBackgroundEnabled( false );
@@ -145,7 +145,7 @@ public:
 			m_pPauseDiscPanel = NULL;
 		}
 
-		m_hParent = 0;
+		m_hParent = 0; // NEO
 	}
 
 	void SetLoadingVisible( bool bVisible )

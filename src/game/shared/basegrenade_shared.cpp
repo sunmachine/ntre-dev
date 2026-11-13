@@ -472,8 +472,8 @@ void CBaseGrenade ::BounceSound( void )
 	// Doesn't need to do anything anymore! Physics makes the sound.
 
 	// NEO NOTE (Rain): Except on NEO we actually want this sound.
-	// Don't have to worry about the physics sound as we temporarily disable
-	// that VPhys while bouncing the nade for our BBOX etc. implementation.
+	// Don't have to worry about the physics sound as we temporarily disable // NEO
+	// that VPhys while bouncing the nade for our BBOX etc. implementation. // NEO
 #ifdef NEO
 #ifdef GAME_DLL
 	CRecipientFilter filter;

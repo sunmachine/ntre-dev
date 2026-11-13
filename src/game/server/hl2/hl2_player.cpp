@@ -446,7 +446,7 @@ static inline float GetAuxChargeRate(CBaseCombatCharacter *player)
 
 #if defined(NEO)
 	CSuitPowerDevice SuitDeviceSprint( bits_SUIT_DEVICE_SPRINT, 5.0f );					// 100 units in 20 seconds
-#elif defined(HL2MP)
+#elif defined(HL2MP) // NEO
 	CSuitPowerDevice SuitDeviceSprint( bits_SUIT_DEVICE_SPRINT, 25.0f );				// 100 units in 4 seconds
 #else
 	CSuitPowerDevice SuitDeviceSprint( bits_SUIT_DEVICE_SPRINT, 12.5f );				// 100 units in 8 seconds
@@ -1969,9 +1969,9 @@ void CHL2_Player::CheatImpulseCommands( int iImpulse )
 				pItem->Spawn();
 				pItem->Activate();
 			}
-	#ifdef SDK2013CE
-		}
-	#endif
+	#ifdef SDK2013CE // NEO
+		} // NEO
+	#endif // NEO
 		break;
 	}
 
@@ -2260,8 +2260,8 @@ bool CHL2_Player::SuitPower_RemoveDevice( const CSuitPowerDevice &device )
 bool CHL2_Player::SuitPower_ShouldRecharge( void )
 {
 	// Make sure all devices are off.
-	if (m_HL2Local.m_bitsActiveDevices != 0x00000000)
-	{
+	if (m_HL2Local.m_bitsActiveDevices != 0x00000000) // NEO
+	{ // NEO
 #ifdef NEO
 		// Is the system fully charged?
 		if (m_HL2Local.m_flSuitPower >= 100.0f)
@@ -2293,7 +2293,7 @@ bool CHL2_Player::SuitPower_ShouldRecharge( void )
 		}
 #endif
 		return false;
-	}
+	} // NEO
 
 	// Is the system fully charged?
 	if( m_HL2Local.m_flSuitPower >= 100.0f )

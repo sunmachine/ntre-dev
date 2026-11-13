@@ -34,8 +34,8 @@
 #include "bone_setup.h"
 #endif
 
-// memdbgon must be the last include file in a .cpp file!!!
-#include "tier0/memdbgon.h"
+// memdbgon must be the last include file in a .cpp file!!! // NEO
+#include "tier0/memdbgon.h" // NEO
 
 int g_iLastCitizenModel = 0;
 int g_iLastCombineModel = 0;
@@ -195,7 +195,7 @@ CHL2MP_Player::CHL2MP_Player() : m_PlayerAnimState( this )
 	//Tony; create our player animation state.
 	m_PlayerAnimState = CreateHL2MPPlayerAnimState( this );
 #endif
-	UseClientSideAnimation();
+	UseClientSideAnimation(); // NEO
 
 	m_angEyeAngles.Init();
 
@@ -438,8 +438,8 @@ void CHL2MP_Player::Spawn(void)
 
 	m_bReady = false;
 
-	//Tony; do the spawn animevent
-	DoAnimationEvent( PLAYERANIMEVENT_SPAWN );
+	//Tony; do the spawn animevent // NEO
+	DoAnimationEvent( PLAYERANIMEVENT_SPAWN ); // NEO
 
 }
 
@@ -684,7 +684,7 @@ void CHL2MP_Player::PreThink( void )
 
 void CHL2MP_Player::PostThink( void )
 {
-	CBasePlayer::PostThink();
+	CBasePlayer::PostThink(); // NEO
 	
 	if ( GetFlags() & FL_DUCKING )
 	{
@@ -1028,7 +1028,7 @@ bool CHL2MP_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 #ifdef NEO
 	if( GetAbsOrigin() != pWeapon->GetAbsOrigin() && !pWeapon->FVisible( this, MASK_SOLID ) && !(GetFlags() & FL_NOTARGET) )
 #else
-	if( !pWeapon->FVisible( this, MASK_SOLID ) && !(GetFlags() & FL_NOTARGET) )
+	if( !pWeapon->FVisible( this, MASK_SOLID ) && !(GetFlags() & FL_NOTARGET) ) // NEO
 #endif // NEO
 	// Don't let the player fetch weapons through walls (use MASK_SOLID so that you can't pickup through windows)
 #ifndef NEO

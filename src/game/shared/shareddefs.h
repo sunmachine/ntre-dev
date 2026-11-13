@@ -121,7 +121,7 @@ public:
 #else
 #define VEC_HULL_MIN_SCALED( player )			( g_pGameRules->GetViewVectors()->m_vHullMin * player->GetModelScale() )
 #define VEC_HULL_MAX_SCALED( player )			( g_pGameRules->GetViewVectors()->m_vHullMax * player->GetModelScale() )
-#define VEC_VIEW_SCALED( player )				( g_pGameRules->GetViewVectors()->m_vView * player->GetModelScale() )
+#define VEC_VIEW_SCALED( player )				( g_pGameRules->GetViewVectors()->m_vView * player->GetModelScale() ) // NEO
 #endif
 
 #ifdef NEO
@@ -452,7 +452,7 @@ enum PLAYER_ANIM
 	PLAYER_LEAVE_AIMING,
 };
 
-#if defined(HL2_DLL) && !defined(NEO)
+#if defined(HL2_DLL) && !defined(NEO) // NEO
 // HL2 has 600 gravity by default
 // NOTE: The discrete ticks can have quantization error, so these numbers are biased a little to
 // make the heights more exact
@@ -618,10 +618,10 @@ typedef enum
 #define COLOR_YELLOW	Color(255, 178, 0, 255)
 #define COLOR_GREEN		Color(153, 255, 153, 255)
 #define COLOR_GREY		Color(204, 204, 204, 255)
-#define COLOR_TINTGREY	Color(164, 164, 164, 255)
+#define COLOR_TINTGREY	Color(164, 164, 164, 255) // NEO
 #define COLOR_WHITE		Color(255, 255, 255, 255)
-#define COLOR_FADED_WHITE		Color(255, 255, 255, 100)
-#define COLOR_DARK_FADED_WHITE		Color(255, 255, 255, 50)
+#define COLOR_FADED_WHITE		Color(255, 255, 255, 100) // NEO
+#define COLOR_DARK_FADED_WHITE		Color(255, 255, 255, 50) // NEO
 #define COLOR_BLACK		Color(0, 0, 0, 255)
 
 #ifdef NEO
@@ -799,7 +799,7 @@ struct FireBulletsInfo_t
 		m_bUseServerRandomSeed = false;
 	}
 
-	FireBulletsInfo_t( int nShots, const Vector &vecSrc, const Vector &vecDir, const Vector &vecSpread, float flDistance, int nAmmoType, bool bPrimaryAttack = true, bool bDoServerEffects = true )
+	FireBulletsInfo_t( int nShots, const Vector &vecSrc, const Vector &vecDir, const Vector &vecSpread, float flDistance, int nAmmoType, bool bPrimaryAttack = true, bool bDoServerEffects = true ) // NEO
 	{
 		m_iShots = nShots;
 		m_vecSrc = vecSrc;

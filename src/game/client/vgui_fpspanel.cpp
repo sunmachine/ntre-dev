@@ -105,7 +105,7 @@ CFPSPanel::CFPSPanel( vgui::VPANEL parent ) : BaseClass( NULL, "CFPSPanel" )
 	// Software cursor support
 	SetCursor(vgui::dc_arrow);
 #else
-	SetCursor( null );
+	SetCursor( null ); // NEO
 #endif
 }
 

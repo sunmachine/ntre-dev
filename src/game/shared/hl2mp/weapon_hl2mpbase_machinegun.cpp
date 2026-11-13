@@ -117,7 +117,7 @@ void CHL2MPMachineGun::PrimaryAttack( void )
 	}
 
 	SendWeaponAnim( GetPrimaryAttackActivity() );
-	ToHL2MPPlayer(pPlayer)->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
+	ToHL2MPPlayer(pPlayer)->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY ); // NEO
 
 }
 

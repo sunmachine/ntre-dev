@@ -272,7 +272,7 @@ IMPLEMENT_SERVERCLASS_ST_NOBASE( CBaseEntity, DT_BaseEntity )
 #if PREDICTION_ERROR_CHECK_LEVEL > 1 
 	SendPropVector	(SENDINFO(m_vecOrigin), -1,  SPROP_NOSCALE|SPROP_CHANGES_OFTEN, 0.0f, HIGH_DEFAULT, SendProxy_Origin ),
 #else
-	SendPropVector	(SENDINFO(m_vecOrigin), -1,  SPROP_NOSCALE|SPROP_CHANGES_OFTEN, 0.0f, HIGH_DEFAULT, SendProxy_Origin ),
+	SendPropVector	(SENDINFO(m_vecOrigin), -1,  SPROP_NOSCALE|SPROP_CHANGES_OFTEN, 0.0f, HIGH_DEFAULT, SendProxy_Origin ), // NEO
 #endif
 
 	SendPropInt		(SENDINFO( m_ubInterpolationFrame ), NOINTERP_PARITY_MAX_BITS, SPROP_UNSIGNED ),
@@ -5306,7 +5306,7 @@ void CBaseEntity::PrecacheSoundHelper( const char *pName )
 		return;
 	}
 
-	if ( !g_ModelSoundsSymbolHelper.Find( pName ).IsValid() )
+	if ( !g_ModelSoundsSymbolHelper.Find( pName ).IsValid() ) // NEO
 	{
 		g_ModelSoundsSymbolHelper.AddString( pName );
 
@@ -5406,7 +5406,7 @@ void CBaseEntity::PrecacheModelComponents( int nModelIndex )
 						{
 							char token[256];
 							const char *pOptions = pEvent->pszOptions();
-							nexttoken( token, pOptions, ' ');
+							nexttoken( token, pOptions, ' ' );
 							if ( token[0] ) 
 							{
 								PrecacheParticleSystem( token );

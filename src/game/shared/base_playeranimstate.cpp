@@ -214,7 +214,7 @@ void CBasePlayerAnimState::ClearAnimationLayers()
 	if ( !m_pOuter )
 		return;
 
-	m_pOuter->SetNumAnimOverlays(AIMSEQUENCE_LAYER + NUM_AIMSEQUENCE_LAYERS);
+	m_pOuter->SetNumAnimOverlays( AIMSEQUENCE_LAYER+NUM_AIMSEQUENCE_LAYERS );
 	for ( int i=0; i < m_pOuter->GetNumAnimOverlays(); i++ )
 	{
 		m_pOuter->GetAnimOverlay( i )->SetOrder( CBaseAnimatingOverlay::MAX_OVERLAYS );
@@ -488,7 +488,7 @@ int CBasePlayerAnimState::CalcSequenceIndex( const char *pBaseName, ... )
 		iSequence = 0;
 	}
 
-	//DevMsg("CalcSeqIdx: \"%s\": %d\n", szFullName, iSequence);
+	//DevMsg("CalcSeqIdx: \"%s\": %d\n", szFullName, iSequence); // NEO
 
 	return iSequence;
 }
@@ -655,10 +655,10 @@ void CBasePlayerAnimState::ComputePoseParam_MoveYaw( CStudioHdr *pStudioHdr )
 
 		int iMoveX = GetOuter()->LookupPoseParameter( pStudioHdr, "move_x" );
 		int iMoveY = GetOuter()->LookupPoseParameter( pStudioHdr, "move_y" );
-		if (iMoveX < 0 || iMoveY < 0)
-		{
+		if (iMoveX < 0 || iMoveY < 0) // NEO
+		{ // NEO
 			return;
-		}
+		} // NEO
 
 		bool bIsMoving;
 		float flPlaybackRate = CalcMovementPlaybackRate( &bIsMoving );

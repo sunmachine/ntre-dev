@@ -41,11 +41,11 @@ enum EScoreboardSections
 	SCORESECTION_SPECTATOR = 4
 };
 
-const int NumSegments = 7
+const int NumSegments = 7 // NEO
 #ifdef NEO
 	+ 1 // "Rank"
 #endif
-;
+; // NEO
 
 static int coord[NumSegments+1] = {
 	0,
@@ -55,7 +55,7 @@ static int coord[NumSegments+1] = {
 	4,
 	6,
 	9,
-	10,
+	10, // NEO
 #ifdef NEO
 	11,
 #endif

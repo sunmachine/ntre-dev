@@ -390,7 +390,7 @@ public:
 	virtual void OnChangeActiveWeapon( CBaseCombatWeapon *pOldWeapon, CBaseCombatWeapon *pNewWeapon ) {}
 
 	// I can't use my current weapon anymore. Switch me to the next best weapon.
-	bool SwitchToNextBestWeapon(CBaseCombatWeapon* pCurrent);
+	bool SwitchToNextBestWeapon(CBaseCombatWeapon *pCurrent);
 
 	// This is a hack to copy the relationship strings used by monstermaker
 	void SetRelationshipString( string_t theString ) { m_RelationshipString = theString; }
@@ -469,9 +469,9 @@ public:
 #ifdef GLOWS_ENABLE
 protected:
 	CNetworkVar( bool, m_bGlowEnabled );
-	CNetworkVar( float, m_flGlowR );
-	CNetworkVar( float, m_flGlowG );
-	CNetworkVar( float, m_flGlowB );
+	CNetworkVar( float, m_flGlowR ); // NEO
+	CNetworkVar( float, m_flGlowG ); // NEO
+	CNetworkVar( float, m_flGlowB ); // NEO
 #endif // GLOWS_ENABLE
 
 private:

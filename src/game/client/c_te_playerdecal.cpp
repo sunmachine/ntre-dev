@@ -190,8 +190,8 @@ IMaterial *CreateTempMaterialForPlayerLogo( int iPlayerIndex, player_info_t *inf
 		char custname[ 512 ];
 		Q_snprintf( custname, sizeof( custname ), "download/user_custom/%c%c/%s.dat", logohex[0], logohex[1], logohex );
 		// it may have been downloaded but not copied under materials folder
-		if (!filesystem->FileExists(custname))
-		{
+		if (!filesystem->FileExists(custname)) // NEO
+		{ // NEO
 #ifdef NEO
 			Q_snprintf( custname, sizeof( custname ), "user_custom/%c%c/%s.dat", logohex[0], logohex[1], logohex );
 			if (!filesystem->FileExists(custname))
@@ -201,7 +201,7 @@ IMaterial *CreateTempMaterialForPlayerLogo( int iPlayerIndex, player_info_t *inf
 #else
 			return NULL; // not downloaded yet
 #endif
-		}
+		} // NEO
 
 		// copy from download folder to materials/temp folder
 		// this is done since material system can access only materials/*.vtf files

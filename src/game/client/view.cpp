@@ -125,7 +125,7 @@ extern ConVar cl_forwardspeed;
 static ConVar v_centermove( "v_centermove", "0.15");
 static ConVar v_centerspeed( "v_centerspeed","500" );
 
-#if defined(NEO) || defined(TF_CLIENT_DLL)
+#if defined(NEO) || defined(TF_CLIENT_DLL) // NEO
 // 54 degrees approximates a 35mm camera - we determined that this makes the viewmodels
 // and motions look the most natural.
 ConVar v_viewmodel_fov( "viewmodel_fov", "54", FCVAR_ARCHIVE, "Sets the field-of-view for the viewmodel.", true, 0.1, true, 179.9, true, 54, true, 70, NULL );
@@ -174,7 +174,7 @@ void SwCursorHack_RestoreValue()
 	vgui::surface()->SetSoftwareCursor(enabled || UseVR());
 }
 #else
-static ConVar cl_software_cursor ( "cl_software_cursor", "0", FCVAR_ARCHIVE, "Switches the game to use a larger software cursor instead of the normal OS cursor", SoftwareCursorChangedCB );
+static ConVar cl_software_cursor ( "cl_software_cursor", "0", FCVAR_ARCHIVE, "Switches the game to use a larger software cursor instead of the normal OS cursor", SoftwareCursorChangedCB ); // NEO
 void SoftwareCursorChangedCB( IConVar *pVar, const char *pOldValue, float fOldValue )
 {
 	ConVar *pConVar = (ConVar *)pVar;

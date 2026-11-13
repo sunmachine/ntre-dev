@@ -418,7 +418,7 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 	{
 		g_ClientVirtualReality.OverrideViewModelTransform( vmorigin, vmangles, pWeapon && pWeapon->ShouldUseLargeViewModelVROverride() );
 	}
-#endif
+#endif // NEO
 
 	SetLocalOrigin( vmorigin );
 	SetLocalAngles( vmangles );

@@ -774,7 +774,7 @@ float CLuminanceHistogramSystem::GetTargetTonemapScalar( bool bGetIdealTargetFor
 	}
 }
 
-extern EHANDLE g_hTonemapControllerInUse;
+extern EHANDLE g_hTonemapControllerInUse; // NEO
 static float GetCurrentBloomScale( void )
 {
 	// Use the appropriate bloom scale settings.  Mapmakers's overrides the convar settings.

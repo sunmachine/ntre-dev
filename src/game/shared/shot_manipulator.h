@@ -58,7 +58,7 @@ protected:
 private:
 #endif
 	Vector m_vecShotDirection;
-	Vector m_vecResult;
+	Vector m_vecResult; // NEO
 	Vector m_vecRight;
 	Vector m_vecUp;
 #ifndef NEO

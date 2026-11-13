@@ -184,7 +184,7 @@ private:
 	bool GetClosestPointOnRoute( const Vector &targetPos, Vector *pVecClosestPoint );
 	bool PlayerIsAheadOfMe( bool bForce = false );
 
-	bool Speak( AIConcept_t aiconcept );
+	bool Speak( AIConcept_t aiconcept ); // NEO
 	bool IsSpeaking();
 
 	// --------------------------------

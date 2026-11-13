@@ -574,7 +574,7 @@ class CStriderMinigun
 {
 public:
 	DECLARE_DATADESC();
-	virtual ~CStriderMinigun(){}
+	virtual ~CStriderMinigun(){} // NEO
 
 	void		Init();
 	void		SetTarget( IStriderMinigunHost *pHost, CBaseEntity *pTarget, bool bOverrideEnemy = false );

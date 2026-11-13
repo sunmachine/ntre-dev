@@ -388,18 +388,18 @@ void CSpectatorMenu::Update( void )
 
 	// make sure the player combo box is up to date
 	int playernum = GetSpectatorTarget();
-	// If there were no players around to spectate, playernum may return zero.
-	if (playernum != 0)
+	// If there were no players around to spectate, playernum may return zero. // NEO
+	if (playernum != 0) // NEO
 	{
-		const char *selectedPlayerName = gr->GetPlayerName(playernum);
-		for (iPlayerIndex = 0; iPlayerIndex<m_pPlayerList->GetItemCount(); ++iPlayerIndex)
+		const char *selectedPlayerName = gr->GetPlayerName(playernum); // NEO
+		for (iPlayerIndex = 0; iPlayerIndex<m_pPlayerList->GetItemCount(); ++iPlayerIndex) // NEO
 		{
 			KeyValues *kv = m_pPlayerList->GetItemUserData(iPlayerIndex);
 			if (kv && FStrEq(kv->GetString("player"), selectedPlayerName))
 			{
 				m_pPlayerList->ActivateItemByRow(iPlayerIndex);
 				break;
-			}
+			} // NEO
 		}
 	}
 
@@ -570,7 +570,7 @@ void CSpectatorGUI::OnThink()
 		{
 			SetVisible( false );
 		}
-#endif // TF_CLIENT_DLL
+#endif // TF_CLIENT_DLL // NEO
         }
 }
 

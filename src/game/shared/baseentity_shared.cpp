@@ -2172,7 +2172,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 		{
 			HandleShotImpactingGlass( info, tr, vecDir, &traceFilter );
 		}
-#endif // GAME_DLL
+#endif // GAME_DLL // NEO
 #endif // NEO
 #ifdef NEO
 		// Bullet penetration

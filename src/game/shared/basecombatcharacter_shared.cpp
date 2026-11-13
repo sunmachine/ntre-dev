@@ -62,9 +62,9 @@ bool CBaseCombatCharacter::Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmo
 
 	if ( m_hActiveWeapon )
 	{
-		if ( !m_hActiveWeapon->Holster( pWeapon ) ) {
+		if ( !m_hActiveWeapon->Holster( pWeapon ) ) { // NEO
 			return false;
-		}
+		} // NEO
 	}
 
 	m_hActiveWeapon = pWeapon;
@@ -96,15 +96,15 @@ bool CBaseCombatCharacter::Weapon_CanSwitchTo( CBaseCombatWeapon *pWeapon )
 #endif
 		return false;
 
-	if ( !pWeapon->CanDeploy() ) {
+	if ( !pWeapon->CanDeploy() ) { // NEO
 		return false;
-	}
+	} // NEO
 
 	if ( m_hActiveWeapon )
 	{
-		if ( !m_hActiveWeapon->CanHolster() && !pWeapon->ForceWeaponSwitch() ) {
+		if ( !m_hActiveWeapon->CanHolster() && !pWeapon->ForceWeaponSwitch() ) { // NEO
 			return false;
-		}
+		} // NEO
 
 		if ( IsPlayer() )
 		{

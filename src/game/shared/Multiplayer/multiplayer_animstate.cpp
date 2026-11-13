@@ -1641,8 +1641,8 @@ void CMultiPlayerAnimState::ComputeMainSequence()
 	if ( (oldActivity == ACT_CROUCHIDLE || oldActivity == ACT_IDLE ) &&
 		 (idealActivity == ACT_WALK || idealActivity == ACT_RUN_CROUCH || idealActivity == ACT_RUN) )
 #else
-	if ((oldActivity == ACT_MP_CROUCH_IDLE || oldActivity == ACT_MP_STAND_IDLE || oldActivity == ACT_MP_DEPLOYED_IDLE || oldActivity == ACT_MP_CROUCH_DEPLOYED_IDLE) &&
-		(idealActivity == ACT_MP_WALK || idealActivity == ACT_MP_CROUCHWALK))
+	if ( (oldActivity == ACT_MP_CROUCH_IDLE || oldActivity == ACT_MP_STAND_IDLE || oldActivity == ACT_MP_DEPLOYED_IDLE || oldActivity == ACT_MP_CROUCH_DEPLOYED_IDLE ) && 
+		 (idealActivity == ACT_MP_WALK || idealActivity == ACT_MP_CROUCHWALK ) )
 #endif
 		{
 		ResetGroundSpeed();
