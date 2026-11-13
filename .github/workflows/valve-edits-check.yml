@@ -1,0 +1,48 @@
+name: Valve edits check
+
+# Answers one question per pull request: did it change Valve code outside a
+# NEO guard? Files that already differ from Valve's tree are listed with the
+# number of lines that differ in tools/valve-edits-baseline.txt, and that
+# count may only shrink. The commands live in tools/check_valve_edits.py, which
+# contributors run as python tools/neo_dev.py check-valve-edits.
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'tools/neo_dev.py'
+      - 'tools/check_valve_edits.py'
+      - 'tools/strip_neo_ifdefs.py'
+      - 'tools/valve-edits-baseline.txt'
+      - 'tools/valve-sdk-base.txt'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  guard:
+    name: Valve edits check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Check edits to Valve files
+        run: python3 -I tools/neo_dev.py check-valve-edits --base "origin/${{ github.base_ref }}"
+
+      - name: Label the pull request when Valve files changed
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          base=$(cat tools/valve-sdk-base.txt)
+          n=0
+          while IFS= read -r f; do
+            git cat-file -e "$base:$f" 2>/dev/null && n=$((n + 1))
+          done < <(git diff --name-only "origin/${{ github.base_ref }}...HEAD" -- 'src/**')
+          echo "Changed files that exist in Valve's tree: $n"
+          if [ "$n" -gt 0 ]; then
+            gh pr edit "${{ github.event.pull_request.number }}" --add-label touches-valve-tree || true
+          fi
