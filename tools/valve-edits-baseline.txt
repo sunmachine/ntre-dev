@@ -155,7 +155,7 @@
 2	src/game/shared/baseviewmodel_shared.cpp
 5	src/game/shared/ehandle.h
 81	src/game/shared/gamemovement.cpp
-56	src/game/shared/gamerules.cpp
+2	src/game/shared/gamerules.cpp
 1	src/game/shared/hl2/hl2_usermessages.cpp
 4	src/game/shared/hl2/hl_gamemovement.cpp
 26	src/game/shared/hl2mp/hl2mp_gamerules.cpp
