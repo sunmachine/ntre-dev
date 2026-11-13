@@ -14,9 +14,6 @@
 2	src/game/client/c_baseentity.h
 16	src/game/client/c_baseplayer.cpp
 4	src/game/client/c_baseviewmodel.cpp
-6	src/game/client/c_colorcorrection.cpp
-6	src/game/client/c_colorcorrectionvolume.cpp
-4	src/game/client/c_entitydissolve.cpp
 39	src/game/client/c_particle_smokegrenade.cpp
 2	src/game/client/c_sceneentity.cpp
 4	src/game/client/c_te_playerdecal.cpp
@@ -88,7 +85,6 @@
 5	src/game/server/basecombatcharacter.h
 6	src/game/server/baseentity.cpp
 6	src/game/server/baseentity.h
-5	src/game/server/baseflex.cpp
 6	src/game/server/basemultiplayerplayer.cpp
 4	src/game/server/basemultiplayerplayer.h
 3	src/game/server/bmodels.cpp
@@ -165,7 +161,6 @@
 2	src/game/shared/hl2mp/weapon_hl2mpbase.h
 2	src/game/shared/hl2mp/weapon_hl2mpbase_machinegun.cpp
 2	src/game/shared/hl2mp/weapon_hl2mpbasebasebludgeon.cpp
-9	src/game/shared/hl2mp/weapon_hl2mpbasebasebludgeon.h
 2	src/game/shared/hl2mp/weapon_slam.h
 6	src/game/shared/igamesystem.cpp
 2	src/game/shared/movevars_shared.cpp
@@ -178,7 +173,7 @@
 8	src/game/shared/sdk/sdk_basegrenade_projectile.cpp
 13	src/game/shared/sdk/sdk_basegrenade_projectile.h
 9	src/game/shared/shareddefs.h
-10	src/game/shared/shot_manipulator.h
+1	src/game/shared/shot_manipulator.h
 2	src/game/shared/util_shared.cpp
 2	src/game/shared/util_shared.h
 7	src/game/shared/weapon_parse.cpp
@@ -202,7 +197,6 @@
 8	src/public/keyframe/keyframe.cpp
 1	src/public/keyframe/keyframe.h
 2	src/public/scratchpad3d.h
-102	src/public/sentence.cpp
 87	src/public/shaderlib/cshader.h
 2	src/public/steam/isteamremotestorage.h
 2	src/public/steam/isteamuserstats.h
@@ -228,7 +222,6 @@
 2	src/public/vgui_controls/Label.h
 10	src/public/vgui_controls/Panel.h
 2	src/public/vgui_controls/ProgressBar.h
-6	src/public/vphysics/collision_set.h
 2	src/tier1/KeyValues.cpp
 2	src/tier1/checksum_md5.cpp
 1	src/tier1/interface.cpp

@@ -463,7 +463,7 @@ void CSentence::ParsePlaintext( CUtlBuffer& buf )
 	text[ 0 ] = 0;
 	while ( 1 )
 	{
-	#ifdef SDK2013CE
+	#if defined(NEO) && defined(SDK2013CE)
 		buf.GetString( token, sizeof( token ) );
 	#else
 		buf.GetString( token );
@@ -486,7 +486,7 @@ void CSentence::ParseWords( CUtlBuffer& buf )
 
 	while ( 1 )
 	{
-	#ifdef SDK2013CE
+	#if defined(NEO) && defined(SDK2013CE)
 		buf.GetString( token, sizeof( token ) );
 	#else
 		buf.GetString( token );
@@ -497,20 +497,20 @@ void CSentence::ParseWords( CUtlBuffer& buf )
 		if ( stricmp( token, "WORD" ) )
 			break;
 
-	#ifdef SDK2013CE
+	#if defined(NEO) && defined(SDK2013CE)
 		buf.GetString( token, sizeof( token ) );
 	#else
 		buf.GetString( token );
 	#endif
 		Q_strncpy( word, token, sizeof( word ) );
 
-	#ifdef SDK2013CE
+	#if defined(NEO) && defined(SDK2013CE)
 		buf.GetString( token, sizeof( token ) );
 	#else
 		buf.GetString( token );
 	#endif
 		start = atof( token );
-	#ifdef SDK2013CE
+	#if defined(NEO) && defined(SDK2013CE)
 		buf.GetString( token, sizeof( token ) );
 	#else
 		buf.GetString( token );
@@ -524,7 +524,7 @@ void CSentence::ParseWords( CUtlBuffer& buf )
 
 		AddWordTag( wt );
 
-	#ifdef SDK2013CE
+	#if defined(NEO) && defined(SDK2013CE)
 		buf.GetString( token, sizeof( token ) );
 	#else
 		buf.GetString( token );
@@ -534,7 +534,7 @@ void CSentence::ParseWords( CUtlBuffer& buf )
 
 		while ( 1 )
 		{
-		#ifdef SDK2013CE
+		#if defined(NEO) && defined(SDK2013CE)
 			buf.GetString( token, sizeof( token ) );
 		#else
 			buf.GetString( token );
@@ -549,25 +549,25 @@ void CSentence::ParseWords( CUtlBuffer& buf )
 
 			code = atoi( token );
 
-		#ifdef SDK2013CE
+		#if defined(NEO) && defined(SDK2013CE)
 			buf.GetString( token, sizeof( token ) );
 		#else
 			buf.GetString( token );
 		#endif
 			Q_strncpy( phonemename, token, sizeof( phonemename ) );
-		#ifdef SDK2013CE
+		#if defined(NEO) && defined(SDK2013CE)
 			buf.GetString( token, sizeof( token ) );
 		#else
 			buf.GetString( token );
 		#endif
 			start = atof( token );
-		#ifdef SDK2013CE
+		#if defined(NEO) && defined(SDK2013CE)
 			buf.GetString( token, sizeof( token ) );
 		#else
 			buf.GetString( token );
 		#endif
 			end = atof( token );
-		#ifdef SDK2013CE
+		#if defined(NEO) && defined(SDK2013CE)
 			buf.GetString( token, sizeof( token ) );
 		#else
 			buf.GetString( token );
@@ -591,7 +591,7 @@ void CSentence::ParseEmphasis( CUtlBuffer& buf )
 	char token[ 4096 ];
 	while ( 1 )
 	{
-	#ifdef SDK2013CE
+	#if defined(NEO) && defined(SDK2013CE)
 		buf.GetString( token, sizeof( token ) );
 	#else
 		buf.GetString( token );
@@ -601,7 +601,7 @@ void CSentence::ParseEmphasis( CUtlBuffer& buf )
 
 		char t[ 256 ];
 		Q_strncpy( t, token, sizeof( t ) );
-	#ifdef SDK2013CE
+	#if defined(NEO) && defined(SDK2013CE)
 		buf.GetString( token, sizeof( token ) );
 	#else
 		buf.GetString( token );
@@ -634,7 +634,7 @@ void CSentence::ParseCloseCaption( CUtlBuffer& buf )
 		//   PHRASE char streamlength "streambytes" starttime endtime
 		//   PHRASE unicode streamlength "streambytes" starttime endtime
 		// }
-	#ifdef SDK2013CE
+	#if defined(NEO) && defined(SDK2013CE)
 		buf.GetString( token, sizeof( token ) );
 	#else
 		buf.GetString( token );
@@ -642,7 +642,7 @@ void CSentence::ParseCloseCaption( CUtlBuffer& buf )
 		if ( !stricmp( token, "}" ) )
 			break;
 
-	#ifdef SDK2013CE
+	#if defined(NEO) && defined(SDK2013CE)
 		buf.GetString( token, sizeof( token ) );
 	#else
 		buf.GetString( token );
@@ -650,7 +650,7 @@ void CSentence::ParseCloseCaption( CUtlBuffer& buf )
 		if ( stricmp( token, "{" ) )
 			break;
 
-	#ifdef SDK2013CE
+	#if defined(NEO) && defined(SDK2013CE)
 		buf.GetString( token, sizeof( token ) );
 	#else
 		buf.GetString( token );
@@ -669,7 +669,7 @@ void CSentence::ParseCloseCaption( CUtlBuffer& buf )
 
 			memset( cc_stream, 0, sizeof( cc_stream ) );
 
-		#ifdef SDK2013CE
+		#if defined(NEO) && defined(SDK2013CE)
 			buf.GetString( token, sizeof( token ) );
 		#else
 			buf.GetString( token );
@@ -686,7 +686,7 @@ void CSentence::ParseCloseCaption( CUtlBuffer& buf )
 				Assert( 0 );
 			}
 
-		#ifdef SDK2013CE
+		#if defined(NEO) && defined(SDK2013CE)
 			buf.GetString( token, sizeof( token ) );
 		#else
 			buf.GetString( token );
@@ -707,7 +707,7 @@ void CSentence::ParseCloseCaption( CUtlBuffer& buf )
 
 			// Skip space
 			buf.GetChar();
-		#ifdef SDK2013CE
+		#if defined(NEO) && defined(SDK2013CE)
 			buf.GetString( token, sizeof( token ) );
 			buf.GetString( token, sizeof( token ) );
 
@@ -727,7 +727,7 @@ void CSentence::ParseOptions( CUtlBuffer& buf )
 	char token[ 4096 ];
 	while ( 1 )
 	{
-	#ifdef SDK2013CE
+	#if defined(NEO) && defined(SDK2013CE)
 		buf.GetString( token, sizeof( token ) );
 	#else
 		buf.GetString( token );
@@ -741,7 +741,7 @@ void CSentence::ParseOptions( CUtlBuffer& buf )
 		char key[ 256 ];
 		Q_strncpy( key, token, sizeof( key ) );
 		char value[ 256 ];
-	#ifdef SDK2013CE
+	#if defined(NEO) && defined(SDK2013CE)
 		buf.GetString( token, sizeof( token ) );
 	#else
 		buf.GetString( token );
@@ -771,7 +771,7 @@ void CSentence::ParseDataVersionOnePointZero( CUtlBuffer& buf )
 
 	while ( 1 )
 	{
-	#ifdef SDK2013CE
+	#if defined(NEO) && defined(SDK2013CE)
 		buf.GetString( token, sizeof( token ) );
 	#else
 		buf.GetString( token );
@@ -786,7 +786,7 @@ void CSentence::ParseDataVersionOnePointZero( CUtlBuffer& buf )
 		char section[ 256 ];
 		Q_strncpy( section, token, sizeof( section ) );
 
-	#ifdef SDK2013CE
+	#if defined(NEO) && defined(SDK2013CE)
 		buf.GetString( token, sizeof( token ) );
 	#else
 		buf.GetString( token );
@@ -1157,7 +1157,7 @@ void CSentence::InitFromBuffer( CUtlBuffer& buf )
 	Reset();
 
 	char token[ 4096 ];
-#ifdef SDK2013CE
+#if defined(NEO) && defined(SDK2013CE)
 	buf.GetString( token, sizeof( token ) );
 #else
 	buf.GetString( token );
@@ -1166,7 +1166,7 @@ void CSentence::InitFromBuffer( CUtlBuffer& buf )
 	if ( stricmp( token, "VERSION" ) )
 		return;
 
-#ifdef SDK2013CE
+#if defined(NEO) && defined(SDK2013CE)
 	buf.GetString( token, sizeof( token ) );
 #else
 	buf.GetString( token );
