@@ -14,10 +14,14 @@ Before pushing
   check-valve-edits       Check that every edit this branch made to a Valve file is inside
                           #ifdef NEO or tagged // NEO, so Valve SDK updates keep merging.
                           Script: check_valve_edits.py.
+  tidy                    Run clang-tidy over the NEO tree and fail on findings the baseline
+                          does not allow. Linux only; on Windows, run it in WSL.
+                          Script: run_tidy.py.
 
 After fixing a problem a check already allowed
   update-valve-baseline   Lower the counts in tools/valve-edits-baseline.txt.
                           Script: check_valve_edits.py.
+  tidy --update-baseline  Lower the counts in tools/clang-tidy-baseline.txt.
 
 Editor setup
   tidy-compile-db         Write a compile database that clangd and clang-tidy accept.
@@ -38,6 +42,7 @@ TOOLS = os.path.dirname(os.path.realpath(__file__))
 COMMANDS = {
     'format': ('format_changed.py', []),
     'check-valve-edits': ('check_valve_edits.py', ['--check']),
+    'tidy': ('run_tidy.py', []),
     'update-valve-baseline': ('check_valve_edits.py', ['--update-baseline']),
     'tidy-compile-db': ('make_tidy_compile_db.py', []),
     'merge-valve-sdk': ('merge_valve_sdk.sh', []),

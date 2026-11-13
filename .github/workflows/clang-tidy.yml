@@ -1,9 +1,10 @@
 name: clang-tidy
 
-# Analyses only the lines a pull request changed, and only in NEO-owned
-# directories. Valve directories have a .clang-tidy with no checks and are
-# never analysed. Runs in the same steamrt sniper image as the build, since
-# the compile database comes from a CMake configure of the real project.
+# Analyses the whole of the NEO-owned directories and fails only on findings that
+# are not in tools/clang-tidy-baseline.txt, so a pull request is not blamed for problems
+# it did not add. Valve directories have a .clang-tidy with no checks and are
+# never analysed. The commands live in tools/run_tidy.py, which contributors run
+# as python3 tools/neo_dev.py tidy.
 
 on:
   pull_request:
@@ -14,11 +15,18 @@ on:
       - 'src/common/neo/**'
       - 'src/tests/**'
       - '**/.clang-tidy'
+      - 'tools/neo_dev.py'
+      - 'tools/run_tidy.py'
+      - 'tools/make_tidy_compile_db.py'
+      - 'tools/clang-tidy-baseline.txt'
+      - '.github/workflows/clang-tidy.yml'
 
 jobs:
   tidy:
-    name: clang-tidy (changed lines)
+    name: clang-tidy (NEO tree, new findings)
     runs-on: ubuntu-24.04
+    # Runs in the same steamrt sniper image as the build, since the compile
+    # database comes from a CMake configure of the real project.
     container:
       image: 'registry.gitlab.steamos.cloud/steamrt/sniper/sdk:latest'
     steps:
@@ -46,39 +54,6 @@ jobs:
           apt-get update
           apt-get install -y --no-install-recommends clang-tidy-19
 
-      - name: Configure the tooling build (unity build off)
-        run: cmake --preset linux-debug -B build/linux-tooling -DNEO_UNITY_BUILD_CLIENT_SERVER=OFF -DNEO_UNITY_BUILD_OTHERS=OFF
-        working-directory: src
-
-      - name: Strip GCC-only flags from the compile database
-        run: python3 -I tools/neo_dev.py tidy-compile-db src/build/linux-tooling build/tidy-db
-
-      # Only files in the compile database are analysed. Anything else has no
-      # real compile flags, so clang-tidy would guess them and report parse
-      # errors: headers, files behind a CMake option the preset leaves off, and
-      # files no target builds. Changed header lines therefore get no findings.
-      - name: Analyse changed lines
-        run: |
-          base=$(git merge-base "origin/${{ github.base_ref }}" HEAD)
-          git diff --name-only --diff-filter=d "$base" HEAD -- \
-            src/game/client/neo src/game/server/neo src/game/shared/neo src/common/neo src/tests \
-            | sort > build/tidy-db/changed.txt
-          sort build/tidy-db/files.txt > build/tidy-db/built.txt
-          comm -12 build/tidy-db/changed.txt build/tidy-db/built.txt > build/tidy-db/analysed.txt
-          comm -23 build/tidy-db/changed.txt build/tidy-db/built.txt > build/tidy-db/skipped.txt
-          if [ -s build/tidy-db/skipped.txt ]; then
-            echo "Not analysed: not built by the tooling configure:"
-            sed 's/^/  /' build/tidy-db/skipped.txt
-          fi
-          if [ ! -s build/tidy-db/analysed.txt ]; then
-            echo "No changed files to analyse."
-            exit 0
-          fi
-          git diff -U0 "$base" HEAD -- $(cat build/tidy-db/analysed.txt) \
-            | clang-tidy-diff-19.py -clang-tidy-binary clang-tidy-19 -p1 -path build/tidy-db -j 4 -quiet \
-            | tee tidy.log
-          if grep -qE 'warning:|error:' tidy.log; then
-            echo "::error::clang-tidy reported findings on changed lines. Each is shown above with its check name."
-            exit 1
-          fi
-          echo "No clang-tidy findings on changed lines."
+      # The command first configures src/build/linux-tooling with the unity build off.
+      - name: Analyse the NEO tree
+        run: python3 -I tools/neo_dev.py tidy --jobs 4

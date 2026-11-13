@@ -6,7 +6,7 @@ removed, so clang-tidy can read a database that CMake generated for GCC.
 Run clang-tidy with -p OUT_DIR afterwards.
 
 Also writes OUT_DIR/files.txt, the sorted repository paths of every file in the
-database, so a caller can tell which changed files have real compile flags.
+database, so a caller can tell which files have real compile flags.
 """
 import json
 import os

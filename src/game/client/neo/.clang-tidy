@@ -6,6 +6,7 @@ Checks: >
   clang-analyzer-*,
   performance-*,
   -bugprone-easily-swappable-parameters,
+  -bugprone-non-zero-enum-to-bool-conversion,
   -bugprone-narrowing-conversions,
   -bugprone-reserved-identifier,
   -bugprone-implicit-widening-of-multiplication-result,
@@ -13,5 +14,5 @@ Checks: >
   -performance-avoid-endl,
   -performance-enum-size,
   -performance-no-int-to-ptr
-HeaderFilterRegex: '(/neo/|/common/neo/|/tests/)'
+HeaderFilterRegex: '/src/(game/(client|server|shared)/neo|common/neo|tests)/'
 WarningsAsErrors: ''
