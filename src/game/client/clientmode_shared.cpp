@@ -82,6 +82,7 @@ extern ConVar replay_rendersetting_renderglow;
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#ifdef NEO
 #ifdef GLOWS_ENABLE
 CLIENTEFFECT_REGISTER_BEGIN(PrecachePostProcessingEffectsGlow)
 CLIENTEFFECT_MATERIAL("dev/glow_color")
@@ -90,6 +91,7 @@ CLIENTEFFECT_MATERIAL("dev/halo_add_to_screen_outline")
 CLIENTEFFECT_MATERIAL("dev/halo_textured_add_to_screen")
 CLIENTEFFECT_REGISTER_END_CONDITIONAL(engine->GetDXSupportLevel() >= 90)
 #endif
+#endif // NEO
 #define ACHIEVEMENT_ANNOUNCEMENT_MIN_TIME 10
 
 class CHudWeaponSelection;
@@ -833,9 +835,8 @@ int ClientModeShared::HandleSpectatorKeyInput( int down, ButtonCode_t keynum, co
 #ifdef NEO
 		// This feature seems pretty broken, you can get stuck in menus etc.
 		// Disabling entirely for now.
-#if(0)
+#else
 		m_pViewport->ShowPanel( PANEL_SPECMENU, true );
-#endif
 #endif
 		return 0; // we handled it, don't handle twice or send to server
 	}
@@ -1302,6 +1303,7 @@ void ClientModeShared::FireGameEvent( IGameEvent *event )
 				wchar_t wszLocalized[100];
 				if ( bAutoTeamed )
 				{
+#ifdef NEO
 #if 0 // TODO (nullsystem): 2025-02-18 SOURCE SDK 2013 CHECK
 					g_pVGuiLocalize->ConstructString( wszLocalized, sizeof( wszLocalized ), g_pVGuiLocalize->Find( "#game_player_joined_autoteam" ), 2, wszPlayerName, wszTeam );
 					weWantToChat = true;
@@ -1321,6 +1323,7 @@ void ClientModeShared::FireGameEvent( IGameEvent *event )
 						g_pVGuiLocalize->ConstructString(wszLocalized, sizeof(wszLocalized), g_pVGuiLocalize->Find("#game_player_joined_team"), 2, wszPlayerName, wszTeam);
 					}
 #endif
+#endif // NEO
 					g_pVGuiLocalize->ConstructString_safe( wszLocalized, bUsingCustomTeamName ? g_pVGuiLocalize->Find( "#game_player_joined_autoteam_party_leader" ) : g_pVGuiLocalize->Find( "#game_player_joined_autoteam" ), 2, wszPlayerName, wszTeam );
 				}
 				else

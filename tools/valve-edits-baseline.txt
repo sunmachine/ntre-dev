@@ -23,8 +23,7 @@
 3	src/game/client/c_team_train_watcher.cpp
 1	src/game/client/cdll_client_int.cpp
 6	src/game/client/clientleafsystem.cpp
-45	src/game/client/clientmode_shared.cpp
-10	src/game/client/clientmode_shared.h
+18	src/game/client/clientmode_shared.cpp
 4	src/game/client/clientshadowmgr.cpp
 2	src/game/client/entity_client_tools.cpp
 2	src/game/client/fx_blood.cpp
