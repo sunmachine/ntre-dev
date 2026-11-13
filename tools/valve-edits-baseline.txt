@@ -19,7 +19,6 @@
 6	src/game/client/c_colorcorrectionvolume.cpp
 4	src/game/client/c_entitydissolve.cpp
 39	src/game/client/c_particle_smokegrenade.cpp
-24	src/game/client/c_playerresource.cpp
 2	src/game/client/c_sceneentity.cpp
 4	src/game/client/c_te_playerdecal.cpp
 3	src/game/client/c_team_train_watcher.cpp

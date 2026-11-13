@@ -316,6 +316,7 @@ int C_PlayerResource::GetTeamScore(int index_ )
 	return team->Get_Score();
 }
 
+#ifdef NEO
 int C_PlayerResource::GetXP(int index)
 {
 	if (!IsConnected(index))
@@ -345,6 +346,7 @@ int C_PlayerResource::GetStar(int index)
 
 	return m_iStar[index];
 }
+#endif // NEO
 
 int C_PlayerResource::GetFrags(int index_ )
 {
