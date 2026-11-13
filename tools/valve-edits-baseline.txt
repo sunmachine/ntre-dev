@@ -132,7 +132,6 @@
 139	src/game/server/hl2mp/hl2mp_player.cpp
 12	src/game/server/hl2mp/hl2mp_player.h
 2	src/game/server/hltvdirector.h
-1	src/game/server/nav_area.cpp
 2	src/game/server/nav_merge.cpp
 4	src/game/server/npc_talker.cpp
 2	src/game/server/npc_talker.h
