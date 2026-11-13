@@ -5623,8 +5623,8 @@ CNavArea::VisibilityType CNavArea::ComputeVisibility( const CNavArea *area, bool
 }
 
 
-//--------------------------------------------------------------------------------------------------------
 #ifdef NEO
+//--------------------------------------------------------------------------------------------------------
 // attribute values below this each get a bit in a stamp's mask (visibility attributes are 0 to 3)
 static constexpr unsigned int VIS_DELTA_ATTRIBUTE_BITS = 32;
 
