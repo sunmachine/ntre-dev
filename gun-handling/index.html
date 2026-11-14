@@ -1,0 +1,569 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Gun Handling Controller</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: one reading column of about 46rem, wide bands for tables and the recoil bench. Two semantic hues carry the argument: rust for "today", blue for "proposed". */
+:root {
+  --bg: #f3f4f7;
+  --surface: #ffffff;
+  --sunk: #e9ebf0;
+  --fg: #19202c;
+  --muted: #586273;
+  --line: #d3d8e1;
+  --today: #a8502c;
+  --today-soft: #f6e6dd;
+  --next: #1f62a8;
+  --next-soft: #dfeaf7;
+  --ok: #2c7a56;
+  --ok-soft: #dcf0e6;
+  --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161d; --surface: #1a2029; --sunk: #0d1016; --fg: #e6e9ef; --muted: #9aa5b6; --line: #2e3745;
+    --today: #e39a76; --today-soft: #3a2519; --next: #7fb4ee; --next-soft: #16293f; --ok: #72c79d; --ok-soft: #15301f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161d; --surface: #1a2029; --sunk: #0d1016; --fg: #e6e9ef; --muted: #9aa5b6; --line: #2e3745;
+  --today: #e39a76; --today-soft: #3a2519; --next: #7fb4ee; --next-soft: #16293f; --ok: #72c79d; --ok-soft: #15301f;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.6; }
+.wrap { max-width: 62rem; margin: 0 auto; padding-block: 2.5rem 4rem; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 3rem; }
+.col { max-width: 46rem; display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+section { display: flex; flex-direction: column; gap: 1.25rem; min-width: 0; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.01em; }
+h3 { font-size: 1.1rem; font-weight: 600; }
+p, ul, ol { margin: 0; }
+ul, ol { padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.lede { font-size: 1.15rem; color: var(--fg); }
+.muted { color: var(--muted); }
+code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+code { background: var(--sunk); padding: 0.1em 0.35em; border-radius: 4px; }
+.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.chip { font-family: var(--font-mono); font-size: 0.75rem; padding: 0.25rem 0.6rem; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); }
+.chip.done { background: var(--ok-soft); border-color: transparent; color: var(--ok); }
+.chip.wait { background: var(--today-soft); border-color: transparent; color: var(--today); }
+.grid { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); }
+.store { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 0.9rem 1rem; display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
+.store h3 { font-size: 1rem; }
+.store p { font-size: 0.9rem; color: var(--muted); }
+.tag { align-self: flex-start; font-family: var(--font-mono); font-size: 0.7rem; padding: 0.15rem 0.45rem; border-radius: 4px; }
+.tag.today { background: var(--today-soft); color: var(--today); }
+.tag.next { background: var(--next-soft); color: var(--next); }
+.tag.ok { background: var(--ok-soft); color: var(--ok); }
+.facts { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); }
+.fact { display: flex; flex-direction: column; gap: 0.15rem; }
+.fact b { font-family: var(--font-display); font-size: 2rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.fact span { font-size: 0.9rem; color: var(--muted); }
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+.steps { counter-reset: s; list-style: none; padding: 0; gap: 0.75rem; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 2rem 1fr; gap: 0.75rem; align-items: start; }
+.steps li::before { content: counter(s); font-family: var(--font-display); font-weight: 700; color: var(--next); font-size: 1.2rem; line-height: 1.4; }
+.layers { display: flex; flex-direction: column; gap: 0.4rem; }
+.layer { display: grid; grid-template-columns: 9rem 1fr; gap: 0.75rem; padding: 0.7rem 0.9rem; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); align-items: baseline; }
+.layer b { font-family: var(--font-display); }
+.layer.top { border-color: var(--next); background: var(--next-soft); }
+.layer span { font-size: 0.92rem; color: var(--muted); }
+.layer.top span { color: var(--fg); }
+.diagram { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem; }
+pre.mermaid { margin: 0; min-width: 34rem; }
+pre.kv { margin: 0; background: var(--sunk); border-radius: 8px; padding: 1rem; overflow-x: auto; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.5; }
+.two { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); }
+.two > * { min-width: 0; }
+.bench { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.25rem; display: grid; gap: 1.5rem; grid-template-columns: minmax(0, 1fr) minmax(0, 18rem); }
+.bench canvas { width: 100%; height: auto; aspect-ratio: 4 / 3; background: var(--sunk); border-radius: 6px; display: block; max-width: 100%; }
+.controls { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+.ctl { display: flex; flex-direction: column; gap: 0.25rem; }
+.ctl label { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.78rem; }
+.ctl output { color: var(--next); font-variant-numeric: tabular-nums; }
+.ctl input[type="range"] { width: 100%; accent-color: var(--next); }
+.ctl small { color: var(--muted); font-size: 0.8rem; line-height: 1.35; }
+button { font-family: var(--font-body); font-size: 0.9rem; font-weight: 500; padding: 0.5rem 0.9rem; border-radius: 6px; border: 1px solid var(--next); background: var(--next); color: var(--surface); cursor: pointer; }
+button.ghost { background: transparent; color: var(--next); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--next); outline-offset: 2px; }
+.btns { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.readout { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
+.phases { display: grid; gap: 0.6rem; }
+.phase { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr) auto; gap: 0.9rem; align-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 0.9rem 1rem; }
+.phase .n { font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; line-height: 1.1; color: var(--next); }
+.phase h3 { margin-bottom: 0.2rem; }
+.phase p { font-size: 0.92rem; color: var(--muted); }
+.phase .h { font-family: var(--font-mono); font-size: 0.8rem; white-space: nowrap; color: var(--muted); }
+.gate { font-size: 0.85rem; color: var(--ok); }
+.note { border-left: 3px solid var(--today); background: var(--today-soft); padding: 0.8rem 1rem; border-radius: 0 6px 6px 0; }
+footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--line); padding-top: 1.25rem; }
+@media (max-width: 720px) {
+  .bench { grid-template-columns: minmax(0, 1fr); }
+  .layer { grid-template-columns: minmax(0, 1fr); gap: 0.15rem; }
+  .phase { grid-template-columns: 2rem minmax(0, 1fr); }
+  .phase .h { grid-column: 2; }
+}
+</style>
+
+<div class="wrap">
+
+<header class="col">
+  <span class="eyebrow">Neotokyo Rebuild / proposal / 2026-11-14</span>
+  <h1>Gun Handling Controller</h1>
+  <p class="lede">A plan to put every number that shapes how a gun fires and feels into one data file per gun, make those numbers adjustable while playing, and then add recoil, camera and handling mechanisms the game does not have yet.</p>
+  <div class="chips">
+    <span class="chip done">Investigation done</span>
+    <span class="chip done">Plan written</span>
+    <span class="chip done">8 rulings answered</span>
+    <span class="chip wait">No game code changed yet</span>
+  </div>
+</header>
+
+<section>
+  <div class="col">
+    <span class="eyebrow">1 / Problem</span>
+    <h2>A gun's feel is held in five places, and four of them need a programmer</h2>
+    <p>Today a designer cannot see one gun's full set of numbers in one place. Most of them can only change with a compiler and a restart. Nothing shows that a change to one gun left the others alone.</p>
+  </div>
+  <div class="grid">
+    <div class="store"><span class="tag ok">Text file</span><h3>Weapon script</h3><p>Damage, fire rate, pellets, penetration, clip size, aim zoom.</p></div>
+    <div class="store"><span class="tag today">Compiled</span><h3>One big table</h3><p>Spread cones, view kick and camera recoil for every gun.</p></div>
+    <div class="store"><span class="tag today">Compiled</span><h3>Per-gun code</h3><p>Movement speed, dry-fire timing, tracers.</p></div>
+    <div class="store"><span class="tag today">Console only</span><h3>38 console variables</h3><p>A burst recoil path that is switched off for most guns.</p></div>
+    <div class="store"><span class="tag today">Compiled</span><h3>Scattered checks</h3><p>Automatic or semi, slug damage, heat, slide lock.</p></div>
+  </div>
+  <div class="col">
+    <p>The feel itself has little to tune. Every gun shares one accuracy model with no per-gun values. Recoil is a flat random draw with no pattern, no recovery and no smoothing. Crouching, walking and leaning barely matter. Nothing moves the camera or the gun model from code when a shot fires, beyond a small punch.</p>
+  </div>
+  <div class="facts">
+    <div class="fact"><b>24</b><span>guns in scope: 23 firearms and the BALC</span></div>
+    <div class="fact"><b>19</b><span>of those are empty templates that differ only in numbers</span></div>
+    <div class="fact"><b>1</b><span>accuracy model shared by all, with no per-gun values</span></div>
+    <div class="fact"><b>0</b><span>tests or reports that prove a gun did not change</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <span class="eyebrow">2 / Proposal summary</span>
+    <h2>One record per gun, one place to tune it, and a proof that nothing moved</h2>
+    <ol class="steps">
+      <li><div><b>One handling record per gun, built on archetypes.</b> Every lever becomes a named value. A gun belongs to a family, such as rifle or shotgun, and states only what makes it different.</div></li>
+      <li><div><b>One lever list in code.</b> The file reader, the file writer, the console commands and the tuning panel are all generated from it. Adding a lever later is a one-line change plus the code that uses it.</div></li>
+      <li><div><b>One handling controller.</b> The maths for spread, kick and recoil moves into a single testable unit that every gun goes through.</div></li>
+      <li><div><b>Live tuning.</b> On a private test server, a docked panel or a console command changes a lever while you play. A save button writes it back to the gun's file.</div></li>
+      <li><div><b>New mechanisms, switched off by default.</b> Recoil patterns with separately tuned randomness, recovery, stance modifiers, camera feedback and viewmodel handling arrive as more levers. No gun changes until someone tunes it.</div></li>
+    </ol>
+    <p>The move is a pure reorganisation. A report of every gun's values is captured before the work and compared after every step. They must match.</p>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <span class="eyebrow">3 / Breakdown</span>
+    <h2>What tuning looks like afterwards</h2>
+    <ol>
+      <li>Start a private server on the test map and press the panel key.</li>
+      <li>The panel docks on the right and shows the gun in your hands. You keep moving and shooting.</li>
+      <li>Hold a key to free the mouse, drag a slider, let go, fire. The change is live on the next shot.</li>
+      <li>Flip the target from the gun to its family to move every rifle at once.</li>
+      <li>Press save. Only that gun's handling block in its file changes, so the edit is a small, reviewable diff.</li>
+    </ol>
+  </div>
+  <div class="diagram"><pre class="mermaid">
+flowchart LR
+    A["Family file<br/>pistol, smg, rifle ..."] --> R["Handling record<br/>per gun"]
+    G["Gun file<br/>only its differences"] --> R
+    L["Lever list<br/>names, ranges, defaults"] --> R
+    R --> C["Handling controller"]
+    C --> F["Fire code<br/>spread, kick, recoil"]
+    C --> V["Camera and gun model<br/>feedback"]
+    P["Tuning panel<br/>and console"] -->|"live change"| R
+    P -->|"save"| G
+    L --> P
+  </pre></div>
+</section>
+
+<section>
+  <div class="col">
+    <h2>Archetypes: seven families already exist in the numbers</h2>
+    <p>Today's values cluster on their own. Each family below lists what every member shares right now. A family holds the value most of its members use, and a gun that differs states its own. Nothing is chosen by hand. A script produces the split and the before-and-after report proves it.</p>
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Family</th><th>Guns</th><th>Shared today</th></tr></thead>
+    <tbody>
+      <tr><td><code>pistol</code></td><td>Milso, Tachi, Kyla</td><td>Movement speed 0.85, widest hip cone 7 degrees, widest aimed cone 4</td></tr>
+      <tr><td><code>smg</code></td><td>MPN, MPN silenced, SRM, SRM silenced, Jitte, Jitte scoped, SMAC</td><td>Automatic, widest hip cone 7, tightest aimed cone 1</td></tr>
+      <tr><td><code>rifle</code></td><td>MX, MX silenced, ZR68C, ZR68S, M41, M41S</td><td>Identical spread: hip 4 to 7, aimed 0 to 3</td></tr>
+      <tr><td><code>marksman</code></td><td>ZR68L, M41L</td><td>Semi-automatic, speed 0.725, no view kick, same camera recoil</td></tr>
+      <tr><td><code>sniper</code></td><td>SRS</td><td>One member</td></tr>
+      <tr><td><code>shotgun</code></td><td>AA13, Supa 7</td><td>5 degree cone throughout, same kick, no bloom from firing</td></tr>
+      <tr><td><code>machinegun</code></td><td>PZ, PBK56S, BALC</td><td>Same kick and camera recoil, tightest hip cone 2</td></tr>
+    </tbody>
+  </table></div>
+  <div class="two">
+    <div class="col">
+      <h3>How a value is resolved</h3>
+      <div class="layers">
+        <div class="layer top"><b>Gun</b><span>What makes this gun different. Wins.</span></div>
+        <div class="layer"><b>Family</b><span>What the family shares.</span></div>
+        <div class="layer"><b>Built-in default</b><span>What every gun shares today.</span></div>
+      </div>
+      <p class="muted">One level only. A family cannot inherit from another family. Marksman is a new name; the other six match weapon types the game already has. This grouping still needs the developer's review.</p>
+    </div>
+    <div class="col">
+      <h3>The MX, after the move</h3>
+<pre class="kv">"Handling"
+{
+    "archetype"   "rifle"
+    "tracers"     "1"
+}</pre>
+      <p class="muted">The rifle family supplies fire mode, speed, spread and kick. The MX only says it has tracers.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <h2>Recoil today: three channels, all purely random</h2>
+    <p>The game has three separate ways a shot disturbs your aim. Each gun uses a different mix, and every one draws a flat random number between a minimum and a maximum.</p>
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Channel</th><th>What you see</th><th>Builds over a burst</th><th>Server can check it</th><th>Guns using it</th></tr></thead>
+    <tbody>
+      <tr><td><b>View punch</b></td><td>The camera jumps and springs back. It nudges the next bullet.</td><td>No, it is reset each shot</td><td>Yes</td><td>16</td></tr>
+      <tr><td><b>Camera climb</b></td><td>The camera rises and stays until you pull it down.</td><td>Yes</td><td>No</td><td>9</td></tr>
+      <tr><td><b>Shot rotation</b></td><td>Bullets leave above the crosshair. The camera does not move.</td><td>Yes</td><td>Yes</td><td>3, by accident</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <p>Patterns will be built on the <b>camera climb</b>, as ruled. It is the channel a player fights with the mouse, which is what makes a pattern learnable.</p>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <h2>Pattern and randomness, tuned separately</h2>
+    <p>Each recoil channel will compute a shot the same way. A fixed pattern and a random draw each get their own scale, so a gun can be fully learnable, fully random or any mix.</p>
+<pre class="kv">shot offset = pattern[shot number] x pattern scale
+            + random(min, max)     x random scale</pre>
+    <p>Try it. The bench below fires bursts with a made-up pattern. The last five bursts stay on screen so you can see how repeatable the climb is. The numbers are illustrations, not game values.</p>
+  </div>
+  <div class="bench">
+    <div style="min-width:0">
+      <canvas id="bench" width="800" height="600" aria-label="Plot of where each shot of a burst lands as the camera climbs"></canvas>
+      <p class="readout" id="readout"></p>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label for="ps">pattern scale <output id="psv"></output></label><input type="range" id="ps" min="0" max="2" step="0.05" value="1"><small>How much of the fixed, learnable climb is applied.</small></div>
+      <div class="ctl"><label for="rs">random scale <output id="rsv"></output></label><input type="range" id="rs" min="0" max="2" step="0.05" value="0.5"><small>How much of the random range is applied.</small></div>
+      <div class="ctl"><label for="sh">random shape <output id="shv"></output></label><input type="range" id="sh" min="0" max="1" step="0.05" value="0"><small>0 is a flat draw. 1 pulls draws toward the centre.</small></div>
+      <div class="ctl"><label for="rc">recovery <output id="rcv"></output></label><input type="range" id="rc" min="0" max="1" step="0.05" value="0"><small>Share of the climb the camera gives back by itself after the burst.</small></div>
+      <div class="btns"><button id="fire" type="button">Fire a burst</button><button id="today" type="button" class="ghost">Today's behaviour</button></div>
+      <p class="muted" style="font-size:0.85rem">Today's behaviour is pattern empty, random scale 1, no recovery. Those are the defaults every gun ships with.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <h2>The new mechanisms</h2>
+    <p>All of these are added as levers on the same record, in the same panel, with defaults that reproduce today's game.</p>
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Mechanism</th><th>What a designer can now do</th><th>Affects bullets</th></tr></thead>
+    <tbody>
+      <tr><td><b>Recoil patterns</b></td><td>Draw a climb and drift per shot, loop or hold it, and let the burst counter cool down gradually.</td><td>Yes</td></tr>
+      <tr><td><b>Randomness control</b></td><td>Scale the random part against the pattern and shape the draw toward the centre.</td><td>Yes</td></tr>
+      <tr><td><b>Recovery and smoothing</b></td><td>Spread a kick over a few frames, and return part of the climb after firing stops.</td><td>Yes</td></tr>
+      <tr><td><b>Per-gun accuracy model</b></td><td>Give each gun its own bloom per shot, cap and recovery speed.</td><td>Yes</td></tr>
+      <tr><td><b>Stance and movement</b></td><td>Multiply spread, bloom, kick and recoil for crouching, walking, moving, jumping, leaning and aiming.</td><td>Yes</td></tr>
+      <tr><td><b>Camera feedback</b></td><td>Add shake, a roll kick, a brief zoom punch and a shove on each shot.</td><td>No</td></tr>
+      <tr><td><b>Viewmodel handling</b></td><td>Add spring kickback on the gun model and per-gun sway, bob, strafe tilt and landing dip.</td><td>No</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <p>Camera feedback comes with one player setting that scales all of it down to zero, for people who are sensitive to camera motion.</p>
+    <h3>The stance matrix</h3>
+    <p>Six states by five outputs, every cell a multiplier that starts at 1. Today only three of these thirty relationships exist at all, and they are fixed for every gun.</p>
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>State</th><th>Spread</th><th>Bloom gain</th><th>Bloom recovery</th><th>Kick</th><th>Recoil</th></tr></thead>
+    <tbody>
+      <tr><td>Crouched</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+      <tr><td>Walk key held</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+      <tr><td>Moving</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+      <tr><td>Airborne</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+      <tr><td>Leaning</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+      <tr><td>Aiming</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="col">
+    <h2>How a live change stays in step</h2>
+    <p>The game runs the same shooting code twice, once on the server and once on your own machine so that firing feels instant. If the two disagree on a number, your screen stutters. So a change always goes to the server first, and the server tells every client.</p>
+  </div>
+  <div class="diagram"><pre class="mermaid">
+sequenceDiagram
+    participant P as Panel or console
+    participant S as Server
+    participant C as Each player's game
+    participant D as Gun file on disk
+    P->>S: set MX kick to 0.7
+    S->>S: check test mode, clamp to range
+    S->>C: MX kick is now 0.7
+    Note over S,C: both sides fire with the new value
+    P->>S: save MX
+    S->>D: rewrite only the Handling block
+  </pre></div>
+</section>
+
+<section>
+  <div class="col">
+    <span class="eyebrow">4 / Plan</span>
+    <h2>Five phases, each ending at a gate</h2>
+    <p>The first three phases change nothing a player can feel. The fourth adds mechanisms whose defaults change nothing. Hours are estimates for agent sessions with a review at each gate, made before any code exists.</p>
+  </div>
+  <div class="phases">
+    <div class="phase"><span class="n">0</span><div><h3>Safety net</h3><p>Capture a report of every gun's handling values from today's code.</p><p class="gate">Gate: the baseline report is saved.</p></div><span class="h">about 2 h</span></div>
+    <div class="phase"><span class="n">1</span><div><h3>Data</h3><p>Write the family file and each gun's handling block. Teach the game to read them. Nothing uses them yet.</p><p class="gate">Gate: the values read from files match the baseline for all 24 guns.</p></div><span class="h">about 4 h</span></div>
+    <div class="phase"><span class="n">2</span><div><h3>Controller</h3><p>Switch the fire code to the new record. Delete the table, the per-gun constants and the 38 console variables.</p><p class="gate">Gate: report matches, unit tests pass, every gun fired in game with no prediction errors.</p></div><span class="h">about 6 h</span></div>
+    <div class="phase"><span class="n">3</span><div><h3>Live tuning</h3><p>Console commands, family edits, save, reload and the docked panel.</p><p class="gate">Gate: edit, save, restart and reload all behave, and an untouched game still matches the baseline.</p></div><span class="h">about 7 h</span></div>
+    <div class="phase"><span class="n">4</span><div><h3>New mechanisms</h3><p>Randomness model, patterns, recovery, stance matrix, camera feedback, viewmodel handling and a pattern view in the panel.</p><p class="gate">Gate: defaults still match the baseline, and a demo profile shows each mechanism working on one gun.</p></div><span class="h">about 9 h</span></div>
+  </div>
+  <div class="col">
+    <p>All of it lands on one branch first. After review it is split into smaller upstream changes: report and tests, data, controller, live commands, panel, then one per mechanism.</p>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <span class="eyebrow">5 / Supporting detail</span>
+    <h2>Decisions already made</h2>
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Question</th><th>Ruling</th></tr></thead>
+    <tbody>
+      <tr><td>How are spread cones written in the files?</td><td>In degrees. The values differ from today's constants by at most 0.0004 degrees, because the old constants were rounded.</td></tr>
+      <tr><td>Three guns get burst recoil by accident. Keep it?</td><td>Keep it as data and flag it for the first tuning pass.</td></tr>
+      <tr><td>Fix the defects found along the way?</td><td>No. Preserve each one and file it upstream separately.</td></tr>
+      <tr><td>Which channel carries patterns?</td><td>Camera climb.</td></tr>
+      <tr><td>How does save write the file?</td><td>It rewrites only the handling block, so comments in the file survive.</td></tr>
+      <tr><td>Per-gun values only, or families?</td><td>Families now.</td></tr>
+      <tr><td>Wait for the upstream "Smooth recoil" change?</td><td>No. It is being coordinated directly with its author.</td></tr>
+      <tr><td>Send the server's values to players when they join?</td><td>Later, before the upstream split.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <h3>Two accepted consequences</h3>
+    <div class="note"><p><b>Camera climb is trusted to the player's machine.</b> The server cannot check it, so a modified game client can skip a patterned climb, as it can skip the Kyla's climb today.</p></div>
+    <div class="note"><p><b>Not for public servers yet.</b> Until the server sends its values to joining players, a player could remove camera recoil with a text edit, and a server with custom tuning would feel uneven to players with stock files. That sync must land with, or before, the upstream change that moves camera recoil into files.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <h2>What the investigation turned up</h2>
+    <p>Thirteen defects and oddities were found. None is fixed by this work. The ones a designer would notice:</p>
+    <ul>
+      <li>The scoped Jitte identifies itself as the plain Jitte, so anything that looks for the scoped one never finds it.</li>
+      <li>Two loadout entries both hand out the silenced M41. The scoped M41L cannot be picked from a loadout.</li>
+      <li>The display names for the M41L and M41S are swapped in one table.</li>
+      <li>AA13 and Supa 7 shells never penetrate walls. Only the slug does.</li>
+      <li>Reloading throws away the rounds left in the magazine. This reads as the original game's rule.</li>
+      <li>The MX and the Tachi show a different viewmodel field of view from the one written in their files, because the game reads a different key.</li>
+    </ul>
+    <h3>Not in this work</h3>
+    <ul>
+      <li>Any change to how a gun feels. Tuning starts after this lands.</li>
+      <li>Knife, grenades, detpack and ghost.</li>
+      <li>Bot behaviour tables.</li>
+      <li>Folding the AA13 and Supa 7 into the shared fire routine.</li>
+      <li>Live tuning on dedicated servers.</li>
+    </ul>
+    <h3>Still open</h3>
+    <ul>
+      <li>The seven-family grouping needs the developer's review.</li>
+      <li>Nothing in the investigation was measured in a running game. It was all read from source.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>Read from the game source at commit dc56cb595 on 2026-11-14. Full findings, the current and proposed architecture and the step-by-step plan are in the project's gun-handling docs folder.</footer>
+
+</div>
+
+<script>
+(function () {
+  var cv = document.getElementById('bench');
+  var ctx = cv.getContext('2d');
+  var ids = ['ps', 'rs', 'sh', 'rc'];
+  var el = {};
+  ids.forEach(function (id) { el[id] = document.getElementById(id); el[id + 'v'] = document.getElementById(id + 'v'); });
+  var readout = document.getElementById('readout');
+  var SHOTS = 20;
+  // Illustrative pattern: degrees of pitch (up) and yaw per shot. Not game values.
+  var PATTERN = [];
+  for (var i = 0; i < SHOTS; i++) {
+    var rise = i < 8 ? 0.55 : 0.12;
+    var sway = i < 6 ? 0.05 : Math.sin((i - 6) / 2.2) * 0.42;
+    PATTERN.push([rise, sway]);
+  }
+  var RAND = { pitch: [0.0, 0.45], yaw: [-0.5, 0.5] };
+  var seed = 7;
+  var bursts = [];
+  function rng(s) { return function () { s |= 0; s = s + 0x6D2B79F5 | 0; var t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function draw1(r, lo, hi, shape) {
+    var flat = r();
+    var centred = (r() + r() + r()) / 3;
+    var u = flat * (1 - shape) + centred * shape;
+    return lo + (hi - lo) * u;
+  }
+  function burst() {
+    var r = rng(seed++);
+    var ps = +el.ps.value, rs = +el.rs.value, sh = +el.sh.value;
+    var x = 0, y = 0, pts = [[0, 0]];
+    for (var i = 1; i < SHOTS; i++) {
+      y += PATTERN[i][0] * ps + draw1(r, RAND.pitch[0], RAND.pitch[1], sh) * rs;
+      x += PATTERN[i][1] * ps + draw1(r, RAND.yaw[0], RAND.yaw[1], sh) * rs;
+      pts.push([x, y]);
+    }
+    return pts;
+  }
+  function tok(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function render() {
+    var W = cv.width, H = cv.height;
+    ctx.clearRect(0, 0, W, H);
+    var line = tok('--line'), muted = tok('--muted'), next = tok('--next'), today = tok('--today');
+    var scale = 26, ox = W / 2, oy = H - 60;
+    ctx.lineWidth = 1; ctx.strokeStyle = line; ctx.fillStyle = muted; ctx.font = '20px ' + tok('--font-mono');
+    for (var d = 0; d <= 20; d += 5) {
+      var gy = oy - d * scale;
+      ctx.beginPath(); ctx.moveTo(40, gy); ctx.lineTo(W - 20, gy); ctx.stroke();
+      ctx.fillText(d + '°', 44, gy - 6);
+    }
+    ctx.beginPath(); ctx.moveTo(ox, 20); ctx.lineTo(ox, H - 30); ctx.stroke();
+    ctx.fillText('first shot', ox + 12, oy + 28);
+    bursts.forEach(function (pts, bi) {
+      var last = bi === bursts.length - 1;
+      ctx.globalAlpha = last ? 1 : 0.22 + 0.1 * bi;
+      ctx.strokeStyle = next; ctx.fillStyle = next; ctx.lineWidth = last ? 2.5 : 1.5;
+      ctx.beginPath();
+      pts.forEach(function (p, i) { var px = ox + p[0] * scale, py = oy - p[1] * scale; if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py); });
+      ctx.stroke();
+      pts.forEach(function (p) { ctx.beginPath(); ctx.arc(ox + p[0] * scale, oy - p[1] * scale, last ? 5 : 3, 0, 6.2832); ctx.fill(); });
+      if (last) {
+        var end = pts[pts.length - 1], rc = +el.rc.value;
+        if (rc > 0) {
+          var ex = ox + end[0] * scale, ey = oy - end[1] * scale;
+          var rx = ox + end[0] * (1 - rc) * scale, ry = oy - end[1] * (1 - rc) * scale;
+          ctx.globalAlpha = 1; ctx.strokeStyle = today; ctx.fillStyle = today; ctx.setLineDash([8, 8]); ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(rx, ry); ctx.stroke(); ctx.setLineDash([]);
+          ctx.beginPath(); ctx.arc(rx, ry, 7, 0, 6.2832); ctx.fill();
+          ctx.fillText('camera settles here', Math.min(rx + 14, W - 250), ry + 6);
+        }
+      }
+    });
+    ctx.globalAlpha = 1;
+    var cur = bursts[bursts.length - 1], e = cur[cur.length - 1];
+    readout.textContent = SHOTS + ' shots. This burst climbed ' + e[1].toFixed(1) + ' degrees and drifted ' + Math.abs(e[0]).toFixed(1) + ' degrees ' + (e[0] < 0 ? 'left' : 'right') + '.';
+  }
+  function labels() { ids.forEach(function (id) { el[id + 'v'].textContent = (+el[id].value).toFixed(2); }); }
+  function fire() { bursts.push(burst()); if (bursts.length > 5) bursts.shift(); render(); }
+  function refill() { bursts = []; for (var i = 0; i < 5; i++) bursts.push(burst()); render(); }
+  ids.forEach(function (id) { el[id].addEventListener('input', function () { labels(); if (id === 'rc') render(); else refill(); }); });
+  document.getElementById('fire').addEventListener('click', fire);
+  document.getElementById('today').addEventListener('click', function () { el.ps.value = 0; el.rs.value = 1; el.sh.value = 0; el.rc.value = 0; labels(); refill(); });
+  if (window.matchMedia) { var mq = window.matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', render); }
+  new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(render);
+  labels(); refill();
+})();
+</script>
+
+<style>.mermaid-diagram{margin-block:4px}.mermaid-diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}</style>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>(function(){
+var CFG={"palettes":{"light":{"surface":"#f4efe4","text":"#42392e","line":"#8a7f6d","border":"#7a6c52","bg":"#fffdf8"},"dark":{"surface":"#262b34","text":"#f2f3f5","line":"#a8adb8","border":"#9aa4b8","bg":"#1f232b"}}};
+if(typeof mermaid==='undefined')return;
+var pres=Array.prototype.slice.call(document.querySelectorAll('pre.mermaid')).filter(function(p){if(p.hasAttribute('data-claude-mermaid-claimed'))return false;p.setAttribute('data-claude-mermaid-claimed','1');return true;});
+if(!pres.length)return;
+var mq=window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):null;
+var root=document.documentElement;
+var items=pres.map(function(pre){
+var mount=document.createElement('div');mount.className='mermaid-diagram';
+return {pre:pre,mount:mount,src:pre.textContent||''};
+});
+var seq=0;
+var renderGen=0;
+var lastKey='';
+function pageBg(fallback){
+var els=[document.body,document.documentElement];
+for(var i=0;i<els.length;i++){
+var c=els[i]&&getComputedStyle(els[i]).backgroundColor;
+if(c&&c!=='transparent'&&c!=='rgba(0, 0, 0, 0)')return c;
+}
+return fallback;
+}
+function render(){
+var theme=root.getAttribute('data-theme');
+var dark=theme==='dark'||(!!(mq&&mq.matches)&&theme!=='light');
+var pal=dark?CFG.palettes.dark:CFG.palettes.light;
+var bg=pageBg(pal.bg);
+var key=(dark?'d':'l')+'|'+bg;
+if(key===lastKey)return;
+lastKey=key;
+var gen=++renderGen;
+var font=getComputedStyle(document.body).fontFamily||'sans-serif';
+var nat={useMaxWidth:false};
+mermaid.initialize({
+startOnLoad:false,securityLevel:'strict',theme:'base',
+flowchart:nat,sequence:nat,er:nat,state:nat,class:nat,pie:nat,
+gantt:nat,journey:nat,timeline:nat,gitGraph:nat,mindmap:nat,xyChart:nat,
+quadrantChart:nat,sankey:nat,c4:nat,requirement:nat,block:nat,
+packet:nat,kanban:nat,architecture:nat,radar:nat,
+themeVariables:{background:bg,mainBkg:pal.surface,primaryColor:pal.surface,
+primaryTextColor:pal.text,lineColor:pal.line,primaryBorderColor:pal.border,
+nodeBorder:pal.border,clusterBorder:pal.border,edgeLabelBackground:bg,
+clusterBkg:'rgba(127,127,127,0.07)',titleColor:pal.text,
+darkMode:dark,rowOdd:bg,rowEven:'rgba(127,127,127,0.07)',
+attributeBackgroundColorOdd:bg,attributeBackgroundColorEven:'rgba(127,127,127,0.07)',
+fontSize:'16px',fontFamily:font},
+themeCSS:'.node rect, .node circle, .node polygon, .node path, .cluster rect { stroke-width: 2px; }'
+});
+items.forEach(function(it){
+var id='claude-mermaid-'+seq++;
+mermaid.render(id,it.src).then(function(r){
+if(gen!==renderGen)return;
+var prev=it.pre.previousElementSibling;
+if(prev&&prev.className==='mermaid-diagram'&&prev!==it.mount)return;
+it.mount.innerHTML=r.svg;
+if(!it.mount.parentNode)it.pre.parentNode.insertBefore(it.mount,it.pre);
+it.pre.style.display='none';
+},function(){
+var scratch=document.getElementById(id);
+if(scratch)scratch.parentNode.removeChild(scratch);
+scratch=document.getElementById('d'+id);
+if(scratch)scratch.parentNode.removeChild(scratch);
+if(gen!==renderGen)return;
+if(it.mount.parentNode)it.mount.parentNode.removeChild(it.mount);
+it.pre.style.display='';
+});
+});
+}
+render();
+if(mq&&mq.addEventListener)mq.addEventListener('change',render);
+if(typeof MutationObserver!=='undefined')new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
+})();</script>
+
+</body></html>
