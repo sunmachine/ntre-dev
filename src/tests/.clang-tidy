@@ -1,0 +1,18 @@
+# Conservative starting set for NEO-owned code. Valve directories have no
+# .clang-tidy and are not analysed.
+Checks: >
+  -*,
+  bugprone-*,
+  clang-analyzer-*,
+  performance-*,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-non-zero-enum-to-bool-conversion,
+  -bugprone-narrowing-conversions,
+  -bugprone-reserved-identifier,
+  -bugprone-implicit-widening-of-multiplication-result,
+  -bugprone-incorrect-roundings,
+  -performance-avoid-endl,
+  -performance-enum-size,
+  -performance-no-int-to-ptr
+HeaderFilterRegex: '/src/(game/(client|server|shared)/neo|common/neo|tests)/'
+WarningsAsErrors: ''

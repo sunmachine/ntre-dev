@@ -1,0 +1,3 @@
+# Valve SDK code is not analysed. NEO-owned directories carry their own
+# .clang-tidy, which overrides this one for files beneath them.
+Checks: '-*'

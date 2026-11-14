@@ -1,0 +1,5 @@
+CompileFlags:
+  # A warning promoted to an error in a Valve header stops clangd at its error
+  # limit, and the editor then shows no clang-tidy results for the file.
+  Add: [-ferror-limit=0]
+  Remove: [-Werror, -Werror=*]

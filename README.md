@@ -96,6 +96,30 @@ $ cmake --build --preset PRESET_NAME
 
 Available PRESET_NAME values: `windows-debug`, `windows-release`, `linux-debug`, `linux-release`.
 
+## Checking your changes
+CI runs three checks on every pull request: clang-format on the lines you changed, a check of NEO's edits to Valve files, and clang-tidy. They are advisory, so a failure does not block a merge, but running them before you push saves a review round. [CONTRIBUTING.md](CONTRIBUTING.md) explains the rules each check enforces.
+
+Run these from the repository root. On Linux, use `python3` in place of `python`.
+
+```
+# Formatting
+python -m pip install clang-format==19.1.7       # once
+python tools/neo_dev.py format                   # format your changed lines
+python tools/neo_dev.py format --check           # report only, as CI does
+
+# Valve edits check
+python tools/neo_dev.py check-valve-edits        # the first run fetches Valve's base commit
+python tools/neo_dev.py update-valve-baseline    # after removing NEO edits from a Valve file
+```
+
+clang-tidy runs on Linux, or inside WSL on Windows. Install `clang-tidy-19` first. `.github/workflows/clang-tidy.yml` shows the install for the Sniper container.
+
+```
+python3 tools/neo_dev.py tidy                               # analyse the NEO tree; the first run configures a build
+python3 tools/neo_dev.py tidy src/game/shared/neo/weapons   # analyse only these paths
+python3 tools/neo_dev.py tidy --update-baseline             # after fixing a finding
+```
+
 ## Steam mod setup
 To make it appear in Steam, the install files have to appear under the sourcemods directory or
 be directed to it.

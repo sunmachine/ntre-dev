@@ -128,6 +128,22 @@ This project uses the [CMake](https://cmake.org/) build system to generate ninja
 ### Preprocessor definitions
 In shared code, clientside code can be differentiated with CLIENT_DLL, vs. serverside's GAME_DLL. In more general engine files, Neotokyo specific code can be marked with a NEO ifdef.
 
+### Updating to a newer Source SDK 2013
+
+NEO tracks `ValveSoftware/source-sdk-2013` as a vendor branch. Valve's commit that NEO's tree was last synchronised with is tagged `sdk-base-<date>` and written to `tools/valve-sdk-base.txt`. The tag is also a parent of a merge commit on `master`, so git can find a merge base and merge Valve's later commits as a normal three-way merge.
+
+Valve lands SDK changes in batches a few times a year. NEO takes them on demand, when a Valve change is wanted or the backlog of unmerged commits has grown. Do an update on a branch cut from `master`:
+
+1. Run `python tools/neo_dev.py merge-valve-sdk`, from Git Bash on Windows. It adds the fetch-only `valve` remote on first use, fetches, starts `git merge --no-commit valve/master`, resolves modify/delete conflicts as "keep deleted" for the paths NEO removed on purpose (`tools/valve-sdk-deleted-paths.txt`), and lists what is left.
+2. Resolve the remaining conflicts. A hunk where Valve fixed a line NEO had guarded is usually "take Valve's, drop the guard". Rename detection sometimes pairs a Valve file with a NEO port of it, such as `tf_bot_squad.cpp` with `neo_bot_squad.cpp`; look before accepting.
+3. Build Linux and Windows, run the tests, and play a round. Valve's changes touch shared gameplay code such as `gamemovement.cpp` and `player.cpp`, so a green build is not enough.
+4. Commit the merge, update `tools/valve-sdk-base.txt` and tag the new base `sdk-base-<date>`.
+5. Open the pull request. It must land as a merge commit, not a squash, or the merge base is lost again. Ask a maintainer to allow merge commits for that pull request.
+
+`rerere.enabled` is switched on by the script, so a conflict you resolved once is replayed if the merge is redone. The cache stays in your clone.
+
+Never reformat, re-indent or sort includes in a file that came from Valve. Every such line conflicts with the next update. NEO additions in Valve files go inside `#ifdef NEO`; see Code style below.
+
 ## Supported compilers
 
 Only the x86-64 architecture is supported.
@@ -182,5 +198,12 @@ Only the x86-64 architecture is supported.
       * `auto output = neo::bit_cast<T>(input);`
 * Valve likes to `( space )` indent their parentheses, especially with macros, but it's not necessary to strictly follow everywhere.
 * Tabs are preferred for indentation, to be consistent with the SDK code.
+* NEO-owned directories have a `.clang-format`, and CI checks the lines a pull request changes. To format your changed lines before pushing, on Windows or Linux, install the formatter once with `python -m pip install clang-format==19.1.7`, or your distribution's `clang-format-19` package, and run `python tools/neo_dev.py format`. It runs the same commands as CI, including for the NEO shaders that a plain `git clang-format` skips. SDK files are never reformatted, so keep their style by hand.
+* The SDK's table macros, such as `BEGIN_NETWORK_TABLE`, `BEGIN_DATADESC` and `BEGIN_PREDICTION_DATA`, go between `// clang-format off` and `// clang-format on` lines. clang-format cannot lay out their entries, so keep one entry per line, indented one tab. Hand-aligned data tables, such as the weapon list in `weapon_bits.h`, are fenced the same way to keep their columns. So is code a contributor laid out by hand, such as an argument list or a constructor initializer list with one leading comma per line.
+* NEO-owned code is also checked by clang-tidy. CI analyses the whole NEO tree on Linux and fails only on findings missing from `tools/clang-tidy-baseline.txt`, so you are not held to account for problems that were already there. After fixing a finding, lower the count with `python tools/neo_dev.py tidy --update-baseline`. NEO code inside Valve files is not analysed. To run the check yourself:
+  * On Linux, install `clang-tidy-19` and run `python3 tools/neo_dev.py tidy`. Each run configures its own build in `src/build/linux-tooling` with the unity build off, so the first run takes a few minutes. The clang-tidy job in `.github/workflows/clang-tidy.yml` shows the install for the Sniper image. To analyse only some files or directories, pass them to the command.
+  * On Windows, run clang-tidy inside WSL. clang cannot parse the Windows build, because Valve's headers rely on MSVC behaviour. Keep a clone in the WSL file system, set up the Sniper container from [README.md](README.md), and follow the Linux steps. This analyses the same Linux build as CI, so the results match. Formatting does not need WSL, and CI does not use it.
+  * In an editor, clangd reads `.clangd` and `.clang-tidy` from the repository. Run the check once, which writes clangd's compile database, and start clangd with `--compile-commands-dir=src/build/linux-tooling/tidy-db`. On Windows, clangd has to run inside WSL too, for example through VS Code's WSL extension. Visual Studio's own clang-tidy support does not work with this setup. clangd leaves out the slower `clang-analyzer` checks, so also run the check before pushing.
 * When using a TODO/FIXME/HACK... style comment, use the format `// NEO TODO (Your-username): Example comment.` to make it easier to search for `NEO` specific todos/fixmes (opposed to Valve ones of the original SDK), and at a glance figure out who has written them.
+* In a file that came from Valve, put NEO code inside `#ifdef NEO`. When a Valve line has to change in place and cannot be guarded, for example a C++20 keyword rename or a cast the compiler requires, end it with `// NEO`. The Valve edits check in CI accepts such lines and flags any other change to Valve code outside a guard. To run it before pushing, use `python tools/neo_dev.py check-valve-edits`. The first run fetches Valve's base commit.
 * For classes running on both client and server, you should generally follow Valve's <i>C_Thing</i> (client) -- <i>CThing</i> (server) convention. On shared files, this might mean #defining serverclass for client, or vice versa. There's plenty of examples of this pattern in Valve's classes for reference, [for example here](https://github.com/NeotokyoRebuild/neo/blob/f749c07a4701d285bbb463686d5a5a50c20b9528/mp/src/game/shared/hl2mp/weapon_357.cpp#L20).
