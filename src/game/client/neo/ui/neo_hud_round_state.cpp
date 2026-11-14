@@ -53,9 +53,11 @@ constexpr bool STARS_HW_FILTERED = false;
 
 CNEOHud_RoundState *g_pNeoHudRoundState;
 
+// clang-format off
 CNEOHud_RoundState::CNEOHud_RoundState(const char *pElementName, vgui::Panel *parent)
 	: CHudElement(pElementName)
 	, Panel(parent, pElementName)
+// clang-format on
 {
 	g_pNeoHudRoundState = this;
 	m_pWszStatusUnicode = L"";

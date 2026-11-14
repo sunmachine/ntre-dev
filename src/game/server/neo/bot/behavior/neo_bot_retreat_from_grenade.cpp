@@ -149,11 +149,13 @@ CBaseEntity *CNEOBotRetreatFromGrenade::FindDangerousGrenade( CNEOBot *me )
 
 
 //---------------------------------------------------------------------------------------------
+// clang-format off
 CNEOBotRetreatFromGrenade::CNEOBotRetreatFromGrenade( CBaseEntity *grenade )
 	: m_grenade(grenade)
 	, m_coverArea( NULL )
 {
 }
+// clang-format on
 
 
 //---------------------------------------------------------------------------------------------

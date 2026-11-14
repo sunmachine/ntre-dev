@@ -509,21 +509,25 @@ bool ImportCrosshair(CrosshairInfo *xhairInfo, const char *pszSequence,
 	return true;
 }
 
+// clang-format off
 void ExportCrosshair(CrosshairInfo *xhairInfo, char (&szSequence)[NEO_XHAIR_SEQMAX]
 #ifdef UNIT_TEST_DLL
 		, const int iExportSerialVersion
 #endif
 		)
+// clang-format on
 {
 #ifndef UNIT_TEST_DLL
 	static constexpr int iExportSerialVersion = NEOXHAIR_SERIAL_CURRENT;
 #endif
 	szSequence[0] = '\0';
+	// clang-format off
 #ifdef DEBUG
 	const bool importOrExportSuccessful =
 #endif
 	ImportOrExportCrosshair(SERIALMODE_SERIALIZE, xhairInfo, szSequence, NEO_XHAIR_SEQMAX
 			, iExportSerialVersion);
+	// clang-format on
 #ifdef DEBUG
 	Assert(importOrExportSuccessful == ValidateCrosshairSerial(szSequence, iExportSerialVersion));
 #endif

@@ -113,10 +113,12 @@ static bool UTIL_KickBotFromTeam( int kickTeam )
 
 //----------------------------------------------------------------------------------------------------------------
 
+// clang-format off
 CNEOBotManager::CNEOBotManager()
 	: NextBotManager()
 	, m_flNextPeriodicThink( 0 )
 	, m_bHasWarnedNoNavMesh( false )
+// clang-format on
 {
 	NextBotManager::SetInstance( this );
 }

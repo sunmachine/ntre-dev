@@ -95,6 +95,7 @@ struct WeaponSeeds_t
 		// This does nothing; dummy value for network test. Remove when not needed anymore.
 #define DEFINE_NEO_BASE_WEP_NETWORK_TABLE
 #else
+// clang-format off
 #ifdef CLIENT_DLL
 #define DEFINE_NEO_BASE_WEP_PREDICTION DEFINE_PRED_FIELD(m_flSoonestAttack, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),\
 DEFINE_PRED_FIELD(m_flLastAttackTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),\
@@ -112,6 +113,7 @@ SendPropTime(SENDINFO(m_flLastAttackTime)),\
 SendPropFloat(SENDINFO(m_flAccuracyPenalty)),\
 SendPropInt(SENDINFO(m_nNumShotsFired)),
 #endif
+// clang-format on
 #endif
 
 enum EDeathIconType

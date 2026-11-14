@@ -712,6 +712,7 @@ bool CGameRules::SwitchToNextBestWeapon( CBaseCombatCharacter *pPlayer, CBaseCom
 
 CBaseCombatWeapon *CGameRules::GetNextBestWeapon( CBaseCombatCharacter *pPlayer, CBaseCombatWeapon *pCurrentWeapon )
 {
+#ifdef NEO
 	CBaseCombatWeapon* pCheck;
 	CBaseCombatWeapon* pBest;// this will be used in the event that we don't find a weapon in the same category.
 
@@ -775,6 +776,9 @@ CBaseCombatWeapon *CGameRules::GetNextBestWeapon( CBaseCombatCharacter *pPlayer,
 	// if pBest is null, we didn't find ANYTHING. Shouldn't be possible- should always 
 	// at least get the crowbar, but ya never know.
 	return pBest;
+#else
+	return NULL;
+#endif // NEO
 }
 
 bool CGameRules::ShouldCollide( int collisionGroup0, int collisionGroup1 )

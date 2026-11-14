@@ -427,12 +427,14 @@ QueryResultType CNEOBotSeekAndDestroy::ShouldHurry( const INextBot *me ) const
 class CNextSpawnFilter : public IEntityFindFilter
 {
 public:
+	// clang-format off
 	CNextSpawnFilter( EHANDLE hPlayer, float flRange )
 		: m_hPlayer{ hPlayer }
 		, m_flRange{ flRange }
 	{
 		
 	}
+	// clang-format on
 
 	bool ShouldFindEntity( CBaseEntity *pEntity )
 	{

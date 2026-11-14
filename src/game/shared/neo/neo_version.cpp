@@ -21,6 +21,7 @@ void NeoVersionPrint()
 	const RenderBackend_t eRenderBackend = g_pMaterialSystem->GetRenderBackend();
 #endif
 
+	// clang-format off
 	Msg("%s\n"
 		"Build version: %s (%s_%s)\n"
 		"Build date: %s\n"
@@ -40,15 +41,18 @@ void NeoVersionPrint()
 		, GetRenderBackendName(eRenderBackend)
 #endif
 		);
+	// clang-format on
 #if defined(CLIENT_DLL) && defined(DX_TO_GL_ABSTRACTION)
 	if (IsOpenGL())
 	{
+		// clang-format off
 		Msg("OpenGL Vendor: %s\n"
 			"OpenGL Renderer: %s\n"
 			"OpenGL Version: %s\n"
 			, (char *)(glGetString(GL_VENDOR))
 			, (char *)(glGetString(GL_RENDERER))
 			, (char *)(glGetString(GL_VERSION)));
+		// clang-format on
 	}
 #endif
 }

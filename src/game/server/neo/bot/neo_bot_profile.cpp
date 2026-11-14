@@ -90,12 +90,14 @@ static const FlagCmp<BotClassFlag> BOT_CLASS_FLAG_CMP[] = {
 #define FLAGCMP_WEP_DEF_ALT(M_BITWNAME, M_NAME, M_DISPLAY_NAME, M_NAMEWEP, ...) { NEO_WEP_##M_BITWNAME, M_NAMEWEP },
 
 // Start from the first weapon not empty as that's 1 << 0 in bitwise
+// clang-format off
 static const FlagCmp<NEO_WEP_BITS_UNDERLYING_TYPE> WEP_BIT_FLAG_CMP[] = {
 FOR_LIST_WEAPONS(FLAGCMP_WEP_DEF, FLAGCMP_WEP_DEF_ALT)
 #ifdef INCLUDE_WEP_PBK
 FLAGCMP_WEP_DEF(PBK56S, pbk56s, "PBK56")
 #endif
 };
+// clang-format on
 
 template <typename FLAG, size_t MAX_LEN_IN_FLAGS_CMP>
 FLAG FlagsFromStr(

@@ -335,6 +335,7 @@ float CalculatePhysicsImpactDamage( int index, gamevcollisionevent_t *pEvent, co
 
 	if ( pEvent->pObjects[otherIndex]->GetGameFlags() & FVPHYSICS_PLAYER_HELD )
 	{
+#ifdef NEO
 		// if the player is holding the object, use its real mass (player holding reduced the mass)
 		
 		CBasePlayer *pPlayer = NULL;
@@ -362,6 +363,17 @@ float CalculatePhysicsImpactDamage( int index, gamevcollisionevent_t *pEvent, co
 		{
 			otherMass = pPlayer->GetHeldObjectMass( pEvent->pObjects[otherIndex] );
 		}
+#else
+		if ( gpGlobals->maxClients == 1 )
+		{
+			// if the player is holding the object, use it's real mass (player holding reduced the mass)
+			CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+			if ( pPlayer )
+			{
+				otherMass = pPlayer->GetHeldObjectMass( pEvent->pObjects[otherIndex] );
+			}
+		}
+#endif // NEO
 	}
 
 	// NOTE: sum the mass of each object in this system for the purpose of damage
@@ -456,6 +468,7 @@ float CalculatePhysicsImpactDamage( int index, gamevcollisionevent_t *pEvent, co
 	}
 	else if ( pEvent->pObjects[index]->GetGameFlags() & FVPHYSICS_PLAYER_HELD )
 	{
+#ifdef NEO
 		// if the player is holding the object, use it's real mass (player holding reduced the mass)
 
 		CBasePlayer *pPlayer = NULL;
@@ -486,6 +499,21 @@ float CalculatePhysicsImpactDamage( int index, gamevcollisionevent_t *pEvent, co
 				invMass = 1.0f / mass;
 			}
 		}
+#else
+		if ( gpGlobals->maxClients == 1 )
+		{
+			// if the player is holding the object, use it's real mass (player holding reduced the mass)
+			CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+			if ( pPlayer )
+			{
+				float mass = pPlayer->GetHeldObjectMass( pEvent->pObjects[index] );
+				if ( mass > 0 )
+				{
+					invMass = 1.0f / mass;
+				}
+			}
+		}
+#endif // NEO
 	}
 
 	eliminatedEnergy *= invMass * energyScale;
