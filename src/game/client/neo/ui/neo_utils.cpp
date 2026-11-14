@@ -35,9 +35,8 @@ uint8 *NeoUtils::CropScaleTo256(const uint8 *rgba8888Data, int width, int height
 
 		const int xTakeMem = ((width > targetWH) ? targetWH : width) * STRIDE;
 
-		for (int srcOffset = srcOffsetStart, dstOffset = dstOffsetStart;
-			 (srcOffset < srcYEnd) && (dstOffset < dstYEnd);
-			 srcOffset += srcYLines, dstOffset += dstYLines)
+		for (int srcOffset = srcOffsetStart, dstOffset = dstOffsetStart; (srcOffset < srcYEnd) && (dstOffset < dstYEnd);
+			srcOffset += srcYLines, dstOffset += dstYLines)
 		{
 			V_memcpy(croppedData + dstOffset, data + srcOffset, xTakeMem);
 		}
@@ -52,9 +51,8 @@ uint8 *NeoUtils::CropScaleTo256(const uint8 *rgba8888Data, int width, int height
 	if (width != SPRAY_WH || height != SPRAY_WH)
 	{
 		uint8 *downData = (uint8 *)(calloc(SPRAY_WH * SPRAY_WH, sizeof(uint8) * STRIDE));
-		stbir_resize_uint8_linear(data, width, height, 0,
-								  downData, SPRAY_WH, SPRAY_WH, 0,
-								  STBIR_4CHANNEL); // Alternatively could use STBIR_RGBA?
+		stbir_resize_uint8_linear(data, width, height, 0, downData, SPRAY_WH, SPRAY_WH, 0,
+			STBIR_4CHANNEL); // Alternatively could use STBIR_RGBA?
 
 		free(data);
 		data = downData;
@@ -120,7 +118,8 @@ void NeoUtils::SerializeVTFDXTSprayToBuffer(CUtlBuffer *buffer, const uint8 *dat
 		buffer->PutUnsignedShort(0);
 
 		// padding0 u8[4];
-		for (int i = 0; i < 4; ++i) buffer->PutUnsignedChar(0);
+		for (int i = 0; i < 4; ++i)
+			buffer->PutUnsignedChar(0);
 
 		// reflectivity float[3] (aka vector)
 		buffer->PutFloat(0.0f);
@@ -128,7 +127,8 @@ void NeoUtils::SerializeVTFDXTSprayToBuffer(CUtlBuffer *buffer, const uint8 *dat
 		buffer->PutFloat(0.0f);
 
 		// padding1 u8[4];
-		for (int i = 0; i < 4; ++i) buffer->PutUnsignedChar(0);
+		for (int i = 0; i < 4; ++i)
+			buffer->PutUnsignedChar(0);
 
 		// bumpmapScale
 #ifdef DXT_OUT
@@ -163,13 +163,15 @@ void NeoUtils::SerializeVTFDXTSprayToBuffer(CUtlBuffer *buffer, const uint8 *dat
 #if (VTF_VER_MINOR >= 3)
 		// 7.3+
 		// padding
-		for (int i = 0; i < 3; ++i) buffer->PutUnsignedChar(0);
+		for (int i = 0; i < 3; ++i)
+			buffer->PutUnsignedChar(0);
 
 		// Number of resources
 		buffer->PutUnsignedInt(1);
 
 		// padding
-		for (int i = 0; i < 8; ++i) buffer->PutUnsignedChar(0);
+		for (int i = 0; i < 8; ++i)
+			buffer->PutUnsignedChar(0);
 #endif
 #endif
 	}
@@ -210,9 +212,7 @@ void NeoUtils::SerializeVTFDXTSprayToBuffer(CUtlBuffer *buffer, const uint8 *dat
 		else
 		{
 			V_memset(mipData, 0, SPRAY_WH * SPRAY_WH * 4);
-			stbir_resize_uint8_linear(data, SPRAY_WH, SPRAY_WH, 0,
-									  mipData, mipWidth, mipHeight, 0,
-									  STBIR_4CHANNEL);
+			stbir_resize_uint8_linear(data, SPRAY_WH, SPRAY_WH, 0, mipData, mipWidth, mipHeight, 0, STBIR_4CHANNEL);
 		}
 
 #ifdef DXT_OUT
@@ -229,9 +229,7 @@ void NeoUtils::SerializeVTFDXTSprayToBuffer(CUtlBuffer *buffer, const uint8 *dat
 					for (int bx = 0; bx < 4; ++bx)
 					{
 						const int x = cx + bx;
-						V_memcpy(ucBufIn + inOffset,
-								 mipData + ((y * mipStride) + (x * 4)),
-								 4);
+						V_memcpy(ucBufIn + inOffset, mipData + ((y * mipStride) + (x * 4)), 4);
 						inOffset += 4;
 					}
 				}
@@ -251,20 +249,20 @@ void NeoUtils::SerializeVTFDXTSprayToBuffer(CUtlBuffer *buffer, const uint8 *dat
 	free(mipData);
 }
 
-void bpr( int level, CUtlBuffer& buf, char const *fmt, ... )
+void bpr(int level, CUtlBuffer &buf, char const *fmt, ...)
 {
-	char txt[ 4096 ] = {};
+	char txt[4096] = {};
 	va_list argptr;
-	va_start( argptr, fmt );
-	_vsnprintf( txt, sizeof( txt ) - 1, fmt, argptr );
-	va_end( argptr );
+	va_start(argptr, fmt);
+	_vsnprintf(txt, sizeof(txt) - 1, fmt, argptr);
+	va_end(argptr);
 
 	int indent = 2;
-	for ( int i = 0; i < ( indent * level ); ++i )
+	for (int i = 0; i < (indent * level); ++i)
 	{
-		buf.Printf( " " );
+		buf.Printf(" ");
 	}
-	buf.Printf( "%s", txt );
+	buf.Printf("%s", txt);
 }
 
 bool IsInGame()

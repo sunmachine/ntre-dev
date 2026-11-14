@@ -14,6 +14,7 @@
 
 LINK_ENTITY_TO_CLASS(neo_deployed_detpack, CNEODeployedDetpack);
 
+// clang-format off
 BEGIN_DATADESC(CNEODeployedDetpack)
 	// Fields
 	DEFINE_FIELD(m_inSolid, FIELD_BOOLEAN),
@@ -27,6 +28,7 @@ BEGIN_DATADESC(CNEODeployedDetpack)
 	// Inputs
 	DEFINE_INPUTFUNC(FIELD_VOID, "RemoteDetonate", InputRemoteDetonate),
 END_DATADESC()
+// clang-format on
 
 extern ConVar sv_neo_grenade_cor;
 extern ConVar sv_neo_grenade_gravity;
@@ -73,7 +75,7 @@ void CNEODeployedDetpack::SetTimer(float detonateDelay, float warnDelay)
 	SetNextThink(gpGlobals->curtime);
 }
 
-void CNEODeployedDetpack::OnPhysGunPickup(CBasePlayer* pPhysGunUser, PhysGunPickup_t reason)
+void CNEODeployedDetpack::OnPhysGunPickup(CBasePlayer *pPhysGunUser, PhysGunPickup_t reason)
 {
 	SetThrower(pPhysGunUser);
 	m_bHasWarnedAI = true;
@@ -90,13 +92,13 @@ void CNEODeployedDetpack::DelayThink()
 
 	if (!m_bHasWarnedAI && gpGlobals->curtime >= m_flWarnAITime)
 	{
-#if !defined( CLIENT_DLL )
+#if !defined(CLIENT_DLL)
 		CSoundEnt::InsertSound(SOUND_DANGER, GetAbsOrigin(), 400, 1.5, this);
 #endif
 		m_bHasWarnedAI = true;
 	}
 
-	CBaseEntity* groundEntity = GetGroundEntity();
+	CBaseEntity *groundEntity = GetGroundEntity();
 	m_hasSettled = GetLocalVelocity().LengthSqr() < 0.5f && groundEntity;
 	m_lastPos = GetAbsOrigin();
 
@@ -119,7 +121,7 @@ void CNEODeployedDetpack::DelayThink()
 	SetNextThink(gpGlobals->curtime + 0.1);
 }
 
-void CNEODeployedDetpack::Explode(trace_t* pTrace, int bitsDamageType)
+void CNEODeployedDetpack::Explode(trace_t *pTrace, int bitsDamageType)
 {
 	BaseClass::Explode(pTrace, bitsDamageType);
 #ifdef GAME_DLL
@@ -129,7 +131,8 @@ void CNEODeployedDetpack::Explode(trace_t* pTrace, int bitsDamageType)
 	{
 		// Use the thrower's position as the reported position
 		Vector vecReported = pThrower ? pThrower->GetAbsOrigin() : vec3_origin;
-		CTakeDamageInfo info(this, pThrower, GetBlastForce(), GetAbsOrigin(), m_flDamage, bitsDamageType, 0, &vecReported);
+		CTakeDamageInfo info(
+			this, pThrower, GetBlastForce(), GetAbsOrigin(), m_flDamage, bitsDamageType, 0, &vecReported);
 		gamestats->Event_WeaponHit(pPlayer, true, "weapon_remotedet", info);
 	}
 #endif
@@ -160,25 +163,26 @@ void CNEODeployedDetpack::Detonate(void)
 }
 
 
-void CNEODeployedDetpack::SetVelocity(const Vector& velocity, const AngularImpulse& angVelocity)
+void CNEODeployedDetpack::SetVelocity(const Vector &velocity, const AngularImpulse &angVelocity)
 {
-	IPhysicsObject* pPhysicsObject = VPhysicsGetObject();
+	IPhysicsObject *pPhysicsObject = VPhysicsGetObject();
 	if (pPhysicsObject)
 	{
 		pPhysicsObject->AddVelocity(&velocity, &angVelocity);
 	}
 }
 
-int CNEODeployedDetpack::OnTakeDamage(const CTakeDamageInfo& inputInfo)
+int CNEODeployedDetpack::OnTakeDamage(const CTakeDamageInfo &inputInfo)
 {
 	// Dets can't be detonated by damage.
 	return 0;
 }
 
-void CNEODeployedDetpack::InputRemoteDetonate(inputdata_t& inputdata)
+void CNEODeployedDetpack::InputRemoteDetonate(inputdata_t &inputdata)
 {
 	ExplosionCreate(GetAbsOrigin() + Vector(0, 0, 16), GetAbsAngles(), GetThrower(), GetDamage(), GetDamageRadius(),
-					SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE | SF_ENVEXPLOSION_NOSOUND, 0.0f, this);
+		SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE | SF_ENVEXPLOSION_NOSOUND, 0.0f,
+		this);
 	m_hasBeenTriggeredToDetonate = true;
 	DevMsg("CNEODeployedDetpack::InputRemoteDetonate triggered\n");
 	if (GetWaterLevel() == 3)
@@ -192,11 +196,11 @@ void CNEODeployedDetpack::InputRemoteDetonate(inputdata_t& inputdata)
 	UTIL_Remove(this);
 }
 
-CBaseGrenadeProjectile* NEODeployedDetpack_Create(const Vector& position, const QAngle& angles, const Vector& velocity,
-	const AngularImpulse& angVelocity, CBaseEntity* pOwner)
+CBaseGrenadeProjectile *NEODeployedDetpack_Create(const Vector &position, const QAngle &angles, const Vector &velocity,
+	const AngularImpulse &angVelocity, CBaseEntity *pOwner)
 {
 	// Don't set the owner here, or the player can't interact with grenades he's thrown
-	auto pDet = (CNEODeployedDetpack*)CBaseEntity::Create("neo_deployed_detpack", position, angles, pOwner);
+	auto pDet = (CNEODeployedDetpack *)CBaseEntity::Create("neo_deployed_detpack", position, angles, pOwner);
 
 	pDet->SetAbsVelocity(velocity);
 	pDet->ApplyLocalAngularVelocityImpulse(angVelocity);
@@ -205,14 +209,15 @@ CBaseGrenadeProjectile* NEODeployedDetpack_Create(const Vector& position, const 
 	// Since we are inheriting from a grenade class, just make sure the fuse never blows due to timer.
 	pDet->SetTimer(FLT_MAX, FLT_MAX);
 	pDet->SetThrower(ToBaseCombatCharacter(pOwner));
-	if (pOwner) pDet->ChangeTeam(pOwner->GetTeamNumber());
+	if (pOwner)
+		pDet->ChangeTeam(pOwner->GetTeamNumber());
 	pDet->m_takedamage = DAMAGE_EVENTS_ONLY;
 
 	return pDet;
 }
 
-bool NEODeployedDetpack_WasPunted(const CBaseEntity* pEntity)
+bool NEODeployedDetpack_WasPunted(const CBaseEntity *pEntity)
 {
-	auto pDet = dynamic_cast<const CNEODeployedDetpack*>(pEntity);
+	auto pDet = dynamic_cast<const CNEODeployedDetpack *>(pEntity);
 	return ((pDet != NULL) ? pDet->WasPunted() : false);
 }

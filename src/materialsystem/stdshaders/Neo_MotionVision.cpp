@@ -8,12 +8,14 @@
 
 BEGIN_SHADER_FLAGS(Neo_MotionVision, "Help for the motionvision shader.", SHADER_NOT_EDITABLE)
 
+// clang-format off
 BEGIN_SHADER_PARAMS
 SHADER_PARAM(FBTEXTURE, SHADER_PARAM_TYPE_TEXTURE, "_rt_FullFrameFB", "")
 SHADER_PARAM(MVTEXTURE, SHADER_PARAM_TYPE_TEXTURE, "dev/mvgrad2", "")
 SHADER_PARAM(NOISETEXTURE, SHADER_PARAM_TYPE_TEXTURE, "dev/noise", "")
 SHADER_PARAM(NOISETRANSFORM, SHADER_PARAM_TYPE_VEC2, "[0 0]", "")
 END_SHADER_PARAMS
+// clang-format on
 
 SHADER_INIT
 {
@@ -34,7 +36,7 @@ SHADER_INIT
 	{
 		Assert(false);
 	}
-	
+
 	if (params[NOISETEXTURE]->IsDefined())
 	{
 		LoadTexture(NOISETEXTURE);
@@ -45,7 +47,7 @@ SHADER_INIT
 	}
 }
 
-#if(0)
+#if (0)
 bool NeedsFullFrameBufferTexture(IMaterialVar **params, bool bCheckSpecificToThisFrame /* = true */) const
 {
 	return true;
@@ -73,9 +75,9 @@ SHADER_DRAW
 		pShaderShadow->EnableSRGBRead(SHADER_SAMPLER0, false);
 		pShaderShadow->EnableSRGBRead(SHADER_SAMPLER1, false);
 		pShaderShadow->EnableSRGBRead(SHADER_SAMPLER2, false);
-		
+
 		pShaderShadow->VertexShaderVertexFormat(VERTEX_POSITION, 1, NULL, 0);
-		
+
 		pShaderShadow->EnableDepthWrites(false);
 		pShaderShadow->EnableSRGBWrite(false);
 
@@ -86,12 +88,12 @@ SHADER_DRAW
 		SET_STATIC_PIXEL_SHADER(neo_motionvision_ps30);
 	}
 
-		DYNAMIC_STATE
+	DYNAMIC_STATE
 	{
 		BindTexture(SHADER_SAMPLER0, FBTEXTURE);
 		BindTexture(SHADER_SAMPLER1, MVTEXTURE);
 		BindTexture(SHADER_SAMPLER2, NOISETEXTURE);
-		
+
 		//s_pShaderAPI->SetPixelShaderConstant(0, NOISETRANSFORM);
 		float vNoiseTransform[2] = {0, 0};
 		params[NOISETRANSFORM]->GetVecValue(vNoiseTransform, 2);

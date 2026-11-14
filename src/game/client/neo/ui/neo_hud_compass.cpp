@@ -23,13 +23,11 @@
 using vgui::surface;
 
 ConVar cl_neo_hud_rangefinder_enabled("cl_neo_hud_rangefinder_enabled", "1", FCVAR_ARCHIVE,
-									  "Whether the rangefinder HUD is enabled or not.", true, 0.0f, true, 1.0f);
+	"Whether the rangefinder HUD is enabled or not.", true, 0.0f, true, 1.0f);
 ConVar cl_neo_hud_rangefinder_pos_frac_x("cl_neo_hud_rangefinder_pos_frac_x", "0.55", FCVAR_ARCHIVE,
-										 "In fractional to the total screen width, the x-axis position of the rangefinder.",
-										 true, 0.0f, true, 1.0f);
+	"In fractional to the total screen width, the x-axis position of the rangefinder.", true, 0.0f, true, 1.0f);
 ConVar cl_neo_hud_rangefinder_pos_frac_y("cl_neo_hud_rangefinder_pos_frac_y", "0.55", FCVAR_ARCHIVE,
-										 "In fractional to the total screen height, the y-axis position of the rangefinder.",
-										 true, 0.0f, true, 1.0f);
+	"In fractional to the total screen height, the y-axis position of the rangefinder.", true, 0.0f, true, 1.0f);
 
 ConVar cl_neo_ghost_callout_compass_time("cl_neo_ghost_callout_compass_time", "10.0", FCVAR_CHEAT,
 	"Time in seconds that ghost callouts remain on the compass.", true, 0.0f, false, 0.0f);
@@ -81,19 +79,19 @@ void CNEOHud_Compass::HideAllGhostCallouts()
 	}
 }
 
-void CNEOHud_Compass::FireGameEvent(IGameEvent* event)
+void CNEOHud_Compass::FireGameEvent(IGameEvent *event)
 {
 	auto eventName = event->GetName();
 	if (!Q_stricmp(eventName, "ghost_enemy_callout"))
 	{
 		const int localTeam = GetLocalPlayerTeam();
 		const int playerTeam = event->GetInt("team");
-		
+
 		if (localTeam == TEAM_SPECTATOR || playerTeam != localTeam)
 		{
 			return;
 		}
-		
+
 		int targetId = event->GetInt("targetid");
 		if (targetId > 0 && targetId < V_ARRAYSIZE(m_GhostCallouts))
 		{
@@ -140,11 +138,14 @@ static C_NEO_Player *GetFirstPersonPlayer()
 	return pFPPlayer;
 }
 
-static float safeAngle(float angle) {
-	while (angle < -180) {
+static float safeAngle(float angle)
+{
+	while (angle < -180)
+	{
 		angle += 360;
 	}
-	while (angle >= 180) {
+	while (angle >= 180)
+	{
 		angle -= 360;
 	}
 	return angle;
@@ -158,10 +159,11 @@ void CNEOHud_Compass::UpdateStateForNeoHudElementDraw()
 	// Point the objective arrow to the relevant objective, if it exists
 	if (NEORules()->GhostExists() || NEORules()->GetJuggernautMarkerPos() != vec3_origin)
 	{
-		const Vector objPos = NEORules()->GetGameType() == NEO_GAME_TYPE_JGR ? NEORules()->GetJuggernautMarkerPos() : NEORules()->GetGhostPos();
+		const Vector objPos = NEORules()->GetGameType() == NEO_GAME_TYPE_JGR ? NEORules()->GetJuggernautMarkerPos()
+																			 : NEORules()->GetGhostPos();
 		const Vector objVec = objPos - MainViewOrigin();
 		const float objYaw = RAD2DEG(atan2f(objVec.y, objVec.x));
-		float objAngle = safeAngle(- objYaw + MainViewAngles()[YAW]);
+		float objAngle = safeAngle(-objYaw + MainViewAngles()[YAW]);
 		m_objAngle = Clamp(objAngle, -(float)m_fov / 2, (float)m_fov / 2);
 	}
 
@@ -173,8 +175,8 @@ void CNEOHud_Compass::UpdateStateForNeoHudElementDraw()
 			trace_t tr;
 			Vector vecForward;
 			AngleVectors(MainViewAngles(), &vecForward);
-			UTIL_TraceLine(MainViewOrigin(), MainViewOrigin() + (vecForward * MAX_TRACE_LENGTH),
-						   MASK_SHOT, pFPPlayer, COLLISION_GROUP_NONE, &tr);
+			UTIL_TraceLine(MainViewOrigin(), MainViewOrigin() + (vecForward * MAX_TRACE_LENGTH), MASK_SHOT, pFPPlayer,
+				COLLISION_GROUP_NONE, &tr);
 			const float flDist = METERS_PER_INCH * tr.startpos.DistTo(tr.endpos);
 			if (flDist >= 999.0f || tr.surface.flags & (SURF_SKY | SURF_SKY2D))
 			{
@@ -205,7 +207,7 @@ void CNEOHud_Compass::DrawNeoHudElement(void)
 		surface()->DrawSetTextColor(COLOR_NEO_WHITE);
 		surface()->DrawSetTextFont(m_hFont);
 		surface()->DrawSetTextPos((m_resX * cl_neo_hud_rangefinder_pos_frac_x.GetFloat()),
-								  (m_resY * cl_neo_hud_rangefinder_pos_frac_y.GetFloat()));
+			(m_resY * cl_neo_hud_rangefinder_pos_frac_y.GetFloat()));
 		surface()->DrawPrintText(m_wszRangeFinder, ARRAYSIZE(m_wszRangeFinder) - 1);
 	}
 }
@@ -228,8 +230,23 @@ void CNEOHud_Compass::ApplySchemeSettings(vgui::IScheme *pScheme)
 
 void CNEOHud_Compass::DrawCompass() const
 {
-	static const wchar_t* ROSE[] = {
-		L"S", L"|", L"SW", L"|", L"W", L"|", L"NW", L"|", L"N", L"|", L"NE", L"|", L"E", L"|", L"SE", L"|",
+	static const wchar_t *ROSE[] = {
+		L"S",
+		L"|",
+		L"SW",
+		L"|",
+		L"W",
+		L"|",
+		L"NW",
+		L"|",
+		L"N",
+		L"|",
+		L"NE",
+		L"|",
+		L"E",
+		L"|",
+		L"SE",
+		L"|",
 	};
 
 	auto player = GetFirstPersonPlayer();
@@ -237,20 +254,20 @@ void CNEOHud_Compass::DrawCompass() const
 
 	surface()->DrawSetTextFont(m_hFont);
 
-	DrawNeoHudRoundedBox(
-		m_xPos, m_yPos,
-		m_xPos + m_width, m_yPos + m_height,
-		m_boxColor);
+	DrawNeoHudRoundedBox(m_xPos, m_yPos, m_xPos + m_width, m_yPos + m_height, m_boxColor);
 
 	const float angle = -MainViewAngles()[YAW];
 	const int steps = ARRAYSIZE(ROSE);
-	for (int i = 0; i < steps; i += m_separators ? 1 : 2) {
+	for (int i = 0; i < steps; i += m_separators ? 1 : 2)
+	{
 		const float stepAngle = (float)(i * 360) / steps;
 		float drawAngle = safeAngle(stepAngle - angle + (float)m_fov / 2);
-		if (drawAngle < 0) {
+		if (drawAngle < 0)
+		{
 			drawAngle += 360;
 		}
-		if (drawAngle >= m_fov) {
+		if (drawAngle >= m_fov)
+		{
 			continue;
 		}
 		const float proportion = drawAngle / m_fov;
@@ -259,8 +276,9 @@ void CNEOHud_Compass::DrawCompass() const
 		int labelWidth, labelHeight;
 		surface()->GetTextSize(m_hFont, ROSE[i], labelWidth, labelHeight);
 		const float padding = (float)labelHeight;
-		surface()->DrawSetTextPos(m_xPos + padding + (m_width - padding * 2) * proportion - (float)labelWidth / 2, m_yPos + (float)m_height / 2 - (float)labelHeight / 2);
-		surface()->DrawPrintText(ROSE[i], Q_UnicodeLength(ROSE[i]));	
+		surface()->DrawSetTextPos(m_xPos + padding + (m_width - padding * 2) * proportion - (float)labelWidth / 2,
+			m_yPos + (float)m_height / 2 - (float)labelHeight / 2);
+		surface()->DrawPrintText(ROSE[i], Q_UnicodeLength(ROSE[i]));
 	}
 
 	// Print compass objective arrow
@@ -270,7 +288,7 @@ void CNEOHud_Compass::DrawCompass() const
 		if (NEORules()->GhostExists() || NEORules()->GetJuggernautMarkerPos() != vec3_origin)
 		{
 			const float proportion = m_objAngle / m_fov + 0.5;
-			
+
 			// Print a unicode arrow to signify objective
 			const wchar_t arrowUnicode[] = L"▼";
 
@@ -283,11 +301,13 @@ void CNEOHud_Compass::DrawCompass() const
 			const bool ghostIsBeingCarried = (ghosterTeam == TEAM_JINRAI || ghosterTeam == TEAM_NSF);
 			const bool ghostIsCarriedByEnemyTeam = (ghosterTeam != ownTeam);
 
-			surface()->DrawSetTextColor(ghostIsBeingCarried ? ghostIsCarriedByEnemyTeam ? COLOR_RED : teamColor : COLOR_WHITE);
+			surface()->DrawSetTextColor(
+				ghostIsBeingCarried ? ghostIsCarriedByEnemyTeam ? COLOR_RED : teamColor : COLOR_WHITE);
 			int labelWidth, labelHeight;
 			surface()->GetTextSize(m_hFont, arrowUnicode, labelWidth, labelHeight);
 			const float padding = (float)labelHeight;
-			surface()->DrawSetTextPos(m_xPos + padding + (m_width - padding * 2) * proportion - (float)labelWidth / 2, m_yPos - labelHeight);
+			surface()->DrawSetTextPos(
+				m_xPos + padding + (m_width - padding * 2) * proportion - (float)labelWidth / 2, m_yPos - labelHeight);
 			surface()->DrawPrintText(arrowUnicode, Q_UnicodeLength(arrowUnicode));
 		}
 	}
@@ -323,11 +343,11 @@ void CNEOHud_Compass::DrawCallouts() const
 	// Collect visible callouts
 	for (int i = 0; i < V_ARRAYSIZE(m_GhostCallouts); ++i)
 	{
-		const GhostCallout& callout = m_GhostCallouts[i];
-		
+		const GhostCallout &callout = m_GhostCallouts[i];
+
 		if (!callout.timer.HasStarted() || callout.timer.IsElapsed())
 			continue;
-			
+
 		float age = callout.timer.GetElapsedTime();
 
 		const Vector objVec = callout.worldPos - viewOrigin;
@@ -358,7 +378,7 @@ void CNEOHud_Compass::DrawCallouts() const
 
 	auto DrawSingleCallout = [&](int idx, bool bDrawText)
 	{
-		CalloutDrawInfo& info = visibleCallouts[idx];
+		CalloutDrawInfo &info = visibleCallouts[idx];
 
 		float alphaScale = (maxAge > 0.f) ? (1.0f - Clamp(info.age / maxAge, 0.0f, 1.0f)) : 0.0f;
 		int alpha = Clamp((int)(255.0f * alphaScale), 0, 255);
@@ -389,7 +409,7 @@ void CNEOHud_Compass::DrawCallouts() const
 	{
 		if (i == latestIdx)
 			continue;
-		
+
 		DrawSingleCallout(i, false);
 	}
 

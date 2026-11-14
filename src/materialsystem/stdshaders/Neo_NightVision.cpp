@@ -8,6 +8,7 @@
 
 BEGIN_SHADER_FLAGS(Neo_NightVision, "Help for the nightvision shader.", SHADER_NOT_EDITABLE)
 
+// clang-format off
 BEGIN_SHADER_PARAMS
 SHADER_PARAM(FBTEXTURE, SHADER_PARAM_TYPE_TEXTURE, "_rt_FullFrameFB", "")
 //SHADER_PARAM(BLURTEXTURE, SHADER_PARAM_TYPE_TEXTURE, "_rt_SmallHDR0", "")
@@ -15,6 +16,7 @@ SHADER_PARAM(NVTEXTURE, SHADER_PARAM_TYPE_TEXTURE, "dev/nvgrad", "")
 SHADER_PARAM(NOISETEXTURE, SHADER_PARAM_TYPE_TEXTURE, "dev/noise", "")
 SHADER_PARAM(NOISETRANSFORM, SHADER_PARAM_TYPE_VEC2, "[0 0]", "")
 END_SHADER_PARAMS
+// clang-format on
 
 SHADER_INIT
 {
@@ -77,7 +79,7 @@ SHADER_DRAW
 		pShaderShadow->EnableTexture(SHADER_SAMPLER3, true);
 
 		pShaderShadow->VertexShaderVertexFormat(VERTEX_POSITION, 1, NULL, 0);
-		
+
 		pShaderShadow->EnableDepthWrites(false);
 
 		// Pre-cache shaders
@@ -94,7 +96,7 @@ SHADER_DRAW
 		//BindTexture(SHADER_SAMPLER1, BLURTEXTURE, -1);
 		BindTexture(SHADER_SAMPLER2, NVTEXTURE, -1);
 		BindTexture(SHADER_SAMPLER3, NOISETEXTURE, -1);
-		
+
 		//s_pShaderAPI->SetPixelShaderConstant(0, NOISETRANSFORM);
 		float vNoiseTransform[2] = {0, 0};
 		params[NOISETRANSFORM]->GetVecValue(vNoiseTransform, 2);

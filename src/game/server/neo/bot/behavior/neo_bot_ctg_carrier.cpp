@@ -10,30 +10,31 @@
 #include "debugoverlay_shared.h"
 #include "weapon_ghost.h"
 
-ConVar neo_debug_ghost_carrier( "neo_debug_ghost_carrier", "0", FCVAR_CHEAT );
+ConVar neo_debug_ghost_carrier("neo_debug_ghost_carrier", "0", FCVAR_CHEAT);
 
 
 //---------------------------------------------------------------------------------------------
-static void CollectPlayers( CNEOBot *me, CUtlVector<CNEO_Player*> *pOutTeammates, CUtlVector<CNEO_Player*> *pOutEnemies = nullptr )
+static void CollectPlayers(
+	CNEOBot *me, CUtlVector<CNEO_Player *> *pOutTeammates, CUtlVector<CNEO_Player *> *pOutEnemies = nullptr)
 {
-	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
+	for (int i = 1; i <= gpGlobals->maxClients; i++)
 	{
-		CNEO_Player *pPlayer = ToNEOPlayer( UTIL_PlayerByIndex( i ) );
-		if ( !pPlayer || !pPlayer->IsAlive() )
+		CNEO_Player *pPlayer = ToNEOPlayer(UTIL_PlayerByIndex(i));
+		if (!pPlayer || !pPlayer->IsAlive())
 		{
 			continue;
 		}
 
-		if ( pPlayer->GetTeamNumber() == me->GetTeamNumber() )
+		if (pPlayer->GetTeamNumber() == me->GetTeamNumber())
 		{
-			if ( pPlayer != me && pOutTeammates ) 
+			if (pPlayer != me && pOutTeammates)
 			{
-				pOutTeammates->AddToTail( pPlayer );
+				pOutTeammates->AddToTail(pPlayer);
 			}
 		}
-		else if ( pOutEnemies )
+		else if (pOutEnemies)
 		{
-			pOutEnemies->AddToTail( pPlayer );
+			pOutEnemies->AddToTail(pPlayer);
 		}
 	}
 }
@@ -45,175 +46,184 @@ CNEOBotGhostEquipmentHandler::CNEOBotGhostEquipmentHandler()
 	m_hCurrentFocusEnemy = nullptr;
 	m_enemyUpdateTimer.Invalidate();
 
-	for ( int i = 0; i < MAX_PLAYERS_ARRAY_SAFE; ++i )
+	for (int i = 0; i < MAX_PLAYERS_ARRAY_SAFE; ++i)
 	{
 		m_enemyLastPos[i] = CNEO_Player::VECTOR_INVALID_WAYPOINT;
 	}
 }
 
-void CNEOBotGhostEquipmentHandler::Update( CNEOBot *me )
+void CNEOBotGhostEquipmentHandler::Update(CNEOBot *me)
 {
-	if ( !me->IsAlive() )
+	if (!me->IsAlive())
 	{
 		return;
 	}
 
-	if ( !me->IsCarryingGhost() )
+	if (!me->IsCarryingGhost())
 	{
 		return;
 	}
 
-	if ( !m_enemyUpdateTimer.HasStarted() )
+	if (!m_enemyUpdateTimer.HasStarted())
 	{
-		m_enemyUpdateTimer.Start( GetUpdateInterval( me ) );
+		m_enemyUpdateTimer.Start(GetUpdateInterval(me));
 	}
 
-	EquipBestWeaponForGhoster( me );
+	EquipBestWeaponForGhoster(me);
 
 	// Pick a focus enemy on the timer, or at once when the ghost stops showing the current one
 	CBaseEntity *pFocus = m_hCurrentFocusEnemy.Get();
-	const bool bFocusLost = pFocus && !IsValidFocusEnemy( me, pFocus );
-	if ( m_enemyUpdateTimer.IsElapsed() || bFocusLost )
+	const bool bFocusLost = pFocus && !IsValidFocusEnemy(me, pFocus);
+	if (m_enemyUpdateTimer.IsElapsed() || bFocusLost)
 	{
 		m_enemies.RemoveAll();
-		CollectPlayers( me, nullptr, &m_enemies );
-		UpdateGhostCarrierCallout( me, m_enemies );
-		m_enemyUpdateTimer.Start( GetUpdateInterval( me ) );
+		CollectPlayers(me, nullptr, &m_enemies);
+		UpdateGhostCarrierCallout(me, m_enemies);
+		m_enemyUpdateTimer.Start(GetUpdateInterval(me));
 	}
 
 	// Check if currently focused enemy has disappeared from beacon range
 	pFocus = m_hCurrentFocusEnemy.Get();
-	if ( !IsValidFocusEnemy( me, pFocus ) )
+	if (!IsValidFocusEnemy(me, pFocus))
 	{
 		m_hCurrentFocusEnemy = nullptr;
 		pFocus = nullptr;
 	}
 
 	// Debug: Highlight the location of the enemy a bot ghost carrier is calling out
-	if ( neo_debug_ghost_carrier.GetBool() && pFocus && pFocus->IsPlayer() )
+	if (neo_debug_ghost_carrier.GetBool() && pFocus && pFocus->IsPlayer())
 	{
-		NDebugOverlay::Cross3D( pFocus->GetAbsOrigin(), 20.0f, 255, 0, 0, true, 0.1f );
+		NDebugOverlay::Cross3D(pFocus->GetAbsOrigin(), 20.0f, 255, 0, 0, true, 0.1f);
 	}
 
-	if ( pFocus )
+	if (pFocus)
 	{
 		// NEOBotGhostCallout tells teammates about the enemy the carrier looks at
-		me->GetBodyInterface()->AimHeadTowards( pFocus->WorldSpaceCenter(), IBody::IMPORTANT, 1.0f, nullptr, "Ghost carrier focus look" );
+		me->GetBodyInterface()->AimHeadTowards(
+			pFocus->WorldSpaceCenter(), IBody::IMPORTANT, 1.0f, nullptr, "Ghost carrier focus look");
 	}
 }
 
-void CNEOBotGhostEquipmentHandler::EquipBestWeaponForGhoster( CNEOBot *me )
+void CNEOBotGhostEquipmentHandler::EquipBestWeaponForGhoster(CNEOBot *me)
 {
 	const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat();
 
-	CNEOBaseCombatWeapon *pActive =    assert_cast<CNEOBaseCombatWeapon*>( me->GetActiveWeapon() );
-	CNEOBaseCombatWeapon *pGhost =     assert_cast<CNEOBaseCombatWeapon*>( me->Weapon_GetSlot( 0 ) );
-	CNEOBaseCombatWeapon *pSecondary = assert_cast<CNEOBaseCombatWeapon*>( me->Weapon_GetSlot( 1 ) );
+	CNEOBaseCombatWeapon *pActive = assert_cast<CNEOBaseCombatWeapon *>(me->GetActiveWeapon());
+	CNEOBaseCombatWeapon *pGhost = assert_cast<CNEOBaseCombatWeapon *>(me->Weapon_GetSlot(0));
+	CNEOBaseCombatWeapon *pSecondary = assert_cast<CNEOBaseCombatWeapon *>(me->Weapon_GetSlot(1));
 
 	// Sanity check: if we don't have the ghost, we shouldn't be in this behavior, but handle gracefully
-	if ( !pGhost ) 
+	if (!pGhost)
 	{
 		// Fallback to normal behavior if ghost is missing
-		me->EquipBestWeaponForThreat( threat );
+		me->EquipBestWeaponForThreat(threat);
 		return;
 	}
 
 	// See if we need to defend ourselves
-	bool bHasThreat = ( threat && threat->GetEntity() && threat->GetEntity()->IsAlive() );
-	if ( bHasThreat )
+	bool bHasThreat = (threat && threat->GetEntity() && threat->GetEntity()->IsAlive());
+	if (bHasThreat)
 	{
-		bool bCanSeeThreat = me->GetVisionInterface()->IsLineOfSightClear( threat->GetEntity()->WorldSpaceCenter() );
-		if ( bCanSeeThreat )
+		bool bCanSeeThreat = me->GetVisionInterface()->IsLineOfSightClear(threat->GetEntity()->WorldSpaceCenter());
+		if (bCanSeeThreat)
 		{
-			if ( pSecondary && pSecondary->HasAmmo() )
+			if (pSecondary && pSecondary->HasAmmo())
 			{
 				// We can still call out enemies the old fashioned way ;)
-				me->Weapon_Switch( pSecondary );
+				me->Weapon_Switch(pSecondary);
 				return;
 			}
 		}
 	}
 
 	// Equip ghost to call out enemies behind walls
-	if ( pActive != pGhost )
+	if (pActive != pGhost)
 	{
-		me->Weapon_Switch( pGhost );
+		me->Weapon_Switch(pGhost);
 	}
 }
 
-bool CNEOBotGhostEquipmentHandler::IsValidFocusEnemy( CNEOBot *me, CBaseEntity *pFocus ) const
+bool CNEOBotGhostEquipmentHandler::IsValidFocusEnemy(CNEOBot *me, CBaseEntity *pFocus) const
 {
-	if ( !pFocus || !pFocus->IsAlive() || pFocus->IsEffectActive( EF_NODRAW ) )
+	if (!pFocus || !pFocus->IsAlive() || pFocus->IsEffectActive(EF_NODRAW))
 	{
 		return false;
 	}
 
-	if ( !me->IsEnemy( pFocus ) )
+	if (!me->IsEnemy(pFocus))
 	{
 		return false;
 	}
 
-	return me->IsRevealedByMyGhost( pFocus );
+	return me->IsRevealedByMyGhost(pFocus);
 }
 
-float CNEOBotGhostEquipmentHandler::GetUpdateInterval( CNEOBot *me ) const
+float CNEOBotGhostEquipmentHandler::GetUpdateInterval(CNEOBot *me) const
 {
 	float flInterval = 3.0f;
-	switch ( me->GetDifficulty() )
+	switch (me->GetDifficulty())
 	{
-	case CNEOBot::EASY:		flInterval = 2.5f; break;
-	case CNEOBot::NORMAL:	flInterval = 2.0f; break;
-	case CNEOBot::HARD:		flInterval = 1.5f; break;
-	case CNEOBot::EXPERT:	flInterval = 1.0f; break;
+	case CNEOBot::EASY:
+		flInterval = 2.5f;
+		break;
+	case CNEOBot::NORMAL:
+		flInterval = 2.0f;
+		break;
+	case CNEOBot::HARD:
+		flInterval = 1.5f;
+		break;
+	case CNEOBot::EXPERT:
+		flInterval = 1.0f;
+		break;
 	}
 
 	// Look at each focus enemy long enough for at least one callout to read the carrier's aim
-	return Max( flInterval, NEOBotGhostCallout::GetMinAimHoldTime() );
+	return Max(flInterval, NEOBotGhostCallout::GetMinAimHoldTime());
 }
 
-void CNEOBotGhostEquipmentHandler::UpdateGhostCarrierCallout( CNEOBot *me, const CUtlVector<CNEO_Player*> &enemies )
+void CNEOBotGhostEquipmentHandler::UpdateGhostCarrierCallout(CNEOBot *me, const CUtlVector<CNEO_Player *> &enemies)
 {
 	CNEO_Player *pBestCallout = nullptr;
 	float flBestCalloutMoved = -1.0f;
 	float flBestCalloutDistSq = FLT_MAX;
 	bool bBestCalloutIsNew = false;
 
-	const Vector& vecMyPos = me->GetAbsOrigin();
+	const Vector &vecMyPos = me->GetAbsOrigin();
 
-	for ( int i = 0; i < enemies.Count(); ++i )
+	for (int i = 0; i < enemies.Count(); ++i)
 	{
 		CNEO_Player *pPlayer = enemies[i];
 
-		if ( pPlayer->IsEffectActive( EF_NODRAW ) ) 
+		if (pPlayer->IsEffectActive(EF_NODRAW))
 		{
 			continue;
 		}
 
 		int idx = pPlayer->entindex();
-		if ( !IsIndexIntoPlayerArrayValid( idx ) )
+		if (!IsIndexIntoPlayerArrayValid(idx))
 		{
 			continue;
 		}
 
 		// Only the enemies the ghost shows, as a human carrier calls out the beacons on their screen
-		if ( !me->IsRevealedByMyGhost( pPlayer ) )
+		if (!me->IsRevealedByMyGhost(pPlayer))
 		{
 			continue;
 		}
 
-		float flDistToMeSq = vecMyPos.DistToSqr( pPlayer->GetAbsOrigin() );
+		float flDistToMeSq = vecMyPos.DistToSqr(pPlayer->GetAbsOrigin());
 
 		// Also take into account how much the enemy has moved since we last reported them
-		Vector vecLast = m_enemyLastPos[ idx ];
+		Vector vecLast = m_enemyLastPos[idx];
 		float flMoved = 0.0f;
-		bool bIsNew = ( vecLast == CNEO_Player::VECTOR_INVALID_WAYPOINT );
+		bool bIsNew = (vecLast == CNEO_Player::VECTOR_INVALID_WAYPOINT);
 
-		if ( !bIsNew )
+		if (!bIsNew)
 		{
-			flMoved = ( pPlayer->GetAbsOrigin() - vecLast ).Length();
+			flMoved = (pPlayer->GetAbsOrigin() - vecLast).Length();
 		}
 
-		if ( !pBestCallout )
+		if (!pBestCallout)
 		{
 			pBestCallout = pPlayer;
 			bBestCalloutIsNew = bIsNew;
@@ -223,7 +233,7 @@ void CNEOBotGhostEquipmentHandler::UpdateGhostCarrierCallout( CNEOBot *me, const
 		}
 
 		// Consider an enemy we haven't called out yet
-		if ( bIsNew && !bBestCalloutIsNew )
+		if (bIsNew && !bBestCalloutIsNew)
 		{
 			pBestCallout = pPlayer;
 			bBestCalloutIsNew = true;
@@ -232,17 +242,17 @@ void CNEOBotGhostEquipmentHandler::UpdateGhostCarrierCallout( CNEOBot *me, const
 			continue;
 		}
 
-		if ( !bIsNew && bBestCalloutIsNew )
+		if (!bIsNew && bBestCalloutIsNew)
 		{
 			// Existing candidate is new, current is old -> ignore current
 			continue;
 		}
 
 		// Tie breakers between candidates
-		if ( bIsNew )
+		if (bIsNew)
 		{
 			// Both New: Tie breaker is distance to me (closest first)
-			if ( flDistToMeSq < flBestCalloutDistSq )
+			if (flDistToMeSq < flBestCalloutDistSq)
 			{
 				pBestCallout = pPlayer;
 				flBestCalloutDistSq = flDistToMeSq;
@@ -252,19 +262,19 @@ void CNEOBotGhostEquipmentHandler::UpdateGhostCarrierCallout( CNEOBot *me, const
 		{
 			// Both Old: Prioritize one that has moved more since last callout
 			float diff = flMoved - flBestCalloutMoved;
-			
+
 			// Check absolute difference to see if it is significant or not
-			if ( FloatMakePositive( diff ) < 100.0f )
+			if (FloatMakePositive(diff) < 100.0f)
 			{
 				// Roughly same movement, tie breaker is closest distance
-				if ( flDistToMeSq < flBestCalloutDistSq )
+				if (flDistToMeSq < flBestCalloutDistSq)
 				{
 					pBestCallout = pPlayer;
 					flBestCalloutMoved = flMoved;
 					flBestCalloutDistSq = flDistToMeSq;
 				}
 			}
-			else if ( diff > 0.0f )
+			else if (diff > 0.0f)
 			{
 				// Distinctly moved more
 				pBestCallout = pPlayer;
@@ -274,16 +284,16 @@ void CNEOBotGhostEquipmentHandler::UpdateGhostCarrierCallout( CNEOBot *me, const
 		}
 	}
 
-	if ( pBestCallout )
+	if (pBestCallout)
 	{
 		// The carrier looks at its focus enemy, and NEOBotGhostCallout reads that aim as the callout
 		m_hCurrentFocusEnemy = pBestCallout;
-		
+
 		// Update cache for this enemy so we know how much they moved next time
 		int idx = pBestCallout->entindex();
-		if ( IsIndexIntoPlayerArrayValid( idx ) )
+		if (IsIndexIntoPlayerArrayValid(idx))
 		{
-			m_enemyLastPos[ idx ] = pBestCallout->GetAbsOrigin();
+			m_enemyLastPos[idx] = pBestCallout->GetAbsOrigin();
 		}
 	}
 	else
@@ -294,86 +304,85 @@ void CNEOBotGhostEquipmentHandler::UpdateGhostCarrierCallout( CNEOBot *me, const
 }
 
 
-
 //---------------------------------------------------------------------------------------------
 // CNEOBotCtgCarrier Implementation
 //---------------------------------------------------------------------------------------------
 
-CNEOBotCtgCarrier::CNEOBotCtgCarrier( void )
+CNEOBotCtgCarrier::CNEOBotCtgCarrier(void)
 {
 	m_closestCapturePoint = CNEO_Player::VECTOR_INVALID_WAYPOINT;
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotCtgCarrier::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotCtgCarrier::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
 	m_chasePath.Invalidate();
 	m_aloneTimer.Invalidate();
-	m_path.SetMinLookAheadDistance( me->GetDesiredPathLookAheadRange() );
+	m_path.SetMinLookAheadDistance(me->GetDesiredPathLookAheadRange());
 
 	m_teammates.RemoveAll();
-	CollectPlayers( me, &m_teammates );
+	CollectPlayers(me, &m_teammates);
 
-	m_closestCapturePoint = NEORules()->GetNearestGhostCapPoint( me->GetTeamNumber(), me->GetAbsOrigin() );
+	m_closestCapturePoint = NEORules()->GetNearestGhostCapPoint(me->GetTeamNumber(), me->GetAbsOrigin());
 
-	UpdateFollowPath( me, m_teammates );
+	UpdateFollowPath(me, m_teammates);
 	return Continue();
 }
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotCtgCarrier::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotCtgCarrier::Update(CNEOBot *me, float interval)
 {
-	if ( !me->IsAlive() )
+	if (!me->IsAlive())
 	{
-		return Done( "I am dead" );
+		return Done("I am dead");
 	}
 
-	if ( !me->IsCarryingGhost() )
+	if (!me->IsCarryingGhost())
 	{
-		return Done( "No longer carrying the ghost" );
+		return Done("No longer carrying the ghost");
 	}
-	
-	if ( NEORules()->IsRoundOver() )
+
+	if (NEORules()->IsRoundOver())
 	{
-		return Done( "Round Over: no CTG objectives to reach" );
+		return Done("Round Over: no CTG objectives to reach");
 	}
 
 	m_teammates.RemoveAll();
-	CollectPlayers( me, &m_teammates );
+	CollectPlayers(me, &m_teammates);
 
 	// Check if bot should transition into lone wolf behavior
-	if ( m_teammates.Count() == 0 )
+	if (m_teammates.Count() == 0)
 	{
-		const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat( true );
-		if ( threat && threat->GetEntity() && threat->GetEntity()->IsAlive() )
+		const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat(true);
+		if (threat && threat->GetEntity() && threat->GetEntity()->IsAlive())
 		{
-			CNavArea *destArea = TheNavMesh->GetNearestNavArea( m_closestCapturePoint );
+			CNavArea *destArea = TheNavMesh->GetNearestNavArea(m_closestCapturePoint);
 			CNavArea *myArea = me->GetLastKnownArea();
 
-			if ( !destArea || !myArea || !destArea->IsPotentiallyVisible( myArea ) )
+			if (!destArea || !myArea || !destArea->IsPotentiallyVisible(myArea))
 			{
-				return SuspendFor( new CNEOBotCtgLoneWolf, "Last one standing and blocked from capturing!" );
+				return SuspendFor(new CNEOBotCtgLoneWolf, "Last one standing and blocked from capturing!");
 			}
 		}
 
 		// Lone wolf will drop the ghost and go into enemy seeking behavior
-		if ( m_closestCapturePoint == CNEO_Player::VECTOR_INVALID_WAYPOINT )
+		if (m_closestCapturePoint == CNEO_Player::VECTOR_INVALID_WAYPOINT)
 		{
-			return SuspendFor( new CNEOBotCtgLoneWolf, "Looking for enemy since there is no capture point" );
+			return SuspendFor(new CNEOBotCtgLoneWolf, "Looking for enemy since there is no capture point");
 		}
 	}
 
-	UpdateFollowPath( me, m_teammates );
-	
-	m_ghostEquipmentHandler.Update( me );
+	UpdateFollowPath(me, m_teammates);
+
+	m_ghostEquipmentHandler.Update(me);
 
 	return Continue();
 }
 
 
 //---------------------------------------------------------------------------------------------
-void CNEOBotCtgCarrier::UpdateFollowPath( CNEOBot *me, const CUtlVector<CNEO_Player*> &teammates )
+void CNEOBotCtgCarrier::UpdateFollowPath(CNEOBot *me, const CUtlVector<CNEO_Player *> &teammates)
 {
 	// Strategy:
 	// 1. Identify valid goal (Capture Point).
@@ -387,9 +396,9 @@ void CNEOBotCtgCarrier::UpdateFollowPath( CNEOBot *me, const CUtlVector<CNEO_Pla
 
 	// Identify the goal first
 	Vector vecGoalPos = m_closestCapturePoint;
-	bool bFoundGoal = ( vecGoalPos != CNEO_Player::VECTOR_INVALID_WAYPOINT );
+	bool bFoundGoal = (vecGoalPos != CNEO_Player::VECTOR_INVALID_WAYPOINT);
 
-	if ( vecGoalPos == CNEO_Player::VECTOR_INVALID_WAYPOINT )
+	if (vecGoalPos == CNEO_Player::VECTOR_INVALID_WAYPOINT)
 	{
 		bFoundGoal = false;
 	}
@@ -400,23 +409,23 @@ void CNEOBotCtgCarrier::UpdateFollowPath( CNEOBot *me, const CUtlVector<CNEO_Pla
 	CNEO_Player *pBestGoalTeammate = nullptr;
 	float flBestGoalTeammateDistSq = FLT_MAX;
 
-	for ( int i = 0; i < teammates.Count(); i++ )
+	for (int i = 0; i < teammates.Count(); i++)
 	{
 		CNEO_Player *pPlayer = teammates[i];
-			
+
 		// Find the teammate nearest to me
-		float distanceToMe = pPlayer->GetAbsOrigin().DistToSqr( me->GetAbsOrigin() );
-		if ( distanceToMe < flTeammateNearestToMeDistSq )
+		float distanceToMe = pPlayer->GetAbsOrigin().DistToSqr(me->GetAbsOrigin());
+		if (distanceToMe < flTeammateNearestToMeDistSq)
 		{
 			flTeammateNearestToMeDistSq = distanceToMe;
 			pTeammateNearestToMe = pPlayer;
 		}
 
 		// Find the teammate closest to the goal
-		if ( bFoundGoal )
+		if (bFoundGoal)
 		{
-			float distanceToGoal = pPlayer->GetAbsOrigin().DistToSqr( vecGoalPos );
-			if ( distanceToGoal < flBestGoalTeammateDistSq )
+			float distanceToGoal = pPlayer->GetAbsOrigin().DistToSqr(vecGoalPos);
+			if (distanceToGoal < flBestGoalTeammateDistSq)
 			{
 				flBestGoalTeammateDistSq = distanceToGoal;
 				pBestGoalTeammate = pPlayer;
@@ -424,7 +433,7 @@ void CNEOBotCtgCarrier::UpdateFollowPath( CNEOBot *me, const CUtlVector<CNEO_Pla
 		}
 	}
 
-	if ( !bFoundGoal )
+	if (!bFoundGoal)
 	{
 		// If we have no goal (defending team on asymmetric map), we should just stay put and call out targets.
 		m_chasePath.Invalidate();
@@ -433,23 +442,23 @@ void CNEOBotCtgCarrier::UpdateFollowPath( CNEOBot *me, const CUtlVector<CNEO_Pla
 	}
 
 	// If we are safe to cap (closer than enemies), just go for it!
-	if ( bFoundGoal )
+	if (bFoundGoal)
 	{
 		// We need to know where enemies are to determine if we are safe to cap
-		if ( me->GetBeaconingGhost() )
+		if (me->GetBeaconingGhost())
 		{
-			float flDistMeToGoalSq = me->GetAbsOrigin().DistToSqr( vecGoalPos );
-			
+			float flDistMeToGoalSq = me->GetAbsOrigin().DistToSqr(vecGoalPos);
+
 			bool bAnyEnemyCloser = false;
-			
-			for ( int i = 1; i <= gpGlobals->maxClients; i++ )
+
+			for (int i = 1; i <= gpGlobals->maxClients; i++)
 			{
-				CNEO_Player *pPlayer = ToNEOPlayer( UTIL_PlayerByIndex( i ) );
-				if ( pPlayer && pPlayer->IsAlive() && pPlayer->GetTeamNumber() != me->GetTeamNumber()
-					&& me->GetVisionInterface()->IsAbleToSee( pPlayer, IVision::DISREGARD_FOV ) )
+				CNEO_Player *pPlayer = ToNEOPlayer(UTIL_PlayerByIndex(i));
+				if (pPlayer && pPlayer->IsAlive() && pPlayer->GetTeamNumber() != me->GetTeamNumber() &&
+					me->GetVisionInterface()->IsAbleToSee(pPlayer, IVision::DISREGARD_FOV))
 				{
-					float dSq = pPlayer->GetAbsOrigin().DistToSqr( vecGoalPos );
-					if ( dSq <= flDistMeToGoalSq )
+					float dSq = pPlayer->GetAbsOrigin().DistToSqr(vecGoalPos);
+					if (dSq <= flDistMeToGoalSq)
 					{
 						bAnyEnemyCloser = true;
 						break;
@@ -457,16 +466,16 @@ void CNEOBotCtgCarrier::UpdateFollowPath( CNEOBot *me, const CUtlVector<CNEO_Pla
 				}
 			}
 
-			if ( !bAnyEnemyCloser )
+			if (!bAnyEnemyCloser)
 			{
 				m_chasePath.Invalidate();
 
-				if ( !m_path.IsValid() )
+				if (!m_path.IsValid())
 				{
-					CNEOBotPathCompute( me, m_path, vecGoalPos, FASTEST_ROUTE );
+					CNEOBotPathCompute(me, m_path, vecGoalPos, FASTEST_ROUTE);
 				}
-                
-				m_path.Update( me );
+
+				m_path.Update(me);
 				return;
 			}
 		}
@@ -477,20 +486,20 @@ void CNEOBotCtgCarrier::UpdateFollowPath( CNEOBot *me, const CUtlVector<CNEO_Pla
 
 	// Check if we are relatively protected by teammates before running after the vanguard
 	bool bIsNearEscort = false;
-	if ( pTeammateNearestToMe )
+	if (pTeammateNearestToMe)
 	{
-		if ( me->GetVisionInterface()->IsLineOfSightClear( pTeammateNearestToMe->WorldSpaceCenter() ) )
+		if (me->GetVisionInterface()->IsLineOfSightClear(pTeammateNearestToMe->WorldSpaceCenter()))
 		{
 			bIsNearEscort = true;
 		}
 	}
 
-	if ( bIsNearEscort )
+	if (bIsNearEscort)
 	{
 		m_aloneTimer.Invalidate();
-		
+
 		// If we are near a teammate, advance towards goal with vanguard
-		if ( pBestGoalTeammate )
+		if (pBestGoalTeammate)
 		{
 			pTargetTeammate = pBestGoalTeammate;
 		}
@@ -498,22 +507,22 @@ void CNEOBotCtgCarrier::UpdateFollowPath( CNEOBot *me, const CUtlVector<CNEO_Pla
 		{
 			// Fallback to nearest if no goal teammate
 			// (unlikely if we are near a teammate, but in case there's a logic bug)
-			pTargetTeammate = pTeammateNearestToMe; 
+			pTargetTeammate = pTeammateNearestToMe;
 		}
 	}
 	else
 	{
 		// We are isolated from our teammates
-		if ( !m_aloneTimer.HasStarted() )
+		if (!m_aloneTimer.HasStarted())
 		{
-			m_aloneTimer.Start( 3.0f );
+			m_aloneTimer.Start(3.0f);
 		}
 
-		if ( !m_aloneTimer.IsElapsed() )
+		if (!m_aloneTimer.IsElapsed())
 		{
 			// grace period: keep running towards the vanguard in case we can catch up with them
 			// helps keep following vanguard in case they round a corner or some other visual obstacle
-			if ( pBestGoalTeammate )
+			if (pBestGoalTeammate)
 			{
 				pTargetTeammate = pBestGoalTeammate;
 			}
@@ -529,19 +538,19 @@ void CNEOBotCtgCarrier::UpdateFollowPath( CNEOBot *me, const CUtlVector<CNEO_Pla
 		}
 	}
 
-	if ( pTargetTeammate )
+	if (pTargetTeammate)
 	{
-		float flDistToTeammateSq = me->GetAbsOrigin().DistToSqr( pTargetTeammate->GetAbsOrigin() );
-		if ( flDistToTeammateSq < ( 100.0f * 100.0f ) )
+		float flDistToTeammateSq = me->GetAbsOrigin().DistToSqr(pTargetTeammate->GetAbsOrigin());
+		if (flDistToTeammateSq < (100.0f * 100.0f))
 		{
 			m_chasePath.Invalidate();
 			return;
 		}
 
 		m_path.Invalidate();
-		
+
 		// chase after the chosen teammate
-		CNEOBotPathUpdateChase( me, m_chasePath, pTargetTeammate, SAFEST_ROUTE );
+		CNEOBotPathUpdateChase(me, m_chasePath, pTargetTeammate, SAFEST_ROUTE);
 		return;
 	}
 
@@ -549,13 +558,13 @@ void CNEOBotCtgCarrier::UpdateFollowPath( CNEOBot *me, const CUtlVector<CNEO_Pla
 	// Update() should handle the LastStand transition next tick, but just in case we fall through here:
 	m_chasePath.Invalidate();
 
-	if ( bFoundGoal )
+	if (bFoundGoal)
 	{
-		if ( !m_path.IsValid() )
+		if (!m_path.IsValid())
 		{
-			CNEOBotPathCompute( me, m_path, vecGoalPos, SAFEST_ROUTE );
+			CNEOBotPathCompute(me, m_path, vecGoalPos, SAFEST_ROUTE);
 		}
-		m_path.Update( me );
+		m_path.Update(me);
 	}
 	else
 	{
@@ -565,37 +574,37 @@ void CNEOBotCtgCarrier::UpdateFollowPath( CNEOBot *me, const CUtlVector<CNEO_Pla
 }
 
 //---------------------------------------------------------------------------------------------
-bool CNEOBotCtgCarrier::HasCleanRunToCap( const CNEOBot *me ) const
+bool CNEOBotCtgCarrier::HasCleanRunToCap(const CNEOBot *me) const
 {
-	if ( !me->IsCarryingGhost() )
+	if (!me->IsCarryingGhost())
 	{
 		return false;
 	}
 
-	if ( m_closestCapturePoint == CNEO_Player::VECTOR_INVALID_WAYPOINT )
+	if (m_closestCapturePoint == CNEO_Player::VECTOR_INVALID_WAYPOINT)
 	{
 		return false;
 	}
 
-	const float flMyDistToGoalSq = me->GetAbsOrigin().DistToSqr( m_closestCapturePoint );
+	const float flMyDistToGoalSq = me->GetAbsOrigin().DistToSqr(m_closestCapturePoint);
 
-	CUtlVector< CKnownEntity > knownVector;
-	me->GetVisionInterface()->CollectKnownEntities( &knownVector );
+	CUtlVector<CKnownEntity> knownVector;
+	me->GetVisionInterface()->CollectKnownEntities(&knownVector);
 
-	for ( int i = 0; i < knownVector.Count(); ++i )
+	for (int i = 0; i < knownVector.Count(); ++i)
 	{
 		CBaseEntity *pKnown = knownVector[i].GetEntity();
-		if ( !pKnown || !pKnown->IsPlayer() || !pKnown->IsAlive() )
+		if (!pKnown || !pKnown->IsPlayer() || !pKnown->IsAlive())
 		{
 			continue;
 		}
 
-		if ( pKnown->GetTeamNumber() == me->GetTeamNumber() )
+		if (pKnown->GetTeamNumber() == me->GetTeamNumber())
 		{
 			continue;
 		}
 
-		if ( pKnown->GetAbsOrigin().DistToSqr( m_closestCapturePoint ) <= flMyDistToGoalSq )
+		if (pKnown->GetAbsOrigin().DistToSqr(m_closestCapturePoint) <= flMyDistToGoalSq)
 		{
 			// A known enemy is at least as close to the cap as we are.
 			return false;
@@ -606,35 +615,35 @@ bool CNEOBotCtgCarrier::HasCleanRunToCap( const CNEOBot *me ) const
 }
 
 //---------------------------------------------------------------------------------------------
-bool CNEOBotCtgCarrier::IsCapPotentiallyVisible( const CNEOBot *me ) const
+bool CNEOBotCtgCarrier::IsCapPotentiallyVisible(const CNEOBot *me) const
 {
-	if ( !me->IsCarryingGhost() )
+	if (!me->IsCarryingGhost())
 	{
 		return false;
 	}
 
-	if ( m_closestCapturePoint == CNEO_Player::VECTOR_INVALID_WAYPOINT )
+	if (m_closestCapturePoint == CNEO_Player::VECTOR_INVALID_WAYPOINT)
 	{
 		return false;
 	}
 
-	const CNavArea *capArea = TheNavMesh->GetNearestNavArea( m_closestCapturePoint );
+	const CNavArea *capArea = TheNavMesh->GetNearestNavArea(m_closestCapturePoint);
 	const CNavArea *myArea = me->GetLastKnownArea();
-	if ( !capArea || !myArea )
+	if (!capArea || !myArea)
 	{
 		return false;
 	}
 
-	return capArea->IsPotentiallyVisible( myArea );
+	return capArea->IsPotentiallyVisible(myArea);
 }
 
 //---------------------------------------------------------------------------------------------
-QueryResultType CNEOBotCtgCarrier::ShouldHurry( const INextBot *me ) const
+QueryResultType CNEOBotCtgCarrier::ShouldHurry(const INextBot *me) const
 {
-	const CNEOBot *meBot = static_cast<const CNEOBot *>( me );
+	const CNEOBot *meBot = static_cast<const CNEOBot *>(me);
 
 	// Within sight of the cap zone, run for it regardless of who is closing in
-	if ( IsCapPotentiallyVisible( meBot ) || HasCleanRunToCap( meBot ) )
+	if (IsCapPotentiallyVisible(meBot) || HasCleanRunToCap(meBot))
 	{
 		return ANSWER_YES;
 	}
@@ -643,36 +652,36 @@ QueryResultType CNEOBotCtgCarrier::ShouldHurry( const INextBot *me ) const
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotCtgCarrier::OnResume( CNEOBot *me, Action< CNEOBot > *interruptingAction )
+ActionResult<CNEOBot> CNEOBotCtgCarrier::OnResume(CNEOBot *me, Action<CNEOBot> *interruptingAction)
 {
 	m_teammates.RemoveAll();
-	CollectPlayers( me, &m_teammates );
+	CollectPlayers(me, &m_teammates);
 
 	// Re-evaluate nearest cap point on resume (in case we moved significantly while interrupted)
-	m_closestCapturePoint = NEORules()->GetNearestGhostCapPoint( me->GetTeamNumber(), me->GetAbsOrigin() );
+	m_closestCapturePoint = NEORules()->GetNearestGhostCapPoint(me->GetTeamNumber(), me->GetAbsOrigin());
 
-	UpdateFollowPath( me, m_teammates );
+	UpdateFollowPath(me, m_teammates);
 	return Continue();
 }
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotCtgCarrier::OnStuck( CNEOBot *me )
+EventDesiredResult<CNEOBot> CNEOBotCtgCarrier::OnStuck(CNEOBot *me)
 {
 	m_path.Invalidate();
 	m_teammates.RemoveAll();
-	CollectPlayers( me, &m_teammates );
-	UpdateFollowPath( me, m_teammates );
+	CollectPlayers(me, &m_teammates);
+	UpdateFollowPath(me, m_teammates);
 	return TryContinue();
 }
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotCtgCarrier::OnMoveToSuccess( CNEOBot *me, const Path *path )
+EventDesiredResult<CNEOBot> CNEOBotCtgCarrier::OnMoveToSuccess(CNEOBot *me, const Path *path)
 {
 	return TryContinue();
 }
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotCtgCarrier::OnMoveToFailure( CNEOBot *me, const Path *path, MoveToFailureType reason )
+EventDesiredResult<CNEOBot> CNEOBotCtgCarrier::OnMoveToFailure(CNEOBot *me, const Path *path, MoveToFailureType reason)
 {
 	m_path.Invalidate();
 	return TryContinue();

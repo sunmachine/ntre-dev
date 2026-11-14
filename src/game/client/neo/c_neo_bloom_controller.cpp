@@ -18,22 +18,26 @@ EHANDLE g_hNeoBloomControllerInUse = NULL;
 class C_NeoBloomController : public C_BaseEntity
 {
 	DECLARE_CLASS(C_NeoBloomController, C_BaseEntity);
+
 public:
 	DECLARE_CLIENTCLASS();
 
 	C_NeoBloomController();
 	~C_NeoBloomController();
 	virtual void OnDataChanged(DataUpdateType_t updateType);
+
 private:
 	float m_flBloomAmountSetting;
 };
 
+// clang-format off
 IMPLEMENT_CLIENTCLASS_DT(C_NeoBloomController, DT_NeoBloomController, CNeoBloomController)
 RecvPropFloat(RECVINFO(m_flBloomAmountSetting)),
 END_RECV_TABLE()
+// clang-format on
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 C_NeoBloomController::C_NeoBloomController(void)
 {
@@ -41,7 +45,7 @@ C_NeoBloomController::C_NeoBloomController(void)
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 C_NeoBloomController::~C_NeoBloomController(void)
 {

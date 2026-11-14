@@ -18,6 +18,7 @@
 
 IMPLEMENT_NETWORKCLASS_ALIASED(WeaponBALC, DT_WeaponBALC)
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CWeaponBALC, DT_WeaponBALC)
 	DEFINE_NEO_BASE_WEP_NETWORK_TABLE
 #ifdef CLIENT_DLL
@@ -36,8 +37,10 @@ BEGIN_NETWORK_TABLE(CWeaponBALC, DT_WeaponBALC)
 	SendPropTime(SENDINFO(m_flChargeStartTime)),
 #endif
 END_NETWORK_TABLE()
+	// clang-format on
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CWeaponBALC)
 	DEFINE_NEO_BASE_WEP_PREDICTION
 
@@ -46,6 +49,7 @@ BEGIN_PREDICTION_DATA(CWeaponBALC)
 	DEFINE_PRED_FIELD(m_bCharged, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_bIsPrimaryFireMode, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
 NEO_IMPLEMENT_ACTTABLE(CWeaponBALC)
@@ -53,12 +57,14 @@ NEO_IMPLEMENT_ACTTABLE(CWeaponBALC)
 LINK_ENTITY_TO_CLASS(weapon_balc, CWeaponBALC);
 
 #ifdef GAME_DLL
+// clang-format off
 BEGIN_DATADESC(CWeaponBALC)
 	DEFINE_FIELD(m_bOverheated, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_bCharging, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_bCharged, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_bIsPrimaryFireMode, FIELD_BOOLEAN),
 END_DATADESC()
+// clang-format on
 #endif
 
 PRECACHE_WEAPON_REGISTER(weapon_balc);
@@ -229,7 +235,8 @@ void CWeaponBALC::SecondaryAttack(void)
 void CWeaponBALC::ItemPostFrame(void)
 {
 	auto pOwner = ToBasePlayer(GetOwner());
-	if (!m_bIsPrimaryFireMode && pOwner && !m_bOverheated && !ShootingIsPrevented() && !(pOwner->m_nButtons & IN_ATTACK2))
+	if (!m_bIsPrimaryFireMode && pOwner && !m_bOverheated && !ShootingIsPrevented() &&
+		!(pOwner->m_nButtons & IN_ATTACK2))
 	{
 		if (pOwner->m_afButtonPressed & IN_ATTACK && !m_bCharging)
 		{
@@ -290,7 +297,7 @@ void CWeaponBALC::Think(void)
 	{
 		SetPrimaryAmmoCount(GetPrimaryAmmoCount() + 1);
 	}
-	
+
 	SetNextThink(gpGlobals->curtime + GetCoolingRate());
 }
 

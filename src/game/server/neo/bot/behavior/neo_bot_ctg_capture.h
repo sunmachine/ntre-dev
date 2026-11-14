@@ -8,16 +8,16 @@
 class CNEOBotCtgCapture : public Action<CNEOBot>
 {
 public:
-	CNEOBotCtgCapture( CWeaponGhost *pObjective );
-	virtual ~CNEOBotCtgCapture() { }
+	CNEOBotCtgCapture(CWeaponGhost *pObjective);
+	virtual ~CNEOBotCtgCapture() {}
 
 	virtual const char *GetName() const override { return "ctgCapture"; }
 
-	virtual ActionResult<CNEOBot> OnStart( CNEOBot *me, Action<CNEOBot> *priorAction ) override;
-	virtual ActionResult<CNEOBot> Update( CNEOBot *me, float interval ) override;
+	virtual ActionResult<CNEOBot> OnStart(CNEOBot *me, Action<CNEOBot> *priorAction) override;
+	virtual ActionResult<CNEOBot> Update(CNEOBot *me, float interval) override;
 
 private:
-	void TryUseGhost( CNEOBot *me, const Vector &vecEye, const Vector &vecGhostCenter );
+	void TryUseGhost(CNEOBot *me, const Vector &vecEye, const Vector &vecGhostCenter);
 
 	CHandle<CWeaponGhost> m_hObjective;
 	CNavArea *m_previousKnownArea;

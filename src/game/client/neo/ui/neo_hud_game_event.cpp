@@ -77,18 +77,16 @@ void CNEOHud_GameEvent::SetMessage(const wchar_t *message, size_t size)
 	V_memcpy(m_pszMessage, message, sizeof(m_pszMessage));
 }
 
-void CNEOHud_GameEvent::SetMessage(const char* message, size_t size)
+void CNEOHud_GameEvent::SetMessage(const char *message, size_t size)
 {
 	Assert(sizeof(m_pszMessage) >= size);
 	g_pVGuiLocalize->ConvertANSIToUnicode(message, m_pszMessage, sizeof(m_pszMessage));
 }
 
-void CNEOHud_GameEvent::UpdateStateForNeoHudElementDraw()
-{
-}
+void CNEOHud_GameEvent::UpdateStateForNeoHudElementDraw() {}
 
 
-void CNEOHud_GameEvent::MsgFunc_RoundResult(bf_read& msg)
+void CNEOHud_GameEvent::MsgFunc_RoundResult(bf_read &msg)
 {
 	msg.ReadString(teamWon, 64);
 	timeWon = msg.ReadFloat();
@@ -99,7 +97,7 @@ void CNEOHud_GameEvent::MsgFunc_RoundResult(bf_read& msg)
 	messageLength = (int)(strchr(message, '\0') - strchr(message, message[0]));
 
 	SetVisible(true);
-	C_NEO_Player* player = C_NEO_Player::GetLocalNEOPlayer();
+	C_NEO_Player *player = C_NEO_Player::GetLocalNEOPlayer();
 	player->m_bShowTestMessage = true;
 }
 
@@ -123,23 +121,25 @@ void CNEOHud_GameEvent::DrawNeoHudElement()
 	int alpha = 255;
 	if (timeSinceWon < 4)
 	{
-		alpha *= ((timeSinceWon-2) / 2);
+		alpha *= ((timeSinceWon - 2) / 2);
 	}
 	else if (timeSinceWon > 8)
 	{
-		alpha *= (1 - ((timeSinceWon-8) / 2));
+		alpha *= (1 - ((timeSinceWon - 8) / 2));
 	}
 
 	surface()->DrawSetTextFont(m_hFont);
 
-	const int textPosX = (m_iResX / 2) - (messageWidth /2);
+	const int textPosX = (m_iResX / 2) - (messageWidth / 2);
 	surface()->DrawSetTextColor(Color(0, 0, 0, alpha));
 	surface()->DrawSetTextPos(textPosX + 2, text_y_offset + 2);
-	surface()->DrawPrintText(messageWord, messageLength); // the address of the null character minus the address of the first character
+	surface()->DrawPrintText(
+		messageWord, messageLength); // the address of the null character minus the address of the first character
 
 	surface()->DrawSetTextColor(Color(255, 255, 255, alpha));
 	surface()->DrawSetTextPos(textPosX, text_y_offset);
-	surface()->DrawPrintText(messageWord, messageLength); // the address of the null character minus the address of the first character
+	surface()->DrawPrintText(
+		messageWord, messageLength); // the address of the null character minus the address of the first character
 
 	if (NEORules()->IsTeamplay())
 	{
@@ -157,7 +157,7 @@ void CNEOHud_GameEvent::DrawNeoHudElement()
 		}
 
 		const vgui::IntRect texRect{
-			.x0 = (m_iResX/2) - 256,
+			.x0 = (m_iResX / 2) - 256,
 			.y0 = image_y_offset,
 			.x1 = (m_iResX / 2) + 256,
 			.y1 = image_y_offset + 256,

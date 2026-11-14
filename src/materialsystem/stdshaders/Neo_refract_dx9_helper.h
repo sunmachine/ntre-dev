@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
 
@@ -54,12 +54,12 @@ struct Neo_Refract_DX9_Vars_t
 	int m_nAlpha;
 };
 
-void InitParamsRefract_DX9( CBaseVSShader *pShader, IMaterialVar** params, const char *pMaterialName, 
-	Neo_Refract_DX9_Vars_t &info);
+void InitParamsRefract_DX9(
+	CBaseVSShader *pShader, IMaterialVar **params, const char *pMaterialName, Neo_Refract_DX9_Vars_t &info);
 
-void InitRefract_DX9(CBaseVSShader *pShader, IMaterialVar** params, Neo_Refract_DX9_Vars_t &info);
+void InitRefract_DX9(CBaseVSShader *pShader, IMaterialVar **params, Neo_Refract_DX9_Vars_t &info);
 
-void DrawRefract_DX9( CBaseVSShader *pShader, IMaterialVar** params, IShaderDynamicAPI *pShaderAPI,
-	IShaderShadow* pShaderShadow, Neo_Refract_DX9_Vars_t &info, VertexCompressionType_t vertexCompression);
+void DrawRefract_DX9(CBaseVSShader *pShader, IMaterialVar **params, IShaderDynamicAPI *pShaderAPI,
+	IShaderShadow *pShaderShadow, Neo_Refract_DX9_Vars_t &info, VertexCompressionType_t vertexCompression);
 
 #endif // NEO_REFRACT_DX9_HELPER_H

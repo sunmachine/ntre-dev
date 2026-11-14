@@ -18,6 +18,7 @@ class CNEO_Player;
 class CWeaponGhost : public CNEOBaseCombatWeapon
 {
 	DECLARE_CLASS(CWeaponGhost, CNEOBaseCombatWeapon);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -44,21 +45,21 @@ public:
 
 	// When the player "activates" the ghost, there is a slight time delay until they're allowed
 	// to start seeing enemy beacons. This function returns whether that time has elapsed.
-	inline bool IsBootupCompleted(float timeOffset=0) const
+	inline bool IsBootupCompleted(float timeOffset = 0) const
 	{
 		extern ConVar sv_neo_ctg_ghost_beacons_when_inactive;
-		const float ghostActivationTime = sv_neo_ctg_ghost_beacons_when_inactive.GetBool()
-			? m_flPickupTime : m_flDeployTime;
+		const float ghostActivationTime =
+			sv_neo_ctg_ghost_beacons_when_inactive.GetBool() ? m_flPickupTime : m_flDeployTime;
 		const float deltaTime = gpGlobals->curtime - ghostActivationTime;
 		return deltaTime + timeOffset >= sv_neo_ghost_delay_secs.GetFloat();
 	}
 
 	// If the enemy is within this ghost's range, returns true and passes its distance by reference.
 	// If the enemy is not in range, the distance will not be written into.
-	[[nodiscard]] bool BeaconRange(CBaseEntity* enemy, float& outDistance) const;
+	[[nodiscard]] bool BeaconRange(CBaseEntity *enemy, float &outDistance) const;
 
-	virtual void PrimaryAttack(void) OVERRIDE { }
-	virtual void SecondaryAttack(void) OVERRIDE { }
+	virtual void PrimaryAttack(void) OVERRIDE {}
+	virtual void SecondaryAttack(void) OVERRIDE {}
 
 	virtual bool Deploy() override;
 	virtual void Drop(const Vector &vecVelocity) override;
@@ -84,7 +85,7 @@ public:
 	{
 		if (GetOwner())
 		{
-			auto neoPlayer = static_cast<CNEO_Player*>(GetPlayerOwner());
+			auto neoPlayer = static_cast<CNEO_Player *>(GetPlayerOwner());
 			neoPlayer->m_bCarryingGhost = false;
 		}
 #ifdef CLIENT_DLL
@@ -104,7 +105,8 @@ private:
 
 	CNetworkVar(float, m_flDeployTime); // The timestamp when the ghost was last equipped as the active weapon.
 	CNetworkVar(float, m_flNearestEnemyDist);
-	CNetworkVar(float, m_flPickupTime); // The timestamp when the ghost was last picked up by a player into their inventory.
+	CNetworkVar(
+		float, m_flPickupTime); // The timestamp when the ghost was last picked up by a player into their inventory.
 
 	CWeaponGhost(const CWeaponGhost &other);
 };

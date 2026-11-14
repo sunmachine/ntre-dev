@@ -27,23 +27,28 @@ float CNEO_Juggernaut::GetUseDistanceSquared()
 }
 
 #ifdef GAME_DLL
+// clang-format off
 IMPLEMENT_SERVERCLASS_ST(CNEO_Juggernaut, DT_NEO_Juggernaut)
 	SendPropBool(SENDINFO(m_bLocked)),
 	SendPropBool(SENDINFO(m_bIsHolding)),
 	SendPropEHandle(SENDINFO(m_hHoldingPlayer)),
 END_SEND_TABLE()
+// clang-format on
 #else
 #ifdef CNEO_Juggernaut
 #undef CNEO_Juggernaut
 #endif
+// clang-format off
 IMPLEMENT_CLIENTCLASS_DT(C_NEO_Juggernaut, DT_NEO_Juggernaut, CNEO_Juggernaut)
 	RecvPropBool(RECVINFO(m_bLocked)),
 	RecvPropBool(RECVINFO(m_bIsHolding)),
 	RecvPropEHandle(RECVINFO(m_hHoldingPlayer)),
 END_RECV_TABLE()
+// clang-format on
 #define CNEO_Juggernaut C_NEO_Juggernaut
 #endif
 
+// clang-format off
 BEGIN_DATADESC(CNEO_Juggernaut)
 #ifdef GAME_DLL
 	DEFINE_USEFUNC(CNEO_Juggernaut::Use),
@@ -57,6 +62,7 @@ BEGIN_DATADESC(CNEO_Juggernaut)
 	DEFINE_OUTPUT(m_OnPlayerActivate, "OnPlayerActivate")
 #endif
 END_DATADESC()
+	// clang-format on
 
 #ifdef GAME_DLL
 CNEO_Juggernaut::~CNEO_Juggernaut()
@@ -114,7 +120,8 @@ void CNEO_Juggernaut::Spawn(void)
 		ExplosionCreate(explOrigin, GetAbsAngles(), this, 0, 128, SF_ENVEXPLOSION_NODAMAGE);
 		SetPlaybackRate(-m_flWarpedPlaybackRate);
 		SetCycle(1.0f);
-		SetContextThink(&CNEO_Juggernaut::DisableSoftCollisionsThink, gpGlobals->curtime + TICK_INTERVAL, "SoftCollisionsThink");
+		SetContextThink(
+			&CNEO_Juggernaut::DisableSoftCollisionsThink, gpGlobals->curtime + TICK_INTERVAL, "SoftCollisionsThink");
 	}
 	else
 	{
@@ -123,10 +130,11 @@ void CNEO_Juggernaut::Spawn(void)
 
 	SetMoveType(MOVETYPE_STEP);
 	SetSolid(SOLID_BBOX);
-	UTIL_SetSize(this, VEC_HULL_MIN, VEC_HULL_MAX); // Needs to be equal or smaller than the player's girth to avoid getting stuck
+	UTIL_SetSize(this, VEC_HULL_MIN,
+		VEC_HULL_MAX); // Needs to be equal or smaller than the player's girth to avoid getting stuck
 	SetFriction(100.0);
 	SetSoftCollision(false);
-	
+
 	CBaseEntity *pWeaponModel = CreateEntityByName("prop_dynamic");
 	if (pWeaponModel)
 	{
@@ -152,11 +160,11 @@ void CNEO_Juggernaut::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYP
 	if (m_bLocked)
 		return;
 
-	CBasePlayer* pPlayer = ToBasePlayer(pActivator);
+	CBasePlayer *pPlayer = ToBasePlayer(pActivator);
 	if (!pPlayer || !pPlayer->IsAlive())
 		return;
 
-	CNEO_Player* pNEOPlayer = static_cast<CNEO_Player*>(pPlayer);
+	CNEO_Player *pNEOPlayer = static_cast<CNEO_Player *>(pPlayer);
 	if (pNEOPlayer->GetClass() == NEO_CLASS_JUGGERNAUT)
 		return;
 
@@ -182,7 +190,7 @@ void CNEO_Juggernaut::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYP
 
 void CNEO_Juggernaut::Think(void)
 {
-	CNEO_Player* pNeoPlayer = m_hHoldingPlayer.Get();
+	CNEO_Player *pNeoPlayer = m_hHoldingPlayer.Get();
 	if (!m_bIsHolding || !pNeoPlayer || !pNeoPlayer->IsAlive() || !(pNeoPlayer->m_nButtons & IN_USE))
 	{
 		HoldCancel();
@@ -223,9 +231,10 @@ void CNEO_Juggernaut::Think(void)
 
 void CNEO_Juggernaut::MakePushThink()
 {
-	if (IsMarkedForDeletion()) return;
+	if (IsMarkedForDeletion())
+		return;
 
-	constexpr const char* pushEnt = "point_push";
+	constexpr const char *pushEnt = "point_push";
 
 	if (m_hPush.Get())
 	{
@@ -242,11 +251,14 @@ void CNEO_Juggernaut::MakePushThink()
 	constexpr auto SF_PUSH_TEST_LOS = 0x0001, SF_PUSH_PLAYER = 0x0008;
 	m_hPush->AddSpawnFlags(SF_PUSH_TEST_LOS | SF_PUSH_PLAYER);
 
-	if (!m_hPush->KeyValue("magnitude", 200.f)) Assert(false);
+	if (!m_hPush->KeyValue("magnitude", 200.f))
+		Assert(false);
 	const float radius = BoundingRadius();
-	if (!m_hPush->KeyValue("radius", radius)) Assert(false);
+	if (!m_hPush->KeyValue("radius", radius))
+		Assert(false);
 	// inner_radius used for LOS calculations, so we don't push players through thin walls
-	if (!m_hPush->KeyValue("inner_radius", 0.5f * radius)) Assert(false);
+	if (!m_hPush->KeyValue("inner_radius", 0.5f * radius))
+		Assert(false);
 
 	m_hPush->Spawn();
 	m_hPush->SetAbsOrigin(WorldSpaceCenter());
@@ -257,15 +269,16 @@ void CNEO_Juggernaut::MakePushThink()
 
 void CNEO_Juggernaut::DisableSoftCollisionsThink()
 {
-	if (IsMarkedForDeletion()) return;
+	if (IsMarkedForDeletion())
+		return;
 
-	CBaseEntity* ent;
+	CBaseEntity *ent;
 	for (CEntitySphereQuery sphere(WorldSpaceCenter(), BoundingRadius(), FL_CLIENT | FL_FAKECLIENT | FL_NPC);
-		(ent = sphere.GetCurrentEntity());
-		sphere.NextEntity())
+		(ent = sphere.GetCurrentEntity()); sphere.NextEntity())
 	{
-		auto* combatChar = assert_cast<CBaseCombatCharacter*>(ent);
-		if (!combatChar || !combatChar->IsAlive()) continue;
+		auto *combatChar = assert_cast<CBaseCombatCharacter *>(ent);
+		if (!combatChar || !combatChar->IsAlive())
+			continue;
 		// As long as there's a living player inside my collider, I can't go into "hard" player-blocking collisions mode
 		// because they would get stuck. Try again later to see if they've moved.
 		SetContextThink(&CNEO_Juggernaut::DisableSoftCollisionsThink, gpGlobals->curtime + 1.f, "SoftCollisionsThink");
@@ -278,7 +291,7 @@ void CNEO_Juggernaut::DisableSoftCollisionsThink()
 
 void CNEO_Juggernaut::HoldCancel(void)
 {
-	CNEO_Player* pNeoPlayer = m_hHoldingPlayer.Get();
+	CNEO_Player *pNeoPlayer = m_hHoldingPlayer.Get();
 	if (pNeoPlayer)
 	{
 		pNeoPlayer->RemoveFlag(FL_FROZEN);
@@ -318,7 +331,7 @@ void CNEO_Juggernaut::SetSoftCollision(bool soft)
 
 const bool CNEO_Juggernaut::IsBeingActivatedByLosingTeam()
 {
-	CNEO_Player* pNeoPlayer = m_hHoldingPlayer.Get();
+	CNEO_Player *pNeoPlayer = m_hHoldingPlayer.Get();
 	if (m_bIsHolding && pNeoPlayer)
 	{
 		const int playerTeam = pNeoPlayer->GetTeamNumber();
@@ -353,12 +366,13 @@ int CNEO_Juggernaut::DrawModel(int flags)
 		return BaseClass::DrawModel(flags);
 	}
 
-	bool inThermalVision = pTargetPlayer ? (pTargetPlayer->IsInVision() && pTargetPlayer->GetClass() == NEO_CLASS_SUPPORT) : false;
+	bool inThermalVision =
+		pTargetPlayer ? (pTargetPlayer->IsInVision() && pTargetPlayer->GetClass() == NEO_CLASS_SUPPORT) : false;
 
 	int ret = 0;
 	if (inThermalVision)
 	{
-		IMaterial* pass = materials->FindMaterial(NEO_THERMAL_MODEL_MATERIAL, TEXTURE_GROUP_MODEL);
+		IMaterial *pass = materials->FindMaterial(NEO_THERMAL_MODEL_MATERIAL, TEXTURE_GROUP_MODEL);
 		modelrender->ForcedMaterialOverride(pass);
 		ret = BaseClass::DrawModel(flags);
 		modelrender->ForcedMaterialOverride(nullptr);

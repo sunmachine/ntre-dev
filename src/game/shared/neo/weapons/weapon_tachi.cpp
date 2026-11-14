@@ -6,6 +6,7 @@
 
 IMPLEMENT_NETWORKCLASS_ALIASED(WeaponTachi, DT_WeaponTachi)
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CWeaponTachi, DT_WeaponTachi)
 DEFINE_NEO_BASE_WEP_NETWORK_TABLE
 
@@ -17,14 +18,17 @@ SendPropTime(SENDINFO(m_flSoonestFiremodeSwitch)),
 SendPropBool(SENDINFO(m_bIsPrimaryFireMode)),
 #endif
 END_NETWORK_TABLE()
+	// clang-format on
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CWeaponTachi)
 DEFINE_NEO_BASE_WEP_PREDICTION
 
 DEFINE_PRED_FIELD(m_flSoonestFiremodeSwitch, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
 DEFINE_PRED_FIELD(m_bIsPrimaryFireMode, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
 NEO_IMPLEMENT_ACTTABLE(CWeaponTachi)
@@ -32,10 +36,12 @@ NEO_IMPLEMENT_ACTTABLE(CWeaponTachi)
 LINK_ENTITY_TO_CLASS(weapon_tachi, CWeaponTachi);
 
 #ifdef GAME_DLL
+// clang-format off
 BEGIN_DATADESC(CWeaponTachi)
 DEFINE_FIELD(m_flSoonestFiremodeSwitch, FIELD_TIME),
 DEFINE_FIELD(m_bIsPrimaryFireMode, FIELD_BOOLEAN),
 END_DATADESC()
+// clang-format on
 #endif
 
 PRECACHE_WEAPON_REGISTER(weapon_tachi);
@@ -63,7 +69,7 @@ CWeaponTachi::CWeaponTachi()
 	};
 }
 
-void CWeaponTachi::SwitchFireMode( void )
+void CWeaponTachi::SwitchFireMode(void)
 {
 	if (m_flSoonestFiremodeSwitch > gpGlobals->curtime)
 	{
@@ -72,39 +78,38 @@ void CWeaponTachi::SwitchFireMode( void )
 
 	m_bIsPrimaryFireMode = !m_bIsPrimaryFireMode;
 
-	WeaponSound( SPECIAL1 );
-	SendWeaponAnim( ACT_VM_DRAW_SPECIAL );
+	WeaponSound(SPECIAL1);
+	SendWeaponAnim(ACT_VM_DRAW_SPECIAL);
 }
 
-void CWeaponTachi::ForceSetFireMode( Tachi::Firemode primaryMode, bool bPlaySound,
-	float flSoonestSwitch )
+void CWeaponTachi::ForceSetFireMode(Tachi::Firemode primaryMode, bool bPlaySound, float flSoonestSwitch)
 {
 	m_bIsPrimaryFireMode = (bool)primaryMode;
 	m_flSoonestFiremodeSwitch = flSoonestSwitch;
 
 	if (bPlaySound)
 	{
-		WeaponSound( SPECIAL1 );
+		WeaponSound(SPECIAL1);
 	}
 }
 
-void CWeaponTachi::ItemPostFrame( void )
+void CWeaponTachi::ItemPostFrame(void)
 {
 	BaseClass::ItemPostFrame();
 
-	if ( m_bInReload )
+	if (m_bInReload)
 	{
 		return;
 	}
 
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 
-	if ( pOwner == NULL )
+	if (pOwner == NULL)
 	{
 		return;
 	}
 
-	if ( (pOwner->m_nButtons & IN_ATTACK2) && (!(pOwner->m_afButtonLast & IN_ATTACK2)) )
+	if ((pOwner->m_nButtons & IN_ATTACK2) && (!(pOwner->m_afButtonLast & IN_ATTACK2)))
 	{
 		if (m_flSoonestFiremodeSwitch < gpGlobals->curtime)
 		{

@@ -37,7 +37,7 @@ BEGIN_DATADESC( CNPCSimpleTalker )
 END_DATADESC()
 
 // array of friend names
-const char *CNPCSimpleTalker::m_szFriends[TLK_CFRIENDS] = 
+const char *CNPCSimpleTalker::m_szFriends[TLK_CFRIENDS] = // NEO
 {
 	"NPC_barney",
 	"NPC_scientist",
@@ -312,7 +312,7 @@ void CNPCSimpleTalker::Event_Killed( const CTakeDamageInfo &info )
 CBaseEntity	*CNPCSimpleTalker::EnumFriends( CBaseEntity *pPrevious, int listNumber, bool bTrace )
 {
 	CBaseEntity *pFriend = pPrevious;
-	const char *pszFriend;
+	const char *pszFriend; // NEO
 	trace_t tr;
 #ifndef NEO
 	Vector vecCheck;

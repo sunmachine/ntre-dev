@@ -13,6 +13,7 @@
 class CWeaponKyla : public CNEOBaseCombatWeapon
 {
 	DECLARE_CLASS(CWeaponKyla, CNEOBaseCombatWeapon);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -32,6 +33,7 @@ public:
 	virtual Activity GetPrimaryAttackActivity(void) override;
 
 	bool CanBePickedUpByClass(int classId) OVERRIDE;
+
 protected:
 	virtual float GetFastestDryRefireTime() const OVERRIDE { return 0.2f; }
 

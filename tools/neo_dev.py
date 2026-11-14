@@ -31,6 +31,9 @@ Taking a newer Valve SDK
   merge-valve-sdk         Start merging a newer Valve SDK and resolve the conflicts NEO always
                           resolves the same way. Needs bash; on Windows, run it from Git Bash.
                           Script: merge_valve_sdk.sh.
+  guard-valve-edits       Put the unguarded NEO hunks in the given Valve files under
+                          #ifdef NEO, with Valve's lines under #else.
+                          Script: guard_valve_edits.py.
 """
 import os
 import runpy
@@ -46,6 +49,7 @@ COMMANDS = {
     'update-valve-baseline': ('check_valve_edits.py', ['--update-baseline']),
     'tidy-compile-db': ('make_tidy_compile_db.py', []),
     'merge-valve-sdk': ('merge_valve_sdk.sh', []),
+    'guard-valve-edits': ('guard_valve_edits.py', []),
 }
 
 

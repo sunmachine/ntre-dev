@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -36,17 +36,17 @@ class CNEOHudDamageIndicator : public CHudElement, public vgui::Panel
 	DECLARE_CLASS_SIMPLE(CNEOHudDamageIndicator, vgui::Panel);
 
 public:
-	CNEOHudDamageIndicator(const char* pElementName);
+	CNEOHudDamageIndicator(const char *pElementName);
 	void Init(void);
 	void Reset(void);
 	virtual bool ShouldDraw(void);
 
 	// Handler for our message
-	void MsgFunc_Damage(bf_read& msg);
+	void MsgFunc_Damage(bf_read &msg);
 
 private:
 	virtual void Paint();
-	virtual void ApplySchemeSettings(vgui::IScheme* pScheme);
+	virtual void ApplySchemeSettings(vgui::IScheme *pScheme);
 
 private:
 	CPanelAnimationVarAliasType(float, m_flDmgX, "dmg_xpos", "10", "proportional_float");
@@ -67,7 +67,7 @@ DECLARE_HUD_MESSAGE(CNEOHudDamageIndicator, Damage);
 
 struct DamageAnimation_t
 {
-	const char* name;
+	const char *name;
 	int bitsDamage;
 	int damage;
 };
@@ -75,9 +75,10 @@ struct DamageAnimation_t
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-CNEOHudDamageIndicator::CNEOHudDamageIndicator(const char* pElementName) : CHudElement(pElementName), BaseClass(NULL, "HudDamageIndicator")
+CNEOHudDamageIndicator::CNEOHudDamageIndicator(const char *pElementName)
+	: CHudElement(pElementName), BaseClass(NULL, "HudDamageIndicator")
 {
-	vgui::Panel* pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = g_pClientMode->GetViewport();
 	SetParent(pParent);
 
 	m_WhiteAdditiveMaterial.Init("vgui/white_additive", TEXTURE_GROUP_VGUI);
@@ -86,7 +87,7 @@ CNEOHudDamageIndicator::CNEOHudDamageIndicator(const char* pElementName) : CHudE
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNEOHudDamageIndicator::Reset(void)
 {
@@ -100,7 +101,7 @@ void CNEOHudDamageIndicator::Init(void)
 
 //-----------------------------------------------------------------------------
 // Purpose: Save CPU cycles by letting the HUD system early cull
-// costly traversal.  Called per frame, return true if thinking and 
+// costly traversal.  Called per frame, return true if thinking and
 // painting need to occur.
 //-----------------------------------------------------------------------------
 bool CNEOHudDamageIndicator::ShouldDraw(void)
@@ -120,11 +121,12 @@ bool CNEOHudDamageIndicator::ShouldDraw(void)
 void CNEOHudDamageIndicator::DrawFullscreenDamageIndicator()
 {
 	CMatRenderContextPtr pRenderContext(materials);
-	IMesh* pMesh = pRenderContext->GetDynamicMesh(true, NULL, NULL, m_WhiteAdditiveMaterial);
+	IMesh *pMesh = pRenderContext->GetDynamicMesh(true, NULL, NULL, m_WhiteAdditiveMaterial);
 
 	CMeshBuilder meshBuilder;
 	meshBuilder.Begin(pMesh, MATERIAL_QUADS, 1);
-	int r = m_DmgFullscreenColor[0], g = m_DmgFullscreenColor[1], b = m_DmgFullscreenColor[2], a = m_DmgFullscreenColor[3];
+	int r = m_DmgFullscreenColor[0], g = m_DmgFullscreenColor[1], b = m_DmgFullscreenColor[2],
+		a = m_DmgFullscreenColor[3];
 
 	float wide = GetWide(), tall = GetTall();
 
@@ -164,13 +166,13 @@ void CNEOHudDamageIndicator::Paint()
 //-----------------------------------------------------------------------------
 // Purpose: Message handler for Damage message
 //-----------------------------------------------------------------------------
-void CNEOHudDamageIndicator::MsgFunc_Damage(bf_read& msg)
+void CNEOHudDamageIndicator::MsgFunc_Damage(bf_read &msg)
 {
-	int armor = msg.ReadByte();	// armor
-	int damageTaken = msg.ReadByte();	// health
+	int armor = msg.ReadByte();       // armor
+	int damageTaken = msg.ReadByte(); // health
 	long bitsDamage = msg.ReadLong(); // damage bits
 
-	C_BasePlayer* pPlayer = C_BasePlayer::GetLocalPlayer();
+	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
 	if (!pPlayer)
 		return;
 
@@ -188,7 +190,7 @@ void CNEOHudDamageIndicator::MsgFunc_Damage(bf_read& msg)
 //-----------------------------------------------------------------------------
 // Purpose: hud scheme settings
 //-----------------------------------------------------------------------------
-void CNEOHudDamageIndicator::ApplySchemeSettings(vgui::IScheme* pScheme)
+void CNEOHudDamageIndicator::ApplySchemeSettings(vgui::IScheme *pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 	SetPaintBackgroundEnabled(false);

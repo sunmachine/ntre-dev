@@ -16,10 +16,10 @@ public:
 
 	void Reset();
 
-	void Update( INextBot *bot, const PathFollower &path );
+	void Update(INextBot *bot, const PathFollower &path);
 
 	bool IsDetouring() const { return m_detour.IsDetouring(); }
-	const Vector &GetMoveGoal() const { return m_detour.GetMoveGoal(); }		// where to move next while detouring
+	const Vector &GetMoveGoal() const { return m_detour.GetMoveGoal(); } // where to move next while detouring
 
 	// The path goal the follower should take, if any: the one past the props while detouring,
 	// and the one it had before the detour when the detour is given up
@@ -29,11 +29,11 @@ public:
 	CBaseEntity *GetBreakableInWay() const { return m_breakable.Get(); }
 
 private:
-	void Plan( INextBot *bot, const PathFollower &path );
-	void LookForBreakable( INextBot *bot, const PathFollower &path );
+	void Plan(INextBot *bot, const PathFollower &path);
+	void LookForBreakable(INextBot *bot, const PathFollower &path);
 
-	CountdownTimer m_lookTimer;				// the look ahead, or the detour's search again while detouring
-	CountdownTimer m_breakableTimer;		// the look for breakables alone, while no plan is looking for them
-	CHandle< CBaseEntity > m_breakable;
+	CountdownTimer m_lookTimer;      // the look ahead, or the detour's search again while detouring
+	CountdownTimer m_breakableTimer; // the look for breakables alone, while no plan is looking for them
+	CHandle<CBaseEntity> m_breakable;
 	CNEOBotPropDetour m_detour;
 };

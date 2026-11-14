@@ -15,7 +15,7 @@ class CNEO_Juggernaut : public CBaseAnimating
 {
 public:
 	DECLARE_CLASS(CNEO_Juggernaut, CBaseAnimating);
-	
+
 	static float GetUseDuration();
 	static float GetUseDistanceSquared();
 	CNEO_Juggernaut() { m_bIsHolding = false; }
@@ -28,18 +28,18 @@ public:
 	DECLARE_DATADESC();
 
 #ifdef GAME_DLL
-	void	Precache(void);
-	void	Spawn(void);
-    void	Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void Precache(void);
+	void Spawn(void);
+	void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
 	virtual int UpdateTransmitState() override;
 
-	CNEO_Player* GetActivatingPlayer() const { return m_hHoldingPlayer.Get(); }
+	CNEO_Player *GetActivatingPlayer() const { return m_hHoldingPlayer.Get(); }
 	bool IsBeingActivated() const { return m_bIsHolding; }
 	const bool IsBeingActivatedByLosingTeam();
 
-	bool	m_bPostDeath = false;
+	bool m_bPostDeath = false;
 #endif
-	virtual int	ObjectCaps(void) override { return BaseClass::ObjectCaps() | FCAP_ONOFF_USE; }
+	virtual int ObjectCaps(void) override { return BaseClass::ObjectCaps() | FCAP_ONOFF_USE; }
 
 	virtual unsigned int PhysicsSolidMaskForEntity() const final override { return MASK_PLAYERSOLID; }
 	virtual void UpdateOnRemove() override;
@@ -50,16 +50,16 @@ public:
 
 private:
 #ifdef GAME_DLL
-	void	Think(void);
-	void	SetSoftCollision(bool soft);
-	void	MakePushThink();
-	void	DisableSoftCollisionsThink();
-	void	HoldCancel(void);
-	void	AnimThink(void);
-	void	InputLock(inputdata_t& inputData) { m_bLocked = true; }
-	void	InputUnlock(inputdata_t& inputData) { m_bLocked = false; }
+	void Think(void);
+	void SetSoftCollision(bool soft);
+	void MakePushThink();
+	void DisableSoftCollisionsThink();
+	void HoldCancel(void);
+	void AnimThink(void);
+	void InputLock(inputdata_t &inputData) { m_bLocked = true; }
+	void InputUnlock(inputdata_t &inputData) { m_bLocked = false; }
 #else
-	int		DrawModel(int flags) override;
+	int DrawModel(int flags) override;
 #endif
 
 #ifdef GAME_DLL

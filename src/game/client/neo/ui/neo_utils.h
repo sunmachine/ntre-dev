@@ -15,10 +15,9 @@ static constexpr int SPRAY_WH = 256;
 // Input "rgba8888Data" has to be 256 x 256 RGBA8888
 // NEO NOTE (nullsystem): This exists because the Source SDK API doesn't seem to generate a valid DXT1 VTF
 void SerializeVTFDXTSprayToBuffer(CUtlBuffer *buffer, const uint8 *rgba8888Data);
-}  // namespace NeoUtils
+} // namespace NeoUtils
 
-void bpr(int level, CUtlBuffer& buf, char const* fmt, ...);
+void bpr(int level, CUtlBuffer &buf, char const *fmt, ...);
 
 // Checks if it's in a playable game (and not a background main menu)
 bool IsInGame();
-

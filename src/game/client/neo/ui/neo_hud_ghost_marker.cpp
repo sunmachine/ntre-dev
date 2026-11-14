@@ -29,12 +29,14 @@ ConVar neo_ghost_marker_hud_scale_factor("neo_ghost_marker_hud_scale_factor", "1
 
 static float ghostViewCentreSize = 0;
 extern ConVar cl_neo_hud_centre_ghost_marker_size;
-void ghostViewCentreSizeChangeCallBack(IConVar* pConVar [[maybe_unused]] = nullptr, char const* pOldString [[maybe_unused]] = nullptr, float flOldValue [[maybe_unused]] = 0.f) {
+void ghostViewCentreSizeChangeCallBack(IConVar *pConVar [[maybe_unused]] = nullptr,
+	char const *pOldString [[maybe_unused]] = nullptr, float flOldValue [[maybe_unused]] = 0.f)
+{
 	int w, h;
-    vgui::surface()->GetScreenSize(w, h);
+	vgui::surface()->GetScreenSize(w, h);
 
-    const auto widerAxis = Max(w, h);
-    ghostViewCentreSize = widerAxis * (cl_neo_hud_centre_ghost_marker_size.GetFloat() / 100);
+	const auto widerAxis = Max(w, h);
+	ghostViewCentreSize = widerAxis * (cl_neo_hud_centre_ghost_marker_size.GetFloat() / 100);
 }
 ConVar cl_neo_hud_centre_ghost_marker_size("cl_neo_hud_centre_ghost_marker_size", "12.5", FCVAR_ARCHIVE,
 	"HUD center size in percentage to fade ghost marker.", true, 1, false, 0, ghostViewCentreSizeChangeCallBack);
@@ -43,7 +45,7 @@ DECLARE_NAMED_HUDELEMENT(CNEOHud_GhostMarker, neo_ghost_marker);
 
 NEO_HUD_ELEMENT_DECLARE_FREQ_CVAR(GhostMarker, 0.01)
 
-CNEOHud_GhostMarker::CNEOHud_GhostMarker(const char* pElemName, vgui::Panel* parent)
+CNEOHud_GhostMarker::CNEOHud_GhostMarker(const char *pElemName, vgui::Panel *parent)
 	: CNEOHud_WorldPosMarker(pElemName, parent)
 {
 	SetAutoDelete(true);
@@ -81,7 +83,7 @@ void CNEOHud_GhostMarker::ApplySchemeSettings(vgui::IScheme *pScheme)
 	int wide, tall;
 	surface()->GetScreenSize(wide, tall);
 	SetBounds(0, 0, wide, tall);
-	
+
 	ghostViewCentreSizeChangeCallBack();
 
 	SetFgColor(COLOR_TRANSPARENT);
@@ -103,7 +105,8 @@ void CNEOHud_GhostMarker::UpdateStateForNeoHudElementDraw()
 			const float flDistMeters = METERS_PER_INCH * MainViewOrigin().DistTo(NEORules()->GetGhostPos());
 			if (cl_neo_hud_worldpos_verbose.GetBool())
 			{
-				V_snwprintf(m_wszMarkerTextUnicode, ARRAYSIZE(m_wszMarkerTextUnicode), L"GHOST DISTANCE: %.0fm", flDistMeters);
+				V_snwprintf(
+					m_wszMarkerTextUnicode, ARRAYSIZE(m_wszMarkerTextUnicode), L"GHOST DISTANCE: %.0fm", flDistMeters);
 			}
 			else
 			{
@@ -118,7 +121,8 @@ void CNEOHud_GhostMarker::UpdateStateForNeoHudElementDraw()
 			const float flDistMeters = METERS_PER_INCH * MainViewOrigin().DistTo(NEORules()->GetJuggernautMarkerPos());
 			if (cl_neo_hud_worldpos_verbose.GetBool())
 			{
-				V_snwprintf(m_wszMarkerTextUnicode, ARRAYSIZE(m_wszMarkerTextUnicode), L"JUGGERNAUT DISTANCE: %.0fm", flDistMeters);
+				V_snwprintf(m_wszMarkerTextUnicode, ARRAYSIZE(m_wszMarkerTextUnicode), L"JUGGERNAUT DISTANCE: %.0fm",
+					flDistMeters);
 			}
 			else
 			{
@@ -145,12 +149,12 @@ void CNEOHud_GhostMarker::DrawNeoHudElement()
 			return;
 		}
 
-		const C_NEO_Player* localPlayer = C_NEO_Player::GetLocalNEOPlayer();
+		const C_NEO_Player *localPlayer = C_NEO_Player::GetLocalNEOPlayer();
 		bool hideGhostMarker = (localPlayer->IsCarryingGhost());
 		if (!hideGhostMarker && (localPlayer->GetObserverMode() == OBS_MODE_IN_EYE))
 		{
 			// NEO NOTE (nullsystem): Skip this if we're observing a player in first person
-			auto* pTargetPlayer = dynamic_cast<C_NEO_Player*>(localPlayer->GetObserverTarget());
+			auto *pTargetPlayer = dynamic_cast<C_NEO_Player *>(localPlayer->GetObserverTarget());
 			hideGhostMarker = (pTargetPlayer && !pTargetPlayer->IsObserver() && pTargetPlayer->IsCarryingGhost());
 		}
 		if (hideGhostMarker)
@@ -174,7 +178,7 @@ void CNEOHud_GhostMarker::DrawNeoHudElement()
 				ghostColor = (iGhostingTeam == TEAM_JINRAI) ? COLOR_JINRAI : COLOR_NSF;
 			}
 		}
-		
+
 		GetVectorInScreenSpace(NEORules()->GetGhostMarkerPos(), iPosX, iPosY);
 	}
 	else
@@ -202,7 +206,8 @@ void CNEOHud_GhostMarker::DrawNeoHudElement()
 	alpha6 = 128 * alpha6;
 
 	constexpr float HALF_BASE_TEX_LENGTH = 64;
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++)
+	{
 		m_fMarkerScalesCurrent[i] = (remainder(gpGlobals->curtime, 2) / 2) + 0.5 + m_fMarkerScalesStart[i];
 		if (m_fMarkerScalesCurrent[i] > 1)
 			m_fMarkerScalesCurrent[i] -= 1;
@@ -218,17 +223,14 @@ void CNEOHud_GhostMarker::DrawNeoHudElement()
 		surface()->DrawSetColor(ghostColor);
 		surface()->DrawSetTexture(m_hTex);
 		surface()->DrawTexturedRect(
-			iPosX - halfCurrentCircle,
-			iPosY - halfCurrentCircle,
-			iPosX + halfCurrentCircle,
-			iPosY + halfCurrentCircle);
+			iPosX - halfCurrentCircle, iPosY - halfCurrentCircle, iPosX + halfCurrentCircle, iPosY + halfCurrentCircle);
 	}
-	
+
 	const float fadeMultiplier = GetFadeValueTowardsScreenCentre(iPosX, iPosY);
 	if (!hideText && fadeMultiplier > 0.001f)
 	{
 		auto adjustedGrey = Color(COLOR_GREY.r(), COLOR_GREY.b(), COLOR_GREY.g(), COLOR_GREY.a() * fadeMultiplier);
-	
+
 		surface()->DrawSetTextColor(adjustedGrey);
 		surface()->DrawSetTextFont(m_hFont);
 		int textSizeX, textSizeY;

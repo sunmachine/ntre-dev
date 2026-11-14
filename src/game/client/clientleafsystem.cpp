@@ -1024,7 +1024,7 @@ void CClientLeafSystem::AddShadowToLeaf( int leaf, ClientLeafShadowHandle_t shad
 		// don't nuke dev build perf by spamming the assert every frame
 		AssertOnce(m_ShadowsInLeaf.NumAllocated() < 2000);
 #else
-		Assert(m_ShadowsInLeaf.NumAllocated() < 2000);
+		Assert( m_ShadowsInLeaf.NumAllocated() < 2000 );
 #endif
 
 		i = m_RenderablesInLeaf.NextElement(i);
@@ -1581,8 +1581,8 @@ void CClientLeafSystem::CollateRenderablesInLeaf( int leaf, int worldListLeafInd
 	bool portalTestEnts = r_PortalTestEnts.GetBool() && !r_portalsopenall.GetBool();
 	
 	// Place a fake entity for static/opaque ents in this leaf
-	AddRenderableToRenderList( *info.m_pRenderList, NULL, worldListLeafIndex, RENDER_GROUP_OPAQUE_STATIC, 0 );
-	AddRenderableToRenderList( *info.m_pRenderList, NULL, worldListLeafIndex, RENDER_GROUP_OPAQUE_ENTITY, 0 );
+	AddRenderableToRenderList( *info.m_pRenderList, NULL, worldListLeafIndex, RENDER_GROUP_OPAQUE_STATIC, 0 ); // NEO
+	AddRenderableToRenderList( *info.m_pRenderList, NULL, worldListLeafIndex, RENDER_GROUP_OPAQUE_ENTITY, 0 ); // NEO
 
 	// Collate everything.
 	unsigned int idx = m_RenderablesInLeaf.FirstElement(leaf);

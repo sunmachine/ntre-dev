@@ -5,22 +5,22 @@
 #include "bot/neo_bot.h"
 
 //--------------------------------------------------------------------------------------------------------
-class CNEOBotPathClearBreakable : public Action< CNEOBot >
+class CNEOBotPathClearBreakable : public Action<CNEOBot>
 {
 public:
 	// Returns the breakable entity if one is blocking the bot's path
-	static CBaseEntity *GetBreakableInPath( CNEOBot *me );
+	static CBaseEntity *GetBreakableInPath(CNEOBot *me);
 
-	CNEOBotPathClearBreakable( CBaseEntity *breakable );
+	CNEOBotPathClearBreakable(CBaseEntity *breakable);
 
-	virtual ActionResult< CNEOBot > OnStart( CNEOBot *me, Action< CNEOBot > *priorAction ) override;
-	virtual ActionResult< CNEOBot > Update( CNEOBot *me, float interval ) override;
-	virtual void OnEnd( CNEOBot *me, Action< CNEOBot > *nextAction ) override;
+	virtual ActionResult<CNEOBot> OnStart(CNEOBot *me, Action<CNEOBot> *priorAction) override;
+	virtual ActionResult<CNEOBot> Update(CNEOBot *me, float interval) override;
+	virtual void OnEnd(CNEOBot *me, Action<CNEOBot> *nextAction) override;
 
-	virtual const char *GetName( void ) const override { return "PathClearBreakable"; }
+	virtual const char *GetName(void) const override { return "PathClearBreakable"; }
 
 private:
-	CHandle< CBaseEntity > m_hBreakable;
+	CHandle<CBaseEntity> m_hBreakable;
 	bool m_isWaitingForFullReload = false;
 	bool m_bDidSwitchWeapon = false;
 	bool m_bSkipKnife = false;

@@ -8,4 +8,3 @@ void InitializeNeoClRenderer();
 void InitializeDbgNeoClGitHashTagEdit();
 #endif // DEBUG
 #endif // CLIENT_DLL
-

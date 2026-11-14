@@ -19,8 +19,9 @@
 
 #ifdef PARANOID_NARROWING
 template <typename T>
-concept Numeric = ((std::is_arithmetic_v<std::remove_cvref_t<T>> && std::numeric_limits<std::remove_cvref_t<T>>::is_bounded)
-	|| std::is_enum_v<std::remove_cvref_t<T>>);
+concept Numeric =
+	((std::is_arithmetic_v<std::remove_cvref_t<T>> && std::numeric_limits<std::remove_cvref_t<T>>::is_bounded) ||
+		std::is_enum_v<std::remove_cvref_t<T>>);
 
 template <typename T, typename U>
 concept DifferentTypes = (!std::is_same_v<T, U>);
@@ -29,7 +30,7 @@ concept DifferentTypes = (!std::is_same_v<T, U>);
 // Asserts that value v must fit into type <Container>.
 template <Numeric Container, Numeric Value>
 	requires DifferentTypes<Container, Value>
-constexpr void AssertFitsInto(const Value& input)
+constexpr void AssertFitsInto(const Value &input)
 {
 	using inputType = std::remove_reference_t<decltype(input)>;
 	using outputType = std::add_const_t<Container>;
@@ -37,10 +38,10 @@ constexpr void AssertFitsInto(const Value& input)
 	static_assert(!std::is_reference_v<inputType>);
 	static_assert(!std::is_reference_v<outputType>);
 
-	[[maybe_unused]] const auto& output = static_cast<outputType&>(input);
+	[[maybe_unused]] const auto &output = static_cast<outputType &>(input);
 	static_assert(!std::is_same_v<decltype(input), decltype(output)>);
 
-	[[maybe_unused]] const auto& roundtrip = static_cast<inputType>(output);
+	[[maybe_unused]] const auto &roundtrip = static_cast<inputType>(output);
 	static_assert(std::is_same_v<decltype(input), decltype(roundtrip)>);
 
 	// Value of type A converted to type B, and then back to type A, should equal the original value.
@@ -53,7 +54,9 @@ constexpr void AssertFitsInto(const Value& input)
 	}
 }
 #else
-consteval void AssertFitsInto(const auto&) { /* optimized away */ }
+consteval void AssertFitsInto(const auto &)
+{ /* optimized away */
+}
 #endif // PARANOID_NARROWING
 
 #ifdef PARANOID_NARROWING
@@ -61,7 +64,7 @@ consteval void AssertFitsInto(const auto&) { /* optimized away */ }
 // It will assert to ensure the conversion is valid.
 template <Numeric Container, Numeric Value>
 	requires DifferentTypes<Container, Value>
-constexpr Container narrow_cast(Value&& v)
+constexpr Container narrow_cast(Value &&v)
 {
 	AssertFitsInto<Container>(v);
 	return static_cast<Container>(std::forward<Value>(v));

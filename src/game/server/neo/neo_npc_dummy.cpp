@@ -23,10 +23,10 @@
 #include "tier0/memdbgon.h"
 
 static CEntityClassList<CNEO_NPCDummy> dummies;
-template <> CNEO_NPCDummy* CEntityClassList<CNEO_NPCDummy>::m_pClassList = nullptr;
+template <> CNEO_NPCDummy *CEntityClassList<CNEO_NPCDummy>::m_pClassList = nullptr;
 
 // --- This stuff is pretty useless for the Dummy. But it seems like its required
-int	ACT_DUMMY = -1;
+int ACT_DUMMY = -1;
 
 enum
 {
@@ -53,23 +53,27 @@ CNEO_NPCDummy::~CNEO_NPCDummy()
 	dummies.Remove(this);
 }
 
-CNEO_NPCDummy* CNEO_NPCDummy::GetList()
+CNEO_NPCDummy *CNEO_NPCDummy::GetList()
 {
 	return dummies.m_pClassList;
 }
 
+// clang-format off
 IMPLEMENT_SERVERCLASS_ST(CNEO_NPCDummy, DT_NEO_NPCDummy)
 END_SEND_TABLE()
+// clang-format on
 
 LINK_ENTITY_TO_CLASS(neo_npc_dummy, CNEO_NPCDummy);
 IMPLEMENT_CUSTOM_AI(npc_citizen, CNEO_NPCDummy);
 
+// clang-format off
 BEGIN_DATADESC(CNEO_NPCDummy)
 	DEFINE_KEYFIELD(m_iKeyHealth, FIELD_INTEGER, "Health"),
 	DEFINE_KEYFIELD(m_strKeyModel, FIELD_STRING, "Model"),
 	DEFINE_KEYFIELD(m_strKeyWeaponModel, FIELD_STRING, "Weapon"),
 	DEFINE_KEYFIELD(m_bKeyDistortEffect, FIELD_BOOLEAN, "DistortEffect"),
 END_DATADESC()
+// clang-format on
 
 // -- This is also useless
 void CNEO_NPCDummy::InitCustomSchedules(void)
@@ -140,9 +144,9 @@ void CNEO_NPCDummy::Spawn(void)
 	NPCInit();
 }
 
-void CNEO_NPCDummy::WeaponBonemerge(const char* weaponModelDir)
+void CNEO_NPCDummy::WeaponBonemerge(const char *weaponModelDir)
 {
-	CBaseEntity* pWeaponModel = CreateEntityByName("prop_dynamic");
+	CBaseEntity *pWeaponModel = CreateEntityByName("prop_dynamic");
 	if (pWeaponModel)
 	{
 		pWeaponModel->SetModel(weaponModelDir);
@@ -162,16 +166,16 @@ void CNEO_NPCDummy::WeaponBonemerge(const char* weaponModelDir)
 }
 
 // Purpose: Good question
-Class_T	CNEO_NPCDummy::Classify(void)
+Class_T CNEO_NPCDummy::Classify(void)
 {
-	return	CLASS_NONE;
+	return CLASS_NONE;
 }
 
-int CNEO_NPCDummy::ShouldTransmit(const CCheckTransmitInfo* pInfo)
+int CNEO_NPCDummy::ShouldTransmit(const CCheckTransmitInfo *pInfo)
 {
 	if (pInfo)
 	{
-		auto otherNeoPlayer = assert_cast<CNEO_Player*>(Instance(pInfo->m_pClientEnt));
+		auto otherNeoPlayer = assert_cast<CNEO_Player *>(Instance(pInfo->m_pClientEnt));
 		if (otherNeoPlayer->GetTeamNumber() == TEAM_SPECTATOR ||
 #ifdef GLOWS_ENABLE
 			otherNeoPlayer->IsDead() ||
@@ -182,7 +186,7 @@ int CNEO_NPCDummy::ShouldTransmit(const CCheckTransmitInfo* pInfo)
 		}
 
 		// Ghoster should receive beacons regardless of PVS
-		const auto* otherWep = static_cast<CNEOBaseCombatWeapon*>(otherNeoPlayer->GetActiveWeapon());
+		const auto *otherWep = static_cast<CNEOBaseCombatWeapon *>(otherNeoPlayer->GetActiveWeapon());
 		if (otherWep && otherWep->IsGhost())
 		{
 			const auto distTo = GetAbsOrigin().DistTo(otherWep->GetAbsOrigin());

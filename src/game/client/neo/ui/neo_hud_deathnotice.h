@@ -48,4 +48,3 @@ enum NeoHudDeathNoticeIcon : wchar_t
 	NEO_HUD_DEATHNOTICEICON_ZR68L,
 	NEO_HUD_DEATHNOTICEICON_ZR68S,
 };
-

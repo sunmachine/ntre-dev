@@ -7,7 +7,8 @@
 #include "neo_gamerules.h"
 #include "neo_player_shared.h"
 
-enum NeoGib {
+enum NeoGib
+{
 	NEO_GIB_ALL = 0,
 	NEO_GIB_HEAD,
 	NEO_GIB_LARM,
@@ -19,7 +20,8 @@ enum NeoGib {
 };
 static constexpr int NEO_GIB_ENUM_COUNT = NEO_GIB__ENUM_COUNT;
 
-enum NeoGibLimb {
+enum NeoGibLimb
+{
 	NEO_GIB_LIMB_HEAD = 0,
 	NEO_GIB_LIMB_LARM,
 	NEO_GIB_LIMB_LLEG,
@@ -30,7 +32,8 @@ enum NeoGibLimb {
 };
 static constexpr int NEO_GIB_LIMB_ENUM_COUNT = NEO_GIB_LIMB__ENUM_COUNT;
 
-enum NeoViewmodel {
+enum NeoViewmodel
+{
 	NEO_VM_AA13 = 0,
 	NEO_VM_DETPACK,
 	NEO_VM_FRAG,
@@ -71,7 +74,8 @@ enum NeoViewmodel {
 };
 static constexpr int NEO_VM_ENUM_COUNT = NEO_VM__ENUM_COUNT;
 
-enum NeoWeaponModel {
+enum NeoWeaponModel
+{
 	NEO_WEP_MDL_AA13 = 0,
 	NEO_WEP_MDL_DETPACK,
 	NEO_WEP_MDL_DETPACK_REMOTE,
@@ -132,31 +136,25 @@ public:
 		return instance;
 	}
 
-	virtual ~CNEOModelManager()
-	{
-		instance = NULL;
-	}
+	virtual ~CNEOModelManager() { instance = NULL; }
 
 	void Precache(void) const;
 
-	const char *GetCorpseModel(NeoSkin nSkin, NeoClass nClass,
-		int iTeam, NeoGib nGib = NEO_GIB_ALL) const;
+	const char *GetCorpseModel(NeoSkin nSkin, NeoClass nClass, int iTeam, NeoGib nGib = NEO_GIB_ALL) const;
 
-	const char* GetGibModel(NeoSkin nSkin, NeoClass nClass,
-		int iTeam, NeoGibLimb nGib = NEO_GIB_LIMB_HEAD) const;
-	
-	const char *GetPlayerModel(NeoSkin nSkin,
-		NeoClass nClass, int iTeam) const;
-	
+	const char *GetGibModel(NeoSkin nSkin, NeoClass nClass, int iTeam, NeoGibLimb nGib = NEO_GIB_LIMB_HEAD) const;
+
+	const char *GetPlayerModel(NeoSkin nSkin, NeoClass nClass, int iTeam) const;
+
 	const char *GetViewModel(NeoViewmodel nWepVm, int iTeam = TEAM_JINRAI) const;
 
 	const char *GetWeaponModel(NeoWeaponModel nWep) const;
 
 private:
 	// We are singleton
-	CNEOModelManager() { }
-	CNEOModelManager( CNEOModelManager &);
-	CNEOModelManager& operator=(CNEOModelManager const &);
+	CNEOModelManager() {}
+	CNEOModelManager(CNEOModelManager &);
+	CNEOModelManager &operator=(CNEOModelManager const &);
 };
 
 #endif // NEO_MODEL_MANAGER_H

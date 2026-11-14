@@ -13,22 +13,22 @@
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotJgrSeek::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotJgrSeek::Update(CNEOBot *me, float interval)
 {
 	m_bListenForCombatSounds = false; // Focus on capturing JGR
 
 	if (NEORules()->GetGameType() != NEO_GAME_TYPE_JGR)
 	{
-		return Done( "Game mode is no longer JGR" );
+		return Done("Game mode is no longer JGR");
 	}
 
-	if ( me->GetClass() != NEO_CLASS_JUGGERNAUT )
+	if (me->GetClass() != NEO_CLASS_JUGGERNAUT)
 	{
 		int iJuggernautPlayer = NEORules()->GetJuggernautPlayer();
 		if (iJuggernautPlayer > 0)
 		{
-			CNEO_Player* pJuggernaut = ToNEOPlayer(UTIL_PlayerByIndex(iJuggernautPlayer));
-			Assert( pJuggernaut != me );
+			CNEO_Player *pJuggernaut = ToNEOPlayer(UTIL_PlayerByIndex(iJuggernautPlayer));
+			Assert(pJuggernaut != me);
 			if (pJuggernaut && pJuggernaut != me && pJuggernaut->IsAlive())
 			{
 				if (pJuggernaut->GetTeamNumber() == me->GetTeamNumber())
@@ -43,48 +43,49 @@ ActionResult< CNEOBot > CNEOBotJgrSeek::Update( CNEOBot *me, float interval )
 		}
 	}
 
-	ActionResult< CNEOBot > result = UpdateCommon( me, interval );
-	if ( result.IsRequestingChange() || result.IsDone() )
+	ActionResult<CNEOBot> result = UpdateCommon(me, interval);
+	if (result.IsRequestingChange() || result.IsDone())
 		return result;
 
-	if ( me->GetClass() == NEO_CLASS_JUGGERNAUT )
+	if (me->GetClass() == NEO_CLASS_JUGGERNAUT)
 	{
-		return SuspendFor( new CNEOBotJgrJuggernaut, "I am the Juggernaut now" );
+		return SuspendFor(new CNEOBotJgrJuggernaut, "I am the Juggernaut now");
 	}
 
 	// Juggernaut objective capture logic
 	if (m_bGoingToTargetEntity && m_hTargetEntity)
 	{
-		if ( me->GetVisionInterface()->GetPrimaryKnownThreat(true) )
+		if (me->GetVisionInterface()->GetPrimaryKnownThreat(true))
 		{
-			return SuspendFor( new CNEOBotAttack( m_hTargetEntity->GetAbsOrigin() ), "Engaging enemies en route to juggernaut" );
+			return SuspendFor(
+				new CNEOBotAttack(m_hTargetEntity->GetAbsOrigin()), "Engaging enemies en route to juggernaut");
 		}
 
 		const float useRangeSq = CNEO_Juggernaut::GetUseDistanceSquared() * 0.8f;
-		if ( me->GetAbsOrigin().DistToSqr( m_hTargetEntity->GetAbsOrigin() ) < useRangeSq ) 
+		if (me->GetAbsOrigin().DistToSqr(m_hTargetEntity->GetAbsOrigin()) < useRangeSq)
 		{
-			if ( !m_hTargetEntity->IsPlayer() )
+			if (!m_hTargetEntity->IsPlayer())
 			{
-				if ( me->IsLineOfSightClear( m_hTargetEntity, CBaseCombatCharacter::IGNORE_ACTORS ) )
+				if (me->IsLineOfSightClear(m_hTargetEntity, CBaseCombatCharacter::IGNORE_ACTORS))
 				{
 					const char *classname = m_hTargetEntity->GetClassname();
 
-					if ( FStrEq( classname, "neo_juggernaut" ) )
+					if (FStrEq(classname, "neo_juggernaut"))
 					{
-						CNEO_Juggernaut *pJgr = static_cast<CNEO_Juggernaut*>( m_hTargetEntity.Get() );
-						if ( pJgr )
+						CNEO_Juggernaut *pJgr = static_cast<CNEO_Juggernaut *>(m_hTargetEntity.Get());
+						if (pJgr)
 						{
 							CBasePlayer *pActivatingPlayer = pJgr->GetActivatingPlayer();
-							if ( NEORules()->IsJuggernautLocked()
-								|| ( pActivatingPlayer && me->InSameTeam( pActivatingPlayer ) && pActivatingPlayer != me ) )
+							if (NEORules()->IsJuggernautLocked() ||
+								(pActivatingPlayer && me->InSameTeam(pActivatingPlayer) && pActivatingPlayer != me))
 							{
-								CNEOBotJgrCapture::LookAwayFrom( me, pJgr );
+								CNEOBotJgrCapture::LookAwayFrom(me, pJgr);
 								m_path.Invalidate(); // wait at juggernaut
 								return Continue();
 							}
 						}
 
-						return SuspendFor( new CNEOBotJgrCapture( pJgr ), "Capturing Juggernaut" );
+						return SuspendFor(new CNEOBotJgrCapture(pJgr), "Capturing Juggernaut");
 					}
 				}
 			}
@@ -95,11 +96,11 @@ ActionResult< CNEOBot > CNEOBotJgrSeek::Update( CNEOBot *me, float interval )
 }
 
 //---------------------------------------------------------------------------------------------
-void CNEOBotJgrSeek::RecomputeSeekPath( CNEOBot *me )
+void CNEOBotJgrSeek::RecomputeSeekPath(CNEOBot *me)
 {
 	if (NEORules()->GetGameType() != NEO_GAME_TYPE_JGR)
 	{
-		CNEOBotSeekAndDestroy::RecomputeSeekPath( me );
+		CNEOBotSeekAndDestroy::RecomputeSeekPath(me);
 		return;
 	}
 
@@ -114,11 +115,11 @@ void CNEOBotJgrSeek::RecomputeSeekPath( CNEOBot *me )
 		// If it's on the ground (no owner)
 		if (iJuggernautPlayer <= 0)
 		{
-			CBaseEntity* pJuggernaut = gEntList.FindEntityByClassname(NULL, "neo_juggernaut");
+			CBaseEntity *pJuggernaut = gEntList.FindEntityByClassname(NULL, "neo_juggernaut");
 			if (pJuggernaut)
 			{
 				const float useRangeSq = CNEO_Juggernaut::GetUseDistanceSquared() * 0.8f;
-				if ( me->GetAbsOrigin().DistToSqr( pJuggernaut->GetAbsOrigin() ) < useRangeSq )
+				if (me->GetAbsOrigin().DistToSqr(pJuggernaut->GetAbsOrigin()) < useRangeSq)
 				{
 					// We're already at the goal, no need to path.
 					m_vGoalPos = pJuggernaut->WorldSpaceCenter();
@@ -132,15 +133,15 @@ void CNEOBotJgrSeek::RecomputeSeekPath( CNEOBot *me )
 				m_bGoingToTargetEntity = true;
 				m_hTargetEntity = pJuggernaut;
 
-				if (CNEOBotPathCompute(me, m_path, m_vGoalPos, FASTEST_ROUTE) && m_path.IsValid() && m_path.GetResult() == Path::COMPLETE_PATH)
+				if (CNEOBotPathCompute(me, m_path, m_vGoalPos, FASTEST_ROUTE) && m_path.IsValid() &&
+					m_path.GetResult() == Path::COMPLETE_PATH)
 				{
 					return;
 				}
 			}
 		}
-
 	}
 
 	// Fallback to base behavior (roaming spawn points)
-	CNEOBotSeekAndDestroy::RecomputeSeekPath( me );
+	CNEOBotSeekAndDestroy::RecomputeSeekPath(me);
 }

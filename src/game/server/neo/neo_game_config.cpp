@@ -5,6 +5,7 @@
 
 LINK_ENTITY_TO_CLASS(neo_game_config, CNEOGameConfig);
 
+// clang-format off
 BEGIN_DATADESC(CNEOGameConfig)
 	DEFINE_KEYFIELD(m_GameType, FIELD_INTEGER, "GameType"),
 	DEFINE_KEYFIELD(m_HiddenHudElements, FIELD_INTEGER, "spawnflags"),
@@ -23,6 +24,7 @@ BEGIN_DATADESC(CNEOGameConfig)
 	DEFINE_OUTPUT(m_OnRoundStart, "OnRoundStart"),
 	DEFINE_OUTPUT(m_OnCompetitive, "OnCompetitive")
 END_DATADESC()
+// clang-format on
 
 extern ConVar sv_neo_comp;
 
@@ -36,28 +38,28 @@ void CNEOGameConfig::Spawn()
 
 // Inputs
 
-void CNEOGameConfig::InputFireTeamWin(inputdata_t& inputData)
+void CNEOGameConfig::InputFireTeamWin(inputdata_t &inputData)
 {
 	int team = inputData.value.Int();
 	NEORules()->SetWinningTeam(team, NEO_VICTORY_MAPIO, false, true, false, false);
 }
 
-void CNEOGameConfig::InputFireDMPlayerWin(inputdata_t& inputData)
+void CNEOGameConfig::InputFireDMPlayerWin(inputdata_t &inputData)
 {
-	CBasePlayer* pPlayer = NULL;
+	CBasePlayer *pPlayer = NULL;
 
 	if (inputData.pActivator && inputData.pActivator->IsPlayer())
 	{
-		pPlayer = (CBasePlayer*)inputData.pActivator;
+		pPlayer = (CBasePlayer *)inputData.pActivator;
 	}
 
 	if (pPlayer)
-    {
-        NEORules()->SetWinningDMPlayer(static_cast<CNEO_Player*>(pPlayer));
-    }
+	{
+		NEORules()->SetWinningDMPlayer(static_cast<CNEO_Player *>(pPlayer));
+	}
 }
 
-void CNEOGameConfig::InputFireRoundTie(inputdata_t& inputData)
+void CNEOGameConfig::InputFireRoundTie(inputdata_t &inputData)
 {
 	NEORules()->SetWinningTeam(TEAM_SPECTATOR, NEO_VICTORY_STALEMATE, false, true, true, false);
 }

@@ -23,18 +23,22 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar sv_neo_ctg_ghost_beacons_when_inactive("sv_neo_ctg_ghost_beacons_when_inactive", "0", FCVAR_NOTIFY|FCVAR_REPLICATED, "Show ghost beacons when the ghost isn't the active weapon.");
+ConVar sv_neo_ctg_ghost_beacons_when_inactive("sv_neo_ctg_ghost_beacons_when_inactive", "0",
+	FCVAR_NOTIFY | FCVAR_REPLICATED, "Show ghost beacons when the ghost isn't the active weapon.");
 
 IMPLEMENT_NETWORKCLASS_ALIASED(WeaponGhost, DT_WeaponGhost)
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CWeaponGhost)
 	DEFINE_NEO_BASE_WEP_PREDICTION
 	DEFINE_PRED_FIELD_TOL(m_flDeployTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE, TICKS_TO_TIME(1)),
 	DEFINE_PRED_FIELD(m_flNearestEnemyDist, FIELD_FLOAT, FTYPEDESC_INSENDTABLE | FTYPEDESC_NOERRORCHECK),
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CWeaponGhost, DT_WeaponGhost)
 	DEFINE_NEO_BASE_WEP_NETWORK_TABLE
 #ifdef CLIENT_DLL
@@ -47,6 +51,7 @@ BEGIN_NETWORK_TABLE(CWeaponGhost, DT_WeaponGhost)
 	SendPropTime(SENDINFO(m_flPickupTime)),
 #endif
 END_NETWORK_TABLE()
+// clang-format on
 
 NEO_IMPLEMENT_ACTTABLE(CWeaponGhost)
 
@@ -68,7 +73,7 @@ CWeaponGhost::CWeaponGhost(void)
 CWeaponGhost::~CWeaponGhost()
 {
 	// At map exit, the rules may be gone before the ghost, so we check.
-	if (auto* rules = NEORules())
+	if (auto *rules = NEORules())
 		rules->ResetGhost();
 }
 #endif
@@ -85,7 +90,7 @@ int CWeaponGhost::ShouldTransmit(const CCheckTransmitInfo *pInfo)
 	{
 		return BaseClass::ShouldTransmit(pInfo);
 	}
-	assert_cast<CNEO_Player*>(Instance(pInfo->m_pClientEnt));
+	assert_cast<CNEO_Player *>(Instance(pInfo->m_pClientEnt));
 	return FL_EDICT_ALWAYS;
 }
 #endif
@@ -98,7 +103,7 @@ void CWeaponGhost::OnDataChanged(DataUpdateType_t updateType)
 		// Ghost startup sound
 		{
 			// Could be more than one ghost on the map, check whether localplayer is carrying the ghost too
-			C_NEO_Player* pLocalPlayer = C_NEO_Player::GetLocalNEOPlayer();
+			C_NEO_Player *pLocalPlayer = C_NEO_Player::GetLocalNEOPlayer();
 			if (!IsCarriedByLocalPlayer() && !pLocalPlayer->IsCarryingGhost())
 			{
 				StopGhostSound();
@@ -129,7 +134,7 @@ void CWeaponGhost::OnDataChanged(DataUpdateType_t updateType)
 
 void CWeaponGhost::PlayGhostSound()
 {
-	C_BasePlayer* pOwner = static_cast<C_BasePlayer*>(GetOwner());
+	C_BasePlayer *pOwner = static_cast<C_BasePlayer *>(GetOwner());
 	if (!pOwner)
 		return;
 
@@ -150,7 +155,7 @@ void CWeaponGhost::StopGhostSound(void)
 // Emit a ghost ping at a refire interval based on distance.
 void CWeaponGhost::TryGhostPing()
 {
-	const auto* owner = GetOwner();
+	const auto *owner = GetOwner();
 	if (!owner)
 		return;
 
@@ -159,10 +164,10 @@ void CWeaponGhost::TryGhostPing()
 
 	if (!sv_neo_ctg_ghost_beacons_when_inactive.GetBool())
 	{
-		const auto* wep = owner->GetActiveWeapon();
+		const auto *wep = owner->GetActiveWeapon();
 		if (!wep)
 			return;
-		if (!assert_cast<const CNEOBaseCombatWeapon*>(wep)->IsGhost())
+		if (!assert_cast<const CNEOBaseCombatWeapon *>(wep)->IsGhost())
 			return;
 	}
 
@@ -182,15 +187,18 @@ void CWeaponGhost::TryGhostPing()
 }
 #endif // CLIENT_DLL
 
-enum {
+enum
+{
 	NEO_GHOST_ONLY_ENEMIES = 0,
 	NEO_GHOST_ONLY_PLAYABLE_TEAMS,
 	NEO_GHOST_ANY_TEAMS
 };
 ConVar neo_ghost_debug_ignore_teams("neo_ghost_debug_ignore_teams", "0", FCVAR_CHEAT | FCVAR_REPLICATED,
-	"Debug ghost team filter. If 0, only ghost the enemy team. If 1, ghost both playable teams. If 2, ghost any team, including spectator and unassigned.", true, 0.0, true, 2.0);
+	"Debug ghost team filter. If 0, only ghost the enemy team. If 1, ghost both playable teams. If 2, ghost any team, including spectator and unassigned.",
+	true, 0.0, true, 2.0);
 ConVar neo_ghost_debug_spew("neo_ghost_debug_spew", "0", FCVAR_CHEAT | FCVAR_REPLICATED,
-	"Whether to spew debug logs to console about ghosting positions and the data PVS/server origin.", true, 0.0, true, 1.0);
+	"Whether to spew debug logs to console about ghosting positions and the data PVS/server origin.", true, 0.0, true,
+	1.0);
 ConVar neo_ghost_debug_hudinfo("neo_ghost_debug_hudinfo", "0", FCVAR_CHEAT | FCVAR_REPLICATED,
 	"Whether to overlay debug text information to screen about ghosting targets.", true, 0.0, true, 1.0);
 
@@ -201,7 +209,7 @@ void CWeaponGhost::Equip(CBaseCombatCharacter *pNewOwner)
 	if (!pNewOwner)
 		return;
 
-	auto neoOwner = assert_cast<CNEO_Player*>(pNewOwner);
+	auto neoOwner = assert_cast<CNEO_Player *>(pNewOwner);
 #ifdef GAME_DLL
 	NEORules()->SetLastGhoster(neoOwner->entindex());
 #endif // GAME_DLL
@@ -236,11 +244,11 @@ void CWeaponGhost::UpdateNearestGhostBeaconDist()
 	if (sv_neo_serverside_beacons.GetBool() != IsServer())
 		return;
 
-	CNEO_Player* ghoster;
+	CNEO_Player *ghoster;
 	if (auto owner = GetOwner())
 	{
 		Assert(owner->IsPlayer());
-		ghoster = assert_cast<CNEO_Player*>(owner);
+		ghoster = assert_cast<CNEO_Player *>(owner);
 	}
 	else
 		return;
@@ -249,14 +257,14 @@ void CWeaponGhost::UpdateNearestGhostBeaconDist()
 	{
 		auto obsTarget = ghoster->GetObserverTarget();
 		if (obsTarget && obsTarget->IsPlayer())
-			ghoster = assert_cast<CNEO_Player*>(obsTarget);
+			ghoster = assert_cast<CNEO_Player *>(obsTarget);
 	}
 	Assert(ghoster->m_bCarryingGhost);
 
 	const int ghosterTeam = ghoster->GetTeamNumber();
 	Assert(ghosterTeam == TEAM_JINRAI || ghosterTeam == TEAM_NSF);
 	const int enemyTeamId = ghosterTeam == TEAM_JINRAI ? TEAM_NSF : TEAM_JINRAI;
-	auto* enemyTeam = GetGlobalTeam(enemyTeamId);
+	auto *enemyTeam = GetGlobalTeam(enemyTeamId);
 	const int enemyCount = enemyTeam->GetNumPlayers();
 
 	float closestEnemy = FLT_MAX;
@@ -273,7 +281,7 @@ void CWeaponGhost::UpdateNearestGhostBeaconDist()
 #endif
 #endif
 	// Dummy entity enemies (used in tutorial)
-	for (auto* dummy = CNEO_NPCDummy::GetList(); dummy; dummy = dummy->m_pNext)
+	for (auto *dummy = CNEO_NPCDummy::GetList(); dummy; dummy = dummy->m_pNext)
 	{
 		float distTo;
 		if (BeaconRange(dummy, distTo))
@@ -283,18 +291,18 @@ void CWeaponGhost::UpdateNearestGhostBeaconDist()
 	m_flNearestEnemyDist = closestEnemy;
 }
 
-bool CWeaponGhost::BeaconRange(CBaseEntity* enemy, float& outDistance) const
+bool CWeaponGhost::BeaconRange(CBaseEntity *enemy, float &outDistance) const
 {
 	if (!enemy)
 		return false;
-	const auto* ghoster = GetOwner();
+	const auto *ghoster = GetOwner();
 	if (!ghoster)
 		return false;
 	if (!enemy->IsAlive() || enemy->IsDormant())
 		return false;
 
-	const auto& ghosterPos = ghoster->GetAbsOrigin();
-	const auto& enemyPos = enemy->GetAbsOrigin();
+	const auto &ghosterPos = ghoster->GetAbsOrigin();
+	const auto &enemyPos = enemy->GetAbsOrigin();
 	const auto dist = ghosterPos.DistTo(enemyPos);
 	if (dist > GetGhostRangeInHammerUnits())
 		return false;
@@ -314,11 +322,11 @@ void CWeaponGhost::Drop(const Vector &vecVelocity)
 {
 	if (GetOwner())
 	{
-		auto neoOwner = static_cast<CNEO_Player*>(GetOwner());
+		auto neoOwner = static_cast<CNEO_Player *>(GetOwner());
 		neoOwner->m_bCarryingGhost = false;
 	}
 	BaseClass::Drop(vecVelocity);
-#if !defined( CLIENT_DLL )
+#if !defined(CLIENT_DLL)
 	SetRemoveable(false);
 #endif
 }

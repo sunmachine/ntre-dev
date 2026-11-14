@@ -25,16 +25,21 @@ extern ConVar sv_neo_grenade_throw_intensity;
 extern ConVar sv_neo_grenade_lob_intensity;
 extern ConVar sv_neo_grenade_roll_intensity;
 
-ConVar sv_neo_infinite_smoke_grenades("sv_neo_infinite_smoke_grenades", "0", FCVAR_REPLICATED | FCVAR_CHEAT, "Should smoke grenades use up ammo.", true, 0.0, true, 1.0);
+ConVar sv_neo_infinite_smoke_grenades("sv_neo_infinite_smoke_grenades", "0", FCVAR_REPLICATED | FCVAR_CHEAT,
+	"Should smoke grenades use up ammo.", true, 0.0, true, 1.0);
 
 IMPLEMENT_NETWORKCLASS_ALIASED(WeaponSmokeGrenade, DT_WeaponSmokeGrenade)
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CWeaponSmokeGrenade, DT_WeaponSmokeGrenade)
 END_NETWORK_TABLE()
+	// clang-format on
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CWeaponSmokeGrenade)
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
 NEO_IMPLEMENT_ACTTABLE(CWeaponSmokeGrenade)
@@ -65,7 +70,7 @@ bool CWeaponSmokeGrenade::Deploy(void)
 }
 
 // Output : Returns true on success, false on failure.
-bool CWeaponSmokeGrenade::Holster(CBaseCombatWeapon* pSwitchingTo)
+bool CWeaponSmokeGrenade::Holster(CBaseCombatWeapon *pSwitchingTo)
 {
 	m_bRedraw = false;
 	m_bDrawbackFinished = false;
@@ -133,17 +138,18 @@ void CWeaponSmokeGrenade::PrimaryAttack(void)
 	}
 }
 
-void CWeaponSmokeGrenade::DecrementAmmo(CBaseCombatCharacter* pOwner)
+void CWeaponSmokeGrenade::DecrementAmmo(CBaseCombatCharacter *pOwner)
 {
 	m_iPrimaryAmmoCount -= 1;
 }
 
 void CWeaponSmokeGrenade::ItemPostFrame(void)
 {
-	if (!HasPrimaryAmmo() && (GetIdealActivity() == ACT_VM_IDLE || GetIdealActivity() == ACT_VM_DRAW)) {
+	if (!HasPrimaryAmmo() && (GetIdealActivity() == ACT_VM_IDLE || GetIdealActivity() == ACT_VM_DRAW))
+	{
 		// Finished Throwing Animation, switch to next weapon and destroy this one
 #ifdef GAME_DLL
-		CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+		CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 		if (pOwner)
 		{ // NEO NOTE (Adam) we could call SwitchToNextBestWeapon both on client and server but that's causing some stutter when throwing the last smokegrenade. HL2MP weapons like slam handle this only server side
 			pOwner->SwitchToNextBestWeapon(this);
@@ -164,7 +170,7 @@ void CWeaponSmokeGrenade::ItemPostFrame(void)
 
 	if (m_bDrawbackFinished)
 	{
-		auto pOwner = static_cast<CNEO_Player*>(GetOwner());
+		auto pOwner = static_cast<CNEO_Player *>(GetOwner());
 
 		if (pOwner)
 		{
@@ -176,7 +182,8 @@ void CWeaponSmokeGrenade::ItemPostFrame(void)
 					ThrowGrenade(pOwner);
 
 					SendWeaponAnim(ACT_VM_THROW);
-					m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flTimeWeaponIdle = gpGlobals->curtime + SequenceDuration();
+					m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flTimeWeaponIdle =
+						gpGlobals->curtime + SequenceDuration();
 					m_bDrawbackFinished = false;
 					m_AttackPaused = GRENADE_PAUSED_NO;
 				}
@@ -196,7 +203,7 @@ void CWeaponSmokeGrenade::ItemPostFrame(void)
 }
 
 extern ConVar sv_neo_grenade_fuse_timer;
-void CWeaponSmokeGrenade::ThrowGrenade(CNEO_Player* pPlayer, bool isAlive, CBaseEntity *pAttacker)
+void CWeaponSmokeGrenade::ThrowGrenade(CNEO_Player *pPlayer, bool isAlive, CBaseEntity *pAttacker)
 {
 	if (!sv_neo_infinite_smoke_grenades.GetBool())
 	{
@@ -228,7 +235,9 @@ void CWeaponSmokeGrenade::ThrowGrenade(CNEO_Player* pPlayer, bool isAlive, CBase
 
 	Vector vecThrow = vForward * flVel + pPlayer->GetAbsVelocity();
 
-	CBaseGrenadeProjectile* pGrenade = NEOSmokegrenade_Create(vecSrc, vec3_angle, vecThrow, AngularImpulse(600, random->RandomInt(-1200, 1200), 0), ((!(pPlayer->IsAlive()) || !isAlive) && pAttacker) ? pAttacker : pPlayer);
+	CBaseGrenadeProjectile *pGrenade =
+		NEOSmokegrenade_Create(vecSrc, vec3_angle, vecThrow, AngularImpulse(600, random->RandomInt(-1200, 1200), 0),
+			((!(pPlayer->IsAlive()) || !isAlive) && pAttacker) ? pAttacker : pPlayer);
 
 	if (pGrenade)
 	{
@@ -246,11 +255,11 @@ void CWeaponSmokeGrenade::ThrowGrenade(CNEO_Player* pPlayer, bool isAlive, CBase
 
 bool CWeaponSmokeGrenade::CanDrop()
 {
-	auto owner = GetOwner(); 
+	auto owner = GetOwner();
 	return owner && !owner->IsAlive();
 }
 
-void CWeaponSmokeGrenade::Drop(const Vector& vecVelocity)
+void CWeaponSmokeGrenade::Drop(const Vector &vecVelocity)
 {
 	BaseClass::Drop(vecVelocity);
 }
@@ -261,9 +270,9 @@ bool CWeaponSmokeGrenade::CanBePickedUpByClass(int classId)
 }
 
 #ifndef CLIENT_DLL
-void CWeaponSmokeGrenade::Operator_HandleAnimEvent(animevent_t* pEvent, CBaseCombatCharacter* pOperator)
+void CWeaponSmokeGrenade::Operator_HandleAnimEvent(animevent_t *pEvent, CBaseCombatCharacter *pOperator)
 {
-	auto pOwner = static_cast<CNEO_Player*>(GetOwner());
+	auto pOwner = static_cast<CNEO_Player *>(GetOwner());
 	Assert(pOwner);
 
 	bool fThrewGrenade = false;

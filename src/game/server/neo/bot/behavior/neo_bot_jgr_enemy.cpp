@@ -7,73 +7,71 @@
 #include "bot/behavior/neo_bot_attack.h"
 
 //---------------------------------------------------------------------------------------------
-CNEOBotJgrEnemy::CNEOBotJgrEnemy( void )
-{
-}
+CNEOBotJgrEnemy::CNEOBotJgrEnemy(void) {}
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotJgrEnemy::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotJgrEnemy::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
 	return Continue();
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotJgrEnemy::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotJgrEnemy::Update(CNEOBot *me, float interval)
 {
 	const int iJuggernautPlayer = NEORules()->GetJuggernautPlayer();
-	if ( iJuggernautPlayer <= 0 )
+	if (iJuggernautPlayer <= 0)
 	{
-		return Done( "No juggernaut player" );
+		return Done("No juggernaut player");
 	}
 
-	CNEO_Player* pJuggernaut = ToNEOPlayer( UTIL_PlayerByIndex( iJuggernautPlayer ) );
-	if ( !pJuggernaut )
+	CNEO_Player *pJuggernaut = ToNEOPlayer(UTIL_PlayerByIndex(iJuggernautPlayer));
+	if (!pJuggernaut)
 	{
-		return Done( "Juggernaut is invalid" );
+		return Done("Juggernaut is invalid");
 	}
 
-	if ( !pJuggernaut->IsAlive() )
+	if (!pJuggernaut->IsAlive())
 	{
-		return Done( "Juggernaut is dead" );
+		return Done("Juggernaut is dead");
 	}
 
-	if ( pJuggernaut->GetTeamNumber() == me->GetTeamNumber() )
+	if (pJuggernaut->GetTeamNumber() == me->GetTeamNumber())
 	{
-		return Done( "Juggernaut is friendly" );
+		return Done("Juggernaut is friendly");
 	}
 
 	const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat(true);
-	if ( threat && !threat->IsObsolete() && me->GetIntentionInterface()->ShouldAttack( me, threat ) )
+	if (threat && !threat->IsObsolete() && me->GetIntentionInterface()->ShouldAttack(me, threat))
 	{
-		return SuspendFor( new CNEOBotAttack( pJuggernaut->GetAbsOrigin() ), "Attacking threat en route to juggernaut" );
+		return SuspendFor(new CNEOBotAttack(pJuggernaut->GetAbsOrigin()), "Attacking threat en route to juggernaut");
 	}
 
 	// Chase the Juggernaut
-	CNEOBotPathUpdateChase( me, m_chasePath, pJuggernaut, DEFAULT_ROUTE );
+	CNEOBotPathUpdateChase(me, m_chasePath, pJuggernaut, DEFAULT_ROUTE);
 
 	return Continue();
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotJgrEnemy::OnResume( CNEOBot *me, Action< CNEOBot > *interruptingAction )
+ActionResult<CNEOBot> CNEOBotJgrEnemy::OnResume(CNEOBot *me, Action<CNEOBot> *interruptingAction)
 {
 	return Continue();
 }
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotJgrEnemy::OnStuck( CNEOBot *me )
+EventDesiredResult<CNEOBot> CNEOBotJgrEnemy::OnStuck(CNEOBot *me)
 {
 	return TryContinue();
 }
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotJgrEnemy::OnMoveToSuccess( CNEOBot *me, const Path *path )
+EventDesiredResult<CNEOBot> CNEOBotJgrEnemy::OnMoveToSuccess(CNEOBot *me, const Path *path)
 {
 	return TryContinue();
 }
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotJgrEnemy::OnMoveToFailure( CNEOBot *me, const Path *path, MoveToFailureType reason )
+EventDesiredResult<CNEOBot> CNEOBotJgrEnemy::OnMoveToFailure(CNEOBot *me, const Path *path, MoveToFailureType reason)
 {
 	return TryContinue();
 }

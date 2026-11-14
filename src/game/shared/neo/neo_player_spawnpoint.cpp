@@ -13,35 +13,34 @@
 class CNEOSpawnPoint_Attacker : public CNEOSpawnPoint
 {
 public:
-	CNEOSpawnPoint_Attacker() : CNEOSpawnPoint()
-	{
-		m_eSide = E_TeamSide::Attacker;
-	}
+	CNEOSpawnPoint_Attacker() : CNEOSpawnPoint() { m_eSide = E_TeamSide::Attacker; }
 };
 LINK_ENTITY_TO_CLASS(info_player_attacker, CNEOSpawnPoint_Attacker);
 
 class CNEOSpawnPoint_Defender : public CNEOSpawnPoint
 {
 public:
-	CNEOSpawnPoint_Defender() : CNEOSpawnPoint()
-	{
-		m_eSide = E_TeamSide::Defender;
-	}
+	CNEOSpawnPoint_Defender() : CNEOSpawnPoint() { m_eSide = E_TeamSide::Defender; }
 };
 LINK_ENTITY_TO_CLASS(info_player_defender, CNEOSpawnPoint_Defender);
 
 #ifdef GAME_DLL
+// clang-format off
 IMPLEMENT_SERVERCLASS_ST(CNEOSpawnPoint, DT_NEOSpawnPoint)
 END_SEND_TABLE()
+// clang-format on
 #else
 #ifdef CNEOSpawnPoint
 #undef CNEOSpawnPoint
 #endif
+// clang-format off
 IMPLEMENT_CLIENTCLASS_DT(C_NEOSpawnPoint, DT_NEOSpawnPoint, CNEOSpawnPoint)
 END_RECV_TABLE()
+// clang-format on
 #define CNEOSpawnPoint C_NEOSpawnPoint
 #endif
 
+// clang-format off
 BEGIN_DATADESC(CNEOSpawnPoint)
 #ifdef GAME_DLL
 	DEFINE_KEYFIELD(m_bDisabled, FIELD_BOOLEAN, "StartDisabled"),
@@ -52,6 +51,7 @@ BEGIN_DATADESC(CNEOSpawnPoint)
 	DEFINE_OUTPUT(m_OnPlayerSpawn, "OnPlayerSpawn")
 #endif
 END_DATADESC()
+// clang-format on
 
 CNEOSpawnPoint::CNEOSpawnPoint()
 {
@@ -72,10 +72,9 @@ void CNEOSpawnPoint::Spawn()
 	AssertMsg(m_eSide == E_TeamSide::Unspecified || m_eSide == E_TeamSide::Attacker || m_eSide == E_TeamSide::Defender,
 		"CNEOSpawnPoint shouldn't be instantiated directly; use info_player_attacker/defender instead!\n");
 
-#if(0)
-	DevMsg("Neo spawnpoint for %s at %f %f %f\n",
-		(m_iOwningTeam == TEAM_JINRAI ? "Jinrai" : "NSF"),
-		GetAbsOrigin().x, GetAbsOrigin().y, GetAbsOrigin().z);
+#if (0)
+	DevMsg("Neo spawnpoint for %s at %f %f %f\n", (m_iOwningTeam == TEAM_JINRAI ? "Jinrai" : "NSF"), GetAbsOrigin().x,
+		GetAbsOrigin().y, GetAbsOrigin().z);
 #endif
 
 #ifdef GAME_DLL
@@ -91,7 +90,7 @@ int CNEOSpawnPoint::GetOwningTeam() const
 		return NEORules()->GetAttackingTeam();
 	case E_TeamSide::Defender:
 		return NEORules()->GetDefendingTeam();
-	default: 
+	default:
 		return TEAM_ANY;
 	}
 }
@@ -102,12 +101,12 @@ E_TeamSide CNEOSpawnPoint::GetSide() const
 }
 
 #ifdef GAME_DLL
-void CNEOSpawnPoint::InputEnable(inputdata_t& inputData)
+void CNEOSpawnPoint::InputEnable(inputdata_t &inputData)
 {
 	m_bDisabled = false;
 }
 
-void CNEOSpawnPoint::InputDisable(inputdata_t& inputData)
+void CNEOSpawnPoint::InputDisable(inputdata_t &inputData)
 {
 	m_bDisabled = true;
 }

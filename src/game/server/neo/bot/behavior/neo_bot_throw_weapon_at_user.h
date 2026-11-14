@@ -11,19 +11,20 @@
 class CNEOBotThrowWeaponAtUser : public CNEOBotThrowWeaponAtPlayer
 {
 public:
-	CNEOBotThrowWeaponAtUser(CNEO_Player* pTargetPlayer) : CNEOBotThrowWeaponAtPlayer(pTargetPlayer) {}
+	CNEOBotThrowWeaponAtUser(CNEO_Player *pTargetPlayer) : CNEOBotThrowWeaponAtPlayer(pTargetPlayer) {}
 
-	virtual void OnEnd(CNEOBot* me, Action< CNEOBot >* nextAction) override
+	virtual void OnEnd(CNEOBot *me, Action<CNEOBot> *nextAction) override
 	{
 		me->m_hCommandingPlayer = nullptr;
 		CNEOBotThrowWeaponAtPlayer::OnEnd(me, nextAction);
 	}
-	
-	virtual const char* GetName(void) const override { return "ThrowWeaponAtUser"; };
 
-	static bool ReadyAimToThrowWeapon(CNEOBot* me, CNEO_Player* pCommander)
+	virtual const char *GetName(void) const override { return "ThrowWeaponAtUser"; };
+
+	static bool ReadyAimToThrowWeapon(CNEOBot *me, CNEO_Player *pCommander)
 	{
-		me->GetBodyInterface()->AimHeadTowards(pCommander->GetAbsOrigin(), IBody::MANDATORY, 0.2f, nullptr, "Aiming at user's feet to throw weapon");
+		me->GetBodyInterface()->AimHeadTowards(
+			pCommander->GetAbsOrigin(), IBody::MANDATORY, 0.2f, nullptr, "Aiming at user's feet to throw weapon");
 
 		Vector vecToUserFeet = pCommander->GetAbsOrigin() - me->EyePosition();
 		vecToUserFeet.NormalizeInPlace();

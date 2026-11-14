@@ -24,14 +24,14 @@
 
 //-----------------------------------------------------------------------------------------
 // Returns the initial Action we will run concurrently as a child to us
-Action< CNEOBot > *CNEOBotScenarioMonitor::InitialContainedAction( CNEOBot *me )
+Action<CNEOBot> *CNEOBotScenarioMonitor::InitialContainedAction(CNEOBot *me)
 {
-	if ( me->IsInASquad() )
+	if (me->IsInASquad())
 	{
-		if ( me->GetSquad()->IsLeader( me ) )
+		if (me->GetSquad()->IsLeader(me))
 		{
 			// I'm the leader of this Squad, so I can do what I want and the other Squaddies will support me
-			return DesiredScenarioAndClassAction( me );
+			return DesiredScenarioAndClassAction(me);
 		}
 
 		// I'm in a Squad but not the leader, do "escort and support" Squad behavior
@@ -42,36 +42,38 @@ Action< CNEOBot > *CNEOBotScenarioMonitor::InitialContainedAction( CNEOBot *me )
 		//return new CNEOBotEscortSquadLeader( DesiredScenarioAndClassAction( me ) );
 	}
 
-	return DesiredScenarioAndClassAction( me );
+	return DesiredScenarioAndClassAction(me);
 }
 
 
 //-----------------------------------------------------------------------------------------
 // Returns Action specific to the scenario and my class
-Action< CNEOBot > *CNEOBotScenarioMonitor::DesiredScenarioAndClassAction( CNEOBot *me )
+Action<CNEOBot> *CNEOBotScenarioMonitor::DesiredScenarioAndClassAction(CNEOBot *me)
 {
 	return new CNEOBotSeekAndDestroy;
 }
 
 
 //-----------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotScenarioMonitor::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotScenarioMonitor::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
-	m_ignoreLostFlagTimer.Start( 20.0f );
+	m_ignoreLostFlagTimer.Start(20.0f);
 	m_lostFlagTimer.Invalidate();
 	return Continue();
 }
 
 
-ConVar neo_bot_fetch_lost_flag_time( "neo_bot_fetch_lost_flag_time", "10", FCVAR_CHEAT, "How long busy NEOBots will ignore the dropped flag before they give up what they are doing and go after it" );
-ConVar neo_bot_flag_kill_on_touch( "neo_bot_flag_kill_on_touch", "0", FCVAR_CHEAT, "If nonzero, any bot that picks up the flag dies. For testing." );
+ConVar neo_bot_fetch_lost_flag_time("neo_bot_fetch_lost_flag_time", "10", FCVAR_CHEAT,
+	"How long busy NEOBots will ignore the dropped flag before they give up what they are doing and go after it");
+ConVar neo_bot_flag_kill_on_touch(
+	"neo_bot_flag_kill_on_touch", "0", FCVAR_CHEAT, "If nonzero, any bot that picks up the flag dies. For testing.");
 
 extern ConVar sv_neo_bot_cmdr_enable;
 extern ConVar sv_neo_bot_cmdr_debug_pause_uncommanded;
 
 
 //-----------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotScenarioMonitor::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotScenarioMonitor::Update(CNEOBot *me, float interval)
 {
 	if (sv_neo_bot_cmdr_enable.GetBool())
 	{
@@ -89,7 +91,7 @@ ActionResult< CNEOBot >	CNEOBotScenarioMonitor::Update( CNEOBot *me, float inter
 	{
 		if (me->m_hCommandingPlayer.Get())
 		{
-			CNEO_Player* pCommander = me->m_hCommandingPlayer.Get();
+			CNEO_Player *pCommander = me->m_hCommandingPlayer.Get();
 
 			if (CNEOBotThrowWeaponAtUser::ReadyAimToThrowWeapon(me, pCommander))
 			{
@@ -100,4 +102,3 @@ ActionResult< CNEOBot >	CNEOBotScenarioMonitor::Update( CNEOBot *me, float inter
 
 	return Continue();
 }
-

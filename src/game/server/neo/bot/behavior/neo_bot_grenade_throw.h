@@ -10,18 +10,18 @@
 class CNEOBaseCombatWeapon;
 class CKnownEntity;
 
-class CNEOBotGrenadeThrow : public Action< CNEOBot >
+class CNEOBotGrenadeThrow : public Action<CNEOBot>
 {
 public:
-	CNEOBotGrenadeThrow( CNEOBaseCombatWeapon *pWeapon, const CKnownEntity *threat );
-	virtual ~CNEOBotGrenadeThrow() override { }
+	CNEOBotGrenadeThrow(CNEOBaseCombatWeapon *pWeapon, const CKnownEntity *threat);
+	virtual ~CNEOBotGrenadeThrow() override {}
 
-	virtual ActionResult< CNEOBot >	OnStart( CNEOBot *me, Action< CNEOBot > *priorAction ) override;
-	virtual ActionResult< CNEOBot >	Update( CNEOBot *me, float interval ) override;
-	virtual void					OnEnd( CNEOBot *me, Action< CNEOBot > *nextAction ) override;
-	virtual ActionResult< CNEOBot >	OnSuspend( CNEOBot *me, Action< CNEOBot > *interruptingAction ) override;
-	virtual ActionResult< CNEOBot >	OnResume( CNEOBot *me, Action< CNEOBot > *interruptingAction ) override;
-	virtual QueryResultType			ShouldRetreat( const INextBot *me ) const override;
+	virtual ActionResult<CNEOBot> OnStart(CNEOBot *me, Action<CNEOBot> *priorAction) override;
+	virtual ActionResult<CNEOBot> Update(CNEOBot *me, float interval) override;
+	virtual void OnEnd(CNEOBot *me, Action<CNEOBot> *nextAction) override;
+	virtual ActionResult<CNEOBot> OnSuspend(CNEOBot *me, Action<CNEOBot> *interruptingAction) override;
+	virtual ActionResult<CNEOBot> OnResume(CNEOBot *me, Action<CNEOBot> *interruptingAction) override;
+	virtual QueryResultType ShouldRetreat(const INextBot *me) const override;
 
 protected:
 	CNavArea *m_vantageArea;
@@ -29,8 +29,8 @@ protected:
 	Vector m_vecThreatLastKnownPos;
 	Vector m_vecThrowLookAt; // far point in m_angThrowSolved's direction, for AimHeadTowards; vec3_invalid until solved
 	QAngle m_angThrowSolved; // eye angles that land the grenade on m_vecTarget; valid while m_vecThrowLookAt is
-	CHandle< CNEOBaseCombatWeapon > m_hGrenadeWeapon;
-	CHandle< CBaseEntity > m_hThreatGrenadeTarget;
+	CHandle<CNEOBaseCombatWeapon> m_hGrenadeWeapon;
+	CHandle<CBaseEntity> m_hThreatGrenadeTarget;
 	CountdownTimer m_giveUpTimer;
 	CountdownTimer m_scanTimer;
 	CountdownTimer m_repathTimer;
@@ -49,8 +49,8 @@ protected:
 
 	// Matched push/pop pair where BeginThrowFocus pushes the required weapon,
 	// which must be balanced by EndThrowFocus.
-	void BeginThrowFocus( CNEOBot *me );
-	void EndThrowFocus( CNEOBot *me );
+	void BeginThrowFocus(CNEOBot *me);
+	void EndThrowFocus(CNEOBot *me);
 
 	enum ThrowAimResult
 	{
@@ -59,12 +59,11 @@ protected:
 		THROW_AIM_UNREACHABLE,
 	};
 
-	ThrowAimResult UpdateThrowAim( CNEOBot *me );
-	CNavArea *FindVantageArea( CNEOBot *me );
+	ThrowAimResult UpdateThrowAim(CNEOBot *me);
+	CNavArea *FindVantageArea(CNEOBot *me);
 
-	virtual ThrowTargetResult UpdateGrenadeTargeting( CNEOBot *me, CNEOBaseCombatWeapon *pWeapon ) = 0;
-	virtual void OnThrowReleased( CNEOBot *me ) { }
-
+	virtual ThrowTargetResult UpdateGrenadeTargeting(CNEOBot *me, CNEOBaseCombatWeapon *pWeapon) = 0;
+	virtual void OnThrowReleased(CNEOBot *me) {}
 };
 
 #endif // NEO_BOT_GRENADE_THROW_H

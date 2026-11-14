@@ -7,14 +7,16 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-LINK_ENTITY_TO_CLASS( neo_worldpos_marker, CNEOWorldPosMarkerEnt );
+LINK_ENTITY_TO_CLASS(neo_worldpos_marker, CNEOWorldPosMarkerEnt);
 #ifdef GAME_DLL
-LINK_ENTITY_TO_CLASS( neo_controlpoint, CNEOWorldPosMarkerEnt );
+LINK_ENTITY_TO_CLASS(neo_controlpoint, CNEOWorldPosMarkerEnt);
 #endif
 
 #ifdef GAME_DLL
-extern void SendProxy_StringT_To_String( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID );
+extern void SendProxy_StringT_To_String(
+	const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID);
 
+// clang-format off
 IMPLEMENT_SERVERCLASS_ST( CNEOWorldPosMarkerEnt, DT_NEOWorldPosMarkerEnt )
 	SendPropArray( SendPropString( SENDINFO_ARRAY( m_iszSpriteNames ), 0, SendProxy_StringT_To_String ), m_iszSpriteNames ),
 	SendPropInt(SENDINFO( m_iCurrentSprite ), NumBitsForCount( MAX_SCREEN_OVERLAYS ), SPROP_UNSIGNED ),
@@ -24,10 +26,12 @@ IMPLEMENT_SERVERCLASS_ST( CNEOWorldPosMarkerEnt, DT_NEOWorldPosMarkerEnt )
 	SendPropBool(SENDINFO( m_bCapzoneEffect )),
 	SendPropBool(SENDINFO( m_bEnabled ))
 END_SEND_TABLE()
+// clang-format on
 #else
 #ifdef CNEOWorldPosMarkerEnt
 #undef CNEOWorldPosMarkerEnt
 #endif
+// clang-format off
 IMPLEMENT_CLIENTCLASS_DT( C_NEOWorldPosMarkerEnt, DT_NEOWorldPosMarkerEnt, CNEOWorldPosMarkerEnt )
 	RecvPropArray( RecvPropString( RECVINFO( m_iszSpriteNames[0]) ), m_iszSpriteNames ),
 	RecvPropInt(RECVINFO( m_iCurrentSprite )),
@@ -37,9 +41,11 @@ IMPLEMENT_CLIENTCLASS_DT( C_NEOWorldPosMarkerEnt, DT_NEOWorldPosMarkerEnt, CNEOW
 	RecvPropBool(RECVINFO( m_bCapzoneEffect )),
 	RecvPropBool(RECVINFO( m_bEnabled ))
 END_RECV_TABLE()
+// clang-format on
 #define CNEOWorldPosMarkerEnt C_NEOWorldPosMarkerEnt
 #endif
 
+// clang-format off
 BEGIN_DATADESC( CNEOWorldPosMarkerEnt )
 #ifdef GAME_DLL
 	DEFINE_KEYFIELD( m_iszSpriteNames[0], FIELD_STRING, "SpriteName1" ),
@@ -69,9 +75,9 @@ BEGIN_DATADESC( CNEOWorldPosMarkerEnt )
 	DEFINE_INPUTFUNC( FIELD_VOID, "Disable", InputDisable ),
 #endif
 END_DATADESC()
+// clang-format on
 
-static const char *ICON_PATHS[] =
-{
+static const char *ICON_PATHS[] = {
 	"vgui/hud/cp/cp_1",
 	"vgui/hud/cp/cp_2",
 	"vgui/hud/cp/cp_3",
@@ -101,7 +107,7 @@ CNEOWorldPosMarkerEnt::CNEOWorldPosMarkerEnt()
 CNEOWorldPosMarkerEnt::~CNEOWorldPosMarkerEnt()
 {
 #ifdef CLIENT_DLL
-	if ( m_pHUD_WorldPosMarker )
+	if (m_pHUD_WorldPosMarker)
 	{
 		m_pHUD_WorldPosMarker->DeletePanel();
 		m_pHUD_WorldPosMarker = nullptr;
@@ -112,64 +118,65 @@ CNEOWorldPosMarkerEnt::~CNEOWorldPosMarkerEnt()
 #ifdef GAME_DLL
 void CNEOWorldPosMarkerEnt::Spawn()
 {
-	if ( m_bStartDisabled )
+	if (m_bStartDisabled)
 	{
 		m_bEnabled = false;
 	}
 
-	COMPILE_TIME_ASSERT( ICON_TOTAL == ARRAYSIZE(ICON_PATHS) );
-	if ( m_iIcon > ICON_INVALID && m_iIcon < ICON_TOTAL )
+	COMPILE_TIME_ASSERT(ICON_TOTAL == ARRAYSIZE(ICON_PATHS));
+	if (m_iIcon > ICON_INVALID && m_iIcon < ICON_TOTAL)
 	{
-		KeyValue( "SpriteName1", ICON_PATHS[m_iIcon] );
+		KeyValue("SpriteName1", ICON_PATHS[m_iIcon]);
 	}
 
-	V_strncpy( m_szText.GetForModify(), STRING( m_szKVText ), 64 );
+	V_strncpy(m_szText.GetForModify(), STRING(m_szKVText), 64);
 
-	SetRenderColorA( clamp( m_iAlpha, 0, 255 ) );
+	SetRenderColorA(clamp(m_iAlpha, 0, 255));
 }
 
 int CNEOWorldPosMarkerEnt::UpdateTransmitState()
 {
-	return SetTransmitState( FL_EDICT_ALWAYS );
+	return SetTransmitState(FL_EDICT_ALWAYS);
 }
 
-void CNEOWorldPosMarkerEnt::InputSetSprite( inputdata_t &inputdata )
+void CNEOWorldPosMarkerEnt::InputSetSprite(inputdata_t &inputdata)
 {
 	int iCorrectedIndex = inputdata.value.Int() - 1;
-	iCorrectedIndex = abs( iCorrectedIndex );
+	iCorrectedIndex = abs(iCorrectedIndex);
 
-	if ( m_iszSpriteNames[iCorrectedIndex] == NULL_STRING )
+	if (m_iszSpriteNames[iCorrectedIndex] == NULL_STRING)
 	{
-		Warning("neo_worldpos_marker %s has no sprite to display at index %d.\n", STRING(GetEntityName()), inputdata.value.Int() );
+		Warning("neo_worldpos_marker %s has no sprite to display at index %d.\n", STRING(GetEntityName()),
+			inputdata.value.Int());
 		return;
 	}
 
 	m_iCurrentSprite = iCorrectedIndex;
 }
 
-void CNEOWorldPosMarkerEnt::InputSetText( inputdata_t &inputdata )
+void CNEOWorldPosMarkerEnt::InputSetText(inputdata_t &inputdata)
 {
-	V_strncpy( m_szText.GetForModify(), inputdata.value.String(), 64 );
+	V_strncpy(m_szText.GetForModify(), inputdata.value.String(), 64);
 }
 
-void CNEOWorldPosMarkerEnt::InputEnable( inputdata_t &inputdata )
+void CNEOWorldPosMarkerEnt::InputEnable(inputdata_t &inputdata)
 {
 	m_bEnabled = true;
 }
 
-void CNEOWorldPosMarkerEnt::InputDisable( inputdata_t &inputdata )
+void CNEOWorldPosMarkerEnt::InputDisable(inputdata_t &inputdata)
 {
 	m_bEnabled = false;
 }
 #else
-void CNEOWorldPosMarkerEnt::PostDataUpdate( DataUpdateType_t updateType )
+void CNEOWorldPosMarkerEnt::PostDataUpdate(DataUpdateType_t updateType)
 {
-	BaseClass::PostDataUpdate( updateType );
+	BaseClass::PostDataUpdate(updateType);
 
-	if ( !m_pHUD_WorldPosMarker && updateType == DATA_UPDATE_DATATABLE_CHANGED )
+	if (!m_pHUD_WorldPosMarker && updateType == DATA_UPDATE_DATATABLE_CHANGED)
 	{
-		m_pHUD_WorldPosMarker = new CNEOHud_WorldPosMarker_Generic( "hudWPMent", this );
-		m_pHUD_WorldPosMarker->SetVisible( true );
+		m_pHUD_WorldPosMarker = new CNEOHud_WorldPosMarker_Generic("hudWPMent", this);
+		m_pHUD_WorldPosMarker->SetVisible(true);
 	}
 }
 #endif

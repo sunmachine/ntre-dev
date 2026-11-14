@@ -14,6 +14,7 @@
 
 LINK_ENTITY_TO_CLASS(neo_grenade_smoke, CNEOGrenadeSmoke);
 
+// clang-format off
 BEGIN_DATADESC(CNEOGrenadeSmoke)
 // Fields
 DEFINE_FIELD(m_inSolid, FIELD_BOOLEAN),
@@ -26,11 +27,16 @@ DEFINE_THINKFUNC(DelayThink),
 // Inputs
 DEFINE_INPUTFUNC(FIELD_FLOAT, "SetTimer", InputSetTimer),
 END_DATADESC()
+// clang-format on
 
-ConVar sv_neo_smoke_bloom_duration("sv_neo_smoke_bloom_duration", "25", FCVAR_CHEAT, "How long should the smoke bloom be up, in seconds.", true, 0.0, true, 60.0);
-ConVar sv_neo_smoke_bloom_layers("sv_neo_smoke_bloom_layers", "2", FCVAR_CHEAT, "Amount of smoke layers atop each other.", true, 0.0, true, 32.0);
-ConVar sv_neo_smoke_blocker_size("sv_neo_smoke_blocker_size", "140", FCVAR_CHEAT, "Size of each LOS blocker per smoke particle.", true, 0.0, true, 200.0);
-ConVar sv_neo_smoke_blocker_delay("sv_neo_smoke_blocker_delay", "1.0", FCVAR_CHEAT, "Time after spawn before LOS blocker activates LOS blocking", true, 0.0, true, 10.0);
+ConVar sv_neo_smoke_bloom_duration("sv_neo_smoke_bloom_duration", "25", FCVAR_CHEAT,
+	"How long should the smoke bloom be up, in seconds.", true, 0.0, true, 60.0);
+ConVar sv_neo_smoke_bloom_layers(
+	"sv_neo_smoke_bloom_layers", "2", FCVAR_CHEAT, "Amount of smoke layers atop each other.", true, 0.0, true, 32.0);
+ConVar sv_neo_smoke_blocker_size("sv_neo_smoke_blocker_size", "140", FCVAR_CHEAT,
+	"Size of each LOS blocker per smoke particle.", true, 0.0, true, 200.0);
+ConVar sv_neo_smoke_blocker_delay("sv_neo_smoke_blocker_delay", "1.0", FCVAR_CHEAT,
+	"Time after spawn before LOS blocker activates LOS blocking", true, 0.0, true, 10.0);
 extern ConVar sv_neo_grenade_cor;
 extern ConVar sv_neo_grenade_gravity;
 extern ConVar sv_neo_grenade_friction;
@@ -60,7 +66,7 @@ void CNEOGrenadeSmoke::Spawn(void)
 	SetNextThink(gpGlobals->curtime);
 }
 
-void CNEOGrenadeSmoke::OnPhysGunPickup(CBasePlayer* pPhysGunUser, PhysGunPickup_t reason)
+void CNEOGrenadeSmoke::OnPhysGunPickup(CBasePlayer *pPhysGunUser, PhysGunPickup_t reason)
 {
 	SetThrower(pPhysGunUser);
 	m_bHasWarnedAI = true;
@@ -68,7 +74,7 @@ void CNEOGrenadeSmoke::OnPhysGunPickup(CBasePlayer* pPhysGunUser, PhysGunPickup_
 	BaseClass::OnPhysGunPickup(pPhysGunUser, reason);
 }
 
-int CNEOGrenadeSmoke::OnTakeDamage(const CTakeDamageInfo& inputInfo)
+int CNEOGrenadeSmoke::OnTakeDamage(const CTakeDamageInfo &inputInfo)
 {
 	// NEO smokes can't be detonated by damage.
 	return 0;
@@ -83,7 +89,7 @@ void CNEOGrenadeSmoke::DelayThink()
 
 	if (!m_bHasWarnedAI && gpGlobals->curtime >= m_flWarnAITime)
 	{
-#if !defined( CLIENT_DLL )
+#if !defined(CLIENT_DLL)
 		CSoundEnt::InsertSound(SOUND_DANGER, GetAbsOrigin(), 400, 1.5, this);
 #endif
 		m_bHasWarnedAI = true;
@@ -109,7 +115,7 @@ bool CNEOGrenadeSmoke::TryDetonate(void)
 
 void CNEOGrenadeSmoke::Detonate(void)
 {
-#if(0)
+#if (0)
 	Vector randVec;
 	randVec.Random((-sv_neo_smoke_bloom_radius.GetFloat() * 0.05f), (sv_neo_smoke_bloom_radius.GetFloat() * 0.05f));
 	UTIL_Smoke(GetAbsOrigin() + randVec, sv_neo_smoke_bloom_radius.GetFloat(), 1.0f);
@@ -138,7 +144,7 @@ void CNEOGrenadeSmoke::Detonate(void)
 		SetNextThink(TICK_NEVER_THINK);
 		return;
 	}
-	
+
 	SetNextThink(gpGlobals->curtime + 1.0f);
 }
 
@@ -146,7 +152,7 @@ void CNEOGrenadeSmoke::SetupParticles(size_t number)
 {
 	for (size_t i = 0; i < number; ++i)
 	{
-		auto ptr = dynamic_cast<ParticleSmokeGrenade*>(CreateEntityByName(PARTICLESMOKEGRENADE_ENTITYNAME));
+		auto ptr = dynamic_cast<ParticleSmokeGrenade *>(CreateEntityByName(PARTICLESMOKEGRENADE_ENTITYNAME));
 		Assert(ptr);
 		if (ptr)
 		{
@@ -160,13 +166,16 @@ void CNEOGrenadeSmoke::SetupParticles(size_t number)
 			constexpr int smokeFadeEndTime = 25;
 			ptr->SetFadeTime(smokeFadeStartTime, smokeFadeEndTime);
 			ptr->Activate();
-			ptr->SetLifetime(sv_neo_smoke_bloom_duration.GetFloat()); // This call passes on responsibility for the memory to the particle thinkfunc
+			ptr->SetLifetime(sv_neo_smoke_bloom_duration
+					.GetFloat()); // This call passes on responsibility for the memory to the particle thinkfunc
 			ptr->FillVolume();
 		}
 
 		// Currently redundant to create a blocker for each particle, but will be handy for dynamic flood fill later
-		auto blocker = static_cast<CNEOSmokeLineOfSightBlocker*>(CreateEntityByName(SMOKELINEOFSIGHTBLOCKER_ENTITYNAME));
-		if (blocker) {
+		auto blocker =
+			static_cast<CNEOSmokeLineOfSightBlocker *>(CreateEntityByName(SMOKELINEOFSIGHTBLOCKER_ENTITYNAME));
+		if (blocker)
+		{
 			// Use `ai_debug_los 2` after spawn to visualize relative blocker size
 			int blockerSize = sv_neo_smoke_blocker_size.GetInt();
 			// Overlap with each particle's position
@@ -179,16 +188,16 @@ void CNEOGrenadeSmoke::SetupParticles(size_t number)
 	}
 }
 
-void CNEOGrenadeSmoke::InputSetTimer(inputdata_t& inputdata)
+void CNEOGrenadeSmoke::InputSetTimer(inputdata_t &inputdata)
 {
 	SetDetonateTimerLength(inputdata.value.Float());
 }
 
-CBaseGrenadeProjectile* NEOSmokegrenade_Create(const Vector& position, const QAngle& angles, const Vector& velocity,
-	const AngularImpulse& angVelocity, CBaseEntity* pOwner)
+CBaseGrenadeProjectile *NEOSmokegrenade_Create(const Vector &position, const QAngle &angles, const Vector &velocity,
+	const AngularImpulse &angVelocity, CBaseEntity *pOwner)
 {
 	// Don't set the owner here, or the player can't interact with grenades he's thrown
-	CNEOGrenadeSmoke* pGrenade = (CNEOGrenadeSmoke*)CBaseEntity::Create("neo_grenade_smoke", position, angles, pOwner);
+	CNEOGrenadeSmoke *pGrenade = (CNEOGrenadeSmoke *)CBaseEntity::Create("neo_grenade_smoke", position, angles, pOwner);
 
 	pGrenade->SetAbsVelocity(velocity);
 	pGrenade->ApplyLocalAngularVelocityImpulse(angVelocity);
@@ -197,15 +206,16 @@ CBaseGrenadeProjectile* NEOSmokegrenade_Create(const Vector& position, const QAn
 	// We won't know when to detonate until the smoke has settled.
 	pGrenade->SetNextThink(gpGlobals->curtime);
 	pGrenade->SetThrower(ToBaseCombatCharacter(pOwner));
-	if (pOwner) pGrenade->ChangeTeam(pOwner->GetTeamNumber());
+	if (pOwner)
+		pGrenade->ChangeTeam(pOwner->GetTeamNumber());
 	pGrenade->m_takedamage = DAMAGE_EVENTS_ONLY;
 
 	return pGrenade;
 }
 
-bool NEOSmokegrenade_WasPunted(const CBaseEntity* pEntity)
+bool NEOSmokegrenade_WasPunted(const CBaseEntity *pEntity)
 {
-	auto pSmoke = dynamic_cast<const CNEOGrenadeSmoke*>(pEntity);
+	auto pSmoke = dynamic_cast<const CNEOGrenadeSmoke *>(pEntity);
 	if (pSmoke)
 	{
 		return pSmoke->WasPunted();

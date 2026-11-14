@@ -11,20 +11,22 @@ namespace vgui
 {
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 class CNeoButton : public Button
 {
-	DECLARE_CLASS_SIMPLE( CNeoButton, Button );
+	DECLARE_CLASS_SIMPLE(CNeoButton, Button);
 
 public:
 	// You can optionally pass in the panel to send the click message to and the name of the command to send to that panel.
-	CNeoButton(Panel* parent, const char* panelName, const char* text, Panel* pActionSignalTarget = NULL, const char* pCmd = NULL)
+	CNeoButton(Panel *parent, const char *panelName, const char *text, Panel *pActionSignalTarget = NULL,
+		const char *pCmd = NULL)
 		: Button(parent, panelName, text, pActionSignalTarget, pCmd)
 	{
 		GetButtonTextures();
 	};
-	CNeoButton(Panel* parent, const char* panelName, const wchar_t* text, Panel* pActionSignalTarget = NULL, const char* pCmd = NULL)
+	CNeoButton(Panel *parent, const char *panelName, const wchar_t *text, Panel *pActionSignalTarget = NULL,
+		const char *pCmd = NULL)
 		: Button(parent, panelName, text, pActionSignalTarget, pCmd)
 	{
 		GetButtonTextures();
@@ -42,11 +44,11 @@ protected:
 protected:
 	void GetButtonTextures();
 
-	int					m_iTextureArmed;
-	int					m_iTextureDisabled;
-	int					m_iTextureMouseOver;
+	int m_iTextureArmed;
+	int m_iTextureDisabled;
+	int m_iTextureMouseOver;
 	//int					m_iTextureNormal;
-	int					m_iTexturePressed;
+	int m_iTexturePressed;
 };
 
 } // namespace vgui

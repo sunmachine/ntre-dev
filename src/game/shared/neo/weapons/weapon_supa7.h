@@ -23,6 +23,7 @@
 class CWeaponSupa7 : public CNEOBaseCombatWeapon
 {
 	DECLARE_CLASS(CWeaponSupa7, CNEOBaseCombatWeapon);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -43,7 +44,7 @@ public:
 	virtual int GetMinBurst() OVERRIDE { return 1; }
 	virtual int GetMaxBurst() OVERRIDE { return 3; }
 
-	virtual const WeaponSpreadInfo_t& GetSpreadInfo(void) override;
+	virtual const WeaponSpreadInfo_t &GetSpreadInfo(void) override;
 
 	bool StartReload(void);
 	bool StartReloadSlug(void);
@@ -58,7 +59,7 @@ public:
 	void PrimaryAttack(void);
 	void SecondaryAttack(void);
 
-	void Drop(const Vector& vecVelocity) OVERRIDE;
+	void Drop(const Vector &vecVelocity) OVERRIDE;
 
 	void ClearDelayedInputs(void);
 
@@ -85,11 +86,11 @@ private:
 	}
 
 private:
-	CNetworkVar(bool, m_bSlugDelayed); // Load slug into tube next
-	CNetworkVar(bool, m_bSlugLoaded); // Slug currently loaded in chamber
-	CNetworkVar(bool, m_bWeaponRaised); // Slug currently loaded in chamber
+	CNetworkVar(bool, m_bSlugDelayed);    // Load slug into tube next
+	CNetworkVar(bool, m_bSlugLoaded);     // Slug currently loaded in chamber
+	CNetworkVar(bool, m_bWeaponRaised);   // Slug currently loaded in chamber
 	CNetworkVar(bool, m_bShellInChamber); // Slug currently loaded in chamber
-	CNetworkVar(float, m_flNextReload); // Time to load the next shell
+	CNetworkVar(float, m_flNextReload);   // Time to load the next shell
 
 private:
 	CWeaponSupa7(const CWeaponSupa7 &other);

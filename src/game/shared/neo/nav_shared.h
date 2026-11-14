@@ -1,24 +1,24 @@
 #pragma once
 
-#if defined( _X360 )
-	#define FORMAT_BSPFILE "maps\\%s.360.bsp"
-	#define FORMAT_NAVFILE "maps\\%s.360.nav"
+#if defined(_X360)
+#define FORMAT_BSPFILE "maps\\%s.360.bsp"
+#define FORMAT_NAVFILE "maps\\%s.360.nav"
 #else
-	#define FORMAT_BSPFILE "maps\\%s.bsp"
+#define FORMAT_BSPFILE "maps\\%s.bsp"
 #ifdef NEO
-	#define FORMAT_NAVFILE "maps\\nav\\%s.nav"
+#define FORMAT_NAVFILE "maps\\nav\\%s.nav"
 #else
-	#define FORMAT_NAVFILE "maps\\%s.nav"
+#define FORMAT_NAVFILE "maps\\%s.nav"
 #endif // NEO
-	#define PATH_NAVFILE_EMBEDDED "maps\\embed.nav"
+#define PATH_NAVFILE_EMBEDDED "maps\\embed.nav"
 #endif
 
-#define NAV_MAGIC_NUMBER 0xFEEDFACE				// to help identify nav files
+#define NAV_MAGIC_NUMBER 0xFEEDFACE // to help identify nav files
 
 //--------------------------------------------------------------------------------------------------------------
 /// The current version of the nav file format
 
-/// IMPORTANT: If this version changes, the swap function in makegamedata 
+/// IMPORTANT: If this version changes, the swap function in makegamedata
 /// must be updated to match. If not, this will break the Xbox 360.
 // TODO: Was changed from 15, update when latest 360 code is integrated (MSB 5/5/09)
 const int NavCurrentVersion = 16;
@@ -33,7 +33,10 @@ enum NavDirType
 	NUM_DIRECTIONS
 };
 
-enum { MAX_NAV_TEAMS = 2 };
+enum
+{
+	MAX_NAV_TEAMS = 2
+};
 
 enum NavCornerType
 {

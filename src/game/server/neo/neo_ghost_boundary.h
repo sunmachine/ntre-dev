@@ -13,7 +13,7 @@ public:
 
 private:
 	void CheckForWeapon();
-	bool IsEntityInside(CBaseEntity* pEnt);
+	bool IsEntityInside(CBaseEntity *pEnt);
 };
 
 class CNEO_GhostBoundary : public CNEO_TriggerWeapon
@@ -26,5 +26,5 @@ public:
 	virtual void StartTouch(CBaseEntity *pOther) override;
 
 private:
-	Vector		m_vecLastObjectivePos = vec3_origin;
+	Vector m_vecLastObjectivePos = vec3_origin;
 };

@@ -82,7 +82,7 @@ public:
 	void ShowPanel(bool state) final;
 	GameActionSet_t GetPreferredActionSet() final { return GAME_ACTION_SET_IN_GAME_HUD; }
 	vgui::VPANEL GetVPanel() final { return BaseClass::GetVPanel(); }
-	void SetParent(vgui::VPANEL parent) final { BaseClass::SetParent( parent ); }
+	void SetParent(vgui::VPANEL parent) final { BaseClass::SetParent(parent); }
 	void FireGameEvent(IGameEvent *event) final;
 
 	void OnMainLoop(const NeoUI::Mode eMode);
@@ -93,7 +93,7 @@ public:
 	NeoUI::Context m_uiCtx;
 
 	bool m_bSourceTVEnabled = false;
-	int	m_HLTVSpectators = 0;
+	int m_HLTVSpectators = 0;
 
 	int m_iTotalPlayers = 0;
 	CNEOScoreBoardPlayer m_playersInfo[MAX_PLAYERS_ARRAY_SAFE] = {};
@@ -118,4 +118,3 @@ public:
 };
 
 extern CNEOScoreBoard *g_pNeoScoreBoard;
-

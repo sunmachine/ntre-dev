@@ -62,10 +62,10 @@ void TermSmokeFogOverlay()
 
 void DrawSmokeFogOverlay()
 {
-	if (g_SmokeFogOverlayAlpha == 0 || !g_pSmokeFogMaterial || !materials)
-	{
+	if (g_SmokeFogOverlayAlpha == 0 || !g_pSmokeFogMaterial || !materials) // NEO
+	{ // NEO
 		return;
-	}
+	} // NEO
 
 	tmZone( TELEMETRY_LEVEL0, TMZF_NONE, "%s", __FUNCTION__ );
 

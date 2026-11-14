@@ -92,9 +92,8 @@ static ENEOCompactMsgFlag ReadDamageReport(bf_read &msg)
 		char infoLine[128] = {};
 		if (pDmgReport->iDealtDmgs > 0 && pDmgReport->iDealtHits > 0)
 		{
-			V_sprintf_safe(infoLine, "Damage dealt to %s [%s]: %d in %d hits\n",
-					   dmgerName, dmgerClass,
-					   pDmgReport->iDealtDmgs, pDmgReport->iDealtHits);
+			V_sprintf_safe(infoLine, "Damage dealt to %s [%s]: %d in %d hits\n", dmgerName, dmgerClass,
+				pDmgReport->iDealtDmgs, pDmgReport->iDealtHits);
 			V_sprintf_safe(gConcatBuffer, "%s", infoLine);
 			V_strcat_safe(gPrintBuffer, gConcatBuffer);
 			gTotals.iDealtDmgs += pDmgReport->iDealtDmgs;
@@ -102,9 +101,8 @@ static ENEOCompactMsgFlag ReadDamageReport(bf_read &msg)
 		}
 		if (pDmgReport->iTakenDmgs > 0 && pDmgReport->iTakenHits > 0)
 		{
-			V_sprintf_safe(infoLine, "Damage taken from %s [%s]: %d in %d hits\n",
-					   dmgerName, dmgerClass,
-					   pDmgReport->iTakenDmgs, pDmgReport->iTakenHits);
+			V_sprintf_safe(infoLine, "Damage taken from %s [%s]: %d in %d hits\n", dmgerName, dmgerClass,
+				pDmgReport->iTakenDmgs, pDmgReport->iTakenHits);
 			V_sprintf_safe(gConcatBuffer, "%s", infoLine);
 			V_strcat_safe(gPrintBuffer, gConcatBuffer);
 			gTotals.iTakenDmgs += pDmgReport->iTakenDmgs;
@@ -119,10 +117,9 @@ static ENEOCompactMsgFlag ReadDamageReport(bf_read &msg)
 
 static void PrintTotalReport()
 {
-	V_sprintf_safe(gConcatBuffer, "Total damage dealt: %d in %d hits\nTotal damage received from players: %d in %d hits\n%s\n",
-		gTotals.iDealtDmgs, gTotals.iDealtHits,
-		gTotals.iTakenDmgs, gTotals.iTakenHits,
-		BORDER);
+	V_sprintf_safe(gConcatBuffer,
+		"Total damage dealt: %d in %d hits\nTotal damage received from players: %d in %d hits\n%s\n",
+		gTotals.iDealtDmgs, gTotals.iDealtHits, gTotals.iTakenDmgs, gTotals.iTakenHits, BORDER);
 	V_strcat_safe(gPrintBuffer, gConcatBuffer);
 }
 
@@ -155,12 +152,11 @@ static void __MsgFunc_KillerDamageInfo(bf_read &msg)
 
 	if (killerIdx > 0 && killerIdx <= gpGlobals->maxClients)
 	{
-		auto *neoAttacker = assert_cast<C_NEO_Player*>(UTIL_PlayerByIndex(killerIdx));
+		auto *neoAttacker = assert_cast<C_NEO_Player *>(UTIL_PlayerByIndex(killerIdx));
 		if (neoAttacker && neoAttacker->entindex() != thisIdx)
 		{
-			g_pVGuiLocalize->ConvertANSIToUnicode(neoAttacker->GetNeoPlayerName(),
-												  g_neoKillerInfos.wszKillerName,
-												  sizeof(g_neoKillerInfos.wszKillerName));
+			g_pVGuiLocalize->ConvertANSIToUnicode(neoAttacker->GetNeoPlayerName(), g_neoKillerInfos.wszKillerName,
+				sizeof(g_neoKillerInfos.wszKillerName));
 		}
 		// If not neoAttacker, already cleared out by memset earlier
 
@@ -169,7 +165,8 @@ static void __MsgFunc_KillerDamageInfo(bf_read &msg)
 			g_neoKillerInfos.iEntIndex = killerIdx;
 			g_neoKillerInfos.iClass = neoAttacker->GetClass();
 			g_neoKillerInfos.iHP = neoAttacker->GetHealth();
-			g_neoKillerInfos.flDistance = METERS_PER_INCH * neoAttacker->GetAbsOrigin().DistTo(localPlayer->GetAbsOrigin());
+			g_neoKillerInfos.flDistance =
+				METERS_PER_INCH * neoAttacker->GetAbsOrigin().DistTo(localPlayer->GetAbsOrigin());
 			if (foundKilledBy)
 			{
 				// Rename very long names
@@ -177,9 +174,8 @@ static void __MsgFunc_KillerDamageInfo(bf_read &msg)
 				{
 					V_strcpy_safe(killedBy, "SUPA 7");
 				}
-				g_pVGuiLocalize->ConvertANSIToUnicode(killedBy,
-						g_neoKillerInfos.wszKilledWith,
-						sizeof(g_neoKillerInfos.wszKilledWith));
+				g_pVGuiLocalize->ConvertANSIToUnicode(
+					killedBy, g_neoKillerInfos.wszKilledWith, sizeof(g_neoKillerInfos.wszKilledWith));
 			}
 			else
 			{
@@ -187,8 +183,8 @@ static void __MsgFunc_KillerDamageInfo(bf_read &msg)
 			}
 
 			V_sprintf_safe(killByLine, "Killed by: %s [%s | %d hp] with %s at %.0f m\n",
-						   neoAttacker->GetNeoPlayerName(), GetNeoClassName(g_neoKillerInfos.iClass),
-						   g_neoKillerInfos.iHP, foundKilledBy ? killedBy : "", g_neoKillerInfos.flDistance);
+				neoAttacker->GetNeoPlayerName(), GetNeoClassName(g_neoKillerInfos.iClass), g_neoKillerInfos.iHP,
+				foundKilledBy ? killedBy : "", g_neoKillerInfos.flDistance);
 			setKillByLine = true;
 		}
 	}
@@ -210,7 +206,8 @@ static void __MsgFunc_KillerDamageInfo(bf_read &msg)
 		}
 	}
 
-	V_sprintf_safe(gConcatBuffer, "%sDamage infos (Round %d):\n%s\n", BORDER, NEORules()->roundNumber(), setKillByLine ? killByLine : "");
+	V_sprintf_safe(gConcatBuffer, "%sDamage infos (Round %d):\n%s\n", BORDER, NEORules()->roundNumber(),
+		setKillByLine ? killByLine : "");
 	V_strcat_safe(gPrintBuffer, gConcatBuffer);
 
 	NeoDamageReportClear();
@@ -233,4 +230,3 @@ static void __MsgFunc_KillerDamageInfoExtra(bf_read &msg)
 
 USER_MESSAGE_REGISTER(KillerDamageInfo);
 USER_MESSAGE_REGISTER(KillerDamageInfoExtra);
-

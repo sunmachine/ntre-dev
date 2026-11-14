@@ -49,7 +49,7 @@ class CNEOHud_SpectatorOverlay : public CNEOHud_ChildElement, public CHudElement
 
 public:
 	CNEOHud_SpectatorOverlay(const char *pElementName, vgui::Panel *parent = nullptr);
-	CNEOHud_SpectatorOverlay(const CNEOHud_SpectatorOverlay& other) = delete;
+	CNEOHud_SpectatorOverlay(const CNEOHud_SpectatorOverlay &other) = delete;
 	virtual ~CNEOHud_SpectatorOverlay();
 
 	void ClearAll();
@@ -87,11 +87,8 @@ protected:
 	ConVar *GetUpdateFrequencyConVar() const final;
 
 private:
-	void DrawPlayerCard(const int iPlayerIdx,
-			const bool bIsLeftSide,
-			const int x, const int y,
-			const int wide, const int tall,
-			const Color accentColor, const float flWideAs43) const;
+	void DrawPlayerCard(const int iPlayerIdx, const bool bIsLeftSide, const int x, const int y, const int wide,
+		const int tall, const Color accentColor, const float flWideAs43) const;
 
 	CPanelAnimationVar(vgui::HFont, m_hNameFont, "NameFont", "NHudSpectatorOverlayName");
 	CPanelAnimationVar(vgui::HFont, m_hInfoFont, "InfoFont", "NHudSpectatorOverlayInfo");
@@ -107,4 +104,3 @@ private:
 };
 
 extern CNEOHud_SpectatorOverlay *g_pNeoHudSpecOverlay;
-

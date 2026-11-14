@@ -10,14 +10,14 @@ class CNEOHud_GhostUplinkState : public CNEOHud_ChildElement, public CHudElement
 
 public:
 	CNEOHud_GhostUplinkState(const char *pElementName, vgui::Panel *parent = NULL);
-	void ApplySchemeSettings(vgui::IScheme* pScheme) override;
+	void ApplySchemeSettings(vgui::IScheme *pScheme) override;
 
 	virtual void Paint() override;
 
 protected:
 	virtual void UpdateStateForNeoHudElementDraw() override;
 	virtual void DrawNeoHudElement() override;
-	virtual ConVar* GetUpdateFrequencyConVar() const override;
+	virtual ConVar *GetUpdateFrequencyConVar() const override;
 
 private:
 	float m_flTimeGhostEquip = 0.f;
@@ -33,5 +33,5 @@ private:
 	int m_iJGRTexture;
 
 private:
-	CNEOHud_GhostUplinkState(const CNEOHud_GhostUplinkState&other);
+	CNEOHud_GhostUplinkState(const CNEOHud_GhostUplinkState &other);
 };

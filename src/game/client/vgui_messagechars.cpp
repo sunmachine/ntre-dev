@@ -185,7 +185,7 @@ CMessageCharsPanel::message_t *CMessageCharsPanel::AllocMessage( void )
 	msg->y		= 0;
 	msg->text	= NULL;
 
-	msg->hCustomFont = 0;
+	msg->hCustomFont = 0; // NEO
 
 	return msg;
 }

@@ -7,15 +7,18 @@
 
 extern ConVar sv_neo_ignore_wep_xp_limit;
 
-namespace CNEOWeaponLoadout {
+namespace CNEOWeaponLoadout
+{
 
 #define WEAPON_DEF(M_BITWNAME, M_NAME, M_DISPLAY_NAME, ...) \
-	[[maybe_unused]] inline const constexpr WeaponInfo WEP_INFO_##M_NAME = { \
-		M_DISPLAY_NAME, "vgui/loadout/loadout_" #M_NAME, "vgui/loadout/loadout_" #M_NAME "_no", "weapon_" #M_NAME, NEO_WEP_##M_BITWNAME };
+	[[maybe_unused]] inline const constexpr WeaponInfo WEP_INFO_##M_NAME = {M_DISPLAY_NAME, \
+		"vgui/loadout/loadout_" #M_NAME, "vgui/loadout/loadout_" #M_NAME "_no", "weapon_" #M_NAME, \
+		NEO_WEP_##M_BITWNAME};
 
 #define WEAPON_DEF_ALT(M_BITWNAME, M_NAME, M_DISPLAY_NAME, M_NAMEWEP, ...) \
-	[[maybe_unused]] inline const constexpr WeaponInfo WEP_INFO_##M_NAME = { \
-		M_DISPLAY_NAME, "vgui/loadout/loadout_" #M_NAME, "vgui/loadout/loadout_" #M_NAME "_no", "weapon_" M_NAMEWEP, NEO_WEP_##M_BITWNAME };
+	[[maybe_unused]] inline const constexpr WeaponInfo WEP_INFO_##M_NAME = {M_DISPLAY_NAME, \
+		"vgui/loadout/loadout_" #M_NAME, "vgui/loadout/loadout_" #M_NAME "_no", "weapon_" M_NAMEWEP, \
+		NEO_WEP_##M_BITWNAME};
 
 #define WEAPON(M_NAME) WEP_INFO_##M_NAME
 
@@ -125,4 +128,3 @@ int GetEffectiveXP(const int actualXP)
 }
 
 } // namespace CNEOWeaponLoadout
-

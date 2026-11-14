@@ -12,17 +12,17 @@ public:
 	C_NEO_TE_TocFlash();
 	virtual ~C_NEO_TE_TocFlash();
 
-	virtual void	PostDataUpdate(DataUpdateType_t updateType);
+	virtual void PostDataUpdate(DataUpdateType_t updateType);
 
 public:
-	Vector			m_vecOrigin;
-	float			m_fRadius;
-	int				r;
-	int				g;
-	int				b;
-	int				exponent;
-	float			m_fTime;
-	float			m_fDecay;
+	Vector m_vecOrigin;
+	float m_fRadius;
+	int r;
+	int g;
+	int b;
+	int exponent;
+	float m_fTime;
+	float m_fDecay;
 };
 
 #endif // NEO_TE_TOCFLASH_H

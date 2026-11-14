@@ -15,14 +15,14 @@ extern int g_verbose;
 #include "neo_serial.h"
 
 const ENeoCrosshairWep MAP_WEAPON_TYPE_TO_XHAIR[WEP_TYPE__TOTAL] = {
-	CROSSHAIR_WEP_NONE,					// WEP_TYPE_NIL
-	CROSSHAIR_WEP_THROWABLE_HIPFIRE,	// WEP_TYPE_THROWABLE
-	CROSSHAIR_WEP_SECONDARY,			// WEP_TYPE_PISTOL
-	CROSSHAIR_WEP_DEFAULT,				// WEP_TYPE_SMG
-	CROSSHAIR_WEP_SHOTGUN,				// WEP_TYPE_SHOTGUN
-	CROSSHAIR_WEP_DEFAULT,				// WEP_TYPE_RIFLE
-	CROSSHAIR_WEP_DEFAULT,				// WEP_TYPE_MACHINEGUN
-	CROSSHAIR_WEP_NONE,					// WEP_TYPE_SNIPER
+	CROSSHAIR_WEP_NONE,              // WEP_TYPE_NIL
+	CROSSHAIR_WEP_THROWABLE_HIPFIRE, // WEP_TYPE_THROWABLE
+	CROSSHAIR_WEP_SECONDARY,         // WEP_TYPE_PISTOL
+	CROSSHAIR_WEP_DEFAULT,           // WEP_TYPE_SMG
+	CROSSHAIR_WEP_SHOTGUN,           // WEP_TYPE_SHOTGUN
+	CROSSHAIR_WEP_DEFAULT,           // WEP_TYPE_RIFLE
+	CROSSHAIR_WEP_DEFAULT,           // WEP_TYPE_MACHINEGUN
+	CROSSHAIR_WEP_NONE,              // WEP_TYPE_SNIPER
 };
 
 #ifdef CLIENT_DLL
@@ -37,18 +37,21 @@ const ENeoCrosshairWep MAP_WEAPON_TYPE_TO_XHAIR[WEP_TYPE__TOTAL] = {
 
 static char static_szCrhSerialDefault[NEO_XHAIR_SEQMAX];
 ConVar cl_neo_crosshair("cl_neo_crosshair", "", FCVAR_ARCHIVE | FCVAR_USERINFO, "Serialized crosshair setting");
-ConVar cl_neo_crosshair_network("cl_neo_crosshair_network", "1", FCVAR_ARCHIVE | FCVAR_CLIENTDLL, "Network crosshair - 0 = disable, 1 = show other players' crosshairs", true, 0.0f, true, 1.0f);
+ConVar cl_neo_crosshair_network("cl_neo_crosshair_network", "1", FCVAR_ARCHIVE | FCVAR_CLIENTDLL,
+	"Network crosshair - 0 = disable, 1 = show other players' crosshairs", true, 0.0f, true, 1.0f);
 
-static const char *INTERNAL_CROSSHAIR_FILES[CROSSHAIR_STYLE__TOTAL] = { "vgui/hud/crosshair", "vgui/hud/crosshair_b", "" };
+static const char *INTERNAL_CROSSHAIR_FILES[CROSSHAIR_STYLE__TOTAL] = {
+	"vgui/hud/crosshair", "vgui/hud/crosshair_b", ""};
 const char **CROSSHAIR_FILES = INTERNAL_CROSSHAIR_FILES;
 
-static const wchar_t *INTERNAL_CROSSHAIR_LABELS[CROSSHAIR_STYLE__TOTAL] = { L"Default", L"Alt", L"Custom" };
+static const wchar_t *INTERNAL_CROSSHAIR_LABELS[CROSSHAIR_STYLE__TOTAL] = {L"Default", L"Alt", L"Custom"};
 const wchar_t **CROSSHAIR_LABELS = INTERNAL_CROSSHAIR_LABELS;
 
-static const wchar_t *INTERNAL_CROSSHAIR_DYNAMICTYPE_LABELS[CROSSHAIR_DYNAMICTYPE__TOTAL] = { L"Disabled", L"Gap", L"Circle", L"Size" };
+static const wchar_t *INTERNAL_CROSSHAIR_DYNAMICTYPE_LABELS[CROSSHAIR_DYNAMICTYPE__TOTAL] = {
+	L"Disabled", L"Gap", L"Circle", L"Size"};
 const wchar_t **CROSSHAIR_DYNAMICTYPE_LABELS = INTERNAL_CROSSHAIR_DYNAMICTYPE_LABELS;
 
-static const wchar_t *INTERNAL_CROSSHAIR_SIZETYPE_LABELS[CROSSHAIR_SIZETYPE__TOTAL] = { L"Absolute", L"Screen halves" };
+static const wchar_t *INTERNAL_CROSSHAIR_SIZETYPE_LABELS[CROSSHAIR_SIZETYPE__TOTAL] = {L"Absolute", L"Screen halves"};
 const wchar_t **CROSSHAIR_SIZETYPE_LABELS = INTERNAL_CROSSHAIR_SIZETYPE_LABELS;
 
 void PaintCrosshair(const CrosshairWepInfo *crh, const int inaccuracy, const int x, const int y)
@@ -106,10 +109,10 @@ void PaintCrosshair(const CrosshairWepInfo *crh, const int inaccuracy, const int
 		const int iStartThick = bOdd ? iHalf + 1 : iHalf;
 		const int iEndThick = iHalf;
 		vgui::IntRect iRects[4] = {
-			{ -iSize - iGap, -iStartThick, -iGap, iEndThick },	// Left
-			{ iGap + iRBOffset, -iStartThick, iGap + iSize + iRBOffset, iEndThick },	// Right
-			{ -iStartThick, iGap + iRBOffset, iEndThick, iGap + iSize + iRBOffset },	// Bottom
-			{ -iStartThick, -iSize - iGap, iEndThick, -iGap },	// Top (Must be last for bTopLine)
+			{-iSize - iGap, -iStartThick, -iGap, iEndThick},                       // Left
+			{iGap + iRBOffset, -iStartThick, iGap + iSize + iRBOffset, iEndThick}, // Right
+			{-iStartThick, iGap + iRBOffset, iEndThick, iGap + iSize + iRBOffset}, // Bottom
+			{-iStartThick, -iSize - iGap, iEndThick, -iGap},                       // Top (Must be last for bTopLine)
 		};
 		for (vgui::IntRect &rect : iRects)
 		{
@@ -149,8 +152,8 @@ void PaintCrosshair(const CrosshairWepInfo *crh, const int inaccuracy, const int
 		if (crh->iOutline > 0)
 		{
 			vgui::surface()->DrawSetColor(bSeparateColorDot ? crh->colorDotOutline : crh->colorOutline);
-			vgui::surface()->DrawFilledRect(-iStartCenter + x -crh->iOutline, -iStartCenter + y -crh->iOutline,
-											iEndCenter + x +crh->iOutline, iEndCenter + y +crh->iOutline);
+			vgui::surface()->DrawFilledRect(-iStartCenter + x - crh->iOutline, -iStartCenter + y - crh->iOutline,
+				iEndCenter + x + crh->iOutline, iEndCenter + y + crh->iOutline);
 		}
 
 		vgui::surface()->DrawSetColor(bSeparateColorDot ? crh->colorDot : crh->color);
@@ -164,7 +167,7 @@ void PaintCrosshair(const CrosshairWepInfo *crh, const int inaccuracy, const int
 	}
 }
 
-int HalfInaccuracyConeInScreenPixels(C_NEOBaseCombatWeapon* pWeapon, int halfScreenWidth)
+int HalfInaccuracyConeInScreenPixels(C_NEOBaseCombatWeapon *pWeapon, int halfScreenWidth)
 {
 	float spread = pWeapon && pWeapon->GetNeoWepBits() & NEO_WEP_FIREARM ? pWeapon->GetBulletSpread().x : 0.f;
 	if (!spread)
@@ -172,8 +175,8 @@ int HalfInaccuracyConeInScreenPixels(C_NEOBaseCombatWeapon* pWeapon, int halfScr
 		return 0;
 	}
 	float scaledFov = DEG2RAD(ScaleFOVByWidthRatio(
-		C_BasePlayer::GetLocalPlayer()->GetFOV(),
-		engine->GetScreenAspectRatio() * 0.75f )) / 2;
+						  C_BasePlayer::GetLocalPlayer()->GetFOV(), engine->GetScreenAspectRatio() * 0.75f)) /
+		2;
 	return halfScreenWidth * spread / tan(scaledFov);
 }
 
@@ -191,20 +194,19 @@ void InitializeClNeoCrosshair()
 
 void NeoConVarCrosshairChangeCallback(IConVar *icvar, const char *pOldVal, [[maybe_unused]] float flOldVal)
 {
-	ConVar* cvar = assert_cast<ConVar*>(icvar);
+	ConVar *cvar = assert_cast<ConVar *>(icvar);
 
 	if (false == ValidateCrosshairSerial(cvar->GetString(), V_atoi(cvar->GetString())))
 	{
 		cvar->InstallChangeCallback(nullptr);
 
-		const auto fnPrintWarning = [&pOldVal, &cvar](const char* pRevertTo, const char* pRevertReason) {
+		const auto fnPrintWarning = [&pOldVal, &cvar](const char *pRevertTo, const char *pRevertReason)
+		{
 			Warning("Your crosshair has been reverted to %s due to syntax error(s) in its %s.\n"
-				"The old value was:\n\t\"%s\" \"%s\"\n"
-				"The new value was:\n\t\"%s\" \"%s\"\n",
-				pRevertTo, pRevertReason,
-				cvar->GetName(), pOldVal,
-				cvar->GetName(), cvar->GetString());
-			};
+					"The old value was:\n\t\"%s\" \"%s\"\n"
+					"The new value was:\n\t\"%s\" \"%s\"\n",
+				pRevertTo, pRevertReason, cvar->GetName(), pOldVal, cvar->GetName(), cvar->GetString());
+		};
 		if (!ValidateCrosshairSerial(pOldVal, V_atoi(pOldVal)))
 		{
 			fnPrintWarning("default", "new and old values");
@@ -231,8 +233,7 @@ void NeoConVarCrosshairChangeCallback(IConVar *icvar, const char *pOldVal, [[may
 
 #endif // CLIENT_DLL
 
-void ResetCrosshairToDefault(CrosshairInfo *xhairInfo,
-		EHipfireOpt (*paeHipfireOpts)[CROSSHAIR_WEP__TOTAL])
+void ResetCrosshairToDefault(CrosshairInfo *xhairInfo, EHipfireOpt (*paeHipfireOpts)[CROSSHAIR_WEP__TOTAL])
 {
 	xhairInfo->wepFlags = CROSSHAIR_WEP_FLAG_DEFAULT;
 	xhairInfo->hipfireFlags = CROSSHAIR_HIPFIRECUSTOM_FLAG_NIL;
@@ -282,7 +283,7 @@ int UseCrosshairIndexFor(const CrosshairInfo *xhairInfo, const int iXHairWep, bo
 		if (xhairInfo->wepFlags & (1 << (iXHairWep - 1)))
 		{
 			if ((iXHairWep < CROSSHAIR_WEP_DEFAULT_HIPFIRE) ||
-					(xhairInfo->hipfireFlags & (1 << (iXHairWep - CROSSHAIR_WEP_DEFAULT_HIPFIRE))))
+				(xhairInfo->hipfireFlags & (1 << (iXHairWep - CROSSHAIR_WEP_DEFAULT_HIPFIRE))))
 			{
 				return iXHairWep;
 			}
@@ -309,14 +310,15 @@ int UseCrosshairIndexFor(const CrosshairInfo *xhairInfo, const int iXHairWep, bo
 }
 
 static bool ImportOrExportCrosshair(const ESerialMode eSerialMode, CrosshairInfo *xhairInfo,
-		char (&szMutSeq)[NEO_XHAIR_SEQMAX], const int iSeqSize, const int iExportSerialVersion)
+	char (&szMutSeq)[NEO_XHAIR_SEQMAX], const int iSeqSize, const int iExportSerialVersion)
 {
 	SerialContext ctx = {
 		.eSerialMode = eSerialMode,
 		.iSeqSize = iSeqSize,
 	};
 #ifdef UNIT_TEST_DLL
-	if (g_verbose > 0) fprintf(stderr, "%s: ImportOrExportCrosshair: iSeqSize: %d\n", g_testFnName, iSeqSize);
+	if (g_verbose > 0)
+		fprintf(stderr, "%s: ImportOrExportCrosshair: iSeqSize: %d\n", g_testFnName, iSeqSize);
 #endif
 
 	// Unsupported serialization version or corrupted from first character
@@ -327,8 +329,8 @@ static bool ImportOrExportCrosshair(const ESerialMode eSerialMode, CrosshairInfo
 
 	const auto eSerialVer = static_cast<NeoXHairSerial>(iExportSerialVersion);
 	// Serial version mismatches what the input declared??
-	if (iExportSerialVersion != SerialInt(iExportSerialVersion, NEOXHAIR_SERIAL_CURRENT,
-		COMPMODE_IGNORE, szMutSeq, &ctx, 0, 0, eSerialVer))
+	if (iExportSerialVersion !=
+		SerialInt(iExportSerialVersion, NEOXHAIR_SERIAL_CURRENT, COMPMODE_IGNORE, szMutSeq, &ctx, 0, 0, eSerialVer))
 	{
 		return false;
 	}
@@ -343,18 +345,17 @@ static bool ImportOrExportCrosshair(const ESerialMode eSerialMode, CrosshairInfo
 
 	if (eSerialVer >= NEOXHAIR_SERIAL_ALPHA_V29)
 	{
-		xhairInfo->wepFlags = SerialInt(xhairInfo->wepFlags, xhairInfo->wepFlags,
-				COMPMODE_IGNORE, szMutSeq, &ctx, 0, CROSSHAIR_WEP_FLAG__HIGHESTFLAG, eSerialVer);
-		xhairInfo->hipfireFlags = SerialInt(xhairInfo->hipfireFlags, xhairInfo->hipfireFlags,
-				COMPMODE_IGNORE, szMutSeq, &ctx, 0, CROSSHAIR_HIPFIRECUSTOM_FLAG__HIGHESTFLAG, eSerialVer);
+		xhairInfo->wepFlags = SerialInt(xhairInfo->wepFlags, xhairInfo->wepFlags, COMPMODE_IGNORE, szMutSeq, &ctx, 0,
+			CROSSHAIR_WEP_FLAG__HIGHESTFLAG, eSerialVer);
+		xhairInfo->hipfireFlags = SerialInt(xhairInfo->hipfireFlags, xhairInfo->hipfireFlags, COMPMODE_IGNORE, szMutSeq,
+			&ctx, 0, CROSSHAIR_HIPFIRECUSTOM_FLAG__HIGHESTFLAG, eSerialVer);
 	}
 
 	for (int i = 0; i < CROSSHAIR_WEP__TOTAL; ++i)
 	{
 		const ECompMode eCompMode = (i == CROSSHAIR_WEP_DEFAULT) ? COMPMODE_IGNORE : COMPMODE_EQUALS;
-		const int iCompIdx = (i > CROSSHAIR_WEP_DEFAULT_HIPFIRE)
-				? CROSSHAIR_WEP_DEFAULT_HIPFIRE
-				: CROSSHAIR_WEP_DEFAULT;
+		const int iCompIdx =
+			(i > CROSSHAIR_WEP_DEFAULT_HIPFIRE) ? CROSSHAIR_WEP_DEFAULT_HIPFIRE : CROSSHAIR_WEP_DEFAULT;
 
 		CrosshairWepInfo *crh = &xhairInfo->wep[i];
 		const CrosshairWepInfo *cmpCrh = &xhairInfo->wep[iCompIdx];
@@ -371,40 +372,52 @@ static bool ImportOrExportCrosshair(const ESerialMode eSerialMode, CrosshairInfo
 
 		if (eSerialVer >= NEOXHAIR_SERIAL_ALPHA_V29)
 		{
-			crh->flags = SerialInt(crh->flags, cmpCrh->flags, eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_FLAG__HIGHESTFLAG, eSerialVer);
+			crh->flags = SerialInt(
+				crh->flags, cmpCrh->flags, eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_FLAG__HIGHESTFLAG, eSerialVer);
 		}
-		crh->iStyle = SerialInt(crh->iStyle, cmpCrh->iStyle, eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_STYLE__TOTAL - 1, eSerialVer);
-		crh->color.SetRawColor(SerialInt(crh->color.GetRawColor(), cmpCrh->color.GetRawColor(), eCompMode, szMutSeq, &ctx, 0, 0, eSerialVer));
+		crh->iStyle = SerialInt(
+			crh->iStyle, cmpCrh->iStyle, eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_STYLE__TOTAL - 1, eSerialVer);
+		crh->color.SetRawColor(SerialInt(
+			crh->color.GetRawColor(), cmpCrh->color.GetRawColor(), eCompMode, szMutSeq, &ctx, 0, 0, eSerialVer));
 
 		if (bNotCompact || crh->iStyle == CROSSHAIR_STYLE_CUSTOM)
 		{
-			crh->eSizeType = static_cast<NeoHudCrosshairSizeType>(SerialInt(crh->eSizeType, cmpCrh->eSizeType, eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_SIZETYPE__TOTAL - 1, eSerialVer));
+			crh->eSizeType = static_cast<NeoHudCrosshairSizeType>(SerialInt(crh->eSizeType, cmpCrh->eSizeType,
+				eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_SIZETYPE__TOTAL - 1, eSerialVer));
 			if (bNotCompact || crh->eSizeType == CROSSHAIR_SIZETYPE_ABSOLUTE)
 			{
-				crh->iSize = SerialInt(crh->iSize, cmpCrh->iSize, eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_MAX_SIZE, eSerialVer);
+				crh->iSize =
+					SerialInt(crh->iSize, cmpCrh->iSize, eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_MAX_SIZE, eSerialVer);
 			}
 			if (bNotCompact || crh->eSizeType == CROSSHAIR_SIZETYPE_SCREEN)
 			{
-				crh->flScrSize = SerialFloat(crh->flScrSize, cmpCrh->flScrSize, eCompMode, szMutSeq, &ctx, 0.0f, 1.0f, eSerialVer);
+				crh->flScrSize =
+					SerialFloat(crh->flScrSize, cmpCrh->flScrSize, eCompMode, szMutSeq, &ctx, 0.0f, 1.0f, eSerialVer);
 			}
-			crh->iThick = SerialInt(crh->iThick, cmpCrh->iThick, eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_MAX_THICKNESS, eSerialVer);
+			crh->iThick = SerialInt(
+				crh->iThick, cmpCrh->iThick, eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_MAX_THICKNESS, eSerialVer);
 			crh->iGap = SerialInt(crh->iGap, cmpCrh->iGap, eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_MAX_GAP, eSerialVer);
-			crh->iOutline = SerialInt(crh->iOutline, cmpCrh->iOutline, eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_MAX_OUTLINE, eSerialVer);
-			crh->iCenterDot = SerialInt(crh->iCenterDot, cmpCrh->iCenterDot, eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_MAX_CENTER_DOT, eSerialVer);
+			crh->iOutline = SerialInt(
+				crh->iOutline, cmpCrh->iOutline, eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_MAX_OUTLINE, eSerialVer);
+			crh->iCenterDot = SerialInt(crh->iCenterDot, cmpCrh->iCenterDot, eCompMode, szMutSeq, &ctx, 0,
+				CROSSHAIR_MAX_CENTER_DOT, eSerialVer);
 			if (eSerialVer < NEOXHAIR_SERIAL_ALPHA_V29)
 			{
-				const bool bTopLine = SerialBool(!(crh->flags & CROSSHAIR_FLAG_NOTOPLINE), !(cmpCrh->flags & CROSSHAIR_FLAG_NOTOPLINE), eCompMode, szMutSeq, &ctx, eSerialVer);
+				const bool bTopLine = SerialBool(!(crh->flags & CROSSHAIR_FLAG_NOTOPLINE),
+					!(cmpCrh->flags & CROSSHAIR_FLAG_NOTOPLINE), eCompMode, szMutSeq, &ctx, eSerialVer);
 				if (!bTopLine)
 				{
 					crh->flags |= CROSSHAIR_FLAG_NOTOPLINE;
 				}
 			}
-			crh->iCircleRad = SerialInt(crh->iCircleRad, cmpCrh->iCircleRad, eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_MAX_CIRCLE_RAD, eSerialVer);
+			crh->iCircleRad = SerialInt(crh->iCircleRad, cmpCrh->iCircleRad, eCompMode, szMutSeq, &ctx, 0,
+				CROSSHAIR_MAX_CIRCLE_RAD, eSerialVer);
 			if (bNotCompact || crh->iCircleRad > 0)
 			{
-				crh->iCircleSegments = SerialInt(crh->iCircleSegments, cmpCrh->iCircleSegments, eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_MAX_CIRCLE_SEGMENTS, eSerialVer);
+				crh->iCircleSegments = SerialInt(crh->iCircleSegments, cmpCrh->iCircleSegments, eCompMode, szMutSeq,
+					&ctx, 0, CROSSHAIR_MAX_CIRCLE_SEGMENTS, eSerialVer);
 			}
-			
+
 			if (eSerialVer < NEOXHAIR_SERIAL_ALPHA_V19)
 			{
 				continue;
@@ -412,8 +425,9 @@ static bool ImportOrExportCrosshair(const ESerialMode eSerialMode, CrosshairInfo
 			// >= NEOXHAIR_SERIAL_ALPHA_V19 segments
 
 			crh->eDynamicType = (eSerialVer >= NEOXHAIR_SERIAL_ALPHA_V19)
-					? static_cast<NeoHudCrosshairDynamicType>(SerialInt(crh->eDynamicType, cmpCrh->eDynamicType, eCompMode, szMutSeq, &ctx, 0, CROSSHAIR_DYNAMICTYPE__TOTAL - 1, eSerialVer))
-					: CROSSHAIR_DYNAMICTYPE_NONE;
+				? static_cast<NeoHudCrosshairDynamicType>(SerialInt(crh->eDynamicType, cmpCrh->eDynamicType, eCompMode,
+					  szMutSeq, &ctx, 0, CROSSHAIR_DYNAMICTYPE__TOTAL - 1, eSerialVer))
+				: CROSSHAIR_DYNAMICTYPE_NONE;
 
 			if (eSerialVer < NEOXHAIR_SERIAL_ALPHA_V22)
 			{
@@ -425,7 +439,8 @@ static bool ImportOrExportCrosshair(const ESerialMode eSerialMode, CrosshairInfo
 			{
 				if (eSerialVer < NEOXHAIR_SERIAL_ALPHA_V29)
 				{
-					const bool bSeparateColorDot = SerialBool((crh->flags & CROSSHAIR_FLAG_SEPERATEDOTCOLOR), (cmpCrh->flags & CROSSHAIR_FLAG_SEPERATEDOTCOLOR), eCompMode, szMutSeq, &ctx, eSerialVer);
+					const bool bSeparateColorDot = SerialBool((crh->flags & CROSSHAIR_FLAG_SEPERATEDOTCOLOR),
+						(cmpCrh->flags & CROSSHAIR_FLAG_SEPERATEDOTCOLOR), eCompMode, szMutSeq, &ctx, eSerialVer);
 					if (bSeparateColorDot)
 					{
 						crh->flags |= CROSSHAIR_FLAG_SEPERATEDOTCOLOR;
@@ -433,16 +448,19 @@ static bool ImportOrExportCrosshair(const ESerialMode eSerialMode, CrosshairInfo
 				}
 				if (bNotCompact || (crh->flags & CROSSHAIR_FLAG_SEPERATEDOTCOLOR))
 				{
-					crh->colorDot.SetRawColor(SerialInt(crh->colorDot.GetRawColor(), cmpCrh->colorDot.GetRawColor(), eCompMode, szMutSeq, &ctx, 0, 0, eSerialVer));
+					crh->colorDot.SetRawColor(SerialInt(crh->colorDot.GetRawColor(), cmpCrh->colorDot.GetRawColor(),
+						eCompMode, szMutSeq, &ctx, 0, 0, eSerialVer));
 					if (bNotCompact || crh->iOutline > 0)
 					{
-						crh->colorDotOutline.SetRawColor(SerialInt(crh->colorDotOutline.GetRawColor(), cmpCrh->colorDotOutline.GetRawColor(), eCompMode, szMutSeq, &ctx, 0, 0, eSerialVer));
+						crh->colorDotOutline.SetRawColor(SerialInt(crh->colorDotOutline.GetRawColor(),
+							cmpCrh->colorDotOutline.GetRawColor(), eCompMode, szMutSeq, &ctx, 0, 0, eSerialVer));
 					}
 				}
 			}
 			if (bNotCompact || crh->iOutline > 0)
 			{
-				crh->colorOutline.SetRawColor(SerialInt(crh->colorOutline.GetRawColor(), cmpCrh->colorOutline.GetRawColor(), eCompMode, szMutSeq, &ctx, 0, 0, eSerialVer));
+				crh->colorOutline.SetRawColor(SerialInt(crh->colorOutline.GetRawColor(),
+					cmpCrh->colorOutline.GetRawColor(), eCompMode, szMutSeq, &ctx, 0, 0, eSerialVer));
 			}
 		}
 	}
@@ -474,8 +492,8 @@ bool ValidateCrosshairSerial(const char *pszSequence, const int ver)
 	return ImportOrExportCrosshair(SERIALMODE_CHECK, &xhairInfo, szMutSeq, iSeqSize, ver);
 }
 
-bool ImportCrosshair(CrosshairInfo *xhairInfo, const char *pszSequence,
-		EHipfireOpt (*paeHipfireOpts)[CROSSHAIR_WEP__TOTAL])
+bool ImportCrosshair(
+	CrosshairInfo *xhairInfo, const char *pszSequence, EHipfireOpt (*paeHipfireOpts)[CROSSHAIR_WEP__TOTAL])
 {
 	const int iSeqSize = V_strlen(pszSequence);
 	if (iSeqSize <= 0 || iSeqSize >= NEO_XHAIR_SEQMAX)
@@ -487,8 +505,10 @@ bool ImportCrosshair(CrosshairInfo *xhairInfo, const char *pszSequence,
 	V_strcpy_safe(szMutSeq, pszSequence);
 
 	ResetCrosshairToDefault(xhairInfo, paeHipfireOpts);
-	const int iExportSerialVersion = V_atoi(pszSequence); // Assuming first number of sequence must be the serial version
-	const bool bValid = ImportOrExportCrosshair(SERIALMODE_DESERIALIZE, xhairInfo, szMutSeq, iSeqSize, iExportSerialVersion);
+	const int iExportSerialVersion =
+		V_atoi(pszSequence); // Assuming first number of sequence must be the serial version
+	const bool bValid =
+		ImportOrExportCrosshair(SERIALMODE_DESERIALIZE, xhairInfo, szMutSeq, iSeqSize, iExportSerialVersion);
 	if (!bValid)
 	{
 		return false;
@@ -502,7 +522,8 @@ bool ImportCrosshair(CrosshairInfo *xhairInfo, const char *pszSequence,
 			const NeoCrosshairHipfireCustomFlags wepHipfireMask = (1 << (i - CROSSHAIR_WEP_DEFAULT_HIPFIRE));
 			// NeoCrosshairHipfireCustomFlags flag equiv. only sets when NeoCrosshairWepFlags flag equiv. is set
 			Assert((xhairInfo->wepFlags & wepMask) || (false == (xhairInfo->hipfireFlags & wepHipfireMask)));
-			(*paeHipfireOpts)[i] = static_cast<EHipfireOpt>(static_cast<bool>(xhairInfo->wepFlags & wepMask) + static_cast<bool>(xhairInfo->hipfireFlags & wepHipfireMask));
+			(*paeHipfireOpts)[i] = static_cast<EHipfireOpt>(static_cast<bool>(xhairInfo->wepFlags & wepMask) +
+				static_cast<bool>(xhairInfo->hipfireFlags & wepHipfireMask));
 		}
 	}
 
@@ -532,4 +553,3 @@ void ExportCrosshair(CrosshairInfo *xhairInfo, char (&szSequence)[NEO_XHAIR_SEQM
 	Assert(importOrExportSuccessful == ValidateCrosshairSerial(szSequence, iExportSerialVersion));
 #endif
 }
-

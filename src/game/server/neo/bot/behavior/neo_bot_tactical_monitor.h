@@ -5,25 +5,26 @@
 class CObjectTeleporter;
 class CNEOIgnoredWeaponsCache;
 
-class CNEOBotTacticalMonitor : public Action< CNEOBot >
+class CNEOBotTacticalMonitor : public Action<CNEOBot>
 {
 public:
 	CNEOBotTacticalMonitor();
 	virtual ~CNEOBotTacticalMonitor();
 
-	virtual Action< CNEOBot >* InitialContainedAction(CNEOBot* me);
+	virtual Action<CNEOBot> *InitialContainedAction(CNEOBot *me);
 
-	virtual ActionResult< CNEOBot >	OnStart(CNEOBot* me, Action< CNEOBot >* priorAction);
-	virtual ActionResult< CNEOBot >	Update(CNEOBot* me, float interval);
+	virtual ActionResult<CNEOBot> OnStart(CNEOBot *me, Action<CNEOBot> *priorAction);
+	virtual ActionResult<CNEOBot> Update(CNEOBot *me, float interval);
 
-	virtual EventDesiredResult< CNEOBot > OnNavAreaChanged(CNEOBot* me, CNavArea* newArea, CNavArea* oldArea);
-	virtual EventDesiredResult< CNEOBot > OnOtherKilled(CNEOBot* me, CBaseCombatCharacter* victim, const CTakeDamageInfo& info);
+	virtual EventDesiredResult<CNEOBot> OnNavAreaChanged(CNEOBot *me, CNavArea *newArea, CNavArea *oldArea);
+	virtual EventDesiredResult<CNEOBot> OnOtherKilled(
+		CNEOBot *me, CBaseCombatCharacter *victim, const CTakeDamageInfo &info);
 
 	// @note Tom Bui: Currently used for the training stuff, but once we get that interface down, we will turn that
 	// into a proper API
-	virtual EventDesiredResult< CNEOBot > OnCommandString(CNEOBot* me, const char* command);
+	virtual EventDesiredResult<CNEOBot> OnCommandString(CNEOBot *me, const char *command);
 
-	virtual const char* GetName(void) const { return "TacticalMonitor"; }
+	virtual const char *GetName(void) const { return "TacticalMonitor"; }
 
 private:
 	CountdownTimer m_hazardCheckTimer;
@@ -35,15 +36,15 @@ private:
 	std::unique_ptr<CNEOIgnoredWeaponsCache> m_pIgnoredWeapons;
 
 	CountdownTimer m_detpackCheckTimer;
-	ActionResult< CNEOBot > MonitorArmedDetpack(CNEOBot *me);
+	ActionResult<CNEOBot> MonitorArmedDetpack(CNEOBot *me);
 
 	CountdownTimer m_enemyDetpackTimer;
 	void MonitorEnemyDetpack(CNEOBot *me);
 	void RepathAroundNewDetpackMark(CNEOBot *me);
 
-	ActionResult< CNEOBot > ScavengeForPrimaryWeapon(CNEOBot* me);
+	ActionResult<CNEOBot> ScavengeForPrimaryWeapon(CNEOBot *me);
 
-	void AvoidBumpingFriends(CNEOBot* me);
-	ActionResult< CNEOBot > WatchForLadders(CNEOBot* me);
-	void CloakPastNpcTurret(CNEOBot* me);
+	void AvoidBumpingFriends(CNEOBot *me);
+	ActionResult<CNEOBot> WatchForLadders(CNEOBot *me);
+	void CloakPastNpcTurret(CNEOBot *me);
 };

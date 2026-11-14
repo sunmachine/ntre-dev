@@ -44,8 +44,8 @@ private:
 	{
 		CUtlString m_name;
 		CUtlVector<float> m_samples; // mono, kSampleRate; empty = unplayable, left to the engine
-		int m_loopStart = -1; // sample index to loop back to, -1 for one-shots
-		float m_distMult = 0.0f; // engine dist_mult of the sound's scripted level, 0 = no falloff
+		int m_loopStart = -1;        // sample index to loop back to, -1 for one-shots
+		float m_distMult = 0.0f;     // engine dist_mult of the sound's scripted level, 0 = no falloff
 	};
 
 	// Written by the game thread under m_mutex, read by the audio thread under m_mutex.
@@ -90,8 +90,8 @@ private:
 	void LoadSound(CachedSound &sound);
 	float LookupDistMult(const char *pszNormalisedName);
 
-	VoiceParams ComputeParams(const SndInfo_t &info, float sourceVolume, const CachedSound &sound,
-							  float outputScale) const;
+	VoiceParams ComputeParams(
+		const SndInfo_t &info, float sourceVolume, const CachedSound &sound, float outputScale) const;
 	int FindVoice(int guid) const;
 	void PrintDebug() const;
 

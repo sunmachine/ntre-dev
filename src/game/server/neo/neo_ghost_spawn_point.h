@@ -25,6 +25,7 @@ public:
 class CNEOGhostSpawnPoint : public CNEOObjectiveSpawnPoint
 {
 	DECLARE_CLASS(CNEOGhostSpawnPoint, CNEOObjectiveSpawnPoint);
+
 public:
 	virtual void Spawn() override;
 };
@@ -32,6 +33,7 @@ public:
 class CNEOJuggernautSpawnPoint : public CNEOObjectiveSpawnPoint
 {
 	DECLARE_CLASS(CNEOJuggernautSpawnPoint, CNEOObjectiveSpawnPoint);
+
 public:
 	virtual void Spawn() override;
 };

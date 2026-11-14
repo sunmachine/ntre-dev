@@ -7,16 +7,16 @@
 class CNEOBotJgrJuggernaut : public CNEOBotSeekAndDestroy
 {
 public:
-	CNEOBotJgrJuggernaut( float duration = -1.0f ) : CNEOBotSeekAndDestroy( duration ), m_bStuckCrouchPhase( false ) {}
+	CNEOBotJgrJuggernaut(float duration = -1.0f) : CNEOBotSeekAndDestroy(duration), m_bStuckCrouchPhase(false) {}
 
-	virtual ActionResult< CNEOBot >	OnStart( CNEOBot *me, Action< CNEOBot > *priorAction ) override;
-	virtual ActionResult< CNEOBot >	Update( CNEOBot *me, float interval ) override;
-	virtual const char *GetName( void ) const override { return "jgrJuggernaut"; }
+	virtual ActionResult<CNEOBot> OnStart(CNEOBot *me, Action<CNEOBot> *priorAction) override;
+	virtual ActionResult<CNEOBot> Update(CNEOBot *me, float interval) override;
+	virtual const char *GetName(void) const override { return "jgrJuggernaut"; }
 
-	virtual EventDesiredResult< CNEOBot > OnStuck( CNEOBot *me ) override;
+	virtual EventDesiredResult<CNEOBot> OnStuck(CNEOBot *me) override;
 
 protected:
-	virtual void RecomputeSeekPath( CNEOBot *me ) override;
+	virtual void RecomputeSeekPath(CNEOBot *me) override;
 
 	CountdownTimer m_stuckTimer;
 	bool m_bStuckCrouchPhase;

@@ -30,13 +30,14 @@ public:
 	virtual void LevelShutdown(void) override;
 
 	void HideAllPings();
+
 protected:
-	virtual void FireGameEvent(IGameEvent* event) override;
+	virtual void FireGameEvent(IGameEvent *event) override;
 
 private:
-	int GetStringPixelWidth(wchar_t* pString, vgui::HFont hFont);
-	void UpdateDistanceToPlayer(C_BasePlayer* player, const int pingIndex);
-	void SetPos(const int index, const int playerTeam, const Vector& pos, bool ghosterPing);
+	int GetStringPixelWidth(wchar_t *pString, vgui::HFont hFont);
+	void UpdateDistanceToPlayer(C_BasePlayer *player, const int pingIndex);
+	void SetPos(const int index, const int playerTeam, const Vector &pos, bool ghosterPing);
 	void NotifyPing(const int playerSlot);
 
 private:

@@ -23,6 +23,7 @@ class CNEODeployedDetpack;
 class CWeaponDetpack : public CNEOBaseProjectile
 {
 	DECLARE_CLASS(CWeaponDetpack, CNEOBaseProjectile);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -35,37 +36,46 @@ public:
 	CWeaponDetpack();
 
 	NEO_WEP_BITS_UNDERLYING_TYPE WeaponIndex() const override { return NEO_WIDX_DETPACK; }
-	virtual NEO_WEP_BITS_UNDERLYING_TYPE GetNeoWepBits(void) const { return NEO_WEP_DETPACK | NEO_WEP_THROWABLE | NEO_WEP_EXPLOSIVE; }
+	virtual NEO_WEP_BITS_UNDERLYING_TYPE GetNeoWepBits(void) const
+	{
+		return NEO_WEP_DETPACK | NEO_WEP_THROWABLE | NEO_WEP_EXPLOSIVE;
+	}
 	virtual int GetNeoWepXPCost(const int neoClass) const OVERRIDE;
 
-	void	Precache(void);
-	void	PrimaryAttack(void);
-	void	DecrementAmmo(CBaseCombatCharacter* pOwner);
-	void	ItemPostFrame(void);
+	void Precache(void);
+	void PrimaryAttack(void);
+	void DecrementAmmo(CBaseCombatCharacter *pOwner);
+	void ItemPostFrame(void);
 
-	bool	Deploy(void);
-	virtual bool	Holster(CBaseCombatWeapon* pSwitchingTo = NULL) OVERRIDE;
+	bool Deploy(void);
+	virtual bool Holster(CBaseCombatWeapon *pSwitchingTo = NULL) OVERRIDE;
 	virtual int GetWeaponFlags() const override;
 
-	virtual float GetFastestDryRefireTime() const { return 1.f; } // is called if attack button spammed, doesn't really mean much for grenades
-	const char* GetWorldModel(void) const override { return	m_bThisDetpackHasBeenThrown ? "models/weapons/w_detremote.mdl" : "models/weapons/w_detpack.mdl"; };
-	bool	Reload(void) { return false; }
+	virtual float GetFastestDryRefireTime() const
+	{
+		return 1.f;
+	} // is called if attack button spammed, doesn't really mean much for grenades
+	const char *GetWorldModel(void) const override
+	{
+		return m_bThisDetpackHasBeenThrown ? "models/weapons/w_detremote.mdl" : "models/weapons/w_detpack.mdl";
+	};
+	bool Reload(void) { return false; }
 
 	virtual float GetSpeedScale(void) const OVERRIDE { return 0.85f; }
 
 #ifdef GAME_DLL
 	static float GetArmingTime() { return 2.66f; } // see Rain's comment in DecrementAmmo
-	CNEODeployedDetpack* GetDetpackEntity() const { return m_pDetpack; }
+	CNEODeployedDetpack *GetDetpackEntity() const { return m_pDetpack; }
 #endif
 
-	bool	CanDrop(void) OVERRIDE;
+	bool CanDrop(void) OVERRIDE;
 	virtual bool CanAim() final { return false; }
 	virtual bool CanPerformSecondaryAttack() const override final { return false; }
 
 	bool CanBePickedUpByClass(int classId) OVERRIDE;
 
 #ifndef CLIENT_DLL
-	void Operator_HandleAnimEvent(animevent_t* pEvent, CBaseCombatCharacter* pOperator);
+	void Operator_HandleAnimEvent(animevent_t *pEvent, CBaseCombatCharacter *pOperator);
 
 #endif
 	void WeaponIdle(void)
@@ -77,7 +87,7 @@ public:
 		}
 	}
 
-	void	TossDetpack(CBasePlayer* pPlayer);
+	void TossDetpack(CBasePlayer *pPlayer);
 
 	CNetworkVar(bool, m_fDrawbackFinished);
 	CNetworkVar(bool, m_bWantsToThrowThisDetpack);
@@ -88,7 +98,7 @@ private:
 	CWeaponDetpack(const CWeaponDetpack &other);
 
 #ifdef GAME_DLL
-	CNEODeployedDetpack* m_pDetpack;
+	CNEODeployedDetpack *m_pDetpack;
 #endif
 };
 

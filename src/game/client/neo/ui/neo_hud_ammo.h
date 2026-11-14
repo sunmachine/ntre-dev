@@ -15,19 +15,19 @@ class CNEOHud_Ammo : public CNEOHud_ChildElement, public CHudElement, public vgu
 public:
 	CNEOHud_Ammo(const char *pElementName, vgui::Panel *parent = nullptr);
 
-	virtual ~CNEOHud_Ammo() { }
+	virtual ~CNEOHud_Ammo() {}
 
-	virtual void ApplySchemeSettings(vgui::IScheme* pScheme);
+	virtual void ApplySchemeSettings(vgui::IScheme *pScheme);
 	virtual void Paint();
 
 protected:
 	virtual void UpdateStateForNeoHudElementDraw();
 	virtual void DrawNeoHudElement();
-	virtual ConVar* GetUpdateFrequencyConVar() const;
+	virtual ConVar *GetUpdateFrequencyConVar() const;
 
 private:
 	void DrawAmmo() const;
-	void DrawHeatMeter(C_NEOBaseCombatWeapon* activeWep) const;
+	void DrawHeatMeter(C_NEOBaseCombatWeapon *activeWep) const;
 
 private:
 	vgui::HFont m_hSmallTextFont = 0;
@@ -71,7 +71,7 @@ private:
 	CPanelAnimationVar(Color, heat_color, "heat_color", "255 50 50 200");
 
 private:
-	CNEOHud_Ammo(const CNEOHud_Ammo& other);
+	CNEOHud_Ammo(const CNEOHud_Ammo &other);
 };
 
 #endif // NEO_HUD_AMMO_H

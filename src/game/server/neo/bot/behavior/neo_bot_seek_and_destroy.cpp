@@ -16,25 +16,28 @@ extern ConVar neo_bot_path_lookahead_range;
 extern ConVar neo_bot_offense_must_push_time;
 extern ConVar neo_bot_defense_must_defend_time;
 
-ConVar neo_bot_debug_seek_and_destroy( "neo_bot_debug_seek_and_destroy", "0", FCVAR_CHEAT );
-ConVar neo_bot_disable_seek_and_destroy( "neo_bot_disable_seek_and_destroy", "0", FCVAR_CHEAT );
+ConVar neo_bot_debug_seek_and_destroy("neo_bot_debug_seek_and_destroy", "0", FCVAR_CHEAT);
+ConVar neo_bot_disable_seek_and_destroy("neo_bot_disable_seek_and_destroy", "0", FCVAR_CHEAT);
 
-ConVar sv_neo_bot_seek_and_destroy_combat_sound_commit_time( "sv_neo_bot_seek_and_destroy_combat_sound_commit_time", "3.0", FCVAR_CHEAT,
-	"Having picked a combat sound, travel to it for this long instead of re-picking.", true, 0, false, 0 );
-ConVar sv_neo_bot_seek_and_destroy_combat_sound_detour_ratio( "sv_neo_bot_seek_and_destroy_combat_sound_detour_ratio", "1.5", FCVAR_CHEAT,
-	"When racing for an objective, divert only if going via the combat sound costs at most this multiple of direct distance.", true, 0, false, 0 );
-ConVar sv_neo_bot_seek_and_destroy_combat_sound_arrive_range( "sv_neo_bot_seek_and_destroy_combat_sound_arrive_range", "200.0", FCVAR_CHEAT,
-	"Combat sound close enough to count as investigated.", true, 0, false, 0 );
+ConVar sv_neo_bot_seek_and_destroy_combat_sound_commit_time("sv_neo_bot_seek_and_destroy_combat_sound_commit_time",
+	"3.0", FCVAR_CHEAT, "Having picked a combat sound, travel to it for this long instead of re-picking.", true, 0,
+	false, 0);
+ConVar sv_neo_bot_seek_and_destroy_combat_sound_detour_ratio("sv_neo_bot_seek_and_destroy_combat_sound_detour_ratio",
+	"1.5", FCVAR_CHEAT,
+	"When racing for an objective, divert only if going via the combat sound costs at most this multiple of direct distance.",
+	true, 0, false, 0);
+ConVar sv_neo_bot_seek_and_destroy_combat_sound_arrive_range("sv_neo_bot_seek_and_destroy_combat_sound_arrive_range",
+	"200.0", FCVAR_CHEAT, "Combat sound close enough to count as investigated.", true, 0, false, 0);
 
 
 //---------------------------------------------------------------------------------------------
 // Is the bot inside the potentially-audible set of a sound at vSoundPos?
-static bool BotInSoundPAS( CNEOBot *me, const Vector &vSoundPos )
+static bool BotInSoundPAS(CNEOBot *me, const Vector &vSoundPos)
 {
-	CPASFilter filter( vSoundPos );
-	for ( int i = 0; i < filter.GetRecipientCount(); ++i )
+	CPASFilter filter(vSoundPos);
+	for (int i = 0; i < filter.GetRecipientCount(); ++i)
 	{
-		if ( filter.GetRecipientIndex( i ) == me->entindex() )
+		if (filter.GetRecipientIndex(i) == me->entindex())
 		{
 			return true;
 		}
@@ -46,9 +49,9 @@ static bool BotInSoundPAS( CNEOBot *me, const Vector &vSoundPos )
 
 //---------------------------------------------------------------------------------------------
 // Returns true if m_path now leads to a combat sound the bot heard
-bool CNEOBotSeekAndDestroy::TryPathToCombatSound( CNEOBot *me )
+bool CNEOBotSeekAndDestroy::TryPathToCombatSound(CNEOBot *me)
 {
-	if ( !m_bListenForCombatSounds )
+	if (!m_bListenForCombatSounds)
 	{
 		return false;
 	}
@@ -58,44 +61,43 @@ bool CNEOBotSeekAndDestroy::TryPathToCombatSound( CNEOBot *me )
 	const Vector vGoalBefore = m_vGoalPos;
 
 	// Stick with the sound already picked until arrival or the commit time runs out
-	const bool bCommitted = m_combatSoundCommitTimer.HasStarted() && !m_combatSoundCommitTimer.IsElapsed()
-		&& me->GetAbsOrigin().DistToSqr( m_vCombatSoundSpot ) > flArriveSqr;
+	const bool bCommitted = m_combatSoundCommitTimer.HasStarted() && !m_combatSoundCommitTimer.IsElapsed() &&
+		me->GetAbsOrigin().DistToSqr(m_vCombatSoundSpot) > flArriveSqr;
 
-	if ( bCommitted && m_path.IsValid() && m_vGoalPos == m_vCombatSoundSpot )
+	if (bCommitted && m_path.IsValid() && m_vGoalPos == m_vCombatSoundSpot)
 	{
 		return false;
 	}
 
-	if ( !bCommitted )
+	if (!bCommitted)
 	{
-		if ( m_soundSearchTimer.HasStarted() && !m_soundSearchTimer.IsElapsed() )
+		if (m_soundSearchTimer.HasStarted() && !m_soundSearchTimer.IsElapsed())
 		{
 			return false;
 		}
-		m_soundSearchTimer.Start( 0.25f );
+		m_soundSearchTimer.Start(0.25f);
 
 		Vector vFight;
-		if ( !NEOMemorySoundCombat::FindNearestFight( me->GetAbsOrigin(), me->GetTeamNumber(), me->entindex(), vFight )
-			|| !BotInSoundPAS( me, vFight )
-			|| me->GetAbsOrigin().DistToSqr( vFight ) <= flArriveSqr )
+		if (!NEOMemorySoundCombat::FindNearestFight(me->GetAbsOrigin(), me->GetTeamNumber(), me->entindex(), vFight) ||
+			!BotInSoundPAS(me, vFight) || me->GetAbsOrigin().DistToSqr(vFight) <= flArriveSqr)
 		{
 			return false; // no fight, out of PAS, or already there
 		}
 
-		if ( vGoalBefore != vec3_origin )
+		if (vGoalBefore != vec3_origin)
 		{
 			// Already heading there
-			if ( vGoalBefore.DistToSqr( vFight ) <= flArriveSqr )
+			if (vGoalBefore.DistToSqr(vFight) <= flArriveSqr)
 			{
 				return false;
 			}
 
 			// An objective runner only takes the detour if the sound is roughly on the way
-			if ( IsSeekGoalAnObjective() )
+			if (IsSeekGoalAnObjective())
 			{
-				const float flDirect = me->GetAbsOrigin().DistTo( vGoalBefore );
-				const float flVia = me->GetAbsOrigin().DistTo( vFight ) + vFight.DistTo( vGoalBefore );
-				if ( flVia > flDirect * sv_neo_bot_seek_and_destroy_combat_sound_detour_ratio.GetFloat() )
+				const float flDirect = me->GetAbsOrigin().DistTo(vGoalBefore);
+				const float flVia = me->GetAbsOrigin().DistTo(vFight) + vFight.DistTo(vGoalBefore);
+				if (flVia > flDirect * sv_neo_bot_seek_and_destroy_combat_sound_detour_ratio.GetFloat())
 				{
 					return false;
 				}
@@ -103,10 +105,10 @@ bool CNEOBotSeekAndDestroy::TryPathToCombatSound( CNEOBot *me )
 		}
 
 		m_vCombatSoundSpot = vFight;
-		m_combatSoundCommitTimer.Start( sv_neo_bot_seek_and_destroy_combat_sound_commit_time.GetFloat() );
+		m_combatSoundCommitTimer.Start(sv_neo_bot_seek_and_destroy_combat_sound_commit_time.GetFloat());
 	}
 
-	if ( TryPathToRoamGoal( me, m_vCombatSoundSpot ) )
+	if (TryPathToRoamGoal(me, m_vCombatSoundSpot))
 	{
 		m_vGoalPos = m_vCombatSoundSpot;
 		m_bGoingToTargetEntity = false;
@@ -115,12 +117,12 @@ bool CNEOBotSeekAndDestroy::TryPathToCombatSound( CNEOBot *me )
 
 	// NEO Jank: the combat sound is unreachable, so give up on it and stop listening for a few seconds
 	m_combatSoundCommitTimer.Invalidate();
-	m_soundSearchTimer.Start( 3.0f );
+	m_soundSearchTimer.Start(3.0f);
 
-	if ( vGoalBefore != vec3_origin )
+	if (vGoalBefore != vec3_origin)
 	{
 		m_vGoalPos = vGoalBefore;
-		CNEOBotPathCompute( me, m_path, m_vGoalPos, DEFAULT_ROUTE );
+		CNEOBotPathCompute(me, m_path, m_vGoalPos, DEFAULT_ROUTE);
 	}
 
 	return false;
@@ -130,38 +132,38 @@ bool CNEOBotSeekAndDestroy::TryPathToCombatSound( CNEOBot *me )
 //---------------------------------------------------------------------------------------------
 // Roam goals are picked at random, so skip one that no route reaches instead of walking at it. A refused
 // attempt stays in m_path: the wander loop's last resort keeps it.
-bool CNEOBotSeekAndDestroy::TryPathToRoamGoal( CNEOBot *me, const Vector &vGoal )
+bool CNEOBotSeekAndDestroy::TryPathToRoamGoal(CNEOBot *me, const Vector &vGoal)
 {
-	return CNEOBotPathCompute( me, m_path, vGoal, DEFAULT_ROUTE ) && CNEOBotPathReachesGoal( m_path );
+	return CNEOBotPathCompute(me, m_path, vGoal, DEFAULT_ROUTE) && CNEOBotPathReachesGoal(m_path);
 }
 
 
 //---------------------------------------------------------------------------------------------
-CNEOBotSeekAndDestroy::CNEOBotSeekAndDestroy( float duration )
+CNEOBotSeekAndDestroy::CNEOBotSeekAndDestroy(float duration)
 {
-	if ( duration > 0.0f )
+	if (duration > 0.0f)
 	{
-		m_giveUpTimer.Start( duration );
+		m_giveUpTimer.Start(duration);
 	}
 }
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotSeekAndDestroy::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotSeekAndDestroy::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
-	m_path.SetMinLookAheadDistance( me->GetDesiredPathLookAheadRange() );
+	m_path.SetMinLookAheadDistance(me->GetDesiredPathLookAheadRange());
 
-	RecomputeSeekPath( me );
+	RecomputeSeekPath(me);
 
 	// restart the timer if we have one
-	if ( m_giveUpTimer.HasStarted() )
+	if (m_giveUpTimer.HasStarted())
 	{
 		m_giveUpTimer.Reset();
 	}
 
-	if ( neo_bot_disable_seek_and_destroy.GetBool() )
+	if (neo_bot_disable_seek_and_destroy.GetBool())
 	{
-		return Done( "Disabled." );
+		return Done("Disabled.");
 	}
 
 	return Continue();
@@ -169,24 +171,23 @@ ActionResult< CNEOBot >	CNEOBotSeekAndDestroy::OnStart( CNEOBot *me, Action< CNE
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotSeekAndDestroy::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotSeekAndDestroy::Update(CNEOBot *me, float interval)
 {
 	// Check for Game Type Specific behaviors and suspend for them
-	if ( NEORules()->GetRemainingPreRoundFreezeTime( true ) > 0.0f )
+	if (NEORules()->GetRemainingPreRoundFreezeTime(true) > 0.0f)
 	{
 		if (NEORules()->GetGameType() == NEO_GAME_TYPE_CTG)
 		{
 			// Only switch to CTG behavior if there are available capture zones this round
-			const Vector vecCapPoint = NEORules()->GetNearestGhostCapPoint( me->GetTeamNumber(), me->GetAbsOrigin() );
-			if ( vecCapPoint != CNEO_Player::VECTOR_INVALID_WAYPOINT )
+			const Vector vecCapPoint = NEORules()->GetNearestGhostCapPoint(me->GetTeamNumber(), me->GetAbsOrigin());
+			if (vecCapPoint != CNEO_Player::VECTOR_INVALID_WAYPOINT)
 			{
-				return SuspendFor( new CNEOBotCtgSeek, "Switching to Ghost-related Seek and Destroy" );
+				return SuspendFor(new CNEOBotCtgSeek, "Switching to Ghost-related Seek and Destroy");
 			}
-
 		}
 		else if (NEORules()->GetGameType() == NEO_GAME_TYPE_JGR)
 		{
-			return SuspendFor( new CNEOBotJgrSeek, "Switching to Juggernaut-related Seek and Destroy" );
+			return SuspendFor(new CNEOBotJgrSeek, "Switching to Juggernaut-related Seek and Destroy");
 		}
 
 		return Continue();
@@ -200,7 +201,7 @@ ActionResult< CNEOBot >	CNEOBotSeekAndDestroy::Update( CNEOBot *me, float interv
 			int iGhosterPlayer = NEORules()->GetGhosterPlayer();
 			if (iGhosterPlayer > 0 && iGhosterPlayer <= gpGlobals->maxClients)
 			{
-				CNEO_Player* pGhostCarrier = ToNEOPlayer(UTIL_PlayerByIndex(iGhosterPlayer));
+				CNEO_Player *pGhostCarrier = ToNEOPlayer(UTIL_PlayerByIndex(iGhosterPlayer));
 				if (pGhostCarrier && pGhostCarrier != me && pGhostCarrier->GetTeamNumber() != me->GetTeamNumber())
 				{
 					return SuspendFor(new CNEOBotCtgEnemy, "Stopping the ghost carrier!");
@@ -209,8 +210,8 @@ ActionResult< CNEOBot >	CNEOBotSeekAndDestroy::Update( CNEOBot *me, float interv
 		}
 	}
 
-	ActionResult< CNEOBot > result = UpdateCommon( me, interval );
-	if ( result.IsRequestingChange() || result.IsDone() )
+	ActionResult<CNEOBot> result = UpdateCommon(me, interval);
+	if (result.IsRequestingChange() || result.IsDone())
 	{
 		return result;
 	}
@@ -219,21 +220,21 @@ ActionResult< CNEOBot >	CNEOBotSeekAndDestroy::Update( CNEOBot *me, float interv
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotSeekAndDestroy::UpdateCommon( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotSeekAndDestroy::UpdateCommon(CNEOBot *me, float interval)
 {
-	if ( m_giveUpTimer.HasStarted() && m_giveUpTimer.IsElapsed() )
+	if (m_giveUpTimer.HasStarted() && m_giveUpTimer.IsElapsed())
 	{
-		return Done( "Behavior duration elapsed" );
+		return Done("Behavior duration elapsed");
 	}
 
-	if ( neo_bot_disable_seek_and_destroy.GetBool() )
+	if (neo_bot_disable_seek_and_destroy.GetBool())
 	{
-		return Done( "Disabled." );
+		return Done("Disabled.");
 	}
 
 	const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat(true);
 
-	if ( threat )
+	if (threat)
 	{
 		const auto *neoThreat = ToNEOPlayer(threat->GetEntity());
 		// This will just go to the ghoster RecomputeSeekPath logics instead of
@@ -241,14 +242,14 @@ ActionResult< CNEOBot > CNEOBotSeekAndDestroy::UpdateCommon( CNEOBot *me, float 
 		const bool bDontSuspendForGhoster = (neoThreat && neoThreat->IsCarryingGhost());
 		if (!bDontSuspendForGhoster)
 		{
-			const Vector& threatLastKnownPos = threat->GetLastKnownPosition();
+			const Vector &threatLastKnownPos = threat->GetLastKnownPosition();
 			// fall back to nearest teammate for backup if I am the closest contact to enemy
-			if ( NEORules()->IsTeamplay() )
+			if (NEORules()->IsTeamplay())
 			{
 				bool bAnyTeammatesCloserToEnemy = false;
-				CNEO_Player* pNearestTeammate = nullptr;
+				CNEO_Player *pNearestTeammate = nullptr;
 				float distToNearestTeammateSqr = FLT_MAX;
-				const Vector& myPos = me->GetAbsOrigin();
+				const Vector &myPos = me->GetAbsOrigin();
 				const float distMeToThreatSqr = myPos.DistToSqr(threatLastKnownPos);
 
 				for (int i = 1; i <= gpGlobals->maxClients; i++)
@@ -258,7 +259,7 @@ ActionResult< CNEOBot > CNEOBotSeekAndDestroy::UpdateCommon( CNEOBot *me, float 
 					{
 						continue;
 					}
-					
+
 					CNEO_Player *pNeoCandidate = ToNEOPlayer(pPlayer);
 					if (!pNeoCandidate)
 					{
@@ -267,12 +268,12 @@ ActionResult< CNEOBot > CNEOBotSeekAndDestroy::UpdateCommon( CNEOBot *me, float 
 
 					if (pNeoCandidate->InSameTeam(me) && (me != pNeoCandidate))
 					{
-						const Vector& candidatePos = pNeoCandidate->GetAbsOrigin();
+						const Vector &candidatePos = pNeoCandidate->GetAbsOrigin();
 						if (threatLastKnownPos.DistToSqr(candidatePos) < distMeToThreatSqr)
 						{
 							bAnyTeammatesCloserToEnemy = true;
 							break;
-						}	
+						}
 
 						float distCandidateSqr = myPos.DistToSqr(candidatePos);
 						if (distCandidateSqr < distToNearestTeammateSqr)
@@ -285,11 +286,12 @@ ActionResult< CNEOBot > CNEOBotSeekAndDestroy::UpdateCommon( CNEOBot *me, float 
 
 				if (!bAnyTeammatesCloserToEnemy && pNearestTeammate)
 				{
-					return SuspendFor( new CNEOBotAttack( pNearestTeammate->GetAbsOrigin() ), "Kiting enemy toward teammate for backup" );
+					return SuspendFor(
+						new CNEOBotAttack(pNearestTeammate->GetAbsOrigin()), "Kiting enemy toward teammate for backup");
 				}
 			}
-			
-			return SuspendFor( new CNEOBotAttack, "Going after an enemy" );
+
+			return SuspendFor(new CNEOBotAttack, "Going after an enemy");
 		}
 	}
 	else
@@ -302,29 +304,29 @@ ActionResult< CNEOBot > CNEOBotSeekAndDestroy::UpdateCommon( CNEOBot *me, float 
 	}
 
 	// move towards our seek goal
-	m_path.Update( me );
+	m_path.Update(me);
 
 	m_bTimerElapsed = m_repathTimer.HasStarted() && m_repathTimer.IsElapsed();
 
-	if ( m_bGoingToTargetEntity )
+	if (m_bGoingToTargetEntity)
 	{
 		bool bEntityVisible = false;
-		if ( m_hTargetEntity )
+		if (m_hTargetEntity)
 		{
 			bEntityVisible = true;
 
-			CBaseEntity* ent = m_hTargetEntity.Get();
+			CBaseEntity *ent = m_hTargetEntity.Get();
 			if (ent)
 			{
-				CBaseCombatWeapon* pWeapon = ent->MyCombatWeaponPointer();
+				CBaseCombatWeapon *pWeapon = ent->MyCombatWeaponPointer();
 				if (pWeapon)
 				{
 					if (pWeapon->IsEffectActive(EF_NODRAW))
 						bEntityVisible = false;
-					
+
 					if (pWeapon->GetOwner() != NULL)
 						bEntityVisible = false;
-					
+
 					// I don't want it anymore.
 					if (me->Weapon_OwnsThisType(pWeapon->GetClassname()))
 						bEntityVisible = false;
@@ -332,14 +334,14 @@ ActionResult< CNEOBot > CNEOBotSeekAndDestroy::UpdateCommon( CNEOBot *me, float 
 			}
 		}
 
-		// If I can see the goal, and the entity isn't visible, then 
-		if ( me->IsLineOfSightClear( m_vGoalPos ) && !bEntityVisible )
+		// If I can see the goal, and the entity isn't visible, then
+		if (me->IsLineOfSightClear(m_vGoalPos) && !bEntityVisible)
 		{
 			// Keep looking for a couple seconds.
-			if ( !m_itemStolenTimer.HasStarted() )
-				m_itemStolenTimer.Start( 2.0f );
+			if (!m_itemStolenTimer.HasStarted())
+				m_itemStolenTimer.Start(2.0f);
 
-			if ( m_itemStolenTimer.HasStarted() && m_itemStolenTimer.IsElapsed() )
+			if (m_itemStolenTimer.HasStarted() && m_itemStolenTimer.IsElapsed())
 			{
 				m_itemStolenTimer.Reset();
 				m_path.Invalidate();
@@ -347,28 +349,28 @@ ActionResult< CNEOBot > CNEOBotSeekAndDestroy::UpdateCommon( CNEOBot *me, float 
 		}
 	}
 
-	if ( !m_path.IsValid() )
+	if (!m_path.IsValid())
 	{
-		if ( !m_repathFailTimer.HasStarted() || m_repathFailTimer.IsElapsed() )
+		if (!m_repathFailTimer.HasStarted() || m_repathFailTimer.IsElapsed())
 		{
-			m_repathTimer.Start( 45.0f );
+			m_repathTimer.Start(45.0f);
 
-			RecomputeSeekPath( me );
+			RecomputeSeekPath(me);
 
-			if ( m_path.IsValid() )
+			if (m_path.IsValid())
 			{
 				m_repathFailTimer.Invalidate();
 			}
 			else
 			{
-				m_repathFailTimer.Start( 1.0f );
+				m_repathFailTimer.Start(1.0f);
 			}
 		}
 	}
 	// Listen for combat sounds on the way to wherever we were going
-	else if ( TryPathToCombatSound( me ) )
+	else if (TryPathToCombatSound(me))
 	{
-		m_repathTimer.Start( 45.0f );
+		m_repathTimer.Start(45.0f);
 	}
 
 	return Continue();
@@ -376,50 +378,51 @@ ActionResult< CNEOBot > CNEOBotSeekAndDestroy::UpdateCommon( CNEOBot *me, float 
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotSeekAndDestroy::OnResume( CNEOBot *me, Action< CNEOBot > *interruptingAction )
+ActionResult<CNEOBot> CNEOBotSeekAndDestroy::OnResume(CNEOBot *me, Action<CNEOBot> *interruptingAction)
 {
-	RecomputeSeekPath( me );
+	RecomputeSeekPath(me);
 
 	return Continue();
 }
 
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotSeekAndDestroy::OnStuck( CNEOBot *me )
+EventDesiredResult<CNEOBot> CNEOBotSeekAndDestroy::OnStuck(CNEOBot *me)
 {
-	RecomputeSeekPath( me );
+	RecomputeSeekPath(me);
 
 	return TryContinue();
 }
 
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotSeekAndDestroy::OnMoveToSuccess( CNEOBot *me, const Path *path )
+EventDesiredResult<CNEOBot> CNEOBotSeekAndDestroy::OnMoveToSuccess(CNEOBot *me, const Path *path)
 {
-	RecomputeSeekPath( me );
+	RecomputeSeekPath(me);
 
 	return TryContinue();
 }
 
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotSeekAndDestroy::OnMoveToFailure( CNEOBot *me, const Path *path, MoveToFailureType reason )
+EventDesiredResult<CNEOBot> CNEOBotSeekAndDestroy::OnMoveToFailure(
+	CNEOBot *me, const Path *path, MoveToFailureType reason)
 {
-	RecomputeSeekPath( me );
+	RecomputeSeekPath(me);
 
 	return TryContinue();
 }
 
 
 //---------------------------------------------------------------------------------------------
-QueryResultType	CNEOBotSeekAndDestroy::ShouldRetreat( const INextBot *meBot ) const
+QueryResultType CNEOBotSeekAndDestroy::ShouldRetreat(const INextBot *meBot) const
 {
 	return ANSWER_UNDEFINED;
 }
 
 
 //---------------------------------------------------------------------------------------------
-QueryResultType CNEOBotSeekAndDestroy::ShouldHurry( const INextBot *me ) const
+QueryResultType CNEOBotSeekAndDestroy::ShouldHurry(const INextBot *me) const
 {
 	return ANSWER_UNDEFINED;
 }
@@ -436,15 +439,15 @@ public:
 	}
 	// clang-format on
 
-	bool ShouldFindEntity( CBaseEntity *pEntity )
+	bool ShouldFindEntity(CBaseEntity *pEntity)
 	{
 		// If we find no truly valid marks, we'll just use the first.
-		if ( !m_hEntityFound.Get() )
+		if (!m_hEntityFound.Get())
 		{
 			m_hEntityFound = pEntity;
 		}
 
-		if ( pEntity->GetAbsOrigin().DistToSqr( m_hPlayer->GetAbsOrigin() ) < ( m_flRange * m_flRange ) )
+		if (pEntity->GetAbsOrigin().DistToSqr(m_hPlayer->GetAbsOrigin()) < (m_flRange * m_flRange))
 		{
 			return false;
 		}
@@ -453,74 +456,64 @@ public:
 		return true;
 	}
 
-	CBaseEntity *GetFilterResult( void )
-	{
-		return m_hEntityFound;
-	}
+	CBaseEntity *GetFilterResult(void) { return m_hEntityFound; }
 
 private:
-	EHANDLE		m_hPlayer;
+	EHANDLE m_hPlayer;
 
-	float		m_flRange;
+	float m_flRange;
 
 	// To maintain backwards compatability, store off the first mark
 	// we find. If we find no truly valid marks, we'll just use the first.
-	EHANDLE		m_hEntityFound;
+	EHANDLE m_hEntityFound;
 };
 
 class CNotOwnedWeaponFilter : public IEntityFindFilter
 {
 public:
-	CNotOwnedWeaponFilter( CBasePlayer *pPlayer )
-		: m_hPlayer{ pPlayer }
-	{
-		
-	}
+	CNotOwnedWeaponFilter(CBasePlayer *pPlayer) : m_hPlayer{pPlayer} {}
 
-	bool ShouldFindEntity( CBaseEntity *pEntity )
+	bool ShouldFindEntity(CBaseEntity *pEntity)
 	{
 		// If we find no truly valid marks, we'll just use the first.
-		if ( !m_hEntityFound.Get() )
+		if (!m_hEntityFound.Get())
 		{
 			m_hEntityFound = pEntity;
 		}
 
-		CBaseCombatWeapon *pWeapon = dynamic_cast< CBaseCombatWeapon *>( pEntity );
-		if ( !pWeapon )
+		CBaseCombatWeapon *pWeapon = dynamic_cast<CBaseCombatWeapon *>(pEntity);
+		if (!pWeapon)
 			return false;
 
-		if ( pWeapon->GetOwner() )
+		if (pWeapon->GetOwner())
 			return false;
 
 		// ignore non-existent ammo to ensure we collect nearby existing ammo
-		if ( pWeapon->IsEffectActive( EF_NODRAW ) )
+		if (pWeapon->IsEffectActive(EF_NODRAW))
 			return false;
 
-		if ( m_hPlayer->Weapon_OwnsThisType( pEntity->GetClassname() ) )
+		if (m_hPlayer->Weapon_OwnsThisType(pEntity->GetClassname()))
 			return false;
-		
+
 		m_hEntityFound = pEntity;
 		return true;
 	}
 
-	CBaseEntity *GetFilterResult( void )
-	{
-		return m_hEntityFound;
-	}
+	CBaseEntity *GetFilterResult(void) { return m_hEntityFound; }
 
 private:
-	CHandle<CBasePlayer>	m_hPlayer;
+	CHandle<CBasePlayer> m_hPlayer;
 
 	// To maintain backwards compatability, store off the first mark
 	// we find. If we find no truly valid marks, we'll just use the first.
-	EHANDLE		m_hEntityFound;
+	EHANDLE m_hEntityFound;
 };
 
 
 //---------------------------------------------------------------------------------------------
-void CNEOBotSeekAndDestroy::RecomputeSeekPath( CNEOBot *me )
+void CNEOBotSeekAndDestroy::RecomputeSeekPath(CNEOBot *me)
 {
-	if ( m_bOverrideApproach )
+	if (m_bOverrideApproach)
 	{
 		return;
 	}
@@ -529,7 +522,7 @@ void CNEOBotSeekAndDestroy::RecomputeSeekPath( CNEOBot *me )
 	m_bGoingToTargetEntity = false;
 	m_vGoalPos = vec3_origin;
 
-	if ( !TheNavAreas.Size() )
+	if (!TheNavAreas.Size())
 	{
 		m_path.Invalidate();
 		return;
@@ -574,47 +567,47 @@ void CNEOBotSeekAndDestroy::RecomputeSeekPath( CNEOBot *me )
 		}
 	}
 #endif
-	
+
 	// Listen for combat sounds
-	if ( TryPathToCombatSound( me ) )
+	if (TryPathToCombatSound(me))
 	{
 		return;
 	}
 
 	// Fallback and roam random spawn points if we have all weapons.
 	{
-		CNextSpawnFilter spawnFilter( me, 128.0f );
+		CNextSpawnFilter spawnFilter(me, 128.0f);
 
-		CUtlVector<CBaseEntity*> pSpawns;
+		CUtlVector<CBaseEntity *> pSpawns;
 
-		CBaseEntity* pSearch = NULL;
-		while ( ( pSearch = gEntList.FindEntityByClassname( pSearch, "info_player_*", &spawnFilter ) ) != NULL )
+		CBaseEntity *pSearch = NULL;
+		while ((pSearch = gEntList.FindEntityByClassname(pSearch, "info_player_*", &spawnFilter)) != NULL)
 		{
-			if ( pSearch && Q_strcmp(pSearch->GetEntityName().ToCStr(), "info_player_start"))
-				pSpawns.AddToTail( pSearch );
+			if (pSearch && Q_strcmp(pSearch->GetEntityName().ToCStr(), "info_player_start"))
+				pSpawns.AddToTail(pSearch);
 		}
 
 		// Don't wander between spawns if there aren't that many.
-		if ( pSpawns.Size() >= 3 )
+		if (pSpawns.Size() >= 3)
 		{
-			for ( int i = 0; i < 10; i++ )
+			for (int i = 0; i < 10; i++)
 			{
-				m_hTargetEntity = pSpawns[RandomInt( 0, pSpawns.Size() - 1 )];
+				m_hTargetEntity = pSpawns[RandomInt(0, pSpawns.Size() - 1)];
 				m_bGoingToTargetEntity = true;
 				m_vGoalPos = m_hTargetEntity->WorldSpaceCenter();
-				if ( TryPathToRoamGoal( me, m_vGoalPos ) )
+				if (TryPathToRoamGoal(me, m_vGoalPos))
 					return;
 			}
 		}
 	}
 
-	for ( int i = 0; i < 10; i++ )
+	for (int i = 0; i < 10; i++)
 	{
 		// No spawns we can get to? Just wander... somewhere!
 
-		Vector vWanderPoint = TheNavAreas[RandomInt( 0, TheNavAreas.Size() - 1 )]->GetCenter();
+		Vector vWanderPoint = TheNavAreas[RandomInt(0, TheNavAreas.Size() - 1)]->GetCenter();
 		m_vGoalPos = vWanderPoint;
-		if ( TryPathToRoamGoal( me, vWanderPoint ) )
+		if (TryPathToRoamGoal(me, vWanderPoint))
 			return;
 	}
 
@@ -624,33 +617,33 @@ void CNEOBotSeekAndDestroy::RecomputeSeekPath( CNEOBot *me )
 
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotSeekAndDestroy::OnTerritoryContested( CNEOBot *me, int territoryID )
+EventDesiredResult<CNEOBot> CNEOBotSeekAndDestroy::OnTerritoryContested(CNEOBot *me, int territoryID)
 {
-	return TryDone( RESULT_IMPORTANT, "Defending the point" );
+	return TryDone(RESULT_IMPORTANT, "Defending the point");
 }
 
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotSeekAndDestroy::OnTerritoryCaptured( CNEOBot *me, int territoryID )
+EventDesiredResult<CNEOBot> CNEOBotSeekAndDestroy::OnTerritoryCaptured(CNEOBot *me, int territoryID)
 {
-	return TryDone( RESULT_IMPORTANT, "Giving up due to point capture" );
+	return TryDone(RESULT_IMPORTANT, "Giving up due to point capture");
 }
 
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotSeekAndDestroy::OnTerritoryLost( CNEOBot *me, int territoryID )
+EventDesiredResult<CNEOBot> CNEOBotSeekAndDestroy::OnTerritoryLost(CNEOBot *me, int territoryID)
 {
-	return TryDone( RESULT_IMPORTANT, "Giving up due to point lost" );
+	return TryDone(RESULT_IMPORTANT, "Giving up due to point lost");
 }
 
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotSeekAndDestroy::OnCommandApproach( CNEOBot* me, const Vector& pos, float range )
+EventDesiredResult<CNEOBot> CNEOBotSeekAndDestroy::OnCommandApproach(CNEOBot *me, const Vector &pos, float range)
 {
 	m_bOverrideApproach = true;
 	m_vOverrideApproach = pos;
 
-	CNEOBotPathCompute( me, m_path, m_vOverrideApproach, DEFAULT_ROUTE );
+	CNEOBotPathCompute(me, m_path, m_vOverrideApproach, DEFAULT_ROUTE);
 
 	return TryContinue();
 }

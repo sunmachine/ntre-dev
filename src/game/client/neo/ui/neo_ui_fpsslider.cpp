@@ -77,11 +77,11 @@ void SliderFpsMax(const wchar_t *wszLeftLabel, int *iFpsMax)
 		Context *pCtx = CurrentContext();
 		auto hdl = pCtx->htSliders.Find(wszLeftLabel);
 		if (hdl == -1 || pCtx->htSliders.Element(hdl).flCachedValue != *iFpsMax ||
-				pCtx->htSliders.Element(hdl).bActive != wdgState.bActive)
+			pCtx->htSliders.Element(hdl).bActive != wdgState.bActive)
 		{
 			const bool bLeftInvalid = (hdl != -1 && pCtx->htSliders.Element(hdl).bActive && !wdgState.bActive &&
-					pCtx->htSliders.Element(hdl).wszText[0] != L'\0' &&
-					!FpsValid(FpsFromText(&pCtx->htSliders.Element(hdl))));
+				pCtx->htSliders.Element(hdl).wszText[0] != L'\0' &&
+				!FpsValid(FpsFromText(&pCtx->htSliders.Element(hdl))));
 			if (hdl == -1)
 			{
 				SliderInfo sInfoNew = {};
@@ -123,15 +123,15 @@ void SliderFpsMax(const wchar_t *wszLeftLabel, int *iFpsMax)
 			}
 
 			vgui::surface()->DrawFilledRect(pCtx->rWidgetArea.x0, pCtx->rWidgetArea.y0,
-											pCtx->rWidgetArea.x0 + pCtx->layout.iRowTall, pCtx->rWidgetArea.y1);
-			vgui::surface()->DrawSetTextPos(pCtx->rWidgetArea.x0 + pFontI->iStartBtnXPos,
-											pCtx->rWidgetArea.y0 + pFontI->iStartBtnYPos);
+				pCtx->rWidgetArea.x0 + pCtx->layout.iRowTall, pCtx->rWidgetArea.y1);
+			vgui::surface()->DrawSetTextPos(
+				pCtx->rWidgetArea.x0 + pFontI->iStartBtnXPos, pCtx->rWidgetArea.y0 + pFontI->iStartBtnYPos);
 			vgui::surface()->DrawPrintText(WSZ_ARROW_LEFT, 1);
 
 			vgui::surface()->DrawFilledRect(pCtx->rWidgetArea.x1 - pCtx->layout.iRowTall, pCtx->rWidgetArea.y0,
-											pCtx->rWidgetArea.x1, pCtx->rWidgetArea.y1);
+				pCtx->rWidgetArea.x1, pCtx->rWidgetArea.y1);
 			vgui::surface()->DrawSetTextPos(pCtx->rWidgetArea.x1 - pCtx->layout.iRowTall + pFontI->iStartBtnXPos,
-											pCtx->rWidgetArea.y0 + pFontI->iStartBtnYPos);
+				pCtx->rWidgetArea.y0 + pFontI->iStartBtnYPos);
 			vgui::surface()->DrawPrintText(WSZ_ARROW_RIGHT, 1);
 
 			int iFontWide, iFontTall;
@@ -141,28 +141,28 @@ void SliderFpsMax(const wchar_t *wszLeftLabel, int *iFpsMax)
 			const int iFontStartPadX = iFontStartX - pCtx->iMarginX;
 			const int iFontEndPadX = iFontEndX + pCtx->iMarginX;
 
-			const float flPerc = static_cast<float>(iPos - FPSSLIDER_MIN) / static_cast<float>(FPSSLIDER_UNLIMITED_POS - FPSSLIDER_MIN);
+			const float flPerc =
+				static_cast<float>(iPos - FPSSLIDER_MIN) / static_cast<float>(FPSSLIDER_UNLIMITED_POS - FPSSLIDER_MIN);
 			const float flBarMaxWide = static_cast<float>(pCtx->irWidgetWide - (2 * pCtx->layout.iRowTall));
 			const int iBarEndX = pCtx->layout.iRowTall + static_cast<int>(flPerc * flBarMaxWide);
 			const int iBarMarginY = static_cast<int>(1.5f * pCtx->iMarginY);
-			vgui::surface()->DrawSetColor(wdgState.bActive ? pCtx->colors.sliderActiveBg : wdgState.bHot ? pCtx->colors.sliderHotBg : pCtx->colors.sliderNormalBg);
+			vgui::surface()->DrawSetColor(wdgState.bActive ? pCtx->colors.sliderActiveBg
+					: wdgState.bHot                        ? pCtx->colors.sliderHotBg
+														   : pCtx->colors.sliderNormalBg);
 			if (flPerc > 0.0f)
 			{
 				vgui::surface()->DrawFilledRect(pCtx->rWidgetArea.x0 + pCtx->layout.iRowTall,
-												pCtx->rWidgetArea.y0 + iBarMarginY,
-												pCtx->rWidgetArea.x0 + Min(iBarEndX, iFontStartPadX),
-												pCtx->rWidgetArea.y1 - iBarMarginY);
+					pCtx->rWidgetArea.y0 + iBarMarginY, pCtx->rWidgetArea.x0 + Min(iBarEndX, iFontStartPadX),
+					pCtx->rWidgetArea.y1 - iBarMarginY);
 			}
 			if (iFontEndX < iBarEndX)
 			{
-				vgui::surface()->DrawFilledRect(pCtx->rWidgetArea.x0 + iFontEndPadX,
-												pCtx->rWidgetArea.y0 + iBarMarginY,
-												pCtx->rWidgetArea.x0 + iBarEndX,
-												pCtx->rWidgetArea.y1 - iBarMarginY);
+				vgui::surface()->DrawFilledRect(pCtx->rWidgetArea.x0 + iFontEndPadX, pCtx->rWidgetArea.y0 + iBarMarginY,
+					pCtx->rWidgetArea.x0 + iBarEndX, pCtx->rWidgetArea.y1 - iBarMarginY);
 			}
 
-			vgui::surface()->DrawSetTextPos(pCtx->rWidgetArea.x0 + iFontStartX,
-											pCtx->rWidgetArea.y0 + pFontI->iYFontOffset);
+			vgui::surface()->DrawSetTextPos(
+				pCtx->rWidgetArea.x0 + iFontStartX, pCtx->rWidgetArea.y0 + pFontI->iYFontOffset);
 			vgui::surface()->DrawPrintText(pSInfo->wszText, V_wcslen(pSInfo->wszText));
 
 			if (wdgState.bActive)
@@ -173,9 +173,8 @@ void SliderFpsMax(const wchar_t *wszLeftLabel, int *iFpsMax)
 					const int iMarkX = iFontStartX + iFontWide;
 					vgui::surface()->DrawSetColor(pCtx->colors.cursor);
 					vgui::surface()->DrawFilledRect(pCtx->rWidgetArea.x0 + iMarkX,
-													pCtx->rWidgetArea.y0 + pFontI->iYFontOffset,
-													pCtx->rWidgetArea.x0 + iMarkX + pCtx->iMarginX,
-													pCtx->rWidgetArea.y0 + pFontI->iYFontOffset + iFontTall);
+						pCtx->rWidgetArea.y0 + pFontI->iYFontOffset, pCtx->rWidgetArea.x0 + iMarkX + pCtx->iMarginX,
+						pCtx->rWidgetArea.y0 + pFontI->iYFontOffset + iFontTall);
 				}
 			}
 		}
@@ -189,12 +188,14 @@ void SliderFpsMax(const wchar_t *wszLeftLabel, int *iFpsMax)
 				pCtx->iActiveSection = pCtx->iSection;
 				if (pCtx->eCode == MOUSE_LEFT)
 				{
-					if (IN_BETWEEN_EQ(pCtx->rWidgetArea.x0, pCtx->iMouseAbsX, pCtx->rWidgetArea.x0 + pCtx->layout.iRowTall))
+					if (IN_BETWEEN_EQ(
+							pCtx->rWidgetArea.x0, pCtx->iMouseAbsX, pCtx->rWidgetArea.x0 + pCtx->layout.iRowTall))
 					{
 						*iFpsMax = FpsFromSliderPos(iPos - 1);
 						pCtx->bValueEdited = true;
 					}
-					else if (IN_BETWEEN_EQ(pCtx->rWidgetArea.x1 - pCtx->layout.iRowTall, pCtx->iMouseAbsX, pCtx->rWidgetArea.x1))
+					else if (IN_BETWEEN_EQ(
+								 pCtx->rWidgetArea.x1 - pCtx->layout.iRowTall, pCtx->iMouseAbsX, pCtx->rWidgetArea.x1))
 					{
 						*iFpsMax = FpsFromSliderPos(iPos + 1);
 						pCtx->bValueEdited = true;
@@ -243,11 +244,14 @@ void SliderFpsMax(const wchar_t *wszLeftLabel, int *iFpsMax)
 		break;
 		case MODE_MOUSEMOVED:
 		{
-			if (wdgState.bActive && vgui::input()->IsMouseDown(MOUSE_LEFT) && pCtx->eMousePressedStart == MOUSESTART_SLIDER)
+			if (wdgState.bActive && vgui::input()->IsMouseDown(MOUSE_LEFT) &&
+				pCtx->eMousePressedStart == MOUSESTART_SLIDER)
 			{
 				const int iMouseRelXWidget = pCtx->iMouseAbsX - pCtx->rWidgetArea.x0;
-				const float flPerc = static_cast<float>(iMouseRelXWidget - pCtx->layout.iRowTall) / static_cast<float>(pCtx->irWidgetWide - (2 * pCtx->layout.iRowTall));
-				*iFpsMax = FpsFromSliderPos(FPSSLIDER_MIN + RoundFloatToInt(flPerc * (FPSSLIDER_UNLIMITED_POS - FPSSLIDER_MIN)));
+				const float flPerc = static_cast<float>(iMouseRelXWidget - pCtx->layout.iRowTall) /
+					static_cast<float>(pCtx->irWidgetWide - (2 * pCtx->layout.iRowTall));
+				*iFpsMax = FpsFromSliderPos(
+					FPSSLIDER_MIN + RoundFloatToInt(flPerc * (FPSSLIDER_UNLIMITED_POS - FPSSLIDER_MIN)));
 				pCtx->bValueEdited = true;
 			}
 		}

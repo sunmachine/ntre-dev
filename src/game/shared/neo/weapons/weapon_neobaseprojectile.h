@@ -7,11 +7,13 @@
 class CNEOBaseProjectile : public CNEOBaseCombatWeapon
 {
 	DECLARE_CLASS(CNEOBaseProjectile, CNEOBaseProjectile);
+
 public:
 	virtual bool IsWeaponReloadable(void) const override { return false; }
+
 protected:
-	void GetThrowPos(const Vector& throwFwd, const Vector& pos, Vector& outPos) const;
-	inline void GetThrowPos(const Vector& throwFwd, Vector& posInPlace) const
+	void GetThrowPos(const Vector &throwFwd, const Vector &pos, Vector &outPos) const;
+	inline void GetThrowPos(const Vector &throwFwd, Vector &posInPlace) const
 	{
 		GetThrowPos(throwFwd, posInPlace, posInPlace);
 	}

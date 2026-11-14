@@ -25,4 +25,3 @@ typedef int NextRoundPlayerRestoreFlags;
 // and in memory (for sv_neo_restore_round_snapshot)
 void MatchSessionBackup();
 void ClearSnapshots();
-

@@ -4,8 +4,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-CNEO_TE_TocFlash::CNEO_TE_TocFlash(const char *name) :
-	CBaseTempEntity(name)
+CNEO_TE_TocFlash::CNEO_TE_TocFlash(const char *name) : CBaseTempEntity(name)
 {
 	m_vecOrigin.Init();
 	r = 0;
@@ -17,9 +16,7 @@ CNEO_TE_TocFlash::CNEO_TE_TocFlash(const char *name) :
 	m_fDecay = 0.0;
 }
 
-CNEO_TE_TocFlash::~CNEO_TE_TocFlash()
-{
-}
+CNEO_TE_TocFlash::~CNEO_TE_TocFlash() {}
 
 void CNEO_TE_TocFlash::Test(const Vector &origin, const QAngle &angles)
 {
@@ -47,6 +44,7 @@ void CNEO_TE_TocFlash::Test(const Vector &origin, const QAngle &angles)
 	Create(filter, 0.0);
 }
 
+// clang-format off
 IMPLEMENT_SERVERCLASS_ST(CNEO_TE_TocFlash, DT_NEO_TE_TocFlash)
 	SendPropVector(SENDINFO(m_vecOrigin), -1, SPROP_COORD),
 	SendPropInt(SENDINFO(r), 8, SPROP_UNSIGNED),
@@ -57,9 +55,10 @@ IMPLEMENT_SERVERCLASS_ST(CNEO_TE_TocFlash, DT_NEO_TE_TocFlash)
 	SendPropFloat(SENDINFO(m_fTime), 8, SPROP_ROUNDDOWN, 0, 25.6),
 	SendPropFloat(SENDINFO(m_fDecay), 8, SPROP_ROUNDDOWN, 0, 2560.0),
 END_SEND_TABLE()
+// clang-format on
 
-void CNEO_TE_TocFlash(IRecipientFilter &filter, float delay, const Vector* org,
-	int r, int g, int b, int exponent, float radius, float time, float decay)
+void CNEO_TE_TocFlash(IRecipientFilter &filter, float delay, const Vector *org, int r, int g, int b, int exponent,
+	float radius, float time, float decay)
 {
 	// Set up parameters
 	g_NEO_TE_TocFlash.m_vecOrigin = *org;

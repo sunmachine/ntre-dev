@@ -12,7 +12,8 @@
 #include <vgui/ISurface.h>
 #include <vgui_controls/Panel.h>
 
-namespace vgui {
+namespace vgui
+{
 class ImagePanel;
 class ImageList;
 }
@@ -30,7 +31,7 @@ public:
 
 	virtual void ApplySchemeSettings(vgui::IScheme *pScheme);
 	virtual void Paint();
-	
+
 	void UpdateAvatarSize();
 	void UpdateStarSize();
 	// sunk cost fallacy and all that, in hindsight I should have made all of this only work with two teams and split players into separate resizeable cutlvectors by team instead of doing this minus index stuff.
@@ -45,7 +46,7 @@ public:
 protected:
 	virtual void UpdateStateForNeoHudElementDraw();
 	virtual void DrawNeoHudElement();
-	virtual ConVar* GetUpdateFrequencyConVar() const;
+	virtual ConVar *GetUpdateFrequencyConVar() const;
 
 private:
 	struct TeamLogoColor
@@ -59,9 +60,9 @@ private:
 	void DrawPlayerList();
 	void DrawPlayerList_BotCmdr();
 	int DrawPlayerRow(int playerIndex, int yOffset, bool small = false);
-	int DrawPlayerRow_BotCmdr(int playerIndex, int yOffset, bool small = false, const Color* highlightColor = nullptr);
-	void DrawPlayer(int playerIndex, int teamIndex, const TeamLogoColor &teamLogoColor,
-					const int xOffset, const bool drawHealthClass, const bool isSelected = false);
+	int DrawPlayerRow_BotCmdr(int playerIndex, int yOffset, bool small = false, const Color *highlightColor = nullptr);
+	void DrawPlayer(int playerIndex, int teamIndex, const TeamLogoColor &teamLogoColor, const int xOffset,
+		const bool drawHealthClass, const bool isSelected = false);
 
 	virtual void LevelShutdown(void) override;
 
@@ -128,9 +129,9 @@ private:
 	};
 	CUtlVector<playerIndexAndTheirValue> m_nPlayerList;
 
-	// Used to index the list above. Index of 0 is invalid. Positive values correspond to team NSF, with index 1 being the first member of NSF. 
+	// Used to index the list above. Index of 0 is invalid. Positive values correspond to team NSF, with index 1 being the first member of NSF.
 	// Negative values correspond to team Jinrai, with index -1 being the first member of Jinrai (Team Jinrai is drawn right to left, while moving left to right starting at index 0 in m_nPlayerList)
-	int m_iSelectedPlayer = 0;		
+	int m_iSelectedPlayer = 0;
 	float m_flSelectedPlayerChangeTime = -1;
 
 	CPanelAnimationVar(Color, box_color, "box_color", "200 200 200 40");
@@ -145,7 +146,7 @@ private:
 };
 
 extern CNEOHud_RoundState *g_pNeoHudRoundState;
-inline CNEOHud_RoundState* NeoHudRoundState()
+inline CNEOHud_RoundState *NeoHudRoundState()
 {
 	return g_pNeoHudRoundState;
 }

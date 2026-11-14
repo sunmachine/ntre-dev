@@ -24,11 +24,11 @@ VideoPanel::VideoPanel( unsigned int nXPos, unsigned int nYPos, unsigned int nHe
 	m_nPlaybackHeight( 0 ),
 	m_bAllowAlternateMedia( allowAlternateMedia )
 {
-#ifdef SDK2013CE
-	vgui::VPANEL pParent = enginevgui->GetPanel( PANEL_ROOT );
-#else
+#ifdef SDK2013CE // NEO
+	vgui::VPANEL pParent = enginevgui->GetPanel( PANEL_ROOT ); // NEO
+#else // NEO
 	vgui::VPANEL pParent = enginevgui->GetPanel( PANEL_GAMEUIDLL );
-#endif
+#endif // NEO
 	SetParent( pParent );
 	SetVisible( false );
 	
@@ -217,7 +217,7 @@ void VideoPanel::OnClose( void )
 		vgui::input()->ReleaseAppModalSurface();
 	}
 
-	vgui::surface()->RestrictPaintToSinglePanel( 0 );
+	vgui::surface()->RestrictPaintToSinglePanel( 0 ); // NEO
 
 	// Fire an exit command if we're asked to do so
 	if ( m_szExitCommand[0] )

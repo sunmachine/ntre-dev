@@ -114,13 +114,13 @@ Returns the descriptive name of this .dll.  E.g., Half-Life, or Team Fortress 2
 const char *GetGameDescription()
 {
 	if ( g_pGameRules ) // this function may be called before the world has spawned, and the game rules initialized
-	{
+	{ // NEO
 		return g_pGameRules->GetGameDescription();
-	}
+	} // NEO
 	else
-	{
+	{ // NEO
 		return "Half-Life 2 Deathmatch";
-	}
+	} // NEO
 }
 
 //-----------------------------------------------------------------------------

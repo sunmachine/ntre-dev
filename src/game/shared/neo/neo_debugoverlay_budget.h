@@ -18,4 +18,4 @@ class IVDebugOverlay;
 // Wrap the engine's debug overlay interface and return the pointer game code
 // should use. A NULL input (a dedicated server has no debug overlay) returns
 // NULL, so existing "if ( debugoverlay )" checks keep working.
-IVDebugOverlay *NEO_InstallDebugOverlayBudget( IVDebugOverlay *pReal );
+IVDebugOverlay *NEO_InstallDebugOverlayBudget(IVDebugOverlay *pReal);

@@ -12,43 +12,43 @@
 static constexpr float CTG_ENEMY_CHASE_REPLAN_SECONDS = 20.0f;
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotCtgEnemyChase::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotCtgEnemyChase::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
-	m_chasePath.SetMinLookAheadDistance( me->GetDesiredPathLookAheadRange() );
-	m_routeTypeTimer.Start( CTG_ENEMY_CHASE_REPLAN_SECONDS );
+	m_chasePath.SetMinLookAheadDistance(me->GetDesiredPathLookAheadRange());
+	m_routeTypeTimer.Start(CTG_ENEMY_CHASE_REPLAN_SECONDS);
 
 	return Continue();
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotCtgEnemyChase::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotCtgEnemyChase::Update(CNEOBot *me, float interval)
 {
-	CNEO_Player *pGhostCarrier = CNEOBotCtgEnemy::EnemyGhostCarrier( me );
-	if ( !pGhostCarrier )
+	CNEO_Player *pGhostCarrier = CNEOBotCtgEnemy::EnemyGhostCarrier(me);
+	if (!pGhostCarrier)
 	{
-		return Done( "No enemy ghost carrier" );
+		return Done("No enemy ghost carrier");
 	}
 
 	// We are ahead of the carrier exactly when a cut-off still exists
-	if ( m_routeTypeTimer.IsElapsed() )
+	if (m_routeTypeTimer.IsElapsed())
 	{
-		m_routeTypeTimer.Start( CTG_ENEMY_CHASE_REPLAN_SECONDS );
-		m_routeType = CNEOBotCtgEnemy::FindCutOff( me, pGhostCarrier ) ? DEFAULT_ROUTE : FASTEST_ROUTE;
+		m_routeTypeTimer.Start(CTG_ENEMY_CHASE_REPLAN_SECONDS);
+		m_routeType = CNEOBotCtgEnemy::FindCutOff(me, pGhostCarrier) ? DEFAULT_ROUTE : FASTEST_ROUTE;
 	}
 
-	const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat( true );
-	if ( threat && !threat->IsObsolete() && me->GetIntentionInterface()->ShouldAttack( me, threat ) )
+	const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat(true);
+	if (threat && !threat->IsObsolete() && me->GetIntentionInterface()->ShouldAttack(me, threat))
 	{
-		return SuspendFor( new CNEOBotAttack( pGhostCarrier->GetAbsOrigin() ), "Attacking ghoster team" );
+		return SuspendFor(new CNEOBotAttack(pGhostCarrier->GetAbsOrigin()), "Attacking ghoster team");
 	}
 
-	CNEOBotPathUpdateChase( me, m_chasePath, pGhostCarrier, m_routeType );
+	CNEOBotPathUpdateChase(me, m_chasePath, pGhostCarrier, m_routeType);
 
 	return Continue();
 }
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot > CNEOBotCtgEnemyChase::OnResume( CNEOBot *me, Action< CNEOBot > *interruptingAction )
+ActionResult<CNEOBot> CNEOBotCtgEnemyChase::OnResume(CNEOBot *me, Action<CNEOBot> *interruptingAction)
 {
 	m_chasePath.Invalidate();
 
@@ -56,7 +56,7 @@ ActionResult< CNEOBot > CNEOBotCtgEnemyChase::OnResume( CNEOBot *me, Action< CNE
 }
 
 //---------------------------------------------------------------------------------------------
-QueryResultType CNEOBotCtgEnemyChase::ShouldHurry( const INextBot *me ) const
+QueryResultType CNEOBotCtgEnemyChase::ShouldHurry(const INextBot *me) const
 {
-	return CNEOBotCtgEnemy::CarrierUrgency( static_cast< const CNEOBot * >( me ) );
+	return CNEOBotCtgEnemy::CarrierUrgency(static_cast<const CNEOBot *>(me));
 }

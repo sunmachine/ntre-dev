@@ -129,7 +129,8 @@ void TestDeserial_V4_ALPHA_V22()
 {
 	// v4 - Separate colors for dots and outlines
 	static const char SERIAL_TEST_STR[] = "4;2;-1;0;3;0.000;2;4;1;6;1;5;7;1;1;-16776961;-16711936;-65536;";
-	static const char SERIAL_TEST_LATEST_STR[] = CURRENT_VER ",0,0,2,2,-1,0,3,2,4,1,6,5,7,1,-16776961,-16711936,-65536,";
+	static const char SERIAL_TEST_LATEST_STR[] =
+		CURRENT_VER ",0,0,2,2,-1,0,3,2,4,1,6,5,7,1,-16776961,-16711936,-65536,";
 
 	CrosshairInfo xhairInfo = {};
 	const bool bValid = ImportCrosshair(&xhairInfo, SERIAL_TEST_STR, nullptr);
@@ -178,7 +179,8 @@ void TestDeserial_V5_ALPHA_V28()
 {
 	// v5 - Omits unused segments
 	static const char SERIAL_TEST_STR[] = "5;2;-1;0;3;2;4;1;6;1;5;7;1;1;-16776961;-16711936;-65536;";
-	static const char SERIAL_TEST_LATEST_STR[] = CURRENT_VER ",0,0,2,2,-1,0,3,2,4,1,6,5,7,1,-16776961,-16711936,-65536,";
+	static const char SERIAL_TEST_LATEST_STR[] =
+		CURRENT_VER ",0,0,2,2,-1,0,3,2,4,1,6,5,7,1,-16776961,-16711936,-65536,";
 
 	CrosshairInfo xhairDef = {};
 	ResetCrosshairToDefault(&xhairDef);
@@ -235,7 +237,8 @@ void TestDeserial_V6_ALPHA_V29()
 	// Further compact cross-segments by default's values
 	// Run-length encoding/decoding on empty segments
 	static const char SERIAL_TEST_STR[] = "6;0;0;2;2;-1;0;3;2;4;1;6;5;7;1;-16776961;-16711936;-65536;";
-	static const char SERIAL_TEST_LATEST_STR[] = CURRENT_VER ",0,0,2,2,-1,0,3,2,4,1,6,5,7,1,-16776961,-16711936,-65536,";
+	static const char SERIAL_TEST_LATEST_STR[] =
+		CURRENT_VER ",0,0,2,2,-1,0,3,2,4,1,6,5,7,1,-16776961,-16711936,-65536,";
 
 	CrosshairInfo xhairDef = {};
 	ResetCrosshairToDefault(&xhairDef);
@@ -290,11 +293,12 @@ void TestDeserial_V7_ALPHA_V35()
 {
 	// V7 - Changes segment-end token from ';' to ','
 	static const char SERIAL_TEST_STR[] = "7,0,0,2,2,-1,0,3,2,4,1,6,5,7,1,-16776961,-16711936,-65536,";
-	static const char SERIAL_TEST_LATEST_STR[] = CURRENT_VER ",0,0,2,2,-1,0,3,2,4,1,6,5,7,1,-16776961,-16711936,-65536,";
+	static const char SERIAL_TEST_LATEST_STR[] =
+		CURRENT_VER ",0,0,2,2,-1,0,3,2,4,1,6,5,7,1,-16776961,-16711936,-65536,";
 
 	CrosshairInfo xhairDef = {};
 	ResetCrosshairToDefault(&xhairDef);
-	const CrosshairWepInfo* defChr = &xhairDef.wep[CROSSHAIR_WEP_DEFAULT];
+	const CrosshairWepInfo *defChr = &xhairDef.wep[CROSSHAIR_WEP_DEFAULT];
 
 	CrosshairInfo xhairInfo = {};
 	const bool bValid = ImportCrosshair(&xhairInfo, SERIAL_TEST_STR, nullptr);
@@ -302,7 +306,7 @@ void TestDeserial_V7_ALPHA_V35()
 	TEST_COMPARE_INT(xhairInfo.wepFlags, CROSSHAIR_WEP_FLAG_DEFAULT);
 	TEST_COMPARE_INT(xhairInfo.hipfireFlags, CROSSHAIR_HIPFIRECUSTOM_FLAG_NIL);
 
-	const CrosshairWepInfo* chr = &xhairInfo.wep[CROSSHAIR_WEP_DEFAULT];
+	const CrosshairWepInfo *chr = &xhairInfo.wep[CROSSHAIR_WEP_DEFAULT];
 
 	// Test values that's from the string itself
 	TEST_COMPARE_INT(chr->iStyle, CROSSHAIR_STYLE_CUSTOM);
@@ -343,12 +347,13 @@ void TestDeserial_V7_ALPHA_V35()
 
 void TestSerial_LongestLength()
 {
-	static const char SERIAL_TEST_STR[] = CURRENT_VER ",63,15,3,2,-1,1,0.999,10,10,5,10,10,10,1,-1,-1,-1,2,,-16777217,0,11,11,11,4,11,11,11,2,-16777217,-16777217,-16777217,2,,-16777217,0,11,11,11,4,11,11,11,2,-16777217,-16777217,-16777217,2,,-16777217,0,11,11,11,4,11,11,11,2,-16777217,-16777217,-16777217,3,,-33554433,1,0.997,12,12,3,12,12,12,3,-33554433,-33554433,-33554433,3,,-33554433,1,0.997,12,12,3,12,12,12,3,-33554433,-33554433,-33554433,3,,-33554433,1,0.997,12,12,3,12,12,12,3,-33554433,-33554433,-33554433,";
+	static const char SERIAL_TEST_STR[] = CURRENT_VER
+		",63,15,3,2,-1,1,0.999,10,10,5,10,10,10,1,-1,-1,-1,2,,-16777217,0,11,11,11,4,11,11,11,2,-16777217,-16777217,-16777217,2,,-16777217,0,11,11,11,4,11,11,11,2,-16777217,-16777217,-16777217,2,,-16777217,0,11,11,11,4,11,11,11,2,-16777217,-16777217,-16777217,3,,-33554433,1,0.997,12,12,3,12,12,12,3,-33554433,-33554433,-33554433,3,,-33554433,1,0.997,12,12,3,12,12,12,3,-33554433,-33554433,-33554433,3,,-33554433,1,0.997,12,12,3,12,12,12,3,-33554433,-33554433,-33554433,";
 
 	CrosshairInfo xhairInfo = {};
 	xhairInfo.wepFlags = CROSSHAIR_WEP_FLAG_SECONDARY | CROSSHAIR_WEP_FLAG_SHOTGUN |
-		CROSSHAIR_WEP_FLAG_DEFAULT_HIPFIRE | CROSSHAIR_WEP_FLAG_SECONDARY_HIPFIRE |
-		CROSSHAIR_WEP_FLAG_SHOTGUN_HIPFIRE | CROSSHAIR_WEP_FLAG_THROWABLE_HIPFIRE;
+		CROSSHAIR_WEP_FLAG_DEFAULT_HIPFIRE | CROSSHAIR_WEP_FLAG_SECONDARY_HIPFIRE | CROSSHAIR_WEP_FLAG_SHOTGUN_HIPFIRE |
+		CROSSHAIR_WEP_FLAG_THROWABLE_HIPFIRE;
 	xhairInfo.hipfireFlags = CROSSHAIR_HIPFIRECUSTOM_FLAG_DEFAULT | CROSSHAIR_HIPFIRECUSTOM_FLAG_SECONDARY |
 		CROSSHAIR_HIPFIRECUSTOM_FLAG_SHOTGUN | CROSSHAIR_HIPFIRECUSTOM_FLAG_THROWABLE;
 
@@ -450,7 +455,8 @@ void TestFailure_OutOfBoundStr_Under()
 void TestFailure_OutOfBoundStr_Over()
 {
 	CrosshairInfo xhairInfo = {};
-	TEST_COMPARE_INT(true, ImportCrosshair(&xhairInfo, CURRENT_VER ",0,0,2,2,-1,0,3,2,4,1,6,5,7,1,-16776961,-16711936,-65536,12,24,48,"));
+	TEST_COMPARE_INT(true,
+		ImportCrosshair(&xhairInfo, CURRENT_VER ",0,0,2,2,-1,0,3,2,4,1,6,5,7,1,-16776961,-16711936,-65536,12,24,48,"));
 	TEST_COMPARE_INT(xhairInfo.wepFlags, CROSSHAIR_WEP_FLAG_DEFAULT);
 	TEST_COMPARE_INT(xhairInfo.hipfireFlags, CROSSHAIR_HIPFIRECUSTOM_FLAG_NIL);
 
@@ -475,8 +481,10 @@ void TestFailure_OutOfBoundStr_Over()
 
 void TestFailure_OutOfBoundValues()
 {
-	static const char SERIAL_TEST_STR_OUTBOUND[] = CURRENT_VER ",0,0,2,99,-1,-2,101,123,-111,1000,999,121212,123,80,-16776961,-16711936,-65536,";
-	static const char SERIAL_TEST_STR_FIXED[] = CURRENT_VER ",0,0,2,2,-1,0,100,25,0,5,25,50,50,3,-16776961,-16711936,-65536,";
+	static const char SERIAL_TEST_STR_OUTBOUND[] =
+		CURRENT_VER ",0,0,2,99,-1,-2,101,123,-111,1000,999,121212,123,80,-16776961,-16711936,-65536,";
+	static const char SERIAL_TEST_STR_FIXED[] =
+		CURRENT_VER ",0,0,2,2,-1,0,100,25,0,5,25,50,50,3,-16776961,-16711936,-65536,";
 
 	CrosshairInfo xhairDef = {};
 	ResetCrosshairToDefault(&xhairDef);
@@ -492,17 +500,17 @@ void TestFailure_OutOfBoundValues()
 
 	// Test values that's from the string itself
 	TEST_COMPARE_INT(chr->iStyle, CROSSHAIR_STYLE_CUSTOM); // 99 -> 2
-	TEST_COMPARE_INT(chr->color.GetRawColor(), -1); 
+	TEST_COMPARE_INT(chr->color.GetRawColor(), -1);
 	TEST_COMPARE_INT(chr->flags, CROSSHAIR_FLAG_SEPERATEDOTCOLOR);
-	TEST_COMPARE_INT(chr->eSizeType, CROSSHAIR_SIZETYPE_ABSOLUTE); // -2 -> 0
-	TEST_COMPARE_INT(chr->iSize, CROSSHAIR_MAX_SIZE); // 101 -> 100
-	TEST_COMPARE_INT(chr->iThick, CROSSHAIR_MAX_THICKNESS); // 123 -> 25
-	TEST_COMPARE_INT(chr->iGap, 0); // -111 -> 0
-	TEST_COMPARE_INT(chr->iOutline, CROSSHAIR_MAX_OUTLINE); // 1000 -> 5
-	TEST_COMPARE_INT(chr->iCenterDot, CROSSHAIR_MAX_CENTER_DOT); // 999 -> 25
-	TEST_COMPARE_INT(chr->iCircleRad, CROSSHAIR_MAX_CIRCLE_RAD); // 121212 -> 50
+	TEST_COMPARE_INT(chr->eSizeType, CROSSHAIR_SIZETYPE_ABSOLUTE);         // -2 -> 0
+	TEST_COMPARE_INT(chr->iSize, CROSSHAIR_MAX_SIZE);                      // 101 -> 100
+	TEST_COMPARE_INT(chr->iThick, CROSSHAIR_MAX_THICKNESS);                // 123 -> 25
+	TEST_COMPARE_INT(chr->iGap, 0);                                        // -111 -> 0
+	TEST_COMPARE_INT(chr->iOutline, CROSSHAIR_MAX_OUTLINE);                // 1000 -> 5
+	TEST_COMPARE_INT(chr->iCenterDot, CROSSHAIR_MAX_CENTER_DOT);           // 999 -> 25
+	TEST_COMPARE_INT(chr->iCircleRad, CROSSHAIR_MAX_CIRCLE_RAD);           // 121212 -> 50
 	TEST_COMPARE_INT(chr->iCircleSegments, CROSSHAIR_MAX_CIRCLE_SEGMENTS); // 123 -> 50
-	TEST_COMPARE_INT(chr->eDynamicType, CROSSHAIR_DYNAMICTYPE_SIZE); // 80 -> 3
+	TEST_COMPARE_INT(chr->eDynamicType, CROSSHAIR_DYNAMICTYPE_SIZE);       // 80 -> 3
 	TEST_COMPARE_INT(chr->colorDot.GetRawColor(), Color(255, 0, 0, 255).GetRawColor());
 	TEST_COMPARE_INT(chr->colorDotOutline.GetRawColor(), Color(0, 255, 0, 255).GetRawColor());
 	TEST_COMPARE_INT(chr->colorOutline.GetRawColor(), Color(0, 0, 255, 255).GetRawColor());
@@ -948,7 +956,8 @@ void TestFeature_Flags_OldBool_SepDotColor()
 	// Convert v4 (non-compressed, 2 bools) to v6 and v7+ (flagged)
 	static const char SERIAL_TEST_STR[] = "4;2;-1;0;3;0.000;2;4;1;6;1;5;7;1;1;-16776961;-16711936;-65536;";
 	static const char SERIAL_TEST_V6_STR[] = "6;0;0;2;2;-1;0;3;2;4;1;6;5;7;1;-16776961;-16711936;-65536;";
-	static const char SERIAL_TEST_LATEST_STR[] = CURRENT_VER ",0,0,2,2,-1,0,3,2,4,1,6,5,7,1,-16776961,-16711936,-65536,";
+	static const char SERIAL_TEST_LATEST_STR[] =
+		CURRENT_VER ",0,0,2,2,-1,0,3,2,4,1,6,5,7,1,-16776961,-16711936,-65536,";
 
 	CrosshairInfo xhairInfo = {};
 	const bool bValid = ImportCrosshair(&xhairInfo, SERIAL_TEST_STR, 0);
@@ -986,8 +995,10 @@ void TestFeature_Flags_OldBool_ToplineOff_SepDotColor()
 {
 	// Convert v4 (non-compressed, 2 bools) to v6 and v7+ (flagged)
 	static const char SERIAL_TEST_STR[] = "4;2;-1;0;3;0.000;2;4;1;6;0;5;7;1;1;-16776961;-16711936;-65536;";
-	static const char SERIAL_TEST_V6_STR[] = "6" ";0;0;3;2;-1;0;3;2;4;1;6;5;7;1;-16776961;-16711936;-65536;";
-	static const char SERIAL_TEST_LATEST_STR[] = CURRENT_VER ",0,0,3,2,-1,0,3,2,4,1,6,5,7,1,-16776961,-16711936,-65536,";
+	static const char SERIAL_TEST_V6_STR[] = "6"
+											 ";0;0;3;2;-1;0;3;2;4;1;6;5;7;1;-16776961;-16711936;-65536;";
+	static const char SERIAL_TEST_LATEST_STR[] =
+		CURRENT_VER ",0,0,3,2,-1,0,3,2,4,1,6,5,7,1,-16776961,-16711936,-65536,";
 
 	CrosshairInfo xhairInfo = {};
 	const bool bValid = ImportCrosshair(&xhairInfo, SERIAL_TEST_STR, nullptr);
@@ -1072,10 +1083,10 @@ void TestFeature_RunLengthEncode_Full()
 	CrosshairInfo xhairInfo = {};
 	ResetCrosshairToDefault(&xhairInfo);
 	xhairInfo.wepFlags = CROSSHAIR_WEP_FLAG_SECONDARY | CROSSHAIR_WEP_FLAG_SHOTGUN |
-		CROSSHAIR_WEP_FLAG_DEFAULT_HIPFIRE | CROSSHAIR_WEP_FLAG_SECONDARY_HIPFIRE |
-		CROSSHAIR_WEP_FLAG_SHOTGUN_HIPFIRE | CROSSHAIR_WEP_FLAG_THROWABLE_HIPFIRE;
-	xhairInfo.hipfireFlags = CROSSHAIR_HIPFIRECUSTOM_FLAG_DEFAULT | CROSSHAIR_HIPFIRECUSTOM_FLAG_SECONDARY
-		| CROSSHAIR_HIPFIRECUSTOM_FLAG_SHOTGUN | CROSSHAIR_HIPFIRECUSTOM_FLAG_THROWABLE;
+		CROSSHAIR_WEP_FLAG_DEFAULT_HIPFIRE | CROSSHAIR_WEP_FLAG_SECONDARY_HIPFIRE | CROSSHAIR_WEP_FLAG_SHOTGUN_HIPFIRE |
+		CROSSHAIR_WEP_FLAG_THROWABLE_HIPFIRE;
+	xhairInfo.hipfireFlags = CROSSHAIR_HIPFIRECUSTOM_FLAG_DEFAULT | CROSSHAIR_HIPFIRECUSTOM_FLAG_SECONDARY |
+		CROSSHAIR_HIPFIRECUSTOM_FLAG_SHOTGUN | CROSSHAIR_HIPFIRECUSTOM_FLAG_THROWABLE;
 
 	for (int i = 0; i < CROSSHAIR_WEP__TOTAL; ++i)
 	{
@@ -1130,13 +1141,14 @@ void TestFeature_RunLengthEncode_Full()
 
 void TestFeature_RunLengthEncode_Partial()
 {
-	static const char SERIAL_TEST_STR[] = CURRENT_VER ",63,15,2,2,-1,1,0.999,10,10,5,10,10,10,1,-1,-1,-1,,,-16777217,0,10,,11,7^-16777217,,,-16777217,0,10,,11,7^-16777217,,,-16777217,0,10,,11,7^-16777217,,,-33554433,,12,,10,,12,,,3,-16777217,,-1,,,-33554433,,12,,10,,12,,,3,-16777217,,-1,,,-33554433,,12,,10,,12,,,3,-16777217,,-1,";
+	static const char SERIAL_TEST_STR[] = CURRENT_VER
+		",63,15,2,2,-1,1,0.999,10,10,5,10,10,10,1,-1,-1,-1,,,-16777217,0,10,,11,7^-16777217,,,-16777217,0,10,,11,7^-16777217,,,-16777217,0,10,,11,7^-16777217,,,-33554433,,12,,10,,12,,,3,-16777217,,-1,,,-33554433,,12,,10,,12,,,3,-16777217,,-1,,,-33554433,,12,,10,,12,,,3,-16777217,,-1,";
 
 	CrosshairInfo xhairInfo = {};
 	ResetCrosshairToDefault(&xhairInfo);
 	xhairInfo.wepFlags = CROSSHAIR_WEP_FLAG_SECONDARY | CROSSHAIR_WEP_FLAG_SHOTGUN |
-		CROSSHAIR_WEP_FLAG_DEFAULT_HIPFIRE | CROSSHAIR_WEP_FLAG_SECONDARY_HIPFIRE |
-		CROSSHAIR_WEP_FLAG_SHOTGUN_HIPFIRE | CROSSHAIR_WEP_FLAG_THROWABLE_HIPFIRE;
+		CROSSHAIR_WEP_FLAG_DEFAULT_HIPFIRE | CROSSHAIR_WEP_FLAG_SECONDARY_HIPFIRE | CROSSHAIR_WEP_FLAG_SHOTGUN_HIPFIRE |
+		CROSSHAIR_WEP_FLAG_THROWABLE_HIPFIRE;
 	xhairInfo.hipfireFlags = CROSSHAIR_HIPFIRECUSTOM_FLAG_DEFAULT | CROSSHAIR_HIPFIRECUSTOM_FLAG_SECONDARY |
 		CROSSHAIR_HIPFIRECUSTOM_FLAG_SHOTGUN | CROSSHAIR_HIPFIRECUSTOM_FLAG_THROWABLE;
 
@@ -1269,9 +1281,8 @@ enum TestFeature_WepFlags_Hipfire_data_e
 	WEPFLAG_HIPFIRE_DATA__TOTAL = 64 * 2,
 };
 
-void TestFeature_WepFlags_Hipfire_data(
-		TestFeature_WepFlags_Hipfire_data_s (&datas)[WEPFLAG_HIPFIRE_DATA__TOTAL],
-		char (&szNames)[WEPFLAG_HIPFIRE_DATA__TOTAL][DATA_XTRA_NAME_SIZE])
+void TestFeature_WepFlags_Hipfire_data(TestFeature_WepFlags_Hipfire_data_s (&datas)[WEPFLAG_HIPFIRE_DATA__TOTAL],
+	char (&szNames)[WEPFLAG_HIPFIRE_DATA__TOTAL][DATA_XTRA_NAME_SIZE])
 {
 	for (int iFlags = 0; iFlags < 64; ++iFlags)
 	{
@@ -1507,39 +1518,38 @@ void TestFeature_WepFlags_Hipfire(TestFeature_WepFlags_Hipfire_data_s *data, [[m
 }
 
 TEST_INIT()
-	TEST_RUN(TestDeserial_V1_PREALPHA_V8_2);
-	TEST_RUN(TestDeserial_V2_ALPHA_V17);
-	TEST_RUN(TestDeserial_V3_ALPHA_V19);
-	TEST_RUN(TestDeserial_V4_ALPHA_V22);
-	TEST_RUN(TestDeserial_V5_ALPHA_V28);
-	TEST_RUN(TestDeserial_V6_ALPHA_V29);
-	TEST_RUN(TestDeserial_V7_ALPHA_V35);
-	TEST_RUN(TestSerial_LongestLength);
-	TEST_RUN(TestFailure_Invalid_SerialValues);
-	TEST_RUN(TestFailure_OutOfBoundStr_Under);
-	TEST_RUN(TestFailure_OutOfBoundStr_Over);
-	TEST_RUN(TestFailure_OutOfBoundValues);
-	TEST_RUN(TestFeature_Omit_Style_Default);
-	TEST_RUN(TestFeature_Omit_Style_AltB);
-	TEST_RUN(TestFeature_Omit_SizeType_Absolute);
-	TEST_RUN(TestFeature_Omit_SizeType_Screen);
-	TEST_RUN(TestFeature_Omit_CircleRad_Empty);
-	TEST_RUN(TestFeature_Omit_CircleRad_Used);
-	TEST_RUN(TestFeature_Omit_Outline_Empty);
-	TEST_RUN(TestFeature_Omit_Outline_Used);
-	TEST_RUN(TestFeature_Omit_CenterDot_Empty);
-	TEST_RUN(TestFeature_Omit_CenterDot_SepDotColor_Not);
-	TEST_RUN(TestFeature_Omit_CenterDot_SepDotColor_NoOutline);
-	TEST_RUN(TestFeature_Omit_CenterDot_SepDotColor_WithOutline);
-	TEST_RUN(TestFeature_Flags_OldBool_None);
-	TEST_RUN(TestFeature_Flags_OldBool_ToplineOff);
-	TEST_RUN(TestFeature_Flags_OldBool_SepDotColor);
-	TEST_RUN(TestFeature_Flags_OldBool_ToplineOff_SepDotColor);
-	TEST_RUN(TestFeature_Flags_Topline_Off);
-	TEST_RUN(TestFeature_Flags_Topline_Off_SepDotColor);
-	TEST_RUN(TestFeature_RunLengthEncode_Full);
-	TEST_RUN(TestFeature_RunLengthEncode_Partial);
-	TEST_RUN(TestFeature_Equality_UpgradeRoundTrip);
-	TEST_RUN_MULTI(TestFeature_WepFlags_Hipfire, WEPFLAG_HIPFIRE_DATA__TOTAL);
+TEST_RUN(TestDeserial_V1_PREALPHA_V8_2);
+TEST_RUN(TestDeserial_V2_ALPHA_V17);
+TEST_RUN(TestDeserial_V3_ALPHA_V19);
+TEST_RUN(TestDeserial_V4_ALPHA_V22);
+TEST_RUN(TestDeserial_V5_ALPHA_V28);
+TEST_RUN(TestDeserial_V6_ALPHA_V29);
+TEST_RUN(TestDeserial_V7_ALPHA_V35);
+TEST_RUN(TestSerial_LongestLength);
+TEST_RUN(TestFailure_Invalid_SerialValues);
+TEST_RUN(TestFailure_OutOfBoundStr_Under);
+TEST_RUN(TestFailure_OutOfBoundStr_Over);
+TEST_RUN(TestFailure_OutOfBoundValues);
+TEST_RUN(TestFeature_Omit_Style_Default);
+TEST_RUN(TestFeature_Omit_Style_AltB);
+TEST_RUN(TestFeature_Omit_SizeType_Absolute);
+TEST_RUN(TestFeature_Omit_SizeType_Screen);
+TEST_RUN(TestFeature_Omit_CircleRad_Empty);
+TEST_RUN(TestFeature_Omit_CircleRad_Used);
+TEST_RUN(TestFeature_Omit_Outline_Empty);
+TEST_RUN(TestFeature_Omit_Outline_Used);
+TEST_RUN(TestFeature_Omit_CenterDot_Empty);
+TEST_RUN(TestFeature_Omit_CenterDot_SepDotColor_Not);
+TEST_RUN(TestFeature_Omit_CenterDot_SepDotColor_NoOutline);
+TEST_RUN(TestFeature_Omit_CenterDot_SepDotColor_WithOutline);
+TEST_RUN(TestFeature_Flags_OldBool_None);
+TEST_RUN(TestFeature_Flags_OldBool_ToplineOff);
+TEST_RUN(TestFeature_Flags_OldBool_SepDotColor);
+TEST_RUN(TestFeature_Flags_OldBool_ToplineOff_SepDotColor);
+TEST_RUN(TestFeature_Flags_Topline_Off);
+TEST_RUN(TestFeature_Flags_Topline_Off_SepDotColor);
+TEST_RUN(TestFeature_RunLengthEncode_Full);
+TEST_RUN(TestFeature_RunLengthEncode_Partial);
+TEST_RUN(TestFeature_Equality_UpgradeRoundTrip);
+TEST_RUN_MULTI(TestFeature_WepFlags_Hipfire, WEPFLAG_HIPFIRE_DATA__TOTAL);
 TEST_END()
-

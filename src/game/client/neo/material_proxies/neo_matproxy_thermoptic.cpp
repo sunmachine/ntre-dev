@@ -22,9 +22,7 @@ CNEOTocMaterialProxy::CNEOTocMaterialProxy()
 	m_pResultVar = NULL;
 }
 
-CNEOTocMaterialProxy::~CNEOTocMaterialProxy()
-{
-}
+CNEOTocMaterialProxy::~CNEOTocMaterialProxy() {}
 
 bool CNEOTocMaterialProxy::Init(IMaterial *pMaterial, KeyValues *pKeyValues)
 {
@@ -56,11 +54,11 @@ void CNEOTocMaterialProxy::OnBind(void *pC_BaseEntity)
 		return;
 	}
 
-	auto renderable = static_cast<IClientRenderable*>(pC_BaseEntity);
+	auto renderable = static_cast<IClientRenderable *>(pC_BaseEntity);
 	Assert(renderable);
 
 	// This entity is a valid C_NEO_Player?
-	auto pNeoPlayer = dynamic_cast<C_NEO_Player*>(renderable);
+	auto pNeoPlayer = dynamic_cast<C_NEO_Player *>(renderable);
 	if (pNeoPlayer)
 	{
 		m_pResultVar->SetFloatValue(pNeoPlayer->GetCloakFactor());
@@ -68,10 +66,10 @@ void CNEOTocMaterialProxy::OnBind(void *pC_BaseEntity)
 	}
 
 	// This entity is a viewmodel?
-	auto pVM = dynamic_cast<C_NEOPredictedViewModel*>(renderable);
+	auto pVM = dynamic_cast<C_NEOPredictedViewModel *>(renderable);
 	if (pVM)
 	{
-		auto pOwner = static_cast<C_NEO_Player*>(pVM->GetOwner());
+		auto pOwner = static_cast<C_NEO_Player *>(pVM->GetOwner());
 		if (pOwner)
 		{
 			m_pResultVar->SetFloatValue(pOwner->GetCloakFactor());
@@ -80,10 +78,10 @@ void CNEOTocMaterialProxy::OnBind(void *pC_BaseEntity)
 	}
 
 	// This entity is a weapon?
-	auto pWep = dynamic_cast<C_BaseHL2MPCombatWeapon*>(renderable);
+	auto pWep = dynamic_cast<C_BaseHL2MPCombatWeapon *>(renderable);
 	if (pWep)
 	{
-		auto pOwner = static_cast<C_NEO_Player*>(pWep->GetOwner());
+		auto pOwner = static_cast<C_NEO_Player *>(pWep->GetOwner());
 		if (pOwner)
 		{
 			m_pResultVar->SetFloatValue(pOwner->GetCloakFactor());

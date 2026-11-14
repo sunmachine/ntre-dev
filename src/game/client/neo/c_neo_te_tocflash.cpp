@@ -9,6 +9,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+// clang-format off
 IMPLEMENT_CLIENTCLASS_EVENT_DT(C_NEO_TE_TocFlash, DT_NEO_TE_TocFlash, CNEO_TE_TocFlash)
 	RecvPropVector(RECVINFO(m_vecOrigin)),
 	RecvPropInt(RECVINFO(r)),
@@ -19,6 +20,7 @@ IMPLEMENT_CLIENTCLASS_EVENT_DT(C_NEO_TE_TocFlash, DT_NEO_TE_TocFlash, CNEO_TE_To
 	RecvPropFloat(RECVINFO(m_fTime)),
 	RecvPropFloat(RECVINFO(m_fDecay)),
 END_RECV_TABLE()
+// clang-format on
 
 C_NEO_TE_TocFlash::C_NEO_TE_TocFlash() : C_BaseTempEntity()
 {
@@ -32,13 +34,10 @@ C_NEO_TE_TocFlash::C_NEO_TE_TocFlash() : C_BaseTempEntity()
 	m_fDecay = 0.0;
 }
 
-C_NEO_TE_TocFlash::~C_NEO_TE_TocFlash()
-{
-}
+C_NEO_TE_TocFlash::~C_NEO_TE_TocFlash() {}
 
-void TE_TocFlash(IRecipientFilter& filter, float delay,
-	const Vector* org, int r, int g, int b, int exponent, float radius,
-	float time, float decay, int nLightIndex)
+void TE_TocFlash(IRecipientFilter &filter, float delay, const Vector *org, int r, int g, int b, int exponent,
+	float radius, float time, float decay, int nLightIndex)
 {
 	dlight_t *dl = effects->CL_AllocDlight(nLightIndex);
 	if (!dl)
@@ -88,7 +87,7 @@ void C_NEO_TE_TocFlash::PostDataUpdate(DataUpdateType_t updateType)
 	TE_TocFlash(filter, 0.0f, &m_vecOrigin, r, g, b, exponent, m_fRadius, m_fTime, m_fDecay, LIGHT_INDEX_TE_DYNAMIC);
 }
 
-void TE_TocFlash(IRecipientFilter& filter, float delay, KeyValues *pKeyValues)
+void TE_TocFlash(IRecipientFilter &filter, float delay, KeyValues *pKeyValues)
 {
 	Vector vecOrigin;
 	vecOrigin.x = pKeyValues->GetFloat("originx");
@@ -101,6 +100,5 @@ void TE_TocFlash(IRecipientFilter& filter, float delay, KeyValues *pKeyValues)
 	float flDecay = pKeyValues->GetFloat("decay");
 	int nLightIndex = pKeyValues->GetInt("lightindex", LIGHT_INDEX_TE_DYNAMIC);
 
-	TE_TocFlash(filter, 0.0f, &vecOrigin, c.r(), c.g(), c.b(), nExponent,
-		flRadius, flDuration, flDecay, nLightIndex);
+	TE_TocFlash(filter, 0.0f, &vecOrigin, c.r(), c.g(), c.b(), nExponent, flRadius, flDuration, flDecay, nLightIndex);
 }

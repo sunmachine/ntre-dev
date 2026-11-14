@@ -52,7 +52,7 @@ int GetWeaponSoundFromString( const char *pszString );
 #define MAX_WEAPON_STRING	80
 #define MAX_WEAPON_PREFIX	16
 #define MAX_WEAPON_AMMO_NAME		32
-#define MAX_BULLET_CHARACTER	2
+#define MAX_BULLET_CHARACTER	2 // NEO
 
 #define WEAPON_PRINTNAME_MISSING "!!! Missing printname on weapon"
 

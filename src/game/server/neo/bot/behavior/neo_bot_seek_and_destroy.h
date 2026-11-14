@@ -5,39 +5,39 @@
 //
 // Roam around the map attacking enemies
 //
-class CNEOBotSeekAndDestroy : public Action< CNEOBot >
+class CNEOBotSeekAndDestroy : public Action<CNEOBot>
 {
 public:
-	CNEOBotSeekAndDestroy( float duration = -1.0f );
+	CNEOBotSeekAndDestroy(float duration = -1.0f);
 
-	virtual ActionResult< CNEOBot >	OnStart( CNEOBot *me, Action< CNEOBot > *priorAction );
-	virtual ActionResult< CNEOBot >	Update( CNEOBot *me, float interval );
+	virtual ActionResult<CNEOBot> OnStart(CNEOBot *me, Action<CNEOBot> *priorAction);
+	virtual ActionResult<CNEOBot> Update(CNEOBot *me, float interval);
 
-	virtual ActionResult< CNEOBot >	OnResume( CNEOBot *me, Action< CNEOBot > *interruptingAction );
+	virtual ActionResult<CNEOBot> OnResume(CNEOBot *me, Action<CNEOBot> *interruptingAction);
 
-	virtual EventDesiredResult< CNEOBot > OnStuck( CNEOBot *me );
-	virtual EventDesiredResult< CNEOBot > OnMoveToSuccess( CNEOBot *me, const Path *path );
-	virtual EventDesiredResult< CNEOBot > OnMoveToFailure( CNEOBot *me, const Path *path, MoveToFailureType reason );
+	virtual EventDesiredResult<CNEOBot> OnStuck(CNEOBot *me);
+	virtual EventDesiredResult<CNEOBot> OnMoveToSuccess(CNEOBot *me, const Path *path);
+	virtual EventDesiredResult<CNEOBot> OnMoveToFailure(CNEOBot *me, const Path *path, MoveToFailureType reason);
 
-	virtual QueryResultType	ShouldRetreat( const INextBot *me ) const;					// is it time to retreat?
-	virtual QueryResultType ShouldHurry( const INextBot *me ) const;					// are we in a hurry?
+	virtual QueryResultType ShouldRetreat(const INextBot *me) const; // is it time to retreat?
+	virtual QueryResultType ShouldHurry(const INextBot *me) const;   // are we in a hurry?
 
-	virtual EventDesiredResult< CNEOBot > OnTerritoryCaptured( CNEOBot *me, int territoryID );
-	virtual EventDesiredResult< CNEOBot > OnTerritoryLost( CNEOBot *me, int territoryID );
-	virtual EventDesiredResult< CNEOBot > OnTerritoryContested( CNEOBot *me, int territoryID );
+	virtual EventDesiredResult<CNEOBot> OnTerritoryCaptured(CNEOBot *me, int territoryID);
+	virtual EventDesiredResult<CNEOBot> OnTerritoryLost(CNEOBot *me, int territoryID);
+	virtual EventDesiredResult<CNEOBot> OnTerritoryContested(CNEOBot *me, int territoryID);
 
-	virtual EventDesiredResult< CNEOBot > OnCommandApproach( CNEOBot *me, const Vector& pos, float range );
+	virtual EventDesiredResult<CNEOBot> OnCommandApproach(CNEOBot *me, const Vector &pos, float range);
 
-	virtual const char *GetName( void ) const	{ return "SeekAndDestroy"; };
+	virtual const char *GetName(void) const { return "SeekAndDestroy"; };
 
 protected:
-	virtual ActionResult< CNEOBot > UpdateCommon( CNEOBot *me, float interval );
+	virtual ActionResult<CNEOBot> UpdateCommon(CNEOBot *me, float interval);
 
-	virtual void RecomputeSeekPath( CNEOBot *me );
+	virtual void RecomputeSeekPath(CNEOBot *me);
 
-	bool TryPathToCombatSound( CNEOBot *me );
-	bool TryPathToRoamGoal( CNEOBot *me, const Vector &vGoal );
-	virtual bool IsSeekGoalAnObjective() const	{ return false; }
+	bool TryPathToCombatSound(CNEOBot *me);
+	bool TryPathToRoamGoal(CNEOBot *me, const Vector &vGoal);
+	virtual bool IsSeekGoalAnObjective() const { return false; }
 
 	PathFollower m_path;
 	CountdownTimer m_repathTimer;

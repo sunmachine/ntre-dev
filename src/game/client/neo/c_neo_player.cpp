@@ -6,7 +6,7 @@
 #include "neo_gamerules.h"
 #include "in_buttons.h"
 #include "c_playerresource.h"
-#include "iviewrender_beams.h"			// flashlight beam
+#include "iviewrender_beams.h" // flashlight beam
 #include "r_efx.h"
 #include "dlight.h"
 
@@ -60,8 +60,8 @@
 #include "c_playerresource.h"
 
 // Don't alias here
-#if defined( CNEO_Player )
-#undef CNEO_Player	
+#if defined(CNEO_Player)
+#undef CNEO_Player
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -69,6 +69,7 @@
 
 LINK_ENTITY_TO_CLASS(player, C_NEO_Player);
 
+// clang-format off
 IMPLEMENT_CLIENTCLASS_DT(C_NEO_Player, DT_NEO_Player, CNEO_Player)
 	RecvPropInt(RECVINFO(m_iNeoClass)),
 	RecvPropInt(RECVINFO(m_iNeoSkin)),
@@ -110,7 +111,9 @@ IMPLEMENT_CLIENTCLASS_DT(C_NEO_Player, DT_NEO_Player, CNEO_Player)
 	RecvPropEHandle(RECVINFO(m_hSpectatorTakeoverPlayerTarget)),
 	RecvPropEHandle(RECVINFO(m_hSpectatorTakeoverPlayerImpersonatingMe))
 END_RECV_TABLE()
+// clang-format on
 
+// clang-format off
 BEGIN_PREDICTION_DATA(C_NEO_Player)
 	DEFINE_PRED_FIELD_TOL(m_flCamoAuxLastTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE, TD_MSECTOLERANCE),
 	
@@ -133,6 +136,7 @@ BEGIN_PREDICTION_DATA(C_NEO_Player)
 	DEFINE_FIELD(m_bFootstepLanding, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_vecFootstepAvgVelocity, FIELD_VECTOR),
 END_PREDICTION_DATA()
+// clang-format on
 
 static void __MsgFunc_IdleRespawnShowMenu(bf_read &)
 {
@@ -157,7 +161,7 @@ static void __MsgFunc_AchievementMark(bf_read &msg)
 }
 USER_MESSAGE_REGISTER(AchievementMark);
 
-void __MsgFunc_AimPunch(bf_read& msg)
+void __MsgFunc_AimPunch(bf_read &msg)
 {
 	float amount = msg.ReadFloat();
 	C_NEO_Player::GetLocalNEOPlayer()->AimPunch(amount);
@@ -165,14 +169,17 @@ void __MsgFunc_AimPunch(bf_read& msg)
 USER_MESSAGE_REGISTER(AimPunch);
 
 ConVar cl_drawhud_quickinfo("cl_drawhud_quickinfo", "0", 0,
-	"Whether to display HL2 style ammo/health info near crosshair.",
-	true, 0.0f, true, 1.0f);
-ConVar cl_neo_streamermode("cl_neo_streamermode", "0", FCVAR_ARCHIVE | FCVAR_USERINFO, "Streamer mode turns player names into generic names and hide avatars.", true, 0.0f, true, 1.0f);
-ConVar cl_neo_streamermode_autodetect_obs("cl_neo_streamermode_autodetect_obs", "0", FCVAR_ARCHIVE, "Automatically turn cl_neo_streamermode on if OBS was detected on startup.", true, 0.0f, true, 1.0f);
-ConVar cl_neo_equip_utility_priority("cl_neo_equip_utility_priority", "1", FCVAR_ARCHIVE, "Utility slot equip priority. 0 = Frag,Smoke,Detpack, 1 = Class Specific First.", true, 0.0f, true, 1.0f);
+	"Whether to display HL2 style ammo/health info near crosshair.", true, 0.0f, true, 1.0f);
+ConVar cl_neo_streamermode("cl_neo_streamermode", "0", FCVAR_ARCHIVE | FCVAR_USERINFO,
+	"Streamer mode turns player names into generic names and hide avatars.", true, 0.0f, true, 1.0f);
+ConVar cl_neo_streamermode_autodetect_obs("cl_neo_streamermode_autodetect_obs", "0", FCVAR_ARCHIVE,
+	"Automatically turn cl_neo_streamermode on if OBS was detected on startup.", true, 0.0f, true, 1.0f);
+ConVar cl_neo_equip_utility_priority("cl_neo_equip_utility_priority", "1", FCVAR_ARCHIVE,
+	"Utility slot equip priority. 0 = Frag,Smoke,Detpack, 1 = Class Specific First.", true, 0.0f, true, 1.0f);
 ConVar cl_neo_tachi_prefer_auto("cl_neo_tachi_prefer_auto", "1", FCVAR_ARCHIVE | FCVAR_USERINFO,
 	"Whether full-auto is the preferred default firing mode for Tachi loadouts.", true, false, true, true);
-ConVar cl_neo_taking_damage_sounds("cl_neo_taking_damage_sounds", "0", FCVAR_USERINFO | FCVAR_ARCHIVE, "Play sounds when taking damage.", true, 0, true, 1);
+ConVar cl_neo_taking_damage_sounds("cl_neo_taking_damage_sounds", "0", FCVAR_USERINFO | FCVAR_ARCHIVE,
+	"Play sounds when taking damage.", true, 0, true, 1);
 
 extern ConVar sv_neo_clantag_allow;
 extern ConVar sv_neo_dev_test_clantag;
@@ -181,22 +188,22 @@ extern ConVar sv_neo_wep_dmg_modifier;
 class NeoLoadoutMenu_Cb : public ICommandCallback
 {
 public:
-	virtual void CommandCallback(const CCommand& command)
+	virtual void CommandCallback(const CCommand &command)
 	{
-		if (!engine->IsInGame() || engine->IsLevelMainMenuBackground() ||
-			engine->IsPlayingDemo() || NEORules()->GetForcedWeapon() >= 0)
+		if (!engine->IsInGame() || engine->IsLevelMainMenuBackground() || engine->IsPlayingDemo() ||
+			NEORules()->GetForcedWeapon() >= 0)
 		{
 			return;
 		}
 
 		auto team = GetLocalPlayerTeam();
-		if(team < FIRST_GAME_TEAM)
+		if (team < FIRST_GAME_TEAM)
 		{
 			return;
 		}
 
-		auto panel = assert_cast<vgui::EditablePanel*>(GetClientModeNormal()->
-			GetViewport()->FindChildByName(PANEL_NEO_LOADOUT));
+		auto panel = assert_cast<vgui::EditablePanel *>(
+			GetClientModeNormal()->GetViewport()->FindChildByName(PANEL_NEO_LOADOUT));
 
 		if (!panel)
 		{
@@ -205,14 +212,13 @@ public:
 			return;
 		}
 
-		auto classPanel = assert_cast<CNeoClassMenu*>(GetClientModeNormal()->
-			GetViewport()->FindChildByName(PANEL_CLASS));
+		auto classPanel =
+			assert_cast<CNeoClassMenu *>(GetClientModeNormal()->GetViewport()->FindChildByName(PANEL_CLASS));
 		if (classPanel)
 		{
 			classPanel->ShowPanel(false);
 		}
-		auto teamPanel = assert_cast<CNeoTeamMenu*>(GetClientModeNormal()->
-			GetViewport()->FindChildByName(PANEL_TEAM));
+		auto teamPanel = assert_cast<CNeoTeamMenu *>(GetClientModeNormal()->GetViewport()->FindChildByName(PANEL_TEAM));
 		if (teamPanel)
 		{
 			teamPanel->ShowPanel(false);
@@ -221,10 +227,11 @@ public:
 		if (panel->IsVisible() && panel->IsEnabled())
 		{
 			panel->MoveToFront();
-			return;	// Prevent cursor stuck
+			return; // Prevent cursor stuck
 		}
 
-		panel->SetProportional(false); // Fixes wrong menu size when in windowed mode, regardless of whether proportional is set to false in the res file (NEOWTF)
+		panel->SetProportional(
+			false); // Fixes wrong menu size when in windowed mode, regardless of whether proportional is set to false in the res file (NEOWTF)
 		panel->ApplySchemeSettings(vgui::scheme()->GetIScheme(panel->GetScheme()));
 
 		panel->SetMouseInputEnabled(true);
@@ -254,7 +261,7 @@ public:
 		panel->SetVisible(true);
 		panel->SetEnabled(true);
 
-		auto loadoutPanel = assert_cast<CNeoLoadoutMenu*>(panel);
+		auto loadoutPanel = assert_cast<CNeoLoadoutMenu *>(panel);
 		if (loadoutPanel)
 		{
 			loadoutPanel->ShowPanel(true);
@@ -273,10 +280,10 @@ NeoLoadoutMenu_Cb neoLoadoutMenu_Cb;
 class NeoClassMenu_Cb : public ICommandCallback
 {
 public:
-	virtual void CommandCallback(const CCommand& command)
+	virtual void CommandCallback(const CCommand &command)
 	{
-		if (!engine->IsInGame() || engine->IsLevelMainMenuBackground() ||
-			engine->IsPlayingDemo() || NEORules()->GetForcedClass() >= 0)
+		if (!engine->IsInGame() || engine->IsLevelMainMenuBackground() || engine->IsPlayingDemo() ||
+			NEORules()->GetForcedClass() >= 0)
 		{
 			return;
 		}
@@ -284,13 +291,13 @@ public:
 		if (!command.FindArg("skipTeamCheck"))
 		{ // A smarter way to do this might be to assign the buttons for class and weapons menu to unique commands that check the current team and call this commandcallback
 			auto team = GetLocalPlayerTeam();
-			if(team < FIRST_GAME_TEAM)
+			if (team < FIRST_GAME_TEAM)
 			{
 				return;
 			}
 		}
 
-		C_NEO_Player* localPlayer = C_NEO_Player::GetLocalNEOPlayer();
+		C_NEO_Player *localPlayer = C_NEO_Player::GetLocalNEOPlayer();
 		if (!localPlayer)
 		{
 			return;
@@ -301,9 +308,9 @@ public:
 		{
 			return;
 		}
-		
-		vgui::EditablePanel *panel = assert_cast<vgui::EditablePanel*>
-			(GetClientModeNormal()->GetViewport()->FindChildByName(PANEL_CLASS));
+
+		vgui::EditablePanel *panel =
+			assert_cast<vgui::EditablePanel *>(GetClientModeNormal()->GetViewport()->FindChildByName(PANEL_CLASS));
 
 		if (!panel)
 		{
@@ -312,14 +319,13 @@ public:
 			return;
 		}
 
-		auto loadoutPanel = assert_cast<CNeoLoadoutMenu*>(GetClientModeNormal()->
-			GetViewport()->FindChildByName(PANEL_NEO_LOADOUT));
+		auto loadoutPanel =
+			assert_cast<CNeoLoadoutMenu *>(GetClientModeNormal()->GetViewport()->FindChildByName(PANEL_NEO_LOADOUT));
 		if (loadoutPanel)
 		{
 			loadoutPanel->ShowPanel(false);
 		}
-		auto teamPanel = assert_cast<CNeoTeamMenu*>(GetClientModeNormal()->
-			GetViewport()->FindChildByName(PANEL_TEAM));
+		auto teamPanel = assert_cast<CNeoTeamMenu *>(GetClientModeNormal()->GetViewport()->FindChildByName(PANEL_TEAM));
 		if (teamPanel)
 		{
 			teamPanel->ShowPanel(false);
@@ -328,7 +334,7 @@ public:
 		if (panel->IsVisible() && panel->IsEnabled())
 		{
 			panel->MoveToFront();
-			return;	// Prevent cursor stuck
+			return; // Prevent cursor stuck
 		}
 
 		panel->SetProportional(false);
@@ -360,10 +366,10 @@ NeoClassMenu_Cb neoClassMenu_Cb;
 class NeoTeamMenu_Cb : public ICommandCallback
 {
 public:
-	virtual void CommandCallback( const CCommand &command )
+	virtual void CommandCallback(const CCommand &command)
 	{
-		if (!engine->IsInGame() || engine->IsLevelMainMenuBackground() ||
-			engine->IsPlayingDemo() || NEORules()->GetForcedTeam() >= 0)
+		if (!engine->IsInGame() || engine->IsLevelMainMenuBackground() || engine->IsPlayingDemo() ||
+			NEORules()->GetForcedTeam() >= 0)
 		{
 			return;
 		}
@@ -375,8 +381,8 @@ public:
 			return;
 		}
 
-		vgui::EditablePanel *panel = assert_cast<vgui::EditablePanel*>
-			(GetClientModeNormal()->GetViewport()->FindChildByName(PANEL_TEAM));
+		vgui::EditablePanel *panel =
+			assert_cast<vgui::EditablePanel *>(GetClientModeNormal()->GetViewport()->FindChildByName(PANEL_TEAM));
 		if (!panel)
 		{
 			Assert(false);
@@ -384,14 +390,14 @@ public:
 			return;
 		}
 
-		auto loadoutPanel = assert_cast<CNeoLoadoutMenu*>(GetClientModeNormal()->
-			GetViewport()->FindChildByName(PANEL_NEO_LOADOUT));
+		auto loadoutPanel =
+			assert_cast<CNeoLoadoutMenu *>(GetClientModeNormal()->GetViewport()->FindChildByName(PANEL_NEO_LOADOUT));
 		if (loadoutPanel)
 		{
 			loadoutPanel->ShowPanel(false);
 		}
-		auto classPanel = assert_cast<CNeoClassMenu*>(GetClientModeNormal()->
-			GetViewport()->FindChildByName(PANEL_CLASS));
+		auto classPanel =
+			assert_cast<CNeoClassMenu *>(GetClientModeNormal()->GetViewport()->FindChildByName(PANEL_CLASS));
 		if (classPanel)
 		{
 			classPanel->ShowPanel(false);
@@ -400,7 +406,7 @@ public:
 		if (panel->IsVisible() && panel->IsEnabled())
 		{
 			panel->MoveToFront();
-			return;	// Prevent cursor stuck
+			return; // Prevent cursor stuck
 		}
 
 		panel->SetProportional(false);
@@ -431,7 +437,7 @@ NeoTeamMenu_Cb neoTeamMenu_Cb;
 class VguiCancel_Cb : public ICommandCallback
 {
 public:
-	virtual void CommandCallback(const CCommand& command)
+	virtual void CommandCallback(const CCommand &command)
 	{
 		auto player = C_NEO_Player::GetLocalNEOPlayer();
 		Assert(player);
@@ -446,7 +452,8 @@ public:
 };
 VguiCancel_Cb vguiCancel_Cb;
 
-ConCommand loadoutmenu("loadoutmenu", &neoLoadoutMenu_Cb, "Open weapon loadout selection menu.", FCVAR_USERINFO | FCVAR_DONTRECORD);
+ConCommand loadoutmenu(
+	"loadoutmenu", &neoLoadoutMenu_Cb, "Open weapon loadout selection menu.", FCVAR_USERINFO | FCVAR_DONTRECORD);
 ConCommand classmenu("classmenu", &neoClassMenu_Cb, "Open class selection menu.", FCVAR_USERINFO | FCVAR_DONTRECORD);
 ConCommand teammenu("teammenu", &neoTeamMenu_Cb, "Open team selection menu.", FCVAR_USERINFO | FCVAR_DONTRECORD);
 ConCommand vguicancel("vguicancel", &vguiCancel_Cb, "Cancel current vgui screen.", FCVAR_USERINFO | FCVAR_DONTRECORD);
@@ -507,11 +514,11 @@ void C_NEO_Player::CheckThermOpticButtons()
 
 		if (!m_bInThermOpticCamo && m_HL2Local.m_cloakPower >= MIN_CLOAK_AUX)
 		{
-			SetCloakState( true );
+			SetCloakState(true);
 		}
 		else
 		{
-			SetCloakState( false );
+			SetCloakState(false);
 		}
 	}
 
@@ -541,8 +548,7 @@ void C_NEO_Player::CheckLeanButtons()
 
 const char *C_NEO_Player::GetNeoClantag() const
 {
-	if (!sv_neo_clantag_allow.GetBool() ||
-			(cl_neo_streamermode.GetBool() && !IsLocalPlayer()))
+	if (!sv_neo_clantag_allow.GetBool() || (cl_neo_streamermode.GetBool() && !IsLocalPlayer()))
 	{
 		return "";
 	}
@@ -596,7 +602,8 @@ const char *C_NEO_Player::GetNeoPlayerName() const
 		bool bError = false;
 		const char *pSzName = InternalGetNeoPlayerName();
 		const int iSize = Q_UTF8ToUChar32(pSzName, u32Out, bError);
-		if (!bError) V_memcpy(gStreamerModeNames[entindex()], pSzName, iSize);
+		if (!bError)
+			V_memcpy(gStreamerModeNames[entindex()], pSzName, iSize);
 		return gStreamerModeNames[entindex()];
 	}
 	return InternalGetNeoPlayerName();
@@ -637,8 +644,9 @@ int C_NEO_Player::DrawModel(int flags)
 		Assert(false);
 		return BaseClass::DrawModel(flags);
 	}
-	
-	bool inThermalVision = pTargetPlayer ? (pTargetPlayer->IsInVision() && pTargetPlayer->GetClass() == NEO_CLASS_SUPPORT) : false;
+
+	bool inThermalVision =
+		pTargetPlayer ? (pTargetPlayer->IsInVision() && pTargetPlayer->GetClass() == NEO_CLASS_SUPPORT) : false;
 
 	int ret = 0;
 	if (!IsCloaked() || inThermalVision)
@@ -648,7 +656,7 @@ int C_NEO_Player::DrawModel(int flags)
 
 	if (IsCloaked() && !inThermalVision)
 	{
-		IMaterial* pass = materials->FindMaterial("models/player/toc", TEXTURE_GROUP_CLIENT_EFFECTS);
+		IMaterial *pass = materials->FindMaterial("models/player/toc", TEXTURE_GROUP_CLIENT_EFFECTS);
 		modelrender->ForcedMaterialOverride(pass);
 		ret |= BaseClass::DrawModel(flags);
 		modelrender->ForcedMaterialOverride(nullptr);
@@ -656,7 +664,7 @@ int C_NEO_Player::DrawModel(int flags)
 
 	else if (inThermalVision && !IsCloaked())
 	{
-		IMaterial* pass = materials->FindMaterial(NEO_THERMAL_MODEL_MATERIAL, TEXTURE_GROUP_MODEL);
+		IMaterial *pass = materials->FindMaterial(NEO_THERMAL_MODEL_MATERIAL, TEXTURE_GROUP_MODEL);
 		modelrender->ForcedMaterialOverride(pass);
 		ret |= BaseClass::DrawModel(flags);
 		modelrender->ForcedMaterialOverride(nullptr);
@@ -665,7 +673,7 @@ int C_NEO_Player::DrawModel(int flags)
 	return ret;
 }
 
-void C_NEO_Player::AddEntity( void )
+void C_NEO_Player::AddEntity(void)
 {
 	BaseClass::AddEntity();
 }
@@ -688,12 +696,12 @@ void C_NEO_Player::AddPoints(int score, bool bAllowNegativeScore, bool bIgnorePl
 	{
 		if (!bAllowNegativeScore)
 		{
-			if (m_iXP < 0)		// Can't go more negative
+			if (m_iXP < 0) // Can't go more negative
 				return;
 
-			if (-score > m_iXP)	// Will this go negative?
+			if (-score > m_iXP) // Will this go negative?
 			{
-				score = -m_iXP;		// Sum will be 0
+				score = -m_iXP; // Sum will be 0
 			}
 		}
 	}
@@ -709,14 +717,14 @@ bool C_NEO_Player::IsDrawnTransparent() const
 	{
 		return IsCloaked();
 	}
-	
+
 	bool inThermalVision = pTargetPlayer->IsInVision() && pTargetPlayer->GetClass() == NEO_CLASS_SUPPORT;
 	return IsCloaked() && !inThermalVision;
 }
 
-ShadowType_t C_NEO_Player::ShadowCastType( void ) 
+ShadowType_t C_NEO_Player::ShadowCastType(void)
 {
-	// NEO TODO (Adam) should cloaked players cast shadows in thermals? If they are drawn opaque, it follows that cloaked players block light on a 
+	// NEO TODO (Adam) should cloaked players cast shadows in thermals? If they are drawn opaque, it follows that cloaked players block light on a
 	// spectrum that thermals can see, so light in that same spectrum would be absent where the shadow would be, hence the shadow should be drawn
 	// if so, replace IsCloaked() with IsDrawnTransparent()
 	if (IsCloaked())
@@ -731,7 +739,7 @@ C_BaseAnimating *C_NEO_Player::BecomeRagdollOnClient()
 	return BaseClass::BecomeRagdollOnClient();
 }
 
-const QAngle& C_NEO_Player::GetRenderAngles()
+const QAngle &C_NEO_Player::GetRenderAngles()
 {
 	return BaseClass::GetRenderAngles();
 }
@@ -746,12 +754,12 @@ bool C_NEO_Player::UsesPowerOfTwoFrameBufferTexture()
 	return IsDrawnTransparent();
 }
 
-bool C_NEO_Player::ShouldDraw( void )
+bool C_NEO_Player::ShouldDraw(void)
 {
 	return BaseClass::ShouldDraw();
 }
 
-void C_NEO_Player::OnDataChanged( DataUpdateType_t type )
+void C_NEO_Player::OnDataChanged(DataUpdateType_t type)
 {
 	BaseClass::OnDataChanged(type);
 
@@ -759,7 +767,7 @@ void C_NEO_Player::OnDataChanged( DataUpdateType_t type )
 	CSpectatorTakeoverPlayerUpdateOnDataChanged();
 }
 
-float C_NEO_Player::GetFOV( void )
+float C_NEO_Player::GetFOV(void)
 {
 	if (engine->IsLevelMainMenuBackground())
 	{
@@ -769,18 +777,18 @@ float C_NEO_Player::GetFOV( void )
 	return BaseClass::GetFOV();
 }
 
-CStudioHdr *C_NEO_Player::OnNewModel( void )
+CStudioHdr *C_NEO_Player::OnNewModel(void)
 {
 	return BaseClass::OnNewModel();
 }
 
-void C_NEO_Player::TraceAttack( const CTakeDamageInfo &info,
-	const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void C_NEO_Player::TraceAttack(
+	const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator)
 {
 	BaseClass::TraceAttack(info, vecDir, ptr, pAccumulator);
 }
 
-void C_NEO_Player::ItemPreFrame( void )
+void C_NEO_Player::ItemPreFrame(void)
 {
 	BaseClass::ItemPreFrame();
 
@@ -793,7 +801,7 @@ void C_NEO_Player::ItemPreFrame( void )
 	}
 }
 
-void C_NEO_Player::ItemPostFrame( void )
+void C_NEO_Player::ItemPostFrame(void)
 {
 	BaseClass::ItemPostFrame();
 }
@@ -803,18 +811,20 @@ float C_NEO_Player::GetMinFOV() const
 	return BaseClass::GetMinFOV();
 }
 
-Vector C_NEO_Player::GetAutoaimVector( float flDelta )
+Vector C_NEO_Player::GetAutoaimVector(float flDelta)
 {
 	return BaseClass::GetAutoaimVector(flDelta);
 }
 
-void C_NEO_Player::NotifyShouldTransmit( ShouldTransmitState_t state )
+void C_NEO_Player::NotifyShouldTransmit(ShouldTransmitState_t state)
 {
 #ifdef GLOWS_ENABLE
-	if (state == ShouldTransmitState_t::SHOULDTRANSMIT_START && glow_outline_effect_enable.GetBool()) {
+	if (state == ShouldTransmitState_t::SHOULDTRANSMIT_START && glow_outline_effect_enable.GetBool())
+	{
 		UpdateGlowEffects(GetTeamNumber());
 	}
-	else {
+	else
+	{
 		SetClientSideGlowEnabled(false);
 		DestroyGlowEffect();
 	}
@@ -827,24 +837,23 @@ void C_NEO_Player::CreateLightEffects(void)
 	BaseClass::CreateLightEffects();
 }
 
-bool C_NEO_Player::ShouldReceiveProjectedTextures( int flags )
+bool C_NEO_Player::ShouldReceiveProjectedTextures(int flags)
 {
 	return BaseClass::ShouldReceiveProjectedTextures(flags);
 }
 
-void C_NEO_Player::PostDataUpdate( DataUpdateType_t updateType )
+void C_NEO_Player::PostDataUpdate(DataUpdateType_t updateType)
 {
 	BaseClass::PostDataUpdate(updateType);
 
-	CNEOPredictedViewModel *vm = (CNEOPredictedViewModel*)GetViewModel();
+	CNEOPredictedViewModel *vm = (CNEOPredictedViewModel *)GetViewModel();
 	if (vm)
 	{
 		SetNextThink(CLIENT_THINK_ALWAYS);
 	}
 }
 
-void C_NEO_Player::PlayStepSound( Vector &vecOrigin,
-	surfacedata_t *psurface, float fvol, bool force )
+void C_NEO_Player::PlayStepSound(Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force)
 {
 	BaseClass::PlayStepSound(vecOrigin, psurface, fvol, force);
 }
@@ -855,7 +864,7 @@ void C_NEO_Player::CalculateSpeed(void)
 
 	// C_BasePlayer::GetActiveWeapon returns the observer target's weapon while spectating in eye.
 	// The server only ever scales by this player's own weapon, so read that one to keep m_flMaxspeed predicted.
-	if (auto pNeoWep = assert_cast<CNEOBaseCombatWeapon*>(C_BaseCombatCharacter::GetActiveWeapon()))
+	if (auto pNeoWep = assert_cast<CNEOBaseCombatWeapon *>(C_BaseCombatCharacter::GetActiveWeapon()))
 	{
 		speed *= pNeoWep->GetSpeedScale();
 	}
@@ -872,20 +881,21 @@ void C_NEO_Player::CalculateSpeed(void)
 
 	if (IsSprinting())
 	{
-		switch (m_iNeoClass) {
-			case NEO_CLASS_RECON:
-				speed *= NEO_RECON_SPRINT_MODIFIER;
-				break;
-			case NEO_CLASS_ASSAULT:
-			case NEO_CLASS_VIP:
-			case NEO_CLASS_JUGGERNAUT:
-				speed *= NEO_ASSAULT_SPRINT_MODIFIER;
-				break;
-			case NEO_CLASS_SUPPORT:
-				speed *= NEO_SUPPORT_SPRINT_MODIFIER; // Should never happen
-				break;
-			default:
-				break;
+		switch (m_iNeoClass)
+		{
+		case NEO_CLASS_RECON:
+			speed *= NEO_RECON_SPRINT_MODIFIER;
+			break;
+		case NEO_CLASS_ASSAULT:
+		case NEO_CLASS_VIP:
+		case NEO_CLASS_JUGGERNAUT:
+			speed *= NEO_ASSAULT_SPRINT_MODIFIER;
+			break;
+		case NEO_CLASS_SUPPORT:
+			speed *= NEO_SUPPORT_SPRINT_MODIFIER; // Should never happen
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -913,27 +923,30 @@ void C_NEO_Player::HandleSpeedChangesLegacy()
 {
 	int buttonsChanged = m_afButtonPressed | m_afButtonReleased;
 
-	if( buttonsChanged & (IN_SPEED | IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT)  || m_nButtons & IN_SPEED)
+	if (buttonsChanged & (IN_SPEED | IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT) || m_nButtons & IN_SPEED)
 	{
 		// The state of the sprint/run button has changed.
-		if ( IsSuitEquipped() )
+		if (IsSuitEquipped())
 		{
 #ifdef NEO
-			constexpr float MOVING_SPEED_MINIMUM = 0.5f; // NEOTODO (Adam) This is the same value as defined in cbaseanimating, should we be using the same value? Should we import it here?
+			constexpr float MOVING_SPEED_MINIMUM =
+				0.5f; // NEOTODO (Adam) This is the same value as defined in cbaseanimating, should we be using the same value? Should we import it here?
 			if (!(m_nButtons & IN_SPEED) && IsSprinting())
 #else
-			if ( !(m_nButtons & (IN_SPEED | IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT)) && IsSprinting())
+			if (!(m_nButtons & (IN_SPEED | IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT)) && IsSprinting())
 #endif
 			{
 				StopSprinting();
 			}
 #ifdef NEO
-			else if ((m_nButtons & IN_SPEED) && !IsSprinting() && GetLocalVelocity().IsLengthGreaterThan(MOVING_SPEED_MINIMUM))
+			else if ((m_nButtons & IN_SPEED) && !IsSprinting() &&
+				GetLocalVelocity().IsLengthGreaterThan(MOVING_SPEED_MINIMUM))
 #else
-			else if ( (m_afButtonPressed & IN_SPEED) && (m_nButtons & (IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT)) && !IsSprinting() )
+			else if ((m_afButtonPressed & IN_SPEED) &&
+				(m_nButtons & (IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT)) && !IsSprinting())
 #endif
 			{
-				if ( CanSprint() )
+				if (CanSprint())
 				{
 					StartSprinting();
 				}
@@ -945,23 +958,23 @@ void C_NEO_Player::HandleSpeedChangesLegacy()
 			}
 		}
 	}
-	else if( buttonsChanged & IN_WALK )
+	else if (buttonsChanged & IN_WALK)
 	{
-		if ( IsSuitEquipped() )
+		if (IsSuitEquipped())
 		{
 			// The state of the WALK button has changed.
-			if( IsWalking() && !(m_afButtonPressed & IN_WALK) )
+			if (IsWalking() && !(m_afButtonPressed & IN_WALK))
 			{
 				StopWalking();
 			}
-			else if( !IsWalking() && !IsSprinting() && (m_afButtonPressed & IN_WALK) )
+			else if (!IsWalking() && !IsSprinting() && (m_afButtonPressed & IN_WALK))
 			{
 				StartWalking();
 			}
 		}
 	}
 
-	if ( IsSuitEquipped() && m_fIsWalking && !(m_nButtons & IN_WALK)  )
+	if (IsSuitEquipped() && m_fIsWalking && !(m_nButtons & IN_WALK))
 		StopWalking();
 }
 
@@ -1065,7 +1078,7 @@ void C_NEO_Player::HandleSpeedChanges( CMoveData *mv )
 #endif
 
 extern ConVar sv_infinite_aux_power;
-void C_NEO_Player::PreThink( void )
+void C_NEO_Player::PreThink(void)
 {
 	BaseClass::PreThink();
 
@@ -1206,7 +1219,7 @@ void C_NEO_Player::PreThink( void )
 
 void C_NEO_Player::Lean(void)
 {
-	auto vm = static_cast<CNEOPredictedViewModel*>(GetViewModel());
+	auto vm = static_cast<CNEOPredictedViewModel *>(GetViewModel());
 	if (vm)
 	{
 		Assert(GetBaseAnimating());
@@ -1269,14 +1282,16 @@ void C_NEO_Player::PostThink(void)
 				LiftAllToggleKeys();
 			}
 
-			if (IsLocalPlayer() && GetDeathTime() != 0 && (GetTeamNumber() == TEAM_JINRAI || GetTeamNumber() == TEAM_NSF))
+			if (IsLocalPlayer() && GetDeathTime() != 0 &&
+				(GetTeamNumber() == TEAM_JINRAI || GetTeamNumber() == TEAM_NSF))
 			{
 				SetObserverMode(OBS_MODE_DEATHCAM);
 				// Fade out 8s to blackout + 2s full blackout
 				ScreenFade_t sfade{
-					.duration = static_cast<unsigned short>(static_cast<float>(1<<SCREENFADE_FRACBITS) * (DEATH_ANIMATION_TIME - 2.0f)),
-					.holdTime = static_cast<unsigned short>(static_cast<float>(1<<SCREENFADE_FRACBITS) * 2.0f),
-					.fadeFlags = FFADE_OUT|FFADE_PURGE,
+					.duration = static_cast<unsigned short>(
+						static_cast<float>(1 << SCREENFADE_FRACBITS) * (DEATH_ANIMATION_TIME - 2.0f)),
+					.holdTime = static_cast<unsigned short>(static_cast<float>(1 << SCREENFADE_FRACBITS) * 2.0f),
+					.fadeFlags = FFADE_OUT | FFADE_PURGE,
 					.r = 0,
 					.g = 0,
 					.b = 0,
@@ -1295,16 +1310,17 @@ void C_NEO_Player::PostThink(void)
 		}
 
 		auto observerMode = GetObserverMode();
-		if (IsLocalPlayer() && observerMode == OBS_MODE_DEATHCAM && gpGlobals->curtime >= (GetDeathTime() + DEATH_ANIMATION_TIME))
+		if (IsLocalPlayer() && observerMode == OBS_MODE_DEATHCAM &&
+			gpGlobals->curtime >= (GetDeathTime() + DEATH_ANIMATION_TIME))
 		{
 			SetObserverMode(OBS_MODE_IN_EYE);
 			g_ClientVirtualReality.AlignTorsoAndViewToWeapon();
 
 			// Fade in 2s from blackout
 			ScreenFade_t sfade{
-				.duration = static_cast<unsigned short>(static_cast<float>(1<<SCREENFADE_FRACBITS) * 2.0f),
+				.duration = static_cast<unsigned short>(static_cast<float>(1 << SCREENFADE_FRACBITS) * 2.0f),
 				.holdTime = static_cast<unsigned short>(0),
-				.fadeFlags = FFADE_IN|FFADE_PURGE,
+				.fadeFlags = FFADE_IN | FFADE_PURGE,
 				.r = 0,
 				.g = 0,
 				.b = 0,
@@ -1349,7 +1365,8 @@ void C_NEO_Player::CalcDeathCamView(Vector &eyeOrigin, QAngle &eyeAngles, float 
 {
 	if (GetClass() != NEO_CLASS_JUGGERNAUT)
 	{
-		if (auto* pRagdoll = assert_cast<C_BaseAnimating*>(m_hRagdoll.Get() ? m_hRagdoll.Get() : m_hServerRagdoll.Get()))
+		if (auto *pRagdoll =
+				assert_cast<C_BaseAnimating *>(m_hRagdoll.Get() ? m_hRagdoll.Get() : m_hServerRagdoll.Get()))
 		{
 			pRagdoll->GetAttachment(pRagdoll->LookupAttachment("eyes"), eyeOrigin, eyeAngles);
 
@@ -1376,7 +1393,6 @@ void C_NEO_Player::CalcDeathCamView(Vector &eyeOrigin, QAngle &eyeAngles, float 
 		else
 		{
 			vTarget = NEORules()->GetJuggernautMarkerPos();
-
 		}
 
 		eyeOrigin = vTarget + Vector(80, 80, 80);
@@ -1401,47 +1417,59 @@ void C_NEO_Player::TeamChange(int iNewTeam)
 #ifdef GLOWS_ENABLE
 void C_NEO_Player::UpdateGlowEffects(int iNewTeam)
 {
-	auto updateGlowColour = [](C_BasePlayer* pPlayer, int iTeam = 0) {
+	auto updateGlowColour = [](C_BasePlayer *pPlayer, int iTeam = 0)
+	{
 		float r, g, b;
 		NEORules()->GetTeamGlowColor(iTeam ? iTeam : pPlayer->GetTeamNumber(), r, g, b);
 		pPlayer->SetGlowEffectColor(r, g, b);
 	};
 
-	if (IsLocalPlayer()) {
-		for (int i = 1; i <= gpGlobals->maxClients; i++) {
-			CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
-			if (!pPlayer || pPlayer == this) {
+	if (IsLocalPlayer())
+	{
+		for (int i = 1; i <= gpGlobals->maxClients; i++)
+		{
+			CBasePlayer *pPlayer = UTIL_PlayerByIndex(i);
+			if (!pPlayer || pPlayer == this)
+			{
 				continue;
 			}
 
-			if (pPlayer->GetTeamNumber() == TEAM_SPECTATOR || pPlayer->GetTeamNumber() == TEAM_UNASSIGNED || !glow_outline_effect_enable.GetBool() || NEORules()->GetHiddenHudElements() & NEO_HUD_ELEMENT_FRIENDLY_MARKER)
+			if (pPlayer->GetTeamNumber() == TEAM_SPECTATOR || pPlayer->GetTeamNumber() == TEAM_UNASSIGNED ||
+				!glow_outline_effect_enable.GetBool() ||
+				NEORules()->GetHiddenHudElements() & NEO_HUD_ELEMENT_FRIENDLY_MARKER)
 			{
 				pPlayer->SetClientSideGlowEnabled(false);
 				continue;
 			}
-			
+
 			updateGlowColour(pPlayer);
-			if (iNewTeam == TEAM_SPECTATOR || (NEORules()->IsTeamplay() && iNewTeam == pPlayer->GetTeamNumber())) {
+			if (iNewTeam == TEAM_SPECTATOR || (NEORules()->IsTeamplay() && iNewTeam == pPlayer->GetTeamNumber()))
+			{
 				pPlayer->SetClientSideGlowEnabled(true);
 			}
-			else { // ditto wrt mp_forcecamera check
+			else
+			{ // ditto wrt mp_forcecamera check
 				pPlayer->SetClientSideGlowEnabled(false);
 			}
 		}
 	}
-	else {
-		if (iNewTeam == TEAM_SPECTATOR || iNewTeam == TEAM_UNASSIGNED || !glow_outline_effect_enable.GetBool() || NEORules()->GetHiddenHudElements() & NEO_HUD_ELEMENT_FRIENDLY_MARKER)
+	else
+	{
+		if (iNewTeam == TEAM_SPECTATOR || iNewTeam == TEAM_UNASSIGNED || !glow_outline_effect_enable.GetBool() ||
+			NEORules()->GetHiddenHudElements() & NEO_HUD_ELEMENT_FRIENDLY_MARKER)
 		{
 			SetClientSideGlowEnabled(false);
 			return;
 		}
-		
+
 		updateGlowColour(this, iNewTeam);
 		int localPlayerTeam = GetLocalPlayerTeam();
-		if (localPlayerTeam == TEAM_SPECTATOR || (NEORules()->IsTeamplay() && localPlayerTeam == iNewTeam)) {
+		if (localPlayerTeam == TEAM_SPECTATOR || (NEORules()->IsTeamplay() && localPlayerTeam == iNewTeam))
+		{
 			SetClientSideGlowEnabled(true);
 		}
-		else { // ditto wrt mp_forcecamera check
+		else
+		{ // ditto wrt mp_forcecamera check
 			SetClientSideGlowEnabled(false);
 		}
 	}
@@ -1463,7 +1491,7 @@ float C_NEO_Player::CloakPower_CurrentVisualPercentage(void) const
 	return 0.0f;
 }
 
-void C_NEO_Player::Spawn( void )
+void C_NEO_Player::Spawn(void)
 {
 	BaseClass::Spawn();
 	FixupOnGroundFlag();
@@ -1505,18 +1533,17 @@ void C_NEO_Player::Spawn( void )
 	}
 }
 
-void C_NEO_Player::DoImpactEffect( trace_t &tr, int nDamageType )
+void C_NEO_Player::DoImpactEffect(trace_t &tr, int nDamageType)
 {
 	BaseClass::DoImpactEffect(tr, nDamageType);
 }
 
-IRagdoll* C_NEO_Player::GetRepresentativeRagdoll() const
+IRagdoll *C_NEO_Player::GetRepresentativeRagdoll() const
 {
 	return BaseClass::GetRepresentativeRagdoll();
 }
 
-void C_NEO_Player::CalcView( Vector &eyeOrigin, QAngle &eyeAngles,
-	float &zNear, float &zFar, float &fov )
+void C_NEO_Player::CalcView(Vector &eyeOrigin, QAngle &eyeAngles, float &zNear, float &zFar, float &fov)
 {
 	BaseClass::CalcView(eyeOrigin, eyeAngles, zNear, zFar, fov);
 }
@@ -1539,7 +1566,7 @@ void C_NEO_Player::Weapon_Drop(C_NEOBaseCombatWeapon *pWeapon)
 
 	if (pWeapon->GetNeoWepBits() & NEO_WEP_SUPA7)
 	{
-		assert_cast<C_WeaponSupa7*>(pWeapon)->ClearDelayedInputs();
+		assert_cast<C_WeaponSupa7 *>(pWeapon)->ClearDelayedInputs();
 	}
 }
 
@@ -1597,19 +1624,19 @@ float C_NEO_Player::GetSprintSpeed_WithActiveWepEncumberment(void) const
 	return GetSprintSpeed() * GetActiveWeaponSpeedScale();
 }
 
-float C_NEO_Player::GetCrouchSpeed_WithWepEncumberment(CNEOBaseCombatWeapon* pNeoWep) const
+float C_NEO_Player::GetCrouchSpeed_WithWepEncumberment(CNEOBaseCombatWeapon *pNeoWep) const
 {
 	Assert(pNeoWep);
 	return GetCrouchSpeed() * pNeoWep->GetSpeedScale();
 }
 
-float C_NEO_Player::GetNormSpeed_WithWepEncumberment(CNEOBaseCombatWeapon* pNeoWep) const
+float C_NEO_Player::GetNormSpeed_WithWepEncumberment(CNEOBaseCombatWeapon *pNeoWep) const
 {
 	Assert(pNeoWep);
 	return GetNormSpeed() * pNeoWep->GetSpeedScale();
 }
 
-float C_NEO_Player::GetSprintSpeed_WithWepEncumberment(CNEOBaseCombatWeapon* pNeoWep) const
+float C_NEO_Player::GetSprintSpeed_WithWepEncumberment(CNEOBaseCombatWeapon *pNeoWep) const
 {
 	Assert(pNeoWep);
 	return GetSprintSpeed() * pNeoWep->GetSpeedScale();
@@ -1712,8 +1739,8 @@ void C_NEO_Player::Weapon_SetZoom(const bool bZoomIn)
 
 	float zoomSpeedSecs = NEO_ZOOM_SPEED;
 
-#if(0)
-#if !defined( NO_ENTITY_PREDICTION )
+#if (0)
+#if !defined(NO_ENTITY_PREDICTION)
 	if (!prediction->InPrediction() && IsLocalPlayer())
 	{
 		if (GetPredictable())
@@ -1781,8 +1808,9 @@ void C_NEO_Player::PlayCloakSound(void)
 	params.m_bEmitCloseCaption = false;
 	params.m_hSoundScriptHandle = (m_bInThermOpticCamo ? tocOn : tocOff);
 	params.m_pOrigin = &GetAbsOrigin();
-	params.m_nChannel = CHAN_VOICE; // NEO TODO (Adam) This doesn't change the channel this sound is played on, set correct channel in sound script
-	
+	params.m_nChannel =
+		CHAN_VOICE; // NEO TODO (Adam) This doesn't change the channel this sound is played on, set correct channel in sound script
+
 	EmitSound(filter, entindex(), params);
 }
 
@@ -1790,12 +1818,12 @@ void C_NEO_Player::SetCloakState(bool state)
 {
 	m_bInThermOpticCamo = state;
 
-	void (CBaseCombatWeapon:: * setShadowState)(int) = m_bInThermOpticCamo ? &CBaseCombatWeapon::AddEffects 
-																		   : &CBaseCombatWeapon::RemoveEffects;
+	void (CBaseCombatWeapon::*setShadowState)(int) =
+		m_bInThermOpticCamo ? &CBaseCombatWeapon::AddEffects : &CBaseCombatWeapon::RemoveEffects;
 
 	for (int i = 0; i < MAX_WEAPONS; i++)
 	{
-		if (CBaseCombatWeapon* weapon = GetWeapon(i))
+		if (CBaseCombatWeapon *weapon = GetWeapon(i))
 		{
 			(weapon->*setShadowState)(EF_NOSHADOW);
 		}
@@ -1805,7 +1833,7 @@ void C_NEO_Player::SetCloakState(bool state)
 // NEO NOTE (Rain): doesn't seem to be implemented at all clientside?
 // Don't need to do this, unless we want it for prediction with proper implementation later.
 // Keeping it for now.
-void C_NEO_Player::ModifyFireBulletsDamage(CTakeDamageInfo* dmgInfo)
+void C_NEO_Player::ModifyFireBulletsDamage(CTakeDamageInfo *dmgInfo)
 {
 	dmgInfo->SetDamage(dmgInfo->GetDamage() * sv_neo_wep_dmg_modifier.GetFloat());
 }
@@ -1847,8 +1875,8 @@ void __MsgFunc_CSpectatorTakeoverPlayer(bf_read &msg)
 	int spectatorTakingOverUserID = msg.ReadLong();
 	int playerTakeoverTargetUserID = msg.ReadLong();
 
-	C_NEO_Player* pSpectatorTakingOver = USERID2NEOPLAYER(spectatorTakingOverUserID);
-	C_NEO_Player* pPlayerTakeoverTarget = USERID2NEOPLAYER(playerTakeoverTargetUserID);
+	C_NEO_Player *pSpectatorTakingOver = USERID2NEOPLAYER(spectatorTakingOverUserID);
+	C_NEO_Player *pPlayerTakeoverTarget = USERID2NEOPLAYER(playerTakeoverTargetUserID);
 
 
 	if (pPlayerTakeoverTarget && pSpectatorTakingOver)
@@ -1863,7 +1891,8 @@ void __MsgFunc_CSpectatorTakeoverPlayer(bf_read &msg)
 	}
 }
 
-CUserMessageRegister CSpectatorTakeoverPlayerRegistration("CSpectatorTakeoverPlayer", __MsgFunc_CSpectatorTakeoverPlayer);
+CUserMessageRegister CSpectatorTakeoverPlayerRegistration(
+	"CSpectatorTakeoverPlayer", __MsgFunc_CSpectatorTakeoverPlayer);
 
 void C_NEO_Player::CSpectatorTakeoverPlayerUpdateOnDataChanged()
 {
@@ -1871,14 +1900,14 @@ void C_NEO_Player::CSpectatorTakeoverPlayerUpdateOnDataChanged()
 	{
 		m_bCopyOverTakeoverPlayerDetails = false;
 
-		if (C_NEO_Player* pTarget = m_hSpectatorTakeoverPlayerTarget.Get())
+		if (C_NEO_Player *pTarget = m_hSpectatorTakeoverPlayerTarget.Get())
 		{
 			CSpectatorTakeoverPlayerUpdate(pTarget);
 		}
 	}
 }
 
-void C_NEO_Player::CSpectatorTakeoverPlayerUpdate(C_NEO_Player* pPlayerTakeoverTarget)
+void C_NEO_Player::CSpectatorTakeoverPlayerUpdate(C_NEO_Player *pPlayerTakeoverTarget)
 {
 	if (!pPlayerTakeoverTarget)
 	{
@@ -1909,49 +1938,51 @@ void C_NEO_Player::CSpectatorTakeoverPlayerUpdate(C_NEO_Player* pPlayerTakeoverT
 	pl.v_angle = pPlayerTakeoverTarget->pl.v_angle; // mimic SnapEyeAngles in neo_player
 }
 
-const char* C_NEO_Player::GetPlayerNameWithTakeoverContext(int player_index)
+const char *C_NEO_Player::GetPlayerNameWithTakeoverContext(int player_index)
 {
-    if (player_index == 0)
-        return "";
+	if (player_index == 0)
+		return "";
 
-    const char* base_name = g_PR->GetPlayerName(player_index);
-    if (!base_name)
-        base_name = "";
+	const char *base_name = g_PR->GetPlayerName(player_index);
+	if (!base_name)
+		base_name = "";
 
-    // Does not factor in clan tag since original display did not use clan tag
-    C_NEO_Player* pPlayer = ToNEOPlayer(UTIL_PlayerByIndex(player_index));
-    if (pPlayer)
-    {
-        C_NEO_Player* pTakeoverTarget = ToNEOPlayer(pPlayer->m_hSpectatorTakeoverPlayerTarget.Get());
-        if (pTakeoverTarget)
-        {
-            const char* pTakeoverTargetName = pTakeoverTarget->GetPlayerName();
-            if (!pTakeoverTargetName)
-                pTakeoverTargetName = "";
+	// Does not factor in clan tag since original display did not use clan tag
+	C_NEO_Player *pPlayer = ToNEOPlayer(UTIL_PlayerByIndex(player_index));
+	if (pPlayer)
+	{
+		C_NEO_Player *pTakeoverTarget = ToNEOPlayer(pPlayer->m_hSpectatorTakeoverPlayerTarget.Get());
+		if (pTakeoverTarget)
+		{
+			const char *pTakeoverTargetName = pTakeoverTarget->GetPlayerName();
+			if (!pTakeoverTargetName)
+				pTakeoverTargetName = "";
 
-            int len = V_sprintf_safe(m_sNameWithTakeoverContextProcessingBuffer, "%s (%s)", pTakeoverTargetName, base_name);
-            if (len >= sizeof(m_sNameWithTakeoverContextProcessingBuffer))
-            {
-                m_sNameWithTakeoverContextProcessingBuffer[sizeof(m_sNameWithTakeoverContextProcessingBuffer) - 2] = ')'; // cap off ()
-            }
-            return m_sNameWithTakeoverContextProcessingBuffer;
-        }
-    }
-    return base_name;
+			int len =
+				V_sprintf_safe(m_sNameWithTakeoverContextProcessingBuffer, "%s (%s)", pTakeoverTargetName, base_name);
+			if (len >= sizeof(m_sNameWithTakeoverContextProcessingBuffer))
+			{
+				m_sNameWithTakeoverContextProcessingBuffer[sizeof(m_sNameWithTakeoverContextProcessingBuffer) - 2] =
+					')'; // cap off ()
+			}
+			return m_sNameWithTakeoverContextProcessingBuffer;
+		}
+	}
+	return base_name;
 }
 
-C_NEO_Player* C_NEO_Player::PlayerUseTraceLine()
+C_NEO_Player *C_NEO_Player::PlayerUseTraceLine()
 {
 	// Select player under cursor
 	Vector eyePos = EyePosition();
 	Vector forward;
-	EyeVectors( &forward );
+	EyeVectors(&forward);
 	Vector traceEnd = eyePos + forward * MAX_COORD_RANGE;
 
 	// MASK_SHOT_HULL to match friendly fire warning trace
 	trace_t tr;
-	UTIL_TraceLine( eyePos, traceEnd, MASK_SHOT_HULL, this, COLLISION_GROUP_NONE, &tr );
-	
+	UTIL_TraceLine(eyePos, traceEnd, MASK_SHOT_HULL, this, COLLISION_GROUP_NONE, &tr);
+
 	if (tr.DidHit() && tr.m_pEnt)
 	{
 		return ToNEOPlayer(tr.m_pEnt);
@@ -1963,13 +1994,13 @@ C_NEO_Player* C_NEO_Player::PlayerUseTraceLine()
 //-----------------------------------------------------------------------------
 // Purpose: Return true if this object can be +used by the player
 //-----------------------------------------------------------------------------
-bool C_NEO_Player::IsUseableEntity( CBaseEntity *pEntity, unsigned int requiredCaps )
+bool C_NEO_Player::IsUseableEntity(CBaseEntity *pEntity, unsigned int requiredCaps)
 {
 	if (!pEntity)
 		return false;
 
 	if (int caps = pEntity->ObjectCaps();
-		caps & (FCAP_IMPULSE_USE|FCAP_CONTINUOUS_USE|FCAP_ONOFF_USE|FCAP_DIRECTIONAL_USE) &&
+		caps & (FCAP_IMPULSE_USE | FCAP_CONTINUOUS_USE | FCAP_ONOFF_USE | FCAP_DIRECTIONAL_USE) &&
 		(caps & requiredCaps) == requiredCaps)
 	{
 		return true;
@@ -1982,14 +2013,14 @@ bool C_NEO_Player::IsUseableEntity( CBaseEntity *pEntity, unsigned int requiredC
 void C_NEO_Player::PlayerUse()
 {
 	BaseClass::PlayerUse();
-	
+
 	// Was use pressed or released?
-	if ( ! ((m_nButtons | m_afButtonPressed | m_afButtonReleased) & IN_USE) )
+	if (!((m_nButtons | m_afButtonPressed | m_afButtonReleased) & IN_USE))
 		return;
 
-	if ( (m_afButtonPressed & IN_USE) && prediction->IsFirstTimePredicted() && !GetUseEntity())
+	if ((m_afButtonPressed & IN_USE) && prediction->IsFirstTimePredicted() && !GetUseEntity())
 	{
-		if (C_NEO_Player* pTargetPlayer = PlayerUseTraceLine())
+		if (C_NEO_Player *pTargetPlayer = PlayerUseTraceLine())
 		{
 			m_Local.m_nOldButtons |= IN_USE;
 			m_afButtonPressed &= ~IN_USE;
@@ -2035,7 +2066,8 @@ void C_NEO_Player::ApplyAimPunch()
 	m_flAimPunchCurrent += m_flAimPunchVel * gpGlobals->frametime;
 	if (abs(m_flAimPunchCurrent) > sv_neo_aimpunch_max.GetFloat())
 	{
-		m_flAimPunchCurrent = clamp(m_flAimPunchCurrent, -sv_neo_aimpunch_max.GetFloat(), sv_neo_aimpunch_max.GetFloat());
+		m_flAimPunchCurrent =
+			clamp(m_flAimPunchCurrent, -sv_neo_aimpunch_max.GetFloat(), sv_neo_aimpunch_max.GetFloat());
 		m_flAimPunchVel = 0.0f;
 	}
 
@@ -2046,7 +2078,7 @@ void C_NEO_Player::ApplyAimPunch()
 
 	float damping = 1 - (sv_neo_aimpunch_damping.GetFloat() * gpGlobals->frametime);
 
-	if ( damping < 0 )
+	if (damping < 0)
 	{
 		damping = 0;
 	}
@@ -2054,6 +2086,6 @@ void C_NEO_Player::ApplyAimPunch()
 
 	// torsional spring
 	float springForceMagnitude = sv_neo_aimpunch_spring_constant.GetFloat() * gpGlobals->frametime;
-	springForceMagnitude = clamp(springForceMagnitude, 0.f, 2.f );
+	springForceMagnitude = clamp(springForceMagnitude, 0.f, 2.f);
 	m_flAimPunchVel -= m_flAimPunchCurrent * springForceMagnitude;
 }

@@ -15,25 +15,31 @@
 // Creates and sets CNEOBotManager as the NextBotManager singleton
 static CNEOBotManager sNEOBotManager;
 
-ConVar neo_bot_difficulty( "neo_bot_difficulty", "2", FCVAR_NONE, "Defines the skill of bots joining the game.  Values are: 0=easy, 1=normal, 2=hard, 3=expert.", true, 0, true, CNEOBot::DifficultyType::NUM_DIFFICULTY_LEVELS - 1);
-ConVar neo_bot_quota( "neo_bot_quota", "10", FCVAR_NONE, "Determines the total number of bots in the game." );
-ConVar neo_bot_quota_mode( "neo_bot_quota_mode", "fill", FCVAR_NONE, "Determines the type of quota.\nAllowed values: 'normal', 'fill', and 'match'.\nIf 'fill', the server will adjust bots to keep N players in the game, where N is bot_quota.\nIf 'match', the server will maintain a 1:N ratio of humans to bots, where N is bot_quota." );
-ConVar neo_bot_join_after_player( "neo_bot_join_after_player", "1", FCVAR_NONE, "If nonzero, bots wait until a player joins before entering the game." );
-ConVar neo_bot_auto_vacate( "neo_bot_auto_vacate", "1", FCVAR_NONE, "If nonzero, bots will automatically leave to make room for human players." );
-ConVar neo_bot_offline_practice( "neo_bot_offline_practice", "0", FCVAR_NONE, "Tells the server that it is in offline practice mode." );
-ConVar neo_bot_melee_only( "neo_bot_melee_only", "0", FCVAR_GAMEDLL, "If nonzero, NEOBots will only use melee weapons" );
+ConVar neo_bot_difficulty("neo_bot_difficulty", "2", FCVAR_NONE,
+	"Defines the skill of bots joining the game.  Values are: 0=easy, 1=normal, 2=hard, 3=expert.", true, 0, true,
+	CNEOBot::DifficultyType::NUM_DIFFICULTY_LEVELS - 1);
+ConVar neo_bot_quota("neo_bot_quota", "10", FCVAR_NONE, "Determines the total number of bots in the game.");
+ConVar neo_bot_quota_mode("neo_bot_quota_mode", "fill", FCVAR_NONE,
+	"Determines the type of quota.\nAllowed values: 'normal', 'fill', and 'match'.\nIf 'fill', the server will adjust bots to keep N players in the game, where N is bot_quota.\nIf 'match', the server will maintain a 1:N ratio of humans to bots, where N is bot_quota.");
+ConVar neo_bot_join_after_player("neo_bot_join_after_player", "1", FCVAR_NONE,
+	"If nonzero, bots wait until a player joins before entering the game.");
+ConVar neo_bot_auto_vacate("neo_bot_auto_vacate", "1", FCVAR_NONE,
+	"If nonzero, bots will automatically leave to make room for human players.");
+ConVar neo_bot_offline_practice(
+	"neo_bot_offline_practice", "0", FCVAR_NONE, "Tells the server that it is in offline practice mode.");
+ConVar neo_bot_melee_only("neo_bot_melee_only", "0", FCVAR_GAMEDLL, "If nonzero, NEOBots will only use melee weapons");
 
 // NEO NOTE (nullsystem): This is not the same as a properly enforce class restriction,
 // this is just within the bots itself and at most make the class selection fairly even
 // amongs bots at lower populated bot matches.
 ConVar neo_bot_thres_restrict_class("neo_bot_thres_restrict_class", "3", FCVAR_NONE,
-		"Defines the maximum amount of bots per team to do class restrictions."
-		" For example, 3 will restrict for 3v3 and below with a maximum of 1 per class, but if 4v4 will not restrict."
-		" If set to a higher value like 4, it will restrict for 4v4 and below with a maximum of 2 per class."
-		" 0 will disables any class restrictions.",
-		true, 0, true, (MAX_PLAYERS - 1) / 2);
+	"Defines the maximum amount of bots per team to do class restrictions."
+	" For example, 3 will restrict for 3v3 and below with a maximum of 1 per class, but if 4v4 will not restrict."
+	" If set to a higher value like 4, it will restrict for 4v4 and below with a maximum of 2 per class."
+	" 0 will disables any class restrictions.",
+	true, 0, true, (MAX_PLAYERS - 1) / 2);
 
-static bool UTIL_KickBotFromTeam( int kickTeam )
+static bool UTIL_KickBotFromTeam(int kickTeam)
 {
 	int i;
 
@@ -44,23 +50,23 @@ static bool UTIL_KickBotFromTeam( int kickTeam )
 		return false;
 	}
 
-	CNEOBot* pBotOnTeam = nullptr;
-	CNEOBot* pDeadBotOnTeam = nullptr;
-	CNEOBot* pClassBotOnTeam = nullptr;
+	CNEOBot *pBotOnTeam = nullptr;
+	CNEOBot *pDeadBotOnTeam = nullptr;
+	CNEOBot *pClassBotOnTeam = nullptr;
 
 	// try to kick a dead bot first
-	for ( i = 1; i <= gpGlobals->maxClients; ++i )
+	for (i = 1; i <= gpGlobals->maxClients; ++i)
 	{
-		CNEO_Player *pPlayer = ToNEOPlayer( UTIL_PlayerByIndex( i ) );
-		CNEOBot* pBot = ToNEOBot(pPlayer);
+		CNEO_Player *pPlayer = ToNEOPlayer(UTIL_PlayerByIndex(i));
+		CNEOBot *pBot = ToNEOBot(pPlayer);
 
 		if (pBot == NULL)
 			continue;
 
-		if ( pBot->HasAttribute( CNEOBot::QUOTA_MANANGED ) == false )
+		if (pBot->HasAttribute(CNEOBot::QUOTA_MANANGED) == false)
 			continue;
 
-		if ( ( pPlayer->GetFlags() & FL_FAKECLIENT ) == 0 )
+		if ((pPlayer->GetFlags() & FL_FAKECLIENT) == 0)
 			continue;
 
 		if (pPlayer->GetTeamNumber() == kickTeam)
@@ -80,7 +86,7 @@ static bool UTIL_KickBotFromTeam( int kickTeam )
 			if (pClassBotOnTeam == pDeadBotOnTeam && pClassBotOnTeam == pBot)
 			{
 				// its a dead bot on the right team of the right class - kick it
-				engine->ServerCommand( UTIL_VarArgs( "kickid %d\n", pPlayer->GetUserID() ) );
+				engine->ServerCommand(UTIL_VarArgs("kickid %d\n", pPlayer->GetUserID()));
 				return true;
 			}
 		}
@@ -90,21 +96,21 @@ static bool UTIL_KickBotFromTeam( int kickTeam )
 	// NEO TODO (Adam) requestAppropriateClass could check class of all dead bots and return class of ideal bot to kick when switching teams
 	if (pClassBotOnTeam)
 	{
-		engine->ServerCommand( UTIL_VarArgs( "kickid %d\n", pClassBotOnTeam->GetUserID() ) );
+		engine->ServerCommand(UTIL_VarArgs("kickid %d\n", pClassBotOnTeam->GetUserID()));
 		return true;
 	}
 
 	// no dead bot on the right team of the right class, fallback to a dead bot
 	if (pDeadBotOnTeam)
 	{
-		engine->ServerCommand( UTIL_VarArgs( "kickid %d\n", pDeadBotOnTeam->GetUserID() ) );
+		engine->ServerCommand(UTIL_VarArgs("kickid %d\n", pDeadBotOnTeam->GetUserID()));
 		return true;
 	}
-	
+
 	// no dead bot on the right team, fallback to any bot on team
 	if (pBotOnTeam)
 	{
-		engine->ServerCommand( UTIL_VarArgs( "kickid %d\n", pBotOnTeam->GetUserID() ) );
+		engine->ServerCommand(UTIL_VarArgs("kickid %d\n", pBotOnTeam->GetUserID()));
 		return true;
 	}
 
@@ -120,19 +126,19 @@ CNEOBotManager::CNEOBotManager()
 	, m_bHasWarnedNoNavMesh( false )
 // clang-format on
 {
-	NextBotManager::SetInstance( this );
+	NextBotManager::SetInstance(this);
 }
 
 
 //----------------------------------------------------------------------------------------------------------------
 CNEOBotManager::~CNEOBotManager()
 {
-	NextBotManager::SetInstance( NULL );
+	NextBotManager::SetInstance(NULL);
 }
 
 
 //----------------------------------------------------------------------------------------------------------------
-void CNEOBotManager::OnMapLoaded( void )
+void CNEOBotManager::OnMapLoaded(void)
 {
 	NextBotManager::OnMapLoaded();
 
@@ -163,42 +169,42 @@ void CNEOBotManager::Update()
 
 
 //----------------------------------------------------------------------------------------------------------------
-bool CNEOBotManager::RemoveBotFromTeamAndKick( int nTeam )
+bool CNEOBotManager::RemoveBotFromTeamAndKick(int nTeam)
 {
-	CUtlVector< CNEO_Player* > vecCandidates;
+	CUtlVector<CNEO_Player *> vecCandidates;
 
 	// Gather potential candidates
-	for ( int i = 1; i <= gpGlobals->maxClients; ++i )
+	for (int i = 1; i <= gpGlobals->maxClients; ++i)
 	{
-		CNEO_Player *pPlayer = ToNEOPlayer( UTIL_PlayerByIndex( i ) );
+		CNEO_Player *pPlayer = ToNEOPlayer(UTIL_PlayerByIndex(i));
 
-		if ( pPlayer == NULL )
+		if (pPlayer == NULL)
 			continue;
 
-		if ( FNullEnt( pPlayer->edict() ) )
+		if (FNullEnt(pPlayer->edict()))
 			continue;
 
-		if ( !pPlayer->IsConnected() )
+		if (!pPlayer->IsConnected())
 			continue;
 
-		CNEOBot* pBot = ToNEOBot( pPlayer );
-		if ( pBot && pBot->HasAttribute( CNEOBot::QUOTA_MANANGED ) )
+		CNEOBot *pBot = ToNEOBot(pPlayer);
+		if (pBot && pBot->HasAttribute(CNEOBot::QUOTA_MANANGED))
 		{
-			if ( pBot->GetTeamNumber() == nTeam )
+			if (pBot->GetTeamNumber() == nTeam)
 			{
-				vecCandidates.AddToTail( pPlayer );
+				vecCandidates.AddToTail(pPlayer);
 			}
 		}
 	}
-	
+
 	CNEO_Player *pVictim = NULL;
-	if ( vecCandidates.Count() > 0 )
+	if (vecCandidates.Count() > 0)
 	{
 		// first look for bots that are currently dead
-		FOR_EACH_VEC( vecCandidates, i )
+		FOR_EACH_VEC(vecCandidates, i)
 		{
 			CNEO_Player *pPlayer = vecCandidates[i];
-			if ( pPlayer && !pPlayer->IsAlive() )
+			if (pPlayer && !pPlayer->IsAlive())
 			{
 				pVictim = pPlayer;
 				break;
@@ -206,12 +212,12 @@ bool CNEOBotManager::RemoveBotFromTeamAndKick( int nTeam )
 		}
 
 		// if we didn't fine one, try to kick anyone on the team
-		if ( !pVictim )
+		if (!pVictim)
 		{
-			FOR_EACH_VEC( vecCandidates, i )
+			FOR_EACH_VEC(vecCandidates, i)
 			{
 				CNEO_Player *pPlayer = vecCandidates[i];
-				if ( pPlayer )
+				if (pPlayer)
 				{
 					pVictim = pPlayer;
 					break;
@@ -220,13 +226,13 @@ bool CNEOBotManager::RemoveBotFromTeamAndKick( int nTeam )
 		}
 	}
 
-	if ( pVictim )
+	if (pVictim)
 	{
-		if ( pVictim->IsAlive() )
+		if (pVictim->IsAlive())
 		{
 			pVictim->CommitSuicide();
 		}
-		UTIL_KickBotFromTeam( TEAM_UNASSIGNED );
+		UTIL_KickBotFromTeam(TEAM_UNASSIGNED);
 		return true;
 	}
 
@@ -238,28 +244,30 @@ extern ConVar neo_bot_recon_ratio;
 extern ConVar neo_bot_support_ratio;
 void CNEOBotManager::MaintainBotQuota()
 {
-	if ( TheNavMesh->IsGenerating() )
+	if (TheNavMesh->IsGenerating())
 		return;
 
-	if ( m_bHasWarnedNoNavMesh )
+	if (m_bHasWarnedNoNavMesh)
 	{
 		return;
 	}
-	else if ( TheNavMesh->GetNavAreaCount() == 0 )
+	else if (TheNavMesh->GetNavAreaCount() == 0)
 	{
-		if ( neo_bot_quota.GetInt() > 0 && !m_bHasWarnedNoNavMesh )
+		if (neo_bot_quota.GetInt() > 0 && !m_bHasWarnedNoNavMesh)
 		{
-			Warning( "No NavMesh available for map %s.  In order to add working bots, map maintainer must create a NavMesh with nav_edit/nav_generate/nav_build_ladder.\n", STRING( gpGlobals->mapname ) );
+			Warning(
+				"No NavMesh available for map %s.  In order to add working bots, map maintainer must create a NavMesh with nav_edit/nav_generate/nav_build_ladder.\n",
+				STRING(gpGlobals->mapname));
 			m_bHasWarnedNoNavMesh = true;
 		}
 		return;
 	}
 
-	if ( g_fGameOver )
+	if (g_fGameOver)
 		return;
 
 	// new players can't spawn immediately after the round has been going for some time
-	if ( !NEORules() )
+	if (!NEORules())
 		return;
 
 	NeoGameType gameType = (NeoGameType)NEORules()->GetGameType();
@@ -269,24 +277,24 @@ void CNEOBotManager::MaintainBotQuota()
 	}
 
 	// if it is not time to do anything...
-	if ( gpGlobals->curtime < m_flNextPeriodicThink )
+	if (gpGlobals->curtime < m_flNextPeriodicThink)
 		return;
 
 	// think every quarter second
 	m_flNextPeriodicThink = gpGlobals->curtime + 0.25f;
 
 	const int iMaxClassRestrictCount = neo_bot_thres_restrict_class.GetInt() * 2;
-	const bool bRestrictClass = (NEORules()->IsTeamplay() &&
-			iMaxClassRestrictCount > 0 && neo_bot_quota.GetInt() <= iMaxClassRestrictCount);
+	const bool bRestrictClass =
+		(NEORules()->IsTeamplay() && iMaxClassRestrictCount > 0 && neo_bot_quota.GetInt() <= iMaxClassRestrictCount);
 
 	// don't add bots until local player has been registered and assigned, to make sure he's player ID #1
-	if ( !engine->IsDedicatedServer() )
+	if (!engine->IsDedicatedServer())
 	{
 		CNEO_Player *pPlayer = ToNEOPlayer(UTIL_GetListenServerHost());
-		if ( !pPlayer ||
-				(bRestrictClass &&
-					(pPlayer->GetTeamNumber() == TEAM_UNASSIGNED ||
-					 !(IN_BETWEEN_EQ(NEO_CLASS_RECON, pPlayer->GetClass(), NEO_CLASS_SUPPORT)))) )
+		if (!pPlayer ||
+			(bRestrictClass &&
+				(pPlayer->GetTeamNumber() == TEAM_UNASSIGNED ||
+					!(IN_BETWEEN_EQ(NEO_CLASS_RECON, pPlayer->GetClass(), NEO_CLASS_SUPPORT)))))
 		{
 			return;
 		}
@@ -299,17 +307,17 @@ void CNEOBotManager::MaintainBotQuota()
 	int nNonNEOBotsOnGameTeams = 0;
 	int nSpectators = 0;
 	int naCountClasses[TEAM__TOTAL][NEO_CLASS__ENUM_COUNT] = {};
-	for ( int i = 1; i <= gpGlobals->maxClients; ++i )
+	for (int i = 1; i <= gpGlobals->maxClients; ++i)
 	{
-		CNEO_Player *pPlayer = ToNEOPlayer( UTIL_PlayerByIndex( i ) );
+		CNEO_Player *pPlayer = ToNEOPlayer(UTIL_PlayerByIndex(i));
 
-		if ( pPlayer == NULL )
+		if (pPlayer == NULL)
 			continue;
 
-		if ( FNullEnt( pPlayer->edict() ) )
+		if (FNullEnt(pPlayer->edict()))
 			continue;
 
-		if ( !pPlayer->IsConnected() )
+		if (!pPlayer->IsConnected())
 			continue;
 
 		int iPlayerTeam = pPlayer->GetTeamNumber();
@@ -320,8 +328,8 @@ void CNEOBotManager::MaintainBotQuota()
 			iClass = pPlayer->m_iNextSpawnClassChoice;
 		}
 
-		CNEOBot* pBot = ToNEOBot( pPlayer );
-		if ( pBot && pBot->HasAttribute( CNEOBot::QUOTA_MANANGED ) )
+		CNEOBot *pBot = ToNEOBot(pPlayer);
+		if (pBot && pBot->HasAttribute(CNEOBot::QUOTA_MANANGED))
 		{
 			nNEOBots++;
 			bool bIsInTeam = (iPlayerTeam == TEAM_JINRAI || iPlayerTeam == TEAM_NSF);
@@ -343,12 +351,12 @@ void CNEOBotManager::MaintainBotQuota()
 		}
 		else
 		{
-			if ( iPlayerTeam == TEAM_JINRAI || iPlayerTeam == TEAM_NSF)
+			if (iPlayerTeam == TEAM_JINRAI || iPlayerTeam == TEAM_NSF)
 			{
 				nNonNEOBotsOnGameTeams++;
 				naCountClasses[iPlayerTeam][iClass]++;
 			}
-			else if ( iPlayerTeam == TEAM_SPECTATOR && !pPlayer->IsHLTV() )
+			else if (iPlayerTeam == TEAM_SPECTATOR && !pPlayer->IsHLTV())
 			{
 				nSpectators++;
 			}
@@ -360,57 +368,58 @@ void CNEOBotManager::MaintainBotQuota()
 	int desiredBotCount = neo_bot_quota.GetInt();
 	int nTotalNonNEOBots = nConnectedClients - nNEOBots;
 
-	if ( FStrEq( neo_bot_quota_mode.GetString(), "fill" ) )
+	if (FStrEq(neo_bot_quota_mode.GetString(), "fill"))
 	{
-		desiredBotCount = Max( 0, desiredBotCount - nNonNEOBotsOnGameTeams );
+		desiredBotCount = Max(0, desiredBotCount - nNonNEOBotsOnGameTeams);
 	}
-	else if ( FStrEq( neo_bot_quota_mode.GetString(), "match" ) )
+	else if (FStrEq(neo_bot_quota_mode.GetString(), "match"))
 	{
 		// If bot_quota_mode is 'match', we want the number of bots to be bot_quota * total humans
-		desiredBotCount = Max( 0, (int)neo_bot_quota.GetFloat() * nNonNEOBotsOnGameTeams );
+		desiredBotCount = Max(0, (int)neo_bot_quota.GetFloat() * nNonNEOBotsOnGameTeams);
 	}
 
 	// wait for a player to join, if necessary
-	if ( neo_bot_join_after_player.GetBool() )
+	if (neo_bot_join_after_player.GetBool())
 	{
-		if ( ( nNonNEOBotsOnGameTeams == 0 ) && ( nSpectators == 0 ) )
+		if ((nNonNEOBotsOnGameTeams == 0) && (nSpectators == 0))
 		{
 			desiredBotCount = 0;
 		}
 	}
 
 	// if bots will auto-vacate, we need to keep one slot open to allow players to join
-	if ( neo_bot_auto_vacate.GetBool() )
+	if (neo_bot_auto_vacate.GetBool())
 	{
-		desiredBotCount = Min( desiredBotCount, gpGlobals->maxClients - nTotalNonNEOBots - 1 );
+		desiredBotCount = Min(desiredBotCount, gpGlobals->maxClients - nTotalNonNEOBots - 1);
 	}
 	else
 	{
-		desiredBotCount = Min( desiredBotCount, gpGlobals->maxClients - nTotalNonNEOBots );
+		desiredBotCount = Min(desiredBotCount, gpGlobals->maxClients - nTotalNonNEOBots);
 	}
 
 	// add bots if necessary
-	if ( desiredBotCount > nNEOBotsOnGameTeams )
+	if (desiredBotCount > nNEOBotsOnGameTeams)
 	{
 		int iTeam = TEAM_UNASSIGNED;
 
 		// In DeathMatch (DM), bots must still be assigned to valid teams (JINRAI/NSF) instead of TEAM_UNASSIGNED.
 		// TEAM_UNASSIGNED forces bots into a limbo/Observer state that the bot logic isn't designed to handle, leading to crashes.
 		// By forcing them onto teams, we ensure they have a valid state and can participate in the DM logic (treating everyone as enemy).
-		if ( iTeam == TEAM_UNASSIGNED )
+		if (iTeam == TEAM_UNASSIGNED)
 		{
-			CTeam* pJinrai = GetGlobalTeam(TEAM_JINRAI);
-			CTeam* pNSF = GetGlobalTeam(TEAM_NSF);
+			CTeam *pJinrai = GetGlobalTeam(TEAM_JINRAI);
+			CTeam *pNSF = GetGlobalTeam(TEAM_NSF);
 			const int numJinrai = pJinrai->GetNumPlayers();
 			const int numNSF = pNSF->GetNumPlayers();
 
 			iTeam = numJinrai < numNSF ? TEAM_JINRAI : numNSF < numJinrai ? TEAM_NSF : RandomInt(TEAM_JINRAI, TEAM_NSF);
 		}
 
-		CNEOBot::DifficultyType skill = Clamp((CNEOBot::DifficultyType)neo_bot_difficulty.GetInt(), CNEOBot::EASY, CNEOBot::EXPERT);
+		CNEOBot::DifficultyType skill =
+			Clamp((CNEOBot::DifficultyType)neo_bot_difficulty.GetInt(), CNEOBot::EASY, CNEOBot::EXPERT);
 
 		CNEOBot *pBot = GetAvailableBotFromPool();
-		if ( pBot == NULL )
+		if (pBot == NULL)
 		{
 			BotClassFlag flagTargetClass = 0;
 			BotClassFlag flagForceClass = 0;
@@ -440,9 +449,9 @@ void CNEOBotManager::MaintainBotQuota()
 
 			char szBotName[MAX_PLAYER_NAME_LENGTH];
 			skill = static_cast<CNEOBot::DifficultyType>(
-					NEOBotProfileCreateNameRetSkill(szBotName, retProfile.profile, skill));
+				NEOBotProfileCreateNameRetSkill(szBotName, retProfile.profile, skill));
 
-			pBot = NextBotCreatePlayerBot< CNEOBot >(szBotName);
+			pBot = NextBotCreatePlayerBot<CNEOBot>(szBotName);
 			pBot->m_iIntendTeam = iTeam;
 			pBot->SetAttribute(CNEOBot::QUOTA_MANANGED);
 			pBot->m_iProfileIdx = retProfile.index;
@@ -453,20 +462,20 @@ void CNEOBotManager::MaintainBotQuota()
 			}
 			pBot->SetDifficulty(skill);
 		}
-		if ( pBot )
+		if (pBot)
 		{
-			pBot->SetAttribute( CNEOBot::QUOTA_MANANGED );
-			engine->SetFakeClientConVarValue( pBot->edict(), "name", pBot->GetPlayerName() );
+			pBot->SetAttribute(CNEOBot::QUOTA_MANANGED);
+			engine->SetFakeClientConVarValue(pBot->edict(), "name", pBot->GetPlayerName());
 			pBot->RequestSetSkin(RandomInt(0, 2));
-			pBot->HandleCommand_JoinTeam( iTeam );
+			pBot->HandleCommand_JoinTeam(iTeam);
 		}
 	}
-	else if ( desiredBotCount < nNEOBotsOnGameTeams )
+	else if (desiredBotCount < nNEOBotsOnGameTeams)
 	{
 		// kick a bot to maintain quota
-		
+
 		// first remove any unassigned bots
-		if ( UTIL_KickBotFromTeam( TEAM_UNASSIGNED ) )
+		if (UTIL_KickBotFromTeam(TEAM_UNASSIGNED))
 			return;
 
 		int kickTeam;
@@ -475,20 +484,20 @@ void CNEOBotManager::MaintainBotQuota()
 		CTeam *pNSF = GetGlobalTeam(TEAM_NSF);
 
 		// remove from the team that has more players
-		if (pJinrai->GetNumPlayers() > pNSF->GetNumPlayers() )
+		if (pJinrai->GetNumPlayers() > pNSF->GetNumPlayers())
 		{
 			kickTeam = TEAM_JINRAI;
 		}
-		else if (pJinrai->GetNumPlayers() < pNSF->GetNumPlayers() )
+		else if (pJinrai->GetNumPlayers() < pNSF->GetNumPlayers())
 		{
 			kickTeam = TEAM_NSF;
 		}
 		// remove from the team that's winning
-		else if (pJinrai->GetScore() > pNSF->GetScore() )
+		else if (pJinrai->GetScore() > pNSF->GetScore())
 		{
 			kickTeam = TEAM_JINRAI;
 		}
-		else if (pJinrai->GetScore() < pNSF->GetScore() )
+		else if (pJinrai->GetScore() < pNSF->GetScore())
 		{
 			kickTeam = TEAM_NSF;
 		}
@@ -499,7 +508,7 @@ void CNEOBotManager::MaintainBotQuota()
 		}
 
 		// attempt to kick a bot from the given team
-		if ( UTIL_KickBotFromTeam( kickTeam ) )
+		if (UTIL_KickBotFromTeam(kickTeam))
 			return;
 
 		// if there were no bots on the team, kick a bot from the other team
@@ -509,30 +518,30 @@ void CNEOBotManager::MaintainBotQuota()
 
 
 //----------------------------------------------------------------------------------------------------------------
-bool CNEOBotManager::IsAllBotTeam( int iTeam )
+bool CNEOBotManager::IsAllBotTeam(int iTeam)
 {
-	CTeam *pTeam = GetGlobalTeam( iTeam );
-	if ( pTeam == NULL )
+	CTeam *pTeam = GetGlobalTeam(iTeam);
+	if (pTeam == NULL)
 	{
 		return false;
 	}
 
 	// check to see if any players on the team are humans
-	for ( int i = 0, n = pTeam->GetNumPlayers(); i < n; ++i )
+	for (int i = 0, n = pTeam->GetNumPlayers(); i < n; ++i)
 	{
-		CNEO_Player *pPlayer = ToNEOPlayer( pTeam->GetPlayer( i ) );
-		if ( pPlayer == NULL )
+		CNEO_Player *pPlayer = ToNEOPlayer(pTeam->GetPlayer(i));
+		if (pPlayer == NULL)
 		{
 			continue;
 		}
-		if ( pPlayer->IsBot() == false )
+		if (pPlayer->IsBot() == false)
 		{
 			return false;
 		}
 	}
 
 	// if we made it this far, then they must all be bots!
-	if ( pTeam->GetNumPlayers() != 0 )
+	if (pTeam->GetNumPlayers() != 0)
 	{
 		return true;
 	}
@@ -544,7 +553,7 @@ bool CNEOBotManager::IsAllBotTeam( int iTeam )
 //----------------------------------------------------------------------------------------------------------------
 void CNEOBotManager::SetIsInOfflinePractice(bool bIsInOfflinePractice)
 {
-	neo_bot_offline_practice.SetValue( bIsInOfflinePractice ? 1 : 0 );
+	neo_bot_offline_practice.SetValue(bIsInOfflinePractice ? 1 : 0);
 }
 
 
@@ -576,32 +585,32 @@ void CNEOBotManager::RevertOfflinePracticeConvars()
 void CNEOBotManager::LevelShutdown()
 {
 	m_flNextPeriodicThink = 0.0f;
-	if ( IsInOfflinePractice() )
+	if (IsInOfflinePractice())
 	{
 		RevertOfflinePracticeConvars();
-		SetIsInOfflinePractice( false );
+		SetIsInOfflinePractice(false);
 	}
-	
+
 	CNEOBotPathReservations()->Clear();
 }
 
 
 //----------------------------------------------------------------------------------------------------------------
-CNEOBot* CNEOBotManager::GetAvailableBotFromPool()
+CNEOBot *CNEOBotManager::GetAvailableBotFromPool()
 {
-	for ( int i = 1; i <= gpGlobals->maxClients; ++i )
+	for (int i = 1; i <= gpGlobals->maxClients; ++i)
 	{
-		CNEOBot* pBot = ToNEOBot(UTIL_PlayerByIndex(i));
+		CNEOBot *pBot = ToNEOBot(UTIL_PlayerByIndex(i));
 
 		if (pBot == NULL)
 			continue;
 
-		if ( ( pBot->GetFlags() & FL_FAKECLIENT ) == 0 )
+		if ((pBot->GetFlags() & FL_FAKECLIENT) == 0)
 			continue;
 
-		if ( pBot->GetTeamNumber() == TEAM_SPECTATOR || pBot->GetTeamNumber() == TEAM_UNASSIGNED )
+		if (pBot->GetTeamNumber() == TEAM_SPECTATOR || pBot->GetTeamNumber() == TEAM_UNASSIGNED)
 		{
-			pBot->ClearAttribute( CNEOBot::QUOTA_MANANGED );
+			pBot->ClearAttribute(CNEOBot::QUOTA_MANANGED);
 			return pBot;
 		}
 	}
@@ -610,146 +619,146 @@ CNEOBot* CNEOBotManager::GetAvailableBotFromPool()
 
 
 //----------------------------------------------------------------------------------------------------------------
-void CNEOBotManager::OnForceAddedBots( int iNumAdded )
+void CNEOBotManager::OnForceAddedBots(int iNumAdded)
 {
-	neo_bot_quota.SetValue( neo_bot_quota.GetInt() + iNumAdded );
+	neo_bot_quota.SetValue(neo_bot_quota.GetInt() + iNumAdded);
 	m_flNextPeriodicThink = gpGlobals->curtime + 1.0f;
 }
 
 
 //----------------------------------------------------------------------------------------------------------------
-void CNEOBotManager::OnForceKickedBots( int iNumKicked )
+void CNEOBotManager::OnForceKickedBots(int iNumKicked)
 {
-	neo_bot_quota.SetValue( MAX( neo_bot_quota.GetInt() - iNumKicked, 0 ) );
+	neo_bot_quota.SetValue(MAX(neo_bot_quota.GetInt() - iNumKicked, 0));
 	// allow time for the bots to be kicked
 	m_flNextPeriodicThink = gpGlobals->curtime + 2.0f;
 }
 
 
 //----------------------------------------------------------------------------------------------------------------
-CNEOBotManager &TheNEOBots( void )
+CNEOBotManager &TheNEOBots(void)
 {
-	return static_cast<CNEOBotManager&>( TheNextBots() );
+	return static_cast<CNEOBotManager &>(TheNextBots());
 }
 
 
-
 //----------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------
-CON_COMMAND_F( neo_bot_debug_stuck_log, "Given a server logfile, visually display bot stuck locations.", FCVAR_GAMEDLL | FCVAR_CHEAT )
+CON_COMMAND_F(neo_bot_debug_stuck_log, "Given a server logfile, visually display bot stuck locations.",
+	FCVAR_GAMEDLL | FCVAR_CHEAT)
 {
 	// Listenserver host or rcon access only!
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if (!UTIL_IsCommandIssuedByServerAdmin())
 		return;
 
-	if ( args.ArgC() < 2 )
+	if (args.ArgC() < 2)
 	{
-		DevMsg( "%s <logfilename>\n", args.Arg(0) );
+		DevMsg("%s <logfilename>\n", args.Arg(0));
 		return;
 	}
 
-	FileHandle_t file = filesystem->Open( args.Arg(1), "r", "GAME" );
+	FileHandle_t file = filesystem->Open(args.Arg(1), "r", "GAME");
 
 	const int maxBufferSize = 1024;
-	char buffer[ maxBufferSize ];
+	char buffer[maxBufferSize];
 
-	char logMapName[ maxBufferSize ];
+	char logMapName[maxBufferSize];
 	logMapName[0] = '\000';
 
 	TheNEOBots().ClearStuckBotData();
 
-	if ( file )
+	if (file)
 	{
 		int line = 0;
-		while( !filesystem->EndOfFile( file ) )
+		while (!filesystem->EndOfFile(file))
 		{
-			filesystem->ReadLine( buffer, maxBufferSize, file );
+			filesystem->ReadLine(buffer, maxBufferSize, file);
 			++line;
 
-			strtok( buffer, ":" );
-			strtok( NULL, ":" );
-			strtok( NULL, ":" );
-			char *first = strtok( NULL, " " );
+			strtok(buffer, ":");
+			strtok(NULL, ":");
+			strtok(NULL, ":");
+			char *first = strtok(NULL, " ");
 
-			if ( !first )
+			if (!first)
 				continue;
 
-			if ( !strcmp( first, "Loading" ) )
+			if (!strcmp(first, "Loading"))
 			{
 				// L 08/08/2012 - 15:10:47: Loading map "mvm_coaltown"
-				strtok( NULL, " " );
-				char *mapname = strtok( NULL, "\"" );
+				strtok(NULL, " ");
+				char *mapname = strtok(NULL, "\"");
 
-				if ( mapname )
+				if (mapname)
 				{
-					strcpy( logMapName, mapname );
-					Warning( "*** Log file from map '%s'\n", mapname );
+					strcpy(logMapName, mapname);
+					Warning("*** Log file from map '%s'\n", mapname);
 				}
 			}
-			else if ( first[0] == '\"' )
+			else if (first[0] == '\"')
 			{
 				// might be a player ID
 
 				char *playerClassname = &first[1];
 
 				char *nameEnd = playerClassname;
-				while( *nameEnd != '\000' && *nameEnd != '<' )
+				while (*nameEnd != '\000' && *nameEnd != '<')
 					++nameEnd;
 				*nameEnd = '\000';
 
 				char *botIDString = ++nameEnd;
 				char *IDEnd = botIDString;
-				while( *IDEnd != '\000' && *IDEnd != '>' )
+				while (*IDEnd != '\000' && *IDEnd != '>')
 					++IDEnd;
 				*IDEnd = '\000';
 
-				int botID = atoi( botIDString );
+				int botID = atoi(botIDString);
 
-				char *second = strtok( NULL, " " );
-				if ( second && !strcmp( second, "stuck" ) )
+				char *second = strtok(NULL, " ");
+				if (second && !strcmp(second, "stuck"))
 				{
-					CStuckBot *stuckBot = TheNEOBots().FindOrCreateStuckBot( botID, playerClassname );
+					CStuckBot *stuckBot = TheNEOBots().FindOrCreateStuckBot(botID, playerClassname);
 
 					CStuckBotEvent *stuckEvent = new CStuckBotEvent;
 
 
 					// L 08/08/2012 - 15:15:05: "Scout<53><BOT><Blue>" stuck (position "-180.61 2471.29 216.04") (duration "2.52") L 08/08/2012 - 15:15:05:    path_goal ( "-180.61 2471.29 216.04" )
-					strtok( NULL, " (\"" );	// (position
+					strtok(NULL, " (\""); // (position
 
-					stuckEvent->m_stuckSpot.x = (float)atof( strtok( NULL, " )\"" ) );
-					stuckEvent->m_stuckSpot.y = (float)atof( strtok( NULL, " )\"" ) );
-					stuckEvent->m_stuckSpot.z = (float)atof( strtok( NULL, " )\"" ) );
+					stuckEvent->m_stuckSpot.x = (float)atof(strtok(NULL, " )\""));
+					stuckEvent->m_stuckSpot.y = (float)atof(strtok(NULL, " )\""));
+					stuckEvent->m_stuckSpot.z = (float)atof(strtok(NULL, " )\""));
 
-					strtok( NULL, ") (\"" );
-					stuckEvent->m_stuckDuration = (float)atof( strtok( NULL, "\"" ) );
+					strtok(NULL, ") (\"");
+					stuckEvent->m_stuckDuration = (float)atof(strtok(NULL, "\""));
 
-					strtok( NULL, ") (\"-L0123456789/:" );	// path_goal
+					strtok(NULL, ") (\"-L0123456789/:"); // path_goal
 
-					char *goal = strtok( NULL, ") (\"" );
+					char *goal = strtok(NULL, ") (\"");
 
-					if ( goal && strcmp( goal, "NULL" ) )
+					if (goal && strcmp(goal, "NULL"))
 					{
 						stuckEvent->m_isGoalValid = true;
 
-						stuckEvent->m_goalSpot.x = (float)atof( goal );
-						stuckEvent->m_goalSpot.y = (float)atof( strtok( NULL, ") (\"" ) );
-						stuckEvent->m_goalSpot.z = (float)atof( strtok( NULL, ") (\"" ) );
+						stuckEvent->m_goalSpot.x = (float)atof(goal);
+						stuckEvent->m_goalSpot.y = (float)atof(strtok(NULL, ") (\""));
+						stuckEvent->m_goalSpot.z = (float)atof(strtok(NULL, ") (\""));
 					}
 					else
 					{
 						stuckEvent->m_isGoalValid = false;
 					}
 
-					stuckBot->m_stuckEventVector.AddToTail( stuckEvent );
+					stuckBot->m_stuckEventVector.AddToTail(stuckEvent);
 				}
 			}
 		}
 
-		filesystem->Close( file );
+		filesystem->Close(file);
 	}
 	else
 	{
-		Warning( "Can't open file '%s'\n", args.Arg(1) );
+		Warning("Can't open file '%s'\n", args.Arg(1));
 	}
 
 	//TheNEOBots().DrawStuckBotData();
@@ -758,10 +767,10 @@ CON_COMMAND_F( neo_bot_debug_stuck_log, "Given a server logfile, visually displa
 
 //----------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------
-CON_COMMAND_F( neo_bot_debug_stuck_log_clear, "Clear currently loaded bot stuck data", FCVAR_GAMEDLL | FCVAR_CHEAT )
+CON_COMMAND_F(neo_bot_debug_stuck_log_clear, "Clear currently loaded bot stuck data", FCVAR_GAMEDLL | FCVAR_CHEAT)
 {
 	// Listenserver host or rcon access only!
-	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+	if (!UTIL_IsCommandIssuedByServerAdmin())
 		return;
 
 	TheNEOBots().ClearStuckBotData();
@@ -778,60 +787,58 @@ void CNEOBotManager::ClearStuckBotData()
 
 //----------------------------------------------------------------------------------------------------------------
 // for parsing and debugging stuck bot server logs
-CStuckBot *CNEOBotManager::FindOrCreateStuckBot( int id, const char *playerClass )
+CStuckBot *CNEOBotManager::FindOrCreateStuckBot(int id, const char *playerClass)
 {
-	for( int i=0; i<m_stuckBotVector.Count(); ++i )
+	for (int i = 0; i < m_stuckBotVector.Count(); ++i)
 	{
 		CStuckBot *stuckBot = m_stuckBotVector[i];
 
-		if ( stuckBot->IsMatch( id, playerClass ) )
+		if (stuckBot->IsMatch(id, playerClass))
 		{
 			return stuckBot;
 		}
 	}
 
 	// new instance of a stuck bot
-	CStuckBot *newStuckBot = new CStuckBot( id, playerClass );
-	m_stuckBotVector.AddToHead( newStuckBot );
+	CStuckBot *newStuckBot = new CStuckBot(id, playerClass);
+	m_stuckBotVector.AddToHead(newStuckBot);
 
 	return newStuckBot;
 }
 
 
 //----------------------------------------------------------------------------------------------------------------
-void CNEOBotManager::DrawStuckBotData( float deltaT )
+void CNEOBotManager::DrawStuckBotData(float deltaT)
 {
-	if ( engine->IsDedicatedServer() )
+	if (engine->IsDedicatedServer())
 		return;
 
-	if ( !m_stuckDisplayTimer.IsElapsed() )
+	if (!m_stuckDisplayTimer.IsElapsed())
 		return;
 
-	m_stuckDisplayTimer.Start( deltaT );
+	m_stuckDisplayTimer.Start(deltaT);
 
 	CBasePlayer *player = UTIL_GetListenServerHost();
-	if ( player == NULL )
+	if (player == NULL)
 		return;
 
-// 	Vector forward;
-// 	AngleVectors( player->EyeAngles(), &forward );
+	// 	Vector forward;
+	// 	AngleVectors( player->EyeAngles(), &forward );
 
-	for( int i=0; i<m_stuckBotVector.Count(); ++i )
+	for (int i = 0; i < m_stuckBotVector.Count(); ++i)
 	{
-		for( int j=0; j<m_stuckBotVector[i]->m_stuckEventVector.Count(); ++j )
+		for (int j = 0; j < m_stuckBotVector[i]->m_stuckEventVector.Count(); ++j)
 		{
-			m_stuckBotVector[i]->m_stuckEventVector[j]->Draw( deltaT );
+			m_stuckBotVector[i]->m_stuckEventVector[j]->Draw(deltaT);
 		}
 
-		for( int j=0; j<m_stuckBotVector[i]->m_stuckEventVector.Count()-1; ++j )
+		for (int j = 0; j < m_stuckBotVector[i]->m_stuckEventVector.Count() - 1; ++j)
 		{
-			NDebugOverlay::HorzArrow( m_stuckBotVector[i]->m_stuckEventVector[j]->m_stuckSpot, 
-									  m_stuckBotVector[i]->m_stuckEventVector[j+1]->m_stuckSpot,
-									  3, 100, 0, 255, 255, true, deltaT );
+			NDebugOverlay::HorzArrow(m_stuckBotVector[i]->m_stuckEventVector[j]->m_stuckSpot,
+				m_stuckBotVector[i]->m_stuckEventVector[j + 1]->m_stuckSpot, 3, 100, 0, 255, 255, true, deltaT);
 		}
 
-		NDebugOverlay::Text( m_stuckBotVector[i]->m_stuckEventVector[0]->m_stuckSpot, CFmtStr( "%s(#%d)", m_stuckBotVector[i]->m_name, m_stuckBotVector[i]->m_id ), false, deltaT );
+		NDebugOverlay::Text(m_stuckBotVector[i]->m_stuckEventVector[0]->m_stuckSpot,
+			CFmtStr("%s(#%d)", m_stuckBotVector[i]->m_name, m_stuckBotVector[i]->m_id), false, deltaT);
 	}
 }
-
-

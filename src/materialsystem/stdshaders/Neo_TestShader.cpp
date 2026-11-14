@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------------
 // Neo_TestShader.cpp
-// 
+//
 // Adapted from the tutorial:
 // https://developer.valvesoftware.com/wiki/Source_SDK_2013:_Your_First_Shader
 //
@@ -26,30 +26,29 @@
 
 BEGIN_SHADER(Neo_TestShader, "Help string for shader.")
 
-	// ----------------------------------------------------------------------------
-	// This block is where you'd define inputs that users can feed to your
-	// shader.
-	// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// This block is where you'd define inputs that users can feed to your
+// shader.
+// ----------------------------------------------------------------------------
+// clang-format off
 	BEGIN_SHADER_PARAMS
 	END_SHADER_PARAMS
+// clang-format on
 
-	// ----------------------------------------------------------------------------
-	// This is the shader initialization block.
-	// ----------------------------------------------------------------------------
-	SHADER_INIT
-	{
+// ----------------------------------------------------------------------------
+// This is the shader initialization block.
+// ----------------------------------------------------------------------------
+SHADER_INIT {}
 
-	}
-
-	// ----------------------------------------------------------------------------
-	// We want this shader to operate on the frame buffer itself. Therefore,
-	// we need to set this to true.
-	// ----------------------------------------------------------------------------
-	bool NeedsFullFrameBufferTexture(IMaterialVar **params, bool bCheckSpecificToThisFrame /* = true */) const
-	{
-		return true;
-	}
-	/*
+// ----------------------------------------------------------------------------
+// We want this shader to operate on the frame buffer itself. Therefore,
+// we need to set this to true.
+// ----------------------------------------------------------------------------
+bool NeedsFullFrameBufferTexture(IMaterialVar **params, bool bCheckSpecificToThisFrame /* = true */) const
+{
+	return true;
+}
+/*
 	// Could we also do this, instead? Perf implications?
 	SHADER_INIT_PARAMS()
 	{
@@ -57,109 +56,107 @@ BEGIN_SHADER(Neo_TestShader, "Help string for shader.")
 	}
 	*/
 
-	// ----------------------------------------------------------------------------
-	// This block should return the name of the shader to fall back to if
-	// we fail to bind this shader for any reason.
-	// ----------------------------------------------------------------------------
-	SHADER_FALLBACK
+// ----------------------------------------------------------------------------
+// This block should return the name of the shader to fall back to if
+// we fail to bind this shader for any reason.
+// ----------------------------------------------------------------------------
+SHADER_FALLBACK
+{
+	// Requires DX9 + above
+	if (g_pHardwareConfig->GetDXSupportLevel() < 90)
 	{
-		// Requires DX9 + above
-		if (g_pHardwareConfig->GetDXSupportLevel() < 90)
-		{
-			Assert(0);
-			return "Wireframe";
-		}
-		return 0;
+		Assert(0);
+		return "Wireframe";
 	}
+	return 0;
+}
 
-	SHADER_DRAW
+SHADER_DRAW
+{
+	// ----------------------------------------------------------------------------
+	// This section is called when the shader is bound for the first time.
+	// You should setup any static state variables here.
+	// ----------------------------------------------------------------------------
+	SHADOW_STATE
 	{
-		// ----------------------------------------------------------------------------
-		// This section is called when the shader is bound for the first time.
-		// You should setup any static state variables here.
-		// ----------------------------------------------------------------------------
-		SHADOW_STATE
-		{
 // Render targets are pegged as sRGB on POSIX, so just force these reads and writes
 #ifdef LINUX
-			const bool bForceSRGBReadAndWrite = g_pHardwareConfig->CanDoSRGBReadFromRTs();
-			pShaderShadow->EnableSRGBRead(SHADER_SAMPLER0, bForceSRGBReadAndWrite);
-			pShaderShadow->EnableSRGBWrite(bForceSRGBReadAndWrite);
+		const bool bForceSRGBReadAndWrite = g_pHardwareConfig->CanDoSRGBReadFromRTs();
+		pShaderShadow->EnableSRGBRead(SHADER_SAMPLER0, bForceSRGBReadAndWrite);
+		pShaderShadow->EnableSRGBWrite(bForceSRGBReadAndWrite);
 #elif defined(_WIN32)
-			pShaderShadow->EnableSRGBRead(SHADER_SAMPLER0, false);
-			pShaderShadow->EnableSRGBWrite(false);
+		pShaderShadow->EnableSRGBRead(SHADER_SAMPLER0, false);
+		pShaderShadow->EnableSRGBWrite(false);
 #else // OS X
-			const bool bForceSRGBReadAndWrite = IsOSX() && g_pHardwareConfig->CanDoSRGBReadFromRTs();
-			pShaderShadow->EnableSRGBRead(SHADER_SAMPLER0, bForceSRGBReadAndWrite);
-			pShaderShadow->EnableSRGBWrite(bForceSRGBReadAndWrite);
+		const bool bForceSRGBReadAndWrite = IsOSX() && g_pHardwareConfig->CanDoSRGBReadFromRTs();
+		pShaderShadow->EnableSRGBRead(SHADER_SAMPLER0, bForceSRGBReadAndWrite);
+		pShaderShadow->EnableSRGBWrite(bForceSRGBReadAndWrite);
 #endif
 
-			// Setup the vertex format.
-			const int formatFlags = VERTEX_POSITION;
-			pShaderShadow->VertexShaderVertexFormat(formatFlags, 1, 0, 0);
+		// Setup the vertex format.
+		const int formatFlags = VERTEX_POSITION;
+		pShaderShadow->VertexShaderVertexFormat(formatFlags, 1, 0, 0);
 
-			// We don't need to write to the depth buffer.
-			pShaderShadow->EnableDepthWrites(false);
+		// We don't need to write to the depth buffer.
+		pShaderShadow->EnableDepthWrites(false);
 
-			// Precache and set the screenspace shader.
-			DECLARE_STATIC_VERTEX_SHADER(sdk_screenspaceeffect_vs20);
-			SET_STATIC_VERTEX_SHADER(sdk_screenspaceeffect_vs20);
+		// Precache and set the screenspace shader.
+		DECLARE_STATIC_VERTEX_SHADER(sdk_screenspaceeffect_vs20);
+		SET_STATIC_VERTEX_SHADER(sdk_screenspaceeffect_vs20);
 
-			// Precache and set the example shader.
-			if (g_pHardwareConfig->SupportsPixelShaders_2_b())
-			{
-				DECLARE_STATIC_PIXEL_SHADER(neo_testshader_ps20b);
-				SET_STATIC_PIXEL_SHADER(neo_testshader_ps20b);
-			}
-			else
-			{
-				DECLARE_STATIC_PIXEL_SHADER(neo_testshader_ps20);
-				SET_STATIC_PIXEL_SHADER(neo_testshader_ps20);
-			}
-		}
-
-		// ----------------------------------------------------------------------------
-		// This section is called every frame.
-		// ----------------------------------------------------------------------------
-		DYNAMIC_STATE
+		// Precache and set the example shader.
+		if (g_pHardwareConfig->SupportsPixelShaders_2_b())
 		{
-			// Use the sdk_screenspaceeffect_vs20 vertex shader.
-			DECLARE_DYNAMIC_VERTEX_SHADER(sdk_screenspaceeffect_vs20);
-			SET_DYNAMIC_VERTEX_SHADER(sdk_screenspaceeffect_vs20);
-
-			// Use our custom pixel shader.
-			if (g_pHardwareConfig->SupportsPixelShaders_2_b())
-			{
-				DECLARE_DYNAMIC_PIXEL_SHADER(neo_testshader_ps20b);
-				SET_DYNAMIC_PIXEL_SHADER(neo_testshader_ps20b);
-			}
-			else
-			{
-				DECLARE_DYNAMIC_PIXEL_SHADER(neo_testshader_ps20);
-				SET_DYNAMIC_PIXEL_SHADER(neo_testshader_ps20);
-			}
-
-			static bool once = true;
-			if (once)
-			{
-				// If we're actually running this shader, we've failed and fallen back from
-				// another shader unexpectedly.
-				// NEO TODO (Rain): fail softly on release
-				Assert(false);
-				Warning("FIXME: SHADER FAILED\n");
-				once = false;
-			}
-
-#if(0)
-			if (g_pHardwareConfig->SupportsShaderModel_3_0())
-			{
-				
-			}
-#endif
+			DECLARE_STATIC_PIXEL_SHADER(neo_testshader_ps20b);
+			SET_STATIC_PIXEL_SHADER(neo_testshader_ps20b);
 		}
+		else
+		{
+			DECLARE_STATIC_PIXEL_SHADER(neo_testshader_ps20);
+			SET_STATIC_PIXEL_SHADER(neo_testshader_ps20);
+		}
+	}
+
+	// ----------------------------------------------------------------------------
+	// This section is called every frame.
+	// ----------------------------------------------------------------------------
+	DYNAMIC_STATE
+	{
+		// Use the sdk_screenspaceeffect_vs20 vertex shader.
+		DECLARE_DYNAMIC_VERTEX_SHADER(sdk_screenspaceeffect_vs20);
+		SET_DYNAMIC_VERTEX_SHADER(sdk_screenspaceeffect_vs20);
+
+		// Use our custom pixel shader.
+		if (g_pHardwareConfig->SupportsPixelShaders_2_b())
+		{
+			DECLARE_DYNAMIC_PIXEL_SHADER(neo_testshader_ps20b);
+			SET_DYNAMIC_PIXEL_SHADER(neo_testshader_ps20b);
+		}
+		else
+		{
+			DECLARE_DYNAMIC_PIXEL_SHADER(neo_testshader_ps20);
+			SET_DYNAMIC_PIXEL_SHADER(neo_testshader_ps20);
+		}
+
+		static bool once = true;
+		if (once)
+		{
+			// If we're actually running this shader, we've failed and fallen back from
+			// another shader unexpectedly.
+			// NEO TODO (Rain): fail softly on release
+			Assert(false);
+			Warning("FIXME: SHADER FAILED\n");
+			once = false;
+		}
+
+#if (0)
+		if (g_pHardwareConfig->SupportsShaderModel_3_0())
+		{
+		}
+#endif
+	}
 
 	Draw(); // Need to call for each draw
-
-	}
+}
 
 END_SHADER

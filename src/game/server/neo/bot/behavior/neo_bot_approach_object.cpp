@@ -10,7 +10,7 @@
 extern ConVar neo_bot_path_lookahead_range;
 
 //---------------------------------------------------------------------------------------------
-CNEOBotApproachObject::CNEOBotApproachObject( CBaseEntity *loot, float range )
+CNEOBotApproachObject::CNEOBotApproachObject(CBaseEntity *loot, float range)
 {
 	m_loot = loot;
 	m_range = range;
@@ -18,49 +18,47 @@ CNEOBotApproachObject::CNEOBotApproachObject( CBaseEntity *loot, float range )
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotApproachObject::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotApproachObject::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
-	m_path.SetMinLookAheadDistance( me->GetDesiredPathLookAheadRange() );
+	m_path.SetMinLookAheadDistance(me->GetDesiredPathLookAheadRange());
 
 	return Continue();
 }
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotApproachObject::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotApproachObject::Update(CNEOBot *me, float interval)
 {
-	if ( m_loot == NULL )
+	if (m_loot == NULL)
 	{
-		return Done( "Object is NULL" );
+		return Done("Object is NULL");
 	}
 
-	if ( m_loot->IsEffectActive( EF_NODRAW ) )
+	if (m_loot->IsEffectActive(EF_NODRAW))
 	{
-		return Done( "Object is NODRAW" );
+		return Done("Object is NODRAW");
 	}
 
-	if ( me->GetLocomotionInterface()->GetGround() == m_loot )
+	if (me->GetLocomotionInterface()->GetGround() == m_loot)
 	{
-		return Done( "I'm standing on the object" );
+		return Done("I'm standing on the object");
 	}
 
-	if ( me->IsDistanceBetweenLessThan( m_loot->GetAbsOrigin(), m_range ) )
+	if (me->IsDistanceBetweenLessThan(m_loot->GetAbsOrigin(), m_range))
 	{
 		// in case we can't pick up the loot for some reason
-		return Done( "Reached object" );
+		return Done("Reached object");
 	}
 
-	if ( m_repathTimer.IsElapsed() )
+	if (m_repathTimer.IsElapsed())
 	{
-		m_repathTimer.Start( RandomFloat( 1.0f, 2.0f ) );
+		m_repathTimer.Start(RandomFloat(1.0f, 2.0f));
 
-		CNEOBotPathCompute( me, m_path, m_loot->GetAbsOrigin(), FASTEST_ROUTE );
+		CNEOBotPathCompute(me, m_path, m_loot->GetAbsOrigin(), FASTEST_ROUTE);
 	}
 
 	// move to the loot
-	m_path.Update( me );
+	m_path.Update(me);
 
 	return Continue();
 }
-
-

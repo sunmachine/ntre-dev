@@ -16,11 +16,11 @@
 
 #include "weapon_neobaseprojectile.h"
 
-#define GRENADE_PAUSED_NO			0
-#define GRENADE_PAUSED_PRIMARY		1
-#define GRENADE_PAUSED_SECONDARY	2
+#define GRENADE_PAUSED_NO 0
+#define GRENADE_PAUSED_PRIMARY 1
+#define GRENADE_PAUSED_SECONDARY 2
 
-#define GRENADE_RADIUS	4.0f // inches
+#define GRENADE_RADIUS 4.0f // inches
 
 #ifdef CLIENT_DLL
 #define CWeaponSmokeGrenade C_WeaponSmokeGrenade
@@ -29,6 +29,7 @@
 class CWeaponSmokeGrenade : public CNEOBaseProjectile
 {
 	DECLARE_CLASS(CWeaponSmokeGrenade, CNEOBaseProjectile);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -44,37 +45,41 @@ public:
 
 	virtual float GetSpeedScale(void) const OVERRIDE { return 0.85f; }
 
-	void	Precache(void);
-	void	PrimaryAttack(void);
-	void	DecrementAmmo(CBaseCombatCharacter* pOwner);
-	void	ItemPostFrame(void);
+	void Precache(void);
+	void PrimaryAttack(void);
+	void DecrementAmmo(CBaseCombatCharacter *pOwner);
+	void ItemPostFrame(void);
 
-	bool	Deploy(void);
-	bool	Holster(CBaseCombatWeapon* pSwitchingTo = NULL);
+	bool Deploy(void);
+	bool Holster(CBaseCombatWeapon *pSwitchingTo = NULL);
 
-	virtual float GetFastestDryRefireTime() const { return 1.f; } // is called if attack button spammed, doesn't really mean much for grenades
+	virtual float GetFastestDryRefireTime() const
+	{
+		return 1.f;
+	} // is called if attack button spammed, doesn't really mean much for grenades
 
-	bool	Reload(void);
-	void	Drop(const Vector& vecVelocity) OVERRIDE;
-	bool	CanDrop() OVERRIDE;
+	bool Reload(void);
+	void Drop(const Vector &vecVelocity) OVERRIDE;
+	bool CanDrop() OVERRIDE;
 	virtual bool CanAim() final { return false; }
 	virtual bool CanPerformSecondaryAttack() const override final { return false; }
 
 #ifndef CLIENT_DLL
-	void Operator_HandleAnimEvent(animevent_t* pEvent, CBaseCombatCharacter* pOperator);
+	void Operator_HandleAnimEvent(animevent_t *pEvent, CBaseCombatCharacter *pOperator);
 #endif
 
-	void	ThrowGrenade(CNEO_Player* pPlayer, bool isAlive = true, CBaseEntity *pAttacker = NULL);
-	bool	IsPrimed() const { return (m_AttackPaused != 0); }
+	void ThrowGrenade(CNEO_Player *pPlayer, bool isAlive = true, CBaseEntity *pAttacker = NULL);
+	bool IsPrimed() const { return (m_AttackPaused != 0); }
 
 	bool CanBePickedUpByClass(int classId) OVERRIDE;
+
 private:
-	CNetworkVar(bool, m_bRedraw);	//Draw the weapon again after throwing a grenade
+	CNetworkVar(bool, m_bRedraw); //Draw the weapon again after throwing a grenade
 
 	CNetworkVar(int, m_AttackPaused);
 	CNetworkVar(bool, m_bDrawbackFinished);
 
-	CWeaponSmokeGrenade(const CWeaponSmokeGrenade& other);
+	CWeaponSmokeGrenade(const CWeaponSmokeGrenade &other);
 };
 
 #endif // NEO_WEAPON_SMOKEGRENADE_H

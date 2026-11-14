@@ -26,7 +26,7 @@ using namespace vgui;
 
 
 #ifndef NEO_UNITY // Unity build
-static int ListFileNameSortFunc([[maybe_unused]] ListPanel *pPanel, const ListPanelItem &item1, const ListPanelItem &item2 )
+static int ListFileNameSortFunc([[maybe_unused]] ListPanel *pPanel, const ListPanelItem &item1, const ListPanelItem &item2 ) // NEO
 {
 	bool dir1 = item1.kv->GetInt("directory") == 1;
 	bool dir2 = item2.kv->GetInt("directory") == 1;

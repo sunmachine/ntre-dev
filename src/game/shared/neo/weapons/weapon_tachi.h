@@ -9,9 +9,9 @@
 #include "in_buttons.h"
 
 #ifdef CLIENT_DLL
-	#include "c_neo_player.h"
+#include "c_neo_player.h"
 #else
-	#include "neo_player.h"
+#include "neo_player.h"
 #endif
 
 #include "weapon_neobasecombatweapon.h"
@@ -20,16 +20,19 @@
 #define CWeaponTachi C_WeaponTachi
 #endif
 
-namespace Tachi {
-	enum Firemode {
-		Auto = false,
-		Single = true
-	};
+namespace Tachi
+{
+enum Firemode
+{
+	Auto = false,
+	Single = true
+};
 };
 
 class CWeaponTachi : public CNEOBaseCombatWeapon
 {
 	DECLARE_CLASS(CWeaponTachi, CNEOBaseCombatWeapon);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -41,11 +44,10 @@ public:
 
 	CWeaponTachi();
 
-	void	ItemPostFrame( void ) override;
+	void ItemPostFrame(void) override;
 
-    virtual void SwitchFireMode( void );
-    virtual void ForceSetFireMode( Tachi::Firemode primaryMode,
-        bool bPlaySound = false, float flSoonestSwitch = 0.0f );
+	virtual void SwitchFireMode(void);
+	virtual void ForceSetFireMode(Tachi::Firemode primaryMode, bool bPlaySound = false, float flSoonestSwitch = 0.0f);
 
 	NEO_WEP_BITS_UNDERLYING_TYPE WeaponIndex() const override { return NEO_WIDX_TACHI; }
 	virtual NEO_WEP_BITS_UNDERLYING_TYPE GetNeoWepBits(void) const override { return NEO_WEP_TACHI | NEO_WEP_FIREARM; }
@@ -53,8 +55,8 @@ public:
 
 	virtual float GetSpeedScale(void) const OVERRIDE { return 0.85f; }
 
-	virtual int	GetMinBurst() OVERRIDE { return 1; }
-	virtual int	GetMaxBurst() OVERRIDE { return 3; }
+	virtual int GetMinBurst() OVERRIDE { return 1; }
+	virtual int GetMaxBurst() OVERRIDE { return 3; }
 
 	inline virtual bool IsAutomatic(void) const override final
 	{
@@ -68,10 +70,10 @@ protected:
 
 private:
 	CNetworkVar(float, m_flSoonestFiremodeSwitch);
-    CNetworkVar(bool, m_bIsPrimaryFireMode);
+	CNetworkVar(bool, m_bIsPrimaryFireMode);
 
 private:
-	CWeaponTachi( const CWeaponTachi &other );
+	CWeaponTachi(const CWeaponTachi &other);
 };
 
 #endif // NEO_WEAPON_TACHI_H

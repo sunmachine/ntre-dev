@@ -4829,7 +4829,7 @@ C_BaseEntity *C_BaseEntity::Instance( int iEnt )
 
 #if defined( WIN32 ) && _MSC_VER <= 1920
 #pragma warning( push )
-#include <typeinfo>
+#include <typeinfo> // NEO
 #pragma warning( pop )
 #endif
 

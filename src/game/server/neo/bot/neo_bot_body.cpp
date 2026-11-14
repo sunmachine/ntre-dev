@@ -4,15 +4,15 @@
 #include "neo_bot_body.h"
 
 
-// 
-// Return how often we should sample our target's position and 
+//
+// Return how often we should sample our target's position and
 // velocity to update our aim tracking, to allow realistic slop in tracking
 //
 float CNEOBotBody::GetHeadAimTrackingInterval() const
 {
 	CNEOBot *me = (CNEOBot *)GetBot();
 
-	switch( me->GetDifficulty() )
+	switch (me->GetDifficulty())
 	{
 	case CNEOBot::EXPERT:
 		return 0.05f;
@@ -72,7 +72,7 @@ const Vector &CNEOBotBody::GetHullMins() const
 {
 	const auto *neoPlayer = NEOPlayerEnt();
 
-	if ( m_posture == CROUCH )
+	if (m_posture == CROUCH)
 	{
 		m_hullMins = VEC_DUCK_HULL_MIN_SCALED(neoPlayer);
 	}
@@ -88,7 +88,7 @@ const Vector &CNEOBotBody::GetHullMaxs() const
 {
 	const auto *neoPlayer = NEOPlayerEnt();
 
-	if ( m_posture == CROUCH )
+	if (m_posture == CROUCH)
 	{
 		m_hullMaxs = VEC_DUCK_HULL_MAX_SCALED(neoPlayer);
 	}
@@ -97,6 +97,5 @@ const Vector &CNEOBotBody::GetHullMaxs() const
 		m_hullMaxs = VEC_HULL_MAX_SCALED(neoPlayer);
 	}
 
-	return m_hullMaxs;	
+	return m_hullMaxs;
 }
-

@@ -12,7 +12,5 @@ struct NeoAvatar
 
 	void SetSteamID(const CSteamID &steamID);
 	void Fetch(const int iAvatarWH);
-	void Paint(const int x, const int y, const int widetall,
-			const bool bDead = false) const;
+	void Paint(const int x, const int y, const int widetall, const bool bDead = false) const;
 };
-

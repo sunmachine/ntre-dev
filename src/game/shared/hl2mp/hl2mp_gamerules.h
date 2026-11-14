@@ -162,7 +162,7 @@ public:
 #ifdef NEO
 	virtual bool CheckGameOver( void );
 #else
-	bool CheckGameOver(void);
+	bool CheckGameOver( void );
 #endif
 
 	bool IsIntermission( void );

@@ -6,6 +6,7 @@
 
 IMPLEMENT_NETWORKCLASS_ALIASED(WeaponSRS, DT_WeaponSRS)
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CWeaponSRS, DT_WeaponSRS)
 	DEFINE_NEO_BASE_WEP_NETWORK_TABLE
 #ifdef CLIENT_DLL
@@ -14,12 +15,15 @@ BEGIN_NETWORK_TABLE(CWeaponSRS, DT_WeaponSRS)
 	SendPropBool(SENDINFO(m_bNeedsBolting)),
 #endif
 END_NETWORK_TABLE()
+	// clang-format on
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CWeaponSRS)
 	DEFINE_NEO_BASE_WEP_PREDICTION
 	DEFINE_PRED_FIELD(m_bNeedsBolting, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
 NEO_IMPLEMENT_ACTTABLE(CWeaponSRS)
@@ -52,8 +56,7 @@ void CWeaponSRS::PrimaryAttack()
 		return BaseClass::PrimaryAttack();
 	}
 
-	const bool tryingToShootTooFast =
-		(gpGlobals->curtime < m_flLastAttackTime + GetFireRate());
+	const bool tryingToShootTooFast = (gpGlobals->curtime < m_flLastAttackTime + GetFireRate());
 	if (tryingToShootTooFast)
 	{
 		return;
@@ -72,7 +75,8 @@ void CWeaponSRS::ItemPreFrame()
 
 	if (m_flLastAttackTime + 0.08f <= gpGlobals->curtime)
 	{ // Primary attack animation finished, begin chambering a round
-		if (auto* pOwner = ToNEOPlayer(GetOwner())) {
+		if (auto *pOwner = ToNEOPlayer(GetOwner()))
+		{
 			if (pOwner->m_nButtons & IN_ATTACK)
 			{
 				return BaseClass::ItemPreFrame();

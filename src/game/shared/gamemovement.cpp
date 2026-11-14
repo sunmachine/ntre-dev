@@ -738,7 +738,7 @@ Vector CGameMovement::GetPlayerMaxs( bool ducked ) const
 	Assert(dynamic_cast<CNEO_Player*>(player));
 	return ducked ? VEC_DUCK_HULL_MAX_SCALED(static_cast<CNEO_Player*>(player)) : VEC_HULL_MAX_SCALED(static_cast<CNEO_Player*>(player));
 #else
-	return ducked ? VEC_DUCK_HULL_MAX_SCALED(player) : VEC_HULL_MAX_SCALED(player);
+	return ducked ? VEC_DUCK_HULL_MAX_SCALED( player ) : VEC_HULL_MAX_SCALED( player );
 #endif
 }
 
@@ -759,7 +759,7 @@ Vector CGameMovement::GetPlayerMins( void ) const
 		Assert(dynamic_cast<CNEO_Player*>(player));
 		return player->m_Local.m_bDucked ? VEC_DUCK_HULL_MIN_SCALED(static_cast<CNEO_Player*>(player)) : VEC_HULL_MIN_SCALED(static_cast<CNEO_Player*>(player));
 #else
-		return player->m_Local.m_bDucked ? VEC_DUCK_HULL_MIN_SCALED(player) : VEC_HULL_MIN_SCALED(player);
+		return player->m_Local.m_bDucked  ? VEC_DUCK_HULL_MIN_SCALED( player ) : VEC_HULL_MIN_SCALED( player );
 #endif
 	}
 }
@@ -781,7 +781,7 @@ Vector CGameMovement::GetPlayerMaxs( void ) const
 		Assert(dynamic_cast<CNEO_Player*>(player));
 		return player->m_Local.m_bDucked ? VEC_DUCK_HULL_MAX_SCALED(static_cast<CNEO_Player*>(player)) : VEC_HULL_MAX_SCALED(static_cast<CNEO_Player*>(player));
 #else
-		return player->m_Local.m_bDucked ? VEC_DUCK_HULL_MAX_SCALED(player) : VEC_HULL_MAX_SCALED(player);
+		return player->m_Local.m_bDucked  ? VEC_DUCK_HULL_MAX_SCALED( player ) : VEC_HULL_MAX_SCALED( player );
 #endif
 	}
 }
@@ -798,7 +798,7 @@ Vector CGameMovement::GetPlayerViewOffset( bool ducked ) const
 	auto thisPlayer = static_cast<CNEO_Player*>(player);
 	return ducked ? VEC_DUCK_VIEW_SCALED(thisPlayer) + thisPlayer->m_vecLean : VEC_VIEW_SCALED(thisPlayer) + thisPlayer->m_vecLean;
 #else
-	return ducked ? VEC_DUCK_VIEW_SCALED(player) : VEC_VIEW_SCALED(player);
+	return ducked ? VEC_DUCK_VIEW_SCALED( player ) : VEC_VIEW_SCALED( player );
 #endif
 }
 
@@ -1080,9 +1080,9 @@ void CGameMovement::CheckParameters( void )
 		IsDead() ||
 		static_cast<CNEO_Player*>(player)->GetNeoFlags() & NEO_FL_FREEZETIME)
 #else
-	if (player->GetFlags() & FL_FROZEN ||
+	if ( player->GetFlags() & FL_FROZEN ||
 		player->GetFlags() & FL_ONTRAIN ||
-		IsDead())
+		 IsDead() )
 #endif
 	{
 		mv->m_flForwardMove = 0;
@@ -2654,9 +2654,9 @@ bool CGameMovement::CheckJumpButton( void )
 		}
 		else
 #endif
-		{
+		{ // NEO
 			mv->m_nOldButtons |= IN_JUMP;
-		}
+		} // NEO
 		return false;		// in air, so no effect
 	}
 
@@ -2708,7 +2708,7 @@ bool CGameMovement::CheckJumpButton( void )
 #ifndef NEO
 	if ( g_bMovementOptimizations )
 	{
-#if (defined(HL2_DLL) || defined(HL2_CLIENT_DLL))
+#if (defined(HL2_DLL) || defined(HL2_CLIENT_DLL)) // NEO
 		Assert( GetCurrentGravity() == 600.0f );
 		flMul = 160.0f;	// approx. 21 units.
 #else
@@ -3170,7 +3170,7 @@ inline bool CGameMovement::OnLadder( trace_t &trace )
 // HPE_BEGIN
 // [sbodenbender] make ladders easier to climb in cstrike
 //=============================================================================
-#if defined (CSTRIKE_DLL) || defined (NEO)
+#if defined (CSTRIKE_DLL) || defined (NEO) // NEO
 ConVar sv_ladder_dampen ( "sv_ladder_dampen", "0.2", FCVAR_REPLICATED, "Amount to dampen perpendicular movement on a ladder", true, 0.0f, true, 1.0f );
 ConVar sv_ladder_angle( "sv_ladder_angle", "-0.707", FCVAR_REPLICATED, "Cos of angle of incidence to ladder perpendicular for applying ladder_dampen", true, -1.0f, true, 1.0f );
 #endif
@@ -4364,27 +4364,27 @@ void CGameMovement::PlayerRoughLandingEffects( float fvol )
 #endif
 	}
 #else
-	if (fvol > 0.0)
+	if ( fvol > 0.0 )
 	{
 		//
 		// Play landing sound right away.
 		player->m_flStepSoundTime = 400;
 
 		// Play step sound for current texture.
-		player->PlayStepSound((Vector&)mv->GetAbsOrigin(), player->m_pSurfaceData, fvol, true);
+		player->PlayStepSound( (Vector &)mv->GetAbsOrigin(), player->m_pSurfaceData, fvol, true );
 
 		//
 		// Knock the screen around a little bit, temporary effect.
 		//
-		player->m_Local.m_vecPunchAngle.Set(ROLL, player->m_Local.m_flFallVelocity * 0.013);
+		player->m_Local.m_vecPunchAngle.Set( ROLL, player->m_Local.m_flFallVelocity * 0.013 );
 
-		if (player->m_Local.m_vecPunchAngle[PITCH] > 8)
+		if ( player->m_Local.m_vecPunchAngle[PITCH] > 8 )
 		{
-			player->m_Local.m_vecPunchAngle.Set(PITCH, 8);
+			player->m_Local.m_vecPunchAngle.Set( PITCH, 8 );
 	}
 
 #if !defined( CLIENT_DLL )
-		player->RumbleEffect((fvol > 0.85f) ? (RUMBLE_FALL_LONG) : (RUMBLE_FALL_SHORT), 0, RUMBLE_FLAGS_NONE);
+		player->RumbleEffect( ( fvol > 0.85f ) ? ( RUMBLE_FALL_LONG ) : ( RUMBLE_FALL_SHORT ), 0, RUMBLE_FLAGS_NONE );
 #endif
 }
 #endif
@@ -4457,7 +4457,7 @@ bool CGameMovement::CanUnduck()
 #ifdef NEO
 			newOrigin[i] += (VEC_DUCK_HULL_MIN_SCALED(static_cast<CNEO_Player*>(player))[i] - VEC_HULL_MIN_SCALED(static_cast<CNEO_Player*>(player))[i]);
 #else
-			newOrigin[i] += (VEC_DUCK_HULL_MIN_SCALED(player)[i] - VEC_HULL_MIN_SCALED(player)[i]);
+			newOrigin[i] += ( VEC_DUCK_HULL_MIN_SCALED( player )[i] - VEC_HULL_MIN_SCALED( player )[i] );
 #endif
 		}
 	}
@@ -4468,13 +4468,13 @@ bool CGameMovement::CanUnduck()
 #ifdef NEO
 		Vector hullSizeNormal = VEC_HULL_MAX_SCALED(static_cast<CNEO_Player*>(player)) - VEC_HULL_MIN_SCALED(static_cast<CNEO_Player*>(player));
 #else
-		Vector hullSizeNormal = VEC_HULL_MAX_SCALED(player) - VEC_HULL_MIN_SCALED(player);
+		Vector hullSizeNormal = VEC_HULL_MAX_SCALED(player) - VEC_HULL_MIN_SCALED(player); // NEO
 #endif
 
 #ifdef NEO
 		Vector hullSizeCrouch = VEC_DUCK_HULL_MAX_SCALED(static_cast<CNEO_Player*>(player)) - VEC_DUCK_HULL_MIN_SCALED(static_cast<CNEO_Player*>(player));
 #else
-		Vector hullSizeCrouch = VEC_DUCK_HULL_MAX_SCALED(player) - VEC_DUCK_HULL_MIN_SCALED(player);
+		Vector hullSizeCrouch = VEC_DUCK_HULL_MAX_SCALED(player) - VEC_DUCK_HULL_MIN_SCALED(player); // NEO
 #endif
 
 		Vector viewDelta = ( hullSizeNormal - hullSizeCrouch );
@@ -4497,7 +4497,7 @@ bool CGameMovement::CanUnduck()
 //-----------------------------------------------------------------------------
 void CGameMovement::FinishUnDuck( void )
 {
-	Assert(dynamic_cast<CNEO_Player*>(player));
+	Assert(dynamic_cast<CNEO_Player*>(player)); // NEO
 
 	int i;
 #ifndef NEO
@@ -4514,7 +4514,7 @@ void CGameMovement::FinishUnDuck( void )
 #ifdef NEO
 			newOrigin[i] += (VEC_DUCK_HULL_MIN_SCALED(static_cast<CNEO_Player*>(player))[i] - VEC_HULL_MIN_SCALED(static_cast<CNEO_Player*>(player))[i]);
 #else
-			newOrigin[i] += (VEC_DUCK_HULL_MIN_SCALED(player)[i] - VEC_HULL_MIN_SCALED(player)[i]);
+			newOrigin[i] += ( VEC_DUCK_HULL_MIN_SCALED( player )[i] - VEC_HULL_MIN_SCALED( player )[i] );
 #endif
 		}
 	}
@@ -4526,8 +4526,8 @@ void CGameMovement::FinishUnDuck( void )
 		Vector hullSizeNormal = VEC_HULL_MAX_SCALED(static_cast<CNEO_Player*>(player)) - VEC_HULL_MIN_SCALED(static_cast<CNEO_Player*>(player));
 		Vector hullSizeCrouch = VEC_DUCK_HULL_MAX_SCALED(static_cast<CNEO_Player*>(player)) - VEC_DUCK_HULL_MIN_SCALED(static_cast<CNEO_Player*>(player));
 #else
-		Vector hullSizeNormal = VEC_HULL_MAX_SCALED(player) - VEC_HULL_MIN_SCALED(player);
-		Vector hullSizeCrouch = VEC_DUCK_HULL_MAX_SCALED(player) - VEC_DUCK_HULL_MIN_SCALED(player);
+		Vector hullSizeNormal = VEC_HULL_MAX_SCALED( player ) - VEC_HULL_MIN_SCALED( player );
+		Vector hullSizeCrouch = VEC_DUCK_HULL_MAX_SCALED( player ) - VEC_DUCK_HULL_MIN_SCALED( player );
 #endif
 
 		Vector viewDelta = ( hullSizeNormal - hullSizeCrouch );
@@ -4539,6 +4539,7 @@ void CGameMovement::FinishUnDuck( void )
 	player->RemoveFlag( FL_DUCKING );
 	player->m_Local.m_bDucking  = false;
 	player->m_Local.m_bInDuckJump  = false;
+#ifdef NEO
 
 	Vector currentOffset = player->GetViewOffset();
 	Vector finalOffset = GetPlayerViewOffset(false);
@@ -4546,6 +4547,9 @@ void CGameMovement::FinishUnDuck( void )
 	finalOffset.y = currentOffset.y;
 
 	player->SetViewOffset( finalOffset );
+#else
+	player->SetViewOffset( GetPlayerViewOffset( false ) );
+#endif // NEO
 	player->m_Local.m_flDucktime = 0;
 
 	mv->SetAbsOrigin( newOrigin );
@@ -4585,7 +4589,7 @@ void CGameMovement::UpdateDuckJumpEyeOffset( void )
 //-----------------------------------------------------------------------------
 void CGameMovement::FinishUnDuckJump( trace_t &trace )
 {
-	Assert(dynamic_cast<CNEO_Player*>(player));
+	Assert(dynamic_cast<CNEO_Player*>(player)); // NEO
 
 	Vector vecNewOrigin;
 	VectorCopy( mv->GetAbsOrigin(), vecNewOrigin );
@@ -4595,8 +4599,8 @@ void CGameMovement::FinishUnDuckJump( trace_t &trace )
 	Vector hullSizeNormal = VEC_HULL_MAX_SCALED(static_cast<CNEO_Player*>(player)) - VEC_HULL_MIN_SCALED(static_cast<CNEO_Player*>(player));
 	Vector hullSizeCrouch = VEC_DUCK_HULL_MAX_SCALED(static_cast<CNEO_Player*>(player)) - VEC_DUCK_HULL_MIN_SCALED(static_cast<CNEO_Player*>(player));
 #else
-	Vector hullSizeNormal = VEC_HULL_MAX_SCALED(player) - VEC_HULL_MIN_SCALED(player);
-	Vector hullSizeCrouch = VEC_DUCK_HULL_MAX_SCALED(player) - VEC_DUCK_HULL_MIN_SCALED(player);
+	Vector hullSizeNormal = VEC_HULL_MAX_SCALED( player ) - VEC_HULL_MIN_SCALED( player );
+	Vector hullSizeCrouch = VEC_DUCK_HULL_MAX_SCALED( player ) - VEC_DUCK_HULL_MIN_SCALED( player );
 #endif
 
 	Vector viewDelta = ( hullSizeNormal - hullSizeCrouch );
@@ -4640,12 +4644,16 @@ void CGameMovement::FinishDuck( void )
 	player->m_Local.m_bDucked = true;
 	player->m_Local.m_bDucking = false;
 
+#ifdef NEO
 	Vector currentOffset = player->GetViewOffset();
 	Vector finalOffset = GetPlayerViewOffset(true);
 	finalOffset.x = currentOffset.x;
 	finalOffset.y = currentOffset.y;
 
 	player->SetViewOffset( finalOffset );
+#else
+	player->SetViewOffset( GetPlayerViewOffset( true ) );
+#endif // NEO
 
 	// HACKHACK - Fudge for collision bug - no time to fix this properly
 	if ( player->GetGroundEntity() != NULL )
@@ -4656,7 +4664,7 @@ void CGameMovement::FinishDuck( void )
 #ifdef NEO
 			org[i] -= (VEC_DUCK_HULL_MIN_SCALED(static_cast<CNEO_Player*>(player))[i] - VEC_HULL_MIN_SCALED(static_cast<CNEO_Player*>(player))[i]);
 #else
-			org[i] -= (VEC_DUCK_HULL_MIN_SCALED(player)[i] - VEC_HULL_MIN_SCALED(player)[i]);
+			org[ i ]-= ( VEC_DUCK_HULL_MIN_SCALED( player )[i] - VEC_HULL_MIN_SCALED( player )[i] );
 #endif
 			mv->SetAbsOrigin( org );
 		}
@@ -4675,8 +4683,8 @@ void CGameMovement::FinishDuck( void )
 			hullSizeCrouch -= playerClass == NEO_CLASS_RECON ? NEO_RECON_DUCK_MAXHULL_OFFSET : NEO_ASSAULT_DUCK_MAXHULL_OFFSET;
 		}
 #else
-		Vector hullSizeNormal = VEC_HULL_MAX_SCALED(player) - VEC_HULL_MIN_SCALED(player);
-		Vector hullSizeCrouch = VEC_DUCK_HULL_MAX_SCALED(player) - VEC_DUCK_HULL_MIN_SCALED(player);
+		Vector hullSizeNormal = VEC_HULL_MAX_SCALED( player ) - VEC_HULL_MIN_SCALED( player );
+		Vector hullSizeCrouch = VEC_DUCK_HULL_MAX_SCALED( player ) - VEC_DUCK_HULL_MIN_SCALED( player );
 #endif
 
 		Vector viewDelta = ( hullSizeNormal - hullSizeCrouch );
@@ -4715,8 +4723,8 @@ void CGameMovement::StartUnDuckJump( void )
 	Vector hullSizeNormal = VEC_HULL_MAX_SCALED(static_cast<CNEO_Player*>(player)) - VEC_HULL_MIN_SCALED(static_cast<CNEO_Player*>(player));
 	Vector hullSizeCrouch = VEC_DUCK_HULL_MAX_SCALED(static_cast<CNEO_Player*>(player)) - VEC_DUCK_HULL_MIN_SCALED(static_cast<CNEO_Player*>(player));
 #else
-	Vector hullSizeNormal = VEC_HULL_MAX_SCALED(player) - VEC_HULL_MIN_SCALED(player);
-	Vector hullSizeCrouch = VEC_DUCK_HULL_MAX_SCALED(player) - VEC_DUCK_HULL_MIN_SCALED(player);
+	Vector hullSizeNormal = VEC_HULL_MAX_SCALED( player ) - VEC_HULL_MIN_SCALED( player );
+	Vector hullSizeCrouch = VEC_DUCK_HULL_MAX_SCALED( player ) - VEC_DUCK_HULL_MIN_SCALED( player );
 #endif
 
 	Vector viewDelta = ( hullSizeNormal - hullSizeCrouch );
@@ -4767,9 +4775,9 @@ void CGameMovement::HandleDuckingSpeedCrop( void )
 		mv->m_flUpMove *= NEO_SLOW_MODIFIER;*/
 #else
 		float frac = 0.33333333f;
-		mv->m_flForwardMove *= frac;
-		mv->m_flSideMove *= frac;
-		mv->m_flUpMove *= frac;
+		mv->m_flForwardMove	*= frac;
+		mv->m_flSideMove	*= frac;
+		mv->m_flUpMove		*= frac;
 #endif
 
 		m_iSpeedCropped		|= SPEED_CROPPED_DUCK;
@@ -5110,7 +5118,7 @@ void CGameMovement::PlayerMove( void )
 	UpdateDuckJumpEyeOffset();
 	Duck();
 
-	// Don't run ladder code if dead or on a train
+	// Don't run ladder code if dead or on a train // NEO
 	if ( !player->pl.deadflag && !(player->GetFlags() & FL_ONTRAIN) )
 	{
 		// If was not on a ladder now, but was on one before,

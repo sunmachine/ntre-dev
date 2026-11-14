@@ -362,10 +362,10 @@ void FileWeaponInfo_t::Parse( KeyValues *pKeyValuesData, const char *szWeaponNam
 	// Printable name
 	Q_strncpy( szPrintName, pKeyValuesData->GetString( "printname", WEAPON_PRINTNAME_MISSING ), MAX_WEAPON_STRING );
 
-	// View model
-	Q_strncpy(szViewModel, pKeyValuesData->GetString("viewmodel"), MAX_WEAPON_STRING);
+	// View model // NEO
+	Q_strncpy(szViewModel, pKeyValuesData->GetString("viewmodel"), MAX_WEAPON_STRING); // NEO
 
-	// World model
+	// World model // NEO
 	Q_strncpy( szWorldModel, pKeyValuesData->GetString( "playermodel" ), MAX_WEAPON_STRING );
 	Q_strncpy( szAnimationPrefix, pKeyValuesData->GetString( "anim_prefix" ), MAX_WEAPON_PREFIX );
 	iSlot = pKeyValuesData->GetInt( "bucket", 0 );
@@ -413,7 +413,7 @@ void FileWeaponInfo_t::Parse( KeyValues *pKeyValuesData, const char *szWeaponNam
 	m_bAllowFlipping = ( pKeyValuesData->GetInt( "AllowFlipping", 1 ) != 0 ) ? true : false;
 	m_bMeleeWeapon = ( pKeyValuesData->GetInt( "MeleeWeapon", 0 ) != 0 ) ? true : false;
 
-#if defined(_DEBUG) && defined(HL2_CLIENT_DLL) && !defined(NEO) // HL2_SINGLE_PRIMARY_WEAPON_MODE is defined server side only, just ifndef neo this out
+#if defined(_DEBUG) && defined(HL2_CLIENT_DLL) && !defined(NEO) // HL2_SINGLE_PRIMARY_WEAPON_MODE is defined server side only, just ifndef neo this out // NEO
 	// make sure two weapons aren't in the same slot & position
 	if ( iSlot >= MAX_WEAPON_SLOTS ||
 		iPosition >= MAX_WEAPON_POSITIONS )

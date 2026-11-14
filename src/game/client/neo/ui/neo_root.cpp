@@ -53,14 +53,15 @@ void NeoToggleconsole();
 extern CNeoLoading *g_pNeoLoading;
 inline NeoUI::Context g_uiCtx;
 inline ConVar cl_neo_toggleconsole("cl_neo_toggleconsole", "1", FCVAR_ARCHIVE,
-								   "If the console can be toggled with the ` keybind or not.", true, 0.0f, true, 1.0f);
+	"If the console can be toggled with the ` keybind or not.", true, 0.0f, true, 1.0f);
 #ifdef DEBUG
 ConVar cl_neo_autojoin_offset("cl_neo_autojoin_offset", "0", FCVAR_DEVELOPMENTONLY,
-		"Auto-join offset max-player requirement.", true, 0.0f, true, static_cast<float>(MAX_PLAYERS-1));
+	"Auto-join offset max-player requirement.", true, 0.0f, true, static_cast<float>(MAX_PLAYERS - 1));
 #endif
 inline int g_iRowsInScreen;
 
-namespace {
+namespace
+{
 
 int g_iAvatar = 64;
 int g_iRootSubPanelWide = 600;
@@ -71,26 +72,27 @@ constexpr wchar_t WSZ_GAME_TITLE2[] = L"Hrebuild";
 #define SZ_WEBSITE "https://neotokyorebuild.github.io"
 
 const wchar_t *TABLE_HEADERS_SERVERBROWSER[GSIW__TOTAL] = {
-	L"Lock", L"VAC", L"Name", L"IP Address", L"Map", L"Players", L"Ping", L"Tags",
+	L"Lock",
+	L"VAC",
+	L"Name",
+	L"IP Address",
+	L"Map",
+	L"Players",
+	L"Ping",
+	L"Tags",
 };
-const int TABLE_DEFPROP_SERVERBROWSER[GSIW__TOTAL] = {
-	8, 8, 30, -18, 18, 12, 12, -1
-};
+const int TABLE_DEFPROP_SERVERBROWSER[GSIW__TOTAL] = {8, 8, 30, -18, 18, 12, 12, -1};
 const float TABLE_SCALEWIDE_SERVERBROWSER = 1.2f;
 
 const wchar_t *TABLE_HEADERS_SERVERBLACKLIST[SBLIST_COL__TOTAL] = {
-	L"Name", L"Type", L"Added on",
+	L"Name",
+	L"Type",
+	L"Added on",
 };
-const int TABLE_DEFPROP_SERVERBLACKLIST[SBLIST_COL__TOTAL] = {
-	60, 10, -1
-};
+const int TABLE_DEFPROP_SERVERBLACKLIST[SBLIST_COL__TOTAL] = {60, 10, -1};
 
-const wchar_t *TABLE_HEADERS_PLAYER[GSPS__TOTAL] = {
-	L"Score", L"Name", L"Time"
-};
-const int TABLE_DEFPROP_PLAYER[GSPS__TOTAL] = {
-	15, 65, -1
-};
+const wchar_t *TABLE_HEADERS_PLAYER[GSPS__TOTAL] = {L"Score", L"Name", L"Time"};
+const int TABLE_DEFPROP_PLAYER[GSPS__TOTAL] = {15, 65, -1};
 
 static_assert(sizeof(CNeoRoot::m_iColsWideServerBrowser) == sizeof(TABLE_DEFPROP_SERVERBROWSER));
 static_assert(sizeof(CNeoRoot::m_iColsWideServerBlacklist) == sizeof(TABLE_DEFPROP_SERVERBLACKLIST));
@@ -117,14 +119,8 @@ struct YMD
 	}
 	// clang-format on
 
-	bool operator==(const YMD &other) const
-	{
-		return year == other.year && month == other.month && day == other.day;
-	}
-	bool operator!=(const YMD &other) const
-	{
-		return !(*this == other);
-	}
+	bool operator==(const YMD &other) const { return year == other.year && month == other.month && day == other.day; }
+	bool operator!=(const YMD &other) const { return !(*this == other); }
 
 	int year;
 	int month;
@@ -168,9 +164,7 @@ enum EPlayerCountMode
 static int PlayersCount(const gameserveritem_t *pServer, const EPlayerCountMode eCountMode)
 {
 	const int iPlayersCount = pServer->m_nPlayers - (NetAdrIsSDR(pServer->m_NetAdr) ? 0 : pServer->m_nBotPlayers);
-	return (eCountMode == PLAYERCOUNT_INCLUDEBOTS)
-			? iPlayersCount + pServer->m_nBotPlayers
-			: iPlayersCount;
+	return (eCountMode == PLAYERCOUNT_INCLUDEBOTS) ? iPlayersCount + pServer->m_nBotPlayers : iPlayersCount;
 }
 
 // Only use it rarely/cached
@@ -192,14 +186,11 @@ static bool NetAdrIsFavorite(const servernetadr_t &netAdr)
 		uint32 unFlags = 0;
 		[[maybe_unused]] uint32 rTime32LastPlayedOnServer = 0;
 
-		if (smm->GetFavoriteGame(i, &nAppID, &nIP, &nConnPort,
-				&nQueryPort, &unFlags, &rTime32LastPlayedOnServer))
+		if (smm->GetFavoriteGame(i, &nAppID, &nIP, &nConnPort, &nQueryPort, &unFlags, &rTime32LastPlayedOnServer))
 		{
-			if (nIP == netAdr.GetIP() &&
-					nConnPort == netAdr.GetConnectionPort() &&
-					nQueryPort == netAdr.GetQueryPort() &&
-					(unFlags & k_unFavoriteFlagFavorite) &&
-					nAppID == static_cast<decltype(nAppID)>(engine->GetAppID()))
+			if (nIP == netAdr.GetIP() && nConnPort == netAdr.GetConnectionPort() &&
+				nQueryPort == netAdr.GetQueryPort() && (unFlags & k_unFavoriteFlagFavorite) &&
+				nAppID == static_cast<decltype(nAppID)>(engine->GetAppID()))
 			{
 				return true;
 			}
@@ -265,8 +256,7 @@ void CNeoRootInput::OnTick()
 	if (HasFocus())
 	{
 		static constexpr float FL_KEYDELAY_INTERVAL = 0.75f;
-		if (m_pressedKey >= JOYSTICK_FIRST &&
-				((m_flStartPressed + FL_KEYDELAY_INTERVAL) < gpGlobals->curtime))
+		if (m_pressedKey >= JOYSTICK_FIRST && ((m_flStartPressed + FL_KEYDELAY_INTERVAL) < gpGlobals->curtime))
 		{
 			m_pNeoRoot->OnRelayedKeyCodeTyped(m_pressedKey);
 		}
@@ -300,12 +290,10 @@ void CNeoRootInput::OnThink()
 	ButtonCode_t code;
 	if (engine->CheckDoneKeyTrapping(code))
 	{
-		const bool bIsCancel = (code == KEY_ESCAPE || code == KEY_XBUTTON_START ||
-				code == STEAMCONTROLLER_START);
+		const bool bIsCancel = (code == KEY_ESCAPE || code == KEY_XBUTTON_START || code == STEAMCONTROLLER_START);
 		if (!bIsCancel)
 		{
-			const bool bIsDelete = (code == KEY_DELETE || code == KEY_XBUTTON_BACK ||
-					code == STEAMCONTROLLER_SELECT);
+			const bool bIsDelete = (code == KEY_DELETE || code == KEY_XBUTTON_BACK || code == STEAMCONTROLLER_SELECT);
 			if (!bIsDelete)
 			{
 				// The keybind system used requires 1:1 so unbind any duplicates
@@ -355,9 +343,9 @@ constexpr const char *BTNS_LOCALIZE[MMBTN__TOTAL] = {
 };
 
 static const char *BINDNAME_TO_ROOTBUTTONACTION_MAP[CNeoRoot::ROOTBUTTONACTION__TOTAL] = {
-	"",						// ROOTBUTTONACTION_NIL (skip over in loop)
-	"neo_toggleconsole",	// ROOTBUTTONACTION_TOGGLECONSOLE
-	"neo_mp3",				// ROOTBUTTONACTION_MP3
+	"",                  // ROOTBUTTONACTION_NIL (skip over in loop)
+	"neo_toggleconsole", // ROOTBUTTONACTION_TOGGLECONSOLE
+	"neo_mp3",           // ROOTBUTTONACTION_MP3
 };
 
 // clang-format off
@@ -372,7 +360,7 @@ CNeoRoot::CNeoRoot(VPANEL parent)
 	SetVisible(true);
 	SetProportional(false);
 	SetupNTRETheme(&g_uiCtx);
-	
+
 	vgui::HScheme neoscheme = vgui::scheme()->LoadSchemeFromFileEx(
 		enginevgui->GetPanel(PANEL_CLIENTDLL), "resource/ClientScheme.res", "ClientScheme");
 	SetScheme(neoscheme);
@@ -397,15 +385,15 @@ CNeoRoot::CNeoRoot(VPANEL parent)
 	{
 		// Initialize map list
 		FileFindHandle_t findHdl;
-		for (const char *pszFilename = filesystem->FindFirst("maps/*.bsp", &findHdl);
-			 pszFilename;
-			 pszFilename = filesystem->FindNext(findHdl))
+		for (const char *pszFilename = filesystem->FindFirst("maps/*.bsp", &findHdl); pszFilename;
+			pszFilename = filesystem->FindNext(findHdl))
 		{
 			// Sanity check: In-case somehow someone named a directory as *.bsp in here
 			if (!filesystem->FindIsDirectory(findHdl))
 			{
 				MapInfo mapInfo;
-				int iSize = g_pVGuiLocalize->ConvertANSIToUnicode(pszFilename, mapInfo.wszName, sizeof(mapInfo.wszName));
+				int iSize =
+					g_pVGuiLocalize->ConvertANSIToUnicode(pszFilename, mapInfo.wszName, sizeof(mapInfo.wszName));
 				iSize -= sizeof(".bsp");
 				mapInfo.wszName[iSize] = '\0';
 				m_vWszMaps.AddToTail(mapInfo);
@@ -464,9 +452,11 @@ CNeoRoot::CNeoRoot(VPANEL parent)
 
 CNeoRoot::~CNeoRoot()
 {
-	if (g_pNeoRoot->m_pFileIODialog) g_pNeoRoot->m_pFileIODialog->DeletePanel();
+	if (g_pNeoRoot->m_pFileIODialog)
+		g_pNeoRoot->m_pFileIODialog->DeletePanel();
 	m_panelCaptureInput->DeletePanel();
-	if (m_avImage) delete m_avImage;
+	if (m_avImage)
+		delete m_avImage;
 	NeoSettingsDeinit(&m_ns);
 
 	m_gameui = nullptr;
@@ -477,7 +467,8 @@ CNeoRoot::~CNeoRoot()
 
 IGameUI *CNeoRoot::GetGameUI()
 {
-	if (!m_gameui && !LoadGameUI()) return nullptr;
+	if (!m_gameui && !LoadGameUI())
+		return nullptr;
 	return m_gameui;
 }
 
@@ -505,10 +496,12 @@ bool CNeoRoot::LoadGameUI()
 	if (!m_gameui)
 	{
 		CreateInterfaceFn gameUIFactory = g_GameUIDLL.GetFactory();
-		if (!gameUIFactory) return false;
+		if (!gameUIFactory)
+			return false;
 
 		m_gameui = reinterpret_cast<IGameUI *>(gameUIFactory(GAMEUI_INTERFACE_VERSION, nullptr));
-		if (!m_gameui) return false;
+		if (!m_gameui)
+			return false;
 	}
 	return true;
 }
@@ -527,9 +520,7 @@ void CNeoRoot::ApplySchemeSettings(IScheme *pScheme)
 	SetBgColor(COLOR_TRANSPARENT);
 
 	static constexpr const char *FONT_NAMES[NeoUI::FONT__TOTAL] = {
-		"NeoUINormal", "NHudOCR", "NHudOCRSmallNoAdditive", "ClientTitleFont", "ClientTitleFontSmall",
-		"NeoUILarge"
-	};
+		"NeoUINormal", "NHudOCR", "NHudOCRSmallNoAdditive", "ClientTitleFont", "ClientTitleFontSmall", "NeoUILarge"};
 	for (int i = 0; i < NeoUI::FONT__TOTAL; ++i)
 	{
 		g_uiCtx.fonts[i].hdl = pScheme->GetFont(FONT_NAMES[i], true);
@@ -544,7 +535,8 @@ void CNeoRoot::ApplySchemeSettings(IScheme *pScheme)
 	g_iAvatar = wide / 30;
 	const float flWide = static_cast<float>(wide);
 	m_flWideAs43 = static_cast<float>(tall) * (4.0f / 3.0f);
-	if (m_flWideAs43 > flWide) m_flWideAs43 = flWide;
+	if (m_flWideAs43 > flWide)
+		m_flWideAs43 = flWide;
 	g_iRootSubPanelWide = static_cast<int>(m_flWideAs43 * 0.9f);
 	m_tabsStateSettings = {};
 	m_tabsStateServerBrowser = {};
@@ -671,8 +663,8 @@ void CNeoRoot::OnRelayedKeyCodeTyped(vgui::KeyCode code)
 		m_flHtBtnCodeUpdate = gpGlobals->realtime + 1.0f;
 	}
 
-	if (KEY_BACKQUOTE != code
-			&& ROOTBUTTONACTION_TOGGLECONSOLE == m_htButtonCodeToAction.Get(code, ROOTBUTTONACTION_NIL))
+	if (KEY_BACKQUOTE != code &&
+		ROOTBUTTONACTION_TOGGLECONSOLE == m_htButtonCodeToAction.Get(code, ROOTBUTTONACTION_NIL))
 	{
 		// NEO JANK (nullsystem): Prevent toggle being handled twice causing it to not really open.
 		// This can happen if using the default ` due to the engine enacting this all the time, however calling
@@ -698,12 +690,12 @@ void CNeoRoot::OnEnterServer(const gameserveritem_t gameServer, const char *pszS
 	const int iPlayersCount = PlayersCount(&gameServer, PLAYERCOUNT_INCLUDEBOTS);
 	m_serverPingAutoJoin.m_serverInfo =
 #ifdef DEBUG
-			(iPlayersCount < (gameServer.m_nMaxPlayers - cl_neo_autojoin_offset.GetInt()))
+		(iPlayersCount < (gameServer.m_nMaxPlayers - cl_neo_autojoin_offset.GetInt()))
 #else
-			(iPlayersCount < gameServer.m_nMaxPlayers)
+		(iPlayersCount < gameServer.m_nMaxPlayers)
 #endif
-				? gameserveritem_t{}
-				: gameServer;
+		? gameserveritem_t{}
+		: gameServer;
 	m_flAutoJoinLastAttempt = gpGlobals->realtime;
 	if (m_serverPingAutoJoin.m_serverInfo.m_NetAdr.GetIP() == 0)
 	{
@@ -731,9 +723,8 @@ void CNeoRoot::OnEnterServer(const gameserveritem_t gameServer, const char *pszS
 
 			if (g_pNeoLoading)
 			{
-				g_pVGuiLocalize->ConvertANSIToUnicode(gameServer.m_szMap,
-													  g_pNeoLoading->m_wszLoadingMap,
-													  sizeof(g_pNeoLoading->m_wszLoadingMap));
+				g_pVGuiLocalize->ConvertANSIToUnicode(
+					gameServer.m_szMap, g_pNeoLoading->m_wszLoadingMap, sizeof(g_pNeoLoading->m_wszLoadingMap));
 			}
 
 			m_state = STATE_ROOT;
@@ -770,7 +761,8 @@ void CNeoRoot::OnMainLoop(const NeoUI::Mode eMode)
 	if (!changedAlpha && secondsSpentOnLoadingScreen < NEO_MENU_SECONDS_TILL_FULLY_OPAQUE)
 	{
 		// Quadratic ease in
-		surface()->DrawSetAlphaMultiplier((secondsSpentOnLoadingScreen * secondsSpentOnLoadingScreen) / (NEO_MENU_SECONDS_TILL_FULLY_OPAQUE * NEO_MENU_SECONDS_TILL_FULLY_OPAQUE));
+		surface()->DrawSetAlphaMultiplier((secondsSpentOnLoadingScreen * secondsSpentOnLoadingScreen) /
+			(NEO_MENU_SECONDS_TILL_FULLY_OPAQUE * NEO_MENU_SECONDS_TILL_FULLY_OPAQUE));
 		changedAlpha = true;
 	}
 
@@ -780,25 +772,25 @@ void CNeoRoot::OnMainLoop(const NeoUI::Mode eMode)
 	if (!m_bOnLoadingScreen)
 	{
 		static constexpr void (CNeoRoot::*P_FN_MAIN_LOOP[STATE__TOTAL])(const MainLoopParam param) = {
-			&CNeoRoot::MainLoopRoot,			// STATE_ROOT
-			&CNeoRoot::MainLoopSettings,		// STATE_SETTINGS
-			&CNeoRoot::MainLoopNewGame,			// STATE_NEWGAME
-			&CNeoRoot::MainLoopServerBrowser,	// STATE_SERVERBROWSER
-			&CNeoRoot::MainLoopCredits,			// STATE_CREDITS
-			&CNeoRoot::MainLoopOverlay,			// STATE_OVERLAY
+			&CNeoRoot::MainLoopRoot,          // STATE_ROOT
+			&CNeoRoot::MainLoopSettings,      // STATE_SETTINGS
+			&CNeoRoot::MainLoopNewGame,       // STATE_NEWGAME
+			&CNeoRoot::MainLoopServerBrowser, // STATE_SERVERBROWSER
+			&CNeoRoot::MainLoopCredits,       // STATE_CREDITS
+			&CNeoRoot::MainLoopOverlay,       // STATE_OVERLAY
 
-			&CNeoRoot::MainLoopMapList,			// STATE_MAPLIST
-			&CNeoRoot::MainLoopServerDetails,	// STATE_SERVERDETAILS
-			&CNeoRoot::MainLoopSprayPicker,		// STATE_SPRAYPICKER
-			&CNeoRoot::MainLoopSprayPicker,		// STATE_SPRAYDELETER
+			&CNeoRoot::MainLoopMapList,       // STATE_MAPLIST
+			&CNeoRoot::MainLoopServerDetails, // STATE_SERVERDETAILS
+			&CNeoRoot::MainLoopSprayPicker,   // STATE_SPRAYPICKER
+			&CNeoRoot::MainLoopSprayPicker,   // STATE_SPRAYDELETER
 
-			&CNeoRoot::MainLoopPopup,			// STATE_KEYCAPTURE
-			&CNeoRoot::MainLoopPopup,			// STATE_CONFIRMSETTINGS
-			&CNeoRoot::MainLoopPopup,			// STATE_QUIT
-			&CNeoRoot::MainLoopPopup,			// STATE_SERVERPASSWORD
-			&CNeoRoot::MainLoopPopup,			// STATE_SETTINGSRESETDEFAULT
-			&CNeoRoot::MainLoopPopup,			// STATE_SPRAYDELETERCONFIRM
-			&CNeoRoot::MainLoopPopup,			// STATE_ADDCUSTOMBLACKLIST
+			&CNeoRoot::MainLoopPopup, // STATE_KEYCAPTURE
+			&CNeoRoot::MainLoopPopup, // STATE_CONFIRMSETTINGS
+			&CNeoRoot::MainLoopPopup, // STATE_QUIT
+			&CNeoRoot::MainLoopPopup, // STATE_SERVERPASSWORD
+			&CNeoRoot::MainLoopPopup, // STATE_SETTINGSRESETDEFAULT
+			&CNeoRoot::MainLoopPopup, // STATE_SPRAYDELETERCONFIRM
+			&CNeoRoot::MainLoopPopup, // STATE_ADDCUSTOMBLACKLIST
 		};
 		// Each MainLoop... will have its own BeginContext
 		(this->*P_FN_MAIN_LOOP[m_state])(MainLoopParam{.eMode = eMode, .wide = wide, .tall = tall});
@@ -822,7 +814,7 @@ void CNeoRoot::OnMainLoop(const NeoUI::Mode eMode)
 			const auto &server = m_serverPingAutoJoin.m_serverInfo;
 			wchar wszText[k_cbMaxGameServerName] = {};
 
-			static constexpr const int ROWLAYOUT_REFRESH[] = { 10, 15, 35, 20, -1 };
+			static constexpr const int ROWLAYOUT_REFRESH[] = {10, 15, 35, 20, -1};
 			NeoUI::SetPerRowLayout(5, ROWLAYOUT_REFRESH, g_uiCtx.layout.iDefRowTall);
 			if (NeoUI::Button(L"Cancel").bPressed)
 			{
@@ -838,7 +830,8 @@ void CNeoRoot::OnMainLoop(const NeoUI::Mode eMode)
 			V_swprintf_safe(wszText, L"Players: %d/%d", iPlayersOnlyCount, server.m_nMaxPlayers);
 			NeoUI::Label(wszText);
 
-			V_swprintf_safe(wszText, L"Refresh: %ds", Max(0, static_cast<int>((m_flAutoJoinLastAttempt + FL_AUTO_JOIN_WAIT) - gpGlobals->realtime)));
+			V_swprintf_safe(wszText, L"Refresh: %ds",
+				Max(0, static_cast<int>((m_flAutoJoinLastAttempt + FL_AUTO_JOIN_WAIT) - gpGlobals->realtime)));
 			NeoUI::Label(wszText);
 
 			if ((m_flAutoJoinLastAttempt + FL_AUTO_JOIN_WAIT) <= gpGlobals->realtime)
@@ -854,12 +847,13 @@ void CNeoRoot::OnMainLoop(const NeoUI::Mode eMode)
 #else
 				if ((iPlayersCount < server.m_nMaxPlayers)
 #endif
-						&& (CNeoServerPing::PINGSTATE_SUCCESS == m_serverPingAutoJoin.m_ePingState))
+					&& (CNeoServerPing::PINGSTATE_SUCCESS == m_serverPingAutoJoin.m_ePingState))
 				{
 					if (m_serverPingAutoJoin.m_serverInfo.m_bPassword)
 					{
 						char szServerPassword[ARRAYSIZE(m_wszServerPassword)];
-						g_pVGuiLocalize->ConvertUnicodeToANSI(m_wszServerPassword, szServerPassword, sizeof(szServerPassword));
+						g_pVGuiLocalize->ConvertUnicodeToANSI(
+							m_wszServerPassword, szServerPassword, sizeof(szServerPassword));
 						OnEnterServer(m_serverPingAutoJoin.m_serverInfo, szServerPassword);
 					}
 					else
@@ -874,9 +868,7 @@ void CNeoRoot::OnMainLoop(const NeoUI::Mode eMode)
 
 		NeoUI::EndContext();
 
-		if (STATE_SETTINGS == m_state
-				&& !m_ns.bModified
-				&& g_uiCtx.bValueEdited)
+		if (STATE_SETTINGS == m_state && !m_ns.bModified && g_uiCtx.bValueEdited)
 		{
 			m_ns.bModified = true;
 		}
@@ -948,8 +940,7 @@ void CNeoRoot::MainLoopRoot(const MainLoopParam param)
 	g_uiCtx.colors.sectionBg = COLOR_TRANSPARENT;
 
 	vgui::surface()->DrawSetColor(COLOR_BLACK_TRANSPARENT);
-	vgui::surface()->DrawFilledRect(g_uiCtx.dPanel.x, 0,
-									g_uiCtx.dPanel.x + g_uiCtx.dPanel.wide, param.tall);
+	vgui::surface()->DrawFilledRect(g_uiCtx.dPanel.x, 0, g_uiCtx.dPanel.x + g_uiCtx.dPanel.wide, param.tall);
 
 	NeoUI::BeginContext(&g_uiCtx, param.eMode, nullptr, "CtxRoot");
 	NeoUI::SwapFont(NeoUI::FONT_NTLARGE, true);
@@ -1003,13 +994,12 @@ void CNeoRoot::MainLoopRoot(const MainLoopParam param)
 			m_state = STATE_SETTINGS;
 			NeoSettingsRestore(&m_ns);
 		}
-		if (cl_neo_hud_spectator_overlay_enabled.GetBool()
-				&& NeoUI::Button(L"OVERLAY").bPressed)
+		if (cl_neo_hud_spectator_overlay_enabled.GetBool() && NeoUI::Button(L"OVERLAY").bPressed)
 		{
-			Q_UTF8ToUnicode(cl_neo_hud_spectator_overlay_jinrai_name.GetString(),
-					m_wszTeamNameJinrai, sizeof(m_wszTeamNameJinrai));
-			Q_UTF8ToUnicode(cl_neo_hud_spectator_overlay_nsf_name.GetString(),
-					m_wszTeamNameNSF, sizeof(m_wszTeamNameNSF));
+			Q_UTF8ToUnicode(
+				cl_neo_hud_spectator_overlay_jinrai_name.GetString(), m_wszTeamNameJinrai, sizeof(m_wszTeamNameJinrai));
+			Q_UTF8ToUnicode(
+				cl_neo_hud_spectator_overlay_nsf_name.GetString(), m_wszTeamNameNSF, sizeof(m_wszTeamNameNSF));
 			V_strcpy_safe(m_szLogoPathJinrai, cl_neo_hud_spectator_overlay_jinrai_logo.GetString());
 			V_strcpy_safe(m_szLogoPathNSF, cl_neo_hud_spectator_overlay_nsf_logo.GetString());
 			m_iMatchesWonJinrai = cl_neo_hud_spectator_overlay_jinrai_matches_won.GetInt();
@@ -1021,9 +1011,7 @@ void CNeoRoot::MainLoopRoot(const MainLoopParam param)
 				if (kv->LoadFromFile(g_pFullFileSystem, "overlay/presets.txt"))
 				{
 					m_teamInfos.Purge();
-					for (KeyValues *teamKv = kv->GetFirstTrueSubKey();
-							teamKv;
-							teamKv = teamKv->GetNextTrueSubKey())
+					for (KeyValues *teamKv = kv->GetFirstTrueSubKey(); teamKv; teamKv = teamKv->GetNextTrueSubKey())
 					{
 						const char *pszName = teamKv->GetString("name");
 						const char *pszLogo = teamKv->GetString("logo");
@@ -1034,8 +1022,7 @@ void CNeoRoot::MainLoopRoot(const MainLoopParam param)
 
 							char szRelLogoPath[MAX_PATH];
 							V_sprintf_safe(szRelLogoPath, "overlay/%s", pszLogo);
-							filesystem->RelativePathToFullPath_safe(szRelLogoPath,
-									nullptr, teamInfo.szLogoPath);
+							filesystem->RelativePathToFullPath_safe(szRelLogoPath, nullptr, teamInfo.szLogoPath);
 							m_teamInfos.AddToTail(teamInfo);
 						}
 					}
@@ -1061,7 +1048,8 @@ void CNeoRoot::MainLoopRoot(const MainLoopParam param)
 		surface()->DrawSetTextFont(g_uiCtx.fonts[NeoUI::FONT_LOGO].hdl);
 		surface()->GetTextSize(g_uiCtx.fonts[NeoUI::FONT_LOGO].hdl, WSZ_GAME_TITLE1_a, iFirstWidth, iFirstHeight);
 		surface()->DrawSetTextColor(COLOR_BLACK);
-		surface()->DrawSetTextPos(iBtnPlaceXMid - (m_iTitleWidth * 0.5) - iDropShadowOffset, iTitleMarginTop + iDropShadowOffset);
+		surface()->DrawSetTextPos(
+			iBtnPlaceXMid - (m_iTitleWidth * 0.5) - iDropShadowOffset, iTitleMarginTop + iDropShadowOffset);
 		surface()->DrawPrintText(WSZ_GAME_TITLE1, SZWSZ_LEN(WSZ_GAME_TITLE1));
 		surface()->DrawSetTextColor(g_uiCtx.colors.titleFg);
 		surface()->DrawSetTextPos(iBtnPlaceXMid - (m_iTitleWidth * 0.5), iTitleMarginTop);
@@ -1070,23 +1058,27 @@ void CNeoRoot::MainLoopRoot(const MainLoopParam param)
 		surface()->DrawPrintText(WSZ_GAME_TITLE1_b, SZWSZ_LEN(WSZ_GAME_TITLE1_b));
 
 		surface()->DrawSetTextColor(COLOR_BLACK);
-		surface()->DrawSetTextPos(iBtnPlaceXMid - (m_iTitleWidth * 0.5) + (iTitleNWidth * 1.16) - iDropShadowOffset, iTitleMarginTop + m_iTitleHeight + iDropShadowOffset);
+		surface()->DrawSetTextPos(iBtnPlaceXMid - (m_iTitleWidth * 0.5) + (iTitleNWidth * 1.16) - iDropShadowOffset,
+			iTitleMarginTop + m_iTitleHeight + iDropShadowOffset);
 		surface()->DrawSetTextFont(g_uiCtx.fonts[NeoUI::FONT_LOGOSMALL].hdl);
 		surface()->DrawPrintText(WSZ_GAME_TITLE2, SZWSZ_LEN(WSZ_GAME_TITLE2));
-		surface()->DrawSetTextPos(iBtnPlaceXMid - (m_iTitleWidth * 0.5) + (iTitleNWidth * 1.16) - iDropShadowOffset, iTitleMarginTop + m_iTitleHeight + iDropShadowOffset);
+		surface()->DrawSetTextPos(iBtnPlaceXMid - (m_iTitleWidth * 0.5) + (iTitleNWidth * 1.16) - iDropShadowOffset,
+			iTitleMarginTop + m_iTitleHeight + iDropShadowOffset);
 		surface()->DrawPrintText(L"G", SZWSZ_LEN(L"G"));
 
 		surface()->DrawSetTextColor(g_uiCtx.colors.titleFg);
-		surface()->DrawSetTextPos(iBtnPlaceXMid - (m_iTitleWidth * 0.5) + (iTitleNWidth * 1.16), iTitleMarginTop + m_iTitleHeight);
+		surface()->DrawSetTextPos(
+			iBtnPlaceXMid - (m_iTitleWidth * 0.5) + (iTitleNWidth * 1.16), iTitleMarginTop + m_iTitleHeight);
 		surface()->DrawSetTextFont(g_uiCtx.fonts[NeoUI::FONT_LOGOSMALL].hdl);
 		surface()->DrawPrintText(WSZ_GAME_TITLE2, SZWSZ_LEN(WSZ_GAME_TITLE2));
 		surface()->DrawSetTextColor(COLOR_RED);
-		surface()->DrawSetTextPos(iBtnPlaceXMid - (m_iTitleWidth * 0.5) + (iTitleNWidth * 1.16), iTitleMarginTop + m_iTitleHeight);
+		surface()->DrawSetTextPos(
+			iBtnPlaceXMid - (m_iTitleWidth * 0.5) + (iTitleNWidth * 1.16), iTitleMarginTop + m_iTitleHeight);
 		surface()->DrawPrintText(L"G", SZWSZ_LEN(L"G"));
 		surface()->DrawSetTextFont(g_uiCtx.fonts[NeoUI::FONT_NTNORMAL].hdl);
 	}
 
-#if 0	// NEO TODO (Adam) place the current player info in the top right corner maybe?
+#if 0 // NEO TODO (Adam) place the current player info in the top right corner maybe?
 	{
 		surface()->DrawSetTextColor(g_uiCtx.colors.activeFg);
 		ISteamUser *steamUser = steamapicontext->SteamUser();
@@ -1252,9 +1244,8 @@ void CNeoRoot::MainLoopRoot(const MainLoopParam param)
 		NeoUI::SetPerRowLayout(1);
 		if (mps->songs[mps->iCurIdx].wszArtist[0])
 		{
-			V_swprintf_safe(wszText, L"%ls - %ls",
-					mps->songs[mps->iCurIdx].wszTitle,
-					mps->songs[mps->iCurIdx].wszArtist);
+			V_swprintf_safe(
+				wszText, L"%ls - %ls", mps->songs[mps->iCurIdx].wszTitle, mps->songs[mps->iCurIdx].wszArtist);
 		}
 		else
 		{
@@ -1270,7 +1261,9 @@ void CNeoRoot::MainLoopRoot(const MainLoopParam param)
 			previousSongIndex = mps->iCurIdx;
 		}
 
-		if (NeoUI::ButtonToggle(wszText, NeoUI::CurrentPopup() == NEOPOPUP_MP3, NeoUI::BUTTONFLAG_SCROLLTEXT, scrollStart).bPressed)
+		if (NeoUI::ButtonToggle(
+				wszText, NeoUI::CurrentPopup() == NEOPOPUP_MP3, NeoUI::BUTTONFLAG_SCROLLTEXT, scrollStart)
+				.bPressed)
 		{
 			if (NeoUI::CurrentPopup() == NEOPOPUP_MP3)
 			{
@@ -1279,12 +1272,13 @@ void CNeoRoot::MainLoopRoot(const MainLoopParam param)
 			else
 			{
 				const int iPopupTall = g_uiCtx.layout.iRowTall * 8;
-				NeoUI::OpenPopup(NEOPOPUP_MP3, NeoUI::Dim{
-							.x = g_uiCtx.dPanel.x,
-							.y = g_uiCtx.dPanel.y - iPopupTall,
-							.wide = g_uiCtx.dPanel.wide,
-							.tall = iPopupTall,
-						});
+				NeoUI::OpenPopup(NEOPOPUP_MP3,
+					NeoUI::Dim{
+						.x = g_uiCtx.dPanel.x,
+						.y = g_uiCtx.dPanel.y - iPopupTall,
+						.wide = g_uiCtx.dPanel.wide,
+						.tall = iPopupTall,
+					});
 			}
 		}
 
@@ -1300,11 +1294,9 @@ void CNeoRoot::MainLoopRoot(const MainLoopParam param)
 		static constexpr int ROWLAYOUT_MP3_TIMES_SMALL[] = {25, 50, -1};
 		static constexpr int ROWLAYOUT_MP3_TIMES_NORMAL[] = {20, 60, -1};
 		NeoUI::SetPerRowLayout(3,
-				(m_flWideAs43 <= 800)
-					? ROWLAYOUT_MP3_TIMES_TINY
-					: (m_flWideAs43 <= 1280)
-						? ROWLAYOUT_MP3_TIMES_SMALL
-						: ROWLAYOUT_MP3_TIMES_NORMAL);
+			(m_flWideAs43 <= 800)        ? ROWLAYOUT_MP3_TIMES_TINY
+				: (m_flWideAs43 <= 1280) ? ROWLAYOUT_MP3_TIMES_SMALL
+										 : ROWLAYOUT_MP3_TIMES_NORMAL);
 		{
 			const int iMin = mps->flSecsCursor / FL_SECSINMIN;
 			const int iSec = mps->flSecsCursor - (iMin * FL_SECSINMIN);
@@ -1317,7 +1309,7 @@ void CNeoRoot::MainLoopRoot(const MainLoopParam param)
 			const int iSec = mps->flSecsLength - (iMin * FL_SECSINMIN);
 			V_swprintf_safe(wszText, L"%02d:%02d", iMin, iSec);
 		}
-		NeoUI::LabelExOpt labelOptions = { NeoUI::TEXTSTYLE_RIGHT, g_uiCtx.eFont };
+		NeoUI::LabelExOpt labelOptions = {NeoUI::TEXTSTYLE_RIGHT, g_uiCtx.eFont};
 		NeoUI::Label(wszText, labelOptions);
 
 		static constexpr int ROWLAYOUT_MP3_CONTROLS[] = {22, 22, 34, -1};
@@ -1333,7 +1325,7 @@ void CNeoRoot::MainLoopRoot(const MainLoopParam param)
 				mps->iCurShuffleIdx = 0;
 			}
 		}
-		
+
 		// Previous button
 		if (NeoUI::Button(L"|\u25C0\u25C0").bPressed)
 		{
@@ -1350,12 +1342,11 @@ void CNeoRoot::MainLoopRoot(const MainLoopParam param)
 		}
 
 		// Play/Pause button
-		if (NeoUI::Button(mps->bPlaying ? L"II" : L"\u25B6").bPressed
-				|| (NeoUI::MODE_KEYPRESSED == g_uiCtx.eMode
-					&& ROOTBUTTONACTION_MP3 == m_htButtonCodeToAction.Get(g_uiCtx.eCode, ROOTBUTTONACTION_NIL)))
+		if (NeoUI::Button(mps->bPlaying ? L"II" : L"\u25B6").bPressed ||
+			(NeoUI::MODE_KEYPRESSED == g_uiCtx.eMode &&
+				ROOTBUTTONACTION_MP3 == m_htButtonCodeToAction.Get(g_uiCtx.eCode, ROOTBUTTONACTION_NIL)))
 		{
-			mps->flagsPlayStateNext = (mps->bPlaying)
-					? NeoMP3::PLAYSTATE_FLAG_PAUSED : NeoMP3::PLAYSTATE_FLAG_PLAY;
+			mps->flagsPlayStateNext = (mps->bPlaying) ? NeoMP3::PLAYSTATE_FLAG_PAUSED : NeoMP3::PLAYSTATE_FLAG_PLAY;
 			NeoMP3::Update();
 		}
 
@@ -1369,7 +1360,8 @@ void CNeoRoot::MainLoopRoot(const MainLoopParam param)
 		g_uiCtx.eButtonTextStyle = NeoUI::TEXTSTYLE_LEFT;
 		NeoUI::EndSection();
 
-		NeoUI::Dim previousDPanel = g_uiCtx.dPanel; // See neo_ui.h "// NEO TODO (nullsystem): Popups should get its own XY offsets"
+		NeoUI::Dim previousDPanel =
+			g_uiCtx.dPanel; // See neo_ui.h "// NEO TODO (nullsystem): Popups should get its own XY offsets"
 
 		if (NeoUI::BeginPopup(NEOPOPUP_MP3))
 		{
@@ -1414,8 +1406,7 @@ void CNeoRoot::MainLoopSettings(const MainLoopParam param)
 		{NeoSettings_HUD, false},
 	};
 	static const wchar_t *WSZ_TABS_LABELS[ARRAYSIZE(P_FN)] = {
-		L"General", L"Keybinds", L"Input", L"Audio", L"Video", L"Crosshair", L"HUD"
-	};
+		L"General", L"Keybinds", L"Input", L"Audio", L"Video", L"Crosshair", L"HUD"};
 
 	m_ns.iNextBinding = -1;
 
@@ -1430,7 +1421,8 @@ void CNeoRoot::MainLoopSettings(const MainLoopParam param)
 	{
 		NeoUI::BeginSection(NeoUI::SECTIONFLAG_ROWWIDGETS | NeoUI::SECTIONFLAG_EXCLUDECONTROLLER);
 		{
-			NeoUI::Tabs(WSZ_TABS_LABELS, ARRAYSIZE(WSZ_TABS_LABELS), &m_ns.iCurTab, NeoUI::TABFLAG_DEFAULT, &m_tabsStateSettings);
+			NeoUI::Tabs(WSZ_TABS_LABELS, ARRAYSIZE(WSZ_TABS_LABELS), &m_ns.iCurTab, NeoUI::TABFLAG_DEFAULT,
+				&m_tabsStateSettings);
 		}
 		NeoUI::EndSection();
 		if (!P_FN[m_ns.iCurTab].bUISectionManaged)
@@ -1453,31 +1445,33 @@ void CNeoRoot::MainLoopSettings(const MainLoopParam param)
 		g_uiCtx.eButtonTextStyle = NeoUI::TEXTSTYLE_CENTER;
 		NeoUI::SetPerRowLayout(4);
 		{
-			static constexpr const ButtonCode_t BTNCODES_DEFAULT[] = { KEY_F10, KEY_XBUTTON_STICK2, STEAMCONTROLLER_F10 };
+			static constexpr const ButtonCode_t BTNCODES_DEFAULT[] = {KEY_F10, KEY_XBUTTON_STICK2, STEAMCONTROLLER_F10};
 			NeoUI::SwapFont(NeoUI::FONT_NTNORMAL);
 			if (NeoUI::Button(NeoUI::HintAlt(L"Back (ESC)", L"Back (B)")).bPressed || NeoUI::BindKeyBack())
 			{
 				m_ns.bBack = true;
 			}
 			if (NeoUI::Button(NeoUI::HintAlt(L"Default (F10)", L"Default (R3/F10)")).bPressed ||
-					NeoUI::Bind(BTNCODES_DEFAULT, ARRAYSIZE(BTNCODES_DEFAULT)))
+				NeoUI::Bind(BTNCODES_DEFAULT, ARRAYSIZE(BTNCODES_DEFAULT)))
 			{
 				m_state = STATE_SETTINGSRESETDEFAULT;
 				NeoSettingsEndVoiceTweakMode();
 			}
 			if (m_ns.bModified)
 			{
-				static constexpr const ButtonCode_t BTNCODES_REVERT[] = { KEY_F7, KEY_XBUTTON_BACK, STEAMCONTROLLER_SELECT };
-				static constexpr const ButtonCode_t BTNCODES_ACCEPT[] = { KEY_F8, KEY_XBUTTON_START, STEAMCONTROLLER_START };
-				if (NeoUI::Button(NeoUI::HintAlt(L"Revert (F7)", L"Revert (SELECT)")).bPressed
-						|| NeoUI::Bind(BTNCODES_REVERT, ARRAYSIZE(BTNCODES_REVERT)))
+				static constexpr const ButtonCode_t BTNCODES_REVERT[] = {
+					KEY_F7, KEY_XBUTTON_BACK, STEAMCONTROLLER_SELECT};
+				static constexpr const ButtonCode_t BTNCODES_ACCEPT[] = {
+					KEY_F8, KEY_XBUTTON_START, STEAMCONTROLLER_START};
+				if (NeoUI::Button(NeoUI::HintAlt(L"Revert (F7)", L"Revert (SELECT)")).bPressed ||
+					NeoUI::Bind(BTNCODES_REVERT, ARRAYSIZE(BTNCODES_REVERT)))
 				{
 					NeoSettingsRestore(&m_ns);
 				}
 				if (m_ns.bIsValid)
 				{
-					if (NeoUI::Button(NeoUI::HintAlt(L"Accept (F8)", L"Accept (START)")).bPressed
-							|| NeoUI::Bind(BTNCODES_ACCEPT, ARRAYSIZE(BTNCODES_ACCEPT)))
+					if (NeoUI::Button(NeoUI::HintAlt(L"Accept (F8)", L"Accept (START)")).bPressed ||
+						NeoUI::Bind(BTNCODES_ACCEPT, ARRAYSIZE(BTNCODES_ACCEPT)))
 					{
 						if (m_ns.video.iFov > maxSupportedFov && m_ns.video.iFov != neo_fov.GetInt())
 						{
@@ -1508,8 +1502,7 @@ void CNeoRoot::MainLoopSettings(const MainLoopParam param)
 		m_ns.iNextBinding = -1;
 		m_ns.bNextBindingSecondary = false;
 		V_swprintf_safe(m_wszBindingText, L"Change %lsbinding for: %ls",
-				m_ns.bNextBindingSecondary ? L"secondary " : L"",
-				m_ns.keys.vBinds[m_iBindingIdx].wszDisplayText);
+			m_ns.bNextBindingSecondary ? L"secondary " : L"", m_ns.keys.vBinds[m_iBindingIdx].wszDisplayText);
 		m_state = STATE_KEYCAPTURE;
 		engine->StartKeyTrapMode();
 	}
@@ -1517,7 +1510,7 @@ void CNeoRoot::MainLoopSettings(const MainLoopParam param)
 
 void CNeoRoot::MainLoopNewGame(const MainLoopParam param)
 {
-	static const wchar_t *DIFFICULTY_LABELS[] = { L"Easy", L"Normal", L"Hard", L"Expert" };
+	static const wchar_t *DIFFICULTY_LABELS[] = {L"Easy", L"Normal", L"Hard", L"Expert"};
 
 	const int iTallTotal = g_uiCtx.layout.iRowTall * (g_iRowsInScreen + 2);
 	g_uiCtx.dPanel.wide = g_iRootSubPanelWide;
@@ -1536,11 +1529,12 @@ void CNeoRoot::MainLoopNewGame(const MainLoopParam param)
 				m_state = STATE_MAPLIST;
 			}
 			NeoUI::TextEdit(L"Hostname", m_newGame.wszHostname, SZWSZ_LEN(m_newGame.wszHostname));
-			NeoUI::SliderInt(L"Max players", &m_newGame.iMaxPlayers, 1, MAX_PLAYERS-1); // -1 to accommodate SourceTV
-			NeoUI::SliderInt(L"Bot Quota", &m_newGame.iBotQuota, 0, MAX_PLAYERS-1);
-			NeoUI::RingBox(L"Bot difficulty", DIFFICULTY_LABELS, ARRAYSIZE(DIFFICULTY_LABELS), &m_newGame.iBotDifficulty);
+			NeoUI::SliderInt(L"Max players", &m_newGame.iMaxPlayers, 1, MAX_PLAYERS - 1); // -1 to accommodate SourceTV
+			NeoUI::SliderInt(L"Bot Quota", &m_newGame.iBotQuota, 0, MAX_PLAYERS - 1);
+			NeoUI::RingBox(
+				L"Bot difficulty", DIFFICULTY_LABELS, ARRAYSIZE(DIFFICULTY_LABELS), &m_newGame.iBotDifficulty);
 			NeoUI::TextEdit(L"Password", m_newGame.wszPassword, SZWSZ_LEN(m_newGame.wszPassword),
-					cl_neo_streamermode.GetBool() ? NeoUI::TEXTEDITFLAG_PASSWORD : NeoUI::TEXTEDITFLAG_NONE);
+				cl_neo_streamermode.GetBool() ? NeoUI::TEXTEDITFLAG_PASSWORD : NeoUI::TEXTEDITFLAG_NONE);
 			NeoUI::RingBoxBool(L"Friendly fire", &m_newGame.bFriendlyFire);
 			NeoUI::RingBoxBool(L"Use Steam networking", &m_newGame.bUseSteamNetworking);
 		}
@@ -1560,9 +1554,10 @@ void CNeoRoot::MainLoopNewGame(const MainLoopParam param)
 				NeoUI::Pad();
 				NeoUI::Pad();
 				NeoUI::Pad();
-				static constexpr const ButtonCode_t BTNCODES_STARTGAME[] = { KEY_F4, KEY_XBUTTON_START, STEAMCONTROLLER_START };
+				static constexpr const ButtonCode_t BTNCODES_STARTGAME[] = {
+					KEY_F4, KEY_XBUTTON_START, STEAMCONTROLLER_START};
 				if (NeoUI::Button(NeoUI::HintAlt(L"Start (F4)", L"Start (START)")).bPressed ||
-						NeoUI::Bind(BTNCODES_STARTGAME, ARRAYSIZE(BTNCODES_STARTGAME)))
+					NeoUI::Bind(BTNCODES_STARTGAME, ARRAYSIZE(BTNCODES_STARTGAME)))
 				{
 					g_pNeoRoot->m_flTimeLoadingScreenTransition = gpGlobals->realtime;
 
@@ -1607,14 +1602,9 @@ void CNeoRoot::MainLoopNewGame(const MainLoopParam param)
 void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 {
 	static const wchar_t *GS_NAMES[GS__TOTAL] = {
-		L"Internet", L"LAN", L"Friends", L"Fav", L"History", L"Spec", L"Blacklist"
-	};
-	static const wchar_t *ANTICHEAT_LABELS[ANTICHEAT__TOTAL] = {
-		L"<Any>", L"On", L"Off"
-	};
-	static const wchar_t *TAGS_FILTER_LABELS[TAGSFILTER__TOTAL] = {
-		L"Tags include", L"Tags exclude"
-	};
+		L"Internet", L"LAN", L"Friends", L"Fav", L"History", L"Spec", L"Blacklist"};
+	static const wchar_t *ANTICHEAT_LABELS[ANTICHEAT__TOTAL] = {L"<Any>", L"On", L"Off"};
+	static const wchar_t *TAGS_FILTER_LABELS[TAGSFILTER__TOTAL] = {L"Tags include", L"Tags exclude"};
 
 	enum EEnterServerState
 	{
@@ -1665,14 +1655,14 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 		NeoUI::BeginSection(NeoUI::SECTIONFLAG_ROWWIDGETS);
 		{
 			const int iPrevTab = m_iServerBrowserTab;
-			NeoUI::Tabs(GS_NAMES, ARRAYSIZE(GS_NAMES), &m_iServerBrowserTab,
-					NeoUI::TABFLAG_DEFAULT, &m_tabsStateServerBrowser);
+			NeoUI::Tabs(
+				GS_NAMES, ARRAYSIZE(GS_NAMES), &m_iServerBrowserTab, NeoUI::TABFLAG_DEFAULT, &m_tabsStateServerBrowser);
 			if (iPrevTab != m_iServerBrowserTab)
 			{
 				m_iSelectedServer = -1;
 			}
 			if ((m_bAutoRefreshFav && m_iServerBrowserTab == GS_FAVORITES) ||
-					!m_serverBrowser[m_iServerBrowserTab].m_bReloadedAtLeastOnce)
+				!m_serverBrowser[m_iServerBrowserTab].m_bReloadedAtLeastOnce)
 			{
 				bForceRefresh = true;
 				m_serverBrowser[m_iServerBrowserTab].m_bReloadedAtLeastOnce = true;
@@ -1693,8 +1683,8 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 				pwszNames = TABLE_HEADERS_SERVERBLACKLIST;
 			}
 
-			m_headerModFlagsServerBrowser |= NeoUI::TableHeader(pwszNames, iColTotal,
-					pirLayout, &m_sortCtx.col, &m_sortCtx.bDescending, 1);
+			m_headerModFlagsServerBrowser |=
+				NeoUI::TableHeader(pwszNames, iColTotal, pirLayout, &m_sortCtx.col, &m_sortCtx.bDescending, 1);
 			g_uiCtx.eButtonTextStyle = NeoUI::TEXTSTYLE_CENTER;
 		}
 		NeoUI::EndSection();
@@ -1702,7 +1692,8 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 		static constexpr int FILTER_ROWS = 8;
 		g_uiCtx.dPanel.y += g_uiCtx.dPanel.tall;
 		g_uiCtx.dPanel.tall = g_uiCtx.layout.iRowTall * (g_iRowsInScreen - 1);
-		if (bTabShowFilterPanel) g_uiCtx.dPanel.tall -= g_uiCtx.layout.iRowTall * FILTER_ROWS;
+		if (bTabShowFilterPanel)
+			g_uiCtx.dPanel.tall -= g_uiCtx.layout.iRowTall * FILTER_ROWS;
 		NeoUI::BeginSection(NeoUI::SECTIONFLAG_DEFAULTFOCUS);
 		{
 			NeoUI::SetPerRowLayout(1);
@@ -1738,19 +1729,22 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 							}
 							if (btn.bKeyUpPressed || btn.bKeyDownPressed)
 							{
-								m_iSelectedServer = LoopAroundInArray(m_iSelectedServer + ((btn.bKeyUpPressed) ? -1 : +1), g_blacklistedServers.Count());
+								m_iSelectedServer = LoopAroundInArray(
+									m_iSelectedServer + ((btn.bKeyUpPressed) ? -1 : +1), g_blacklistedServers.Count());
 							}
 							else if (btn.bPressed || btn.bMouseRightPressed)
 							{
 								m_iSelectedServer = i;
 								if (btn.bMouseRightPressed)
 								{
-									NeoUI::OpenPopup(NEOPOPUP_ACTIONBLACKLIST, NeoUI::Dim{
-												.x = g_uiCtx.iMouseAbsX,
-												.y = g_uiCtx.iMouseAbsY,
-												.wide = NeoUI::SuitableWideByWStr(L"Remove from blacklist", NeoUI::SUITABLEWIDE_POPUP),
-												.tall = g_uiCtx.layout.iDefRowTall,
-											});
+									NeoUI::OpenPopup(NEOPOPUP_ACTIONBLACKLIST,
+										NeoUI::Dim{
+											.x = g_uiCtx.iMouseAbsX,
+											.y = g_uiCtx.iMouseAbsY,
+											.wide = NeoUI::SuitableWideByWStr(
+												L"Remove from blacklist", NeoUI::SUITABLEWIDE_POPUP),
+											.tall = g_uiCtx.layout.iDefRowTall,
+										});
 								}
 							}
 						}
@@ -1773,7 +1767,8 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 					}
 					else
 					{
-						V_swprintf_safe(wszInfo, L"No %ls queries found. Press Refresh to re-check", GS_NAMES[m_iServerBrowserTab]);
+						V_swprintf_safe(
+							wszInfo, L"No %ls queries found. Press Refresh to re-check", GS_NAMES[m_iServerBrowserTab]);
 					}
 					NeoUI::BeginIgnoreXOffset();
 					{
@@ -1800,14 +1795,22 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 							const auto &server = sbTab->m_filteredServers[i];
 							const int iPlayersCount = PlayersCount(&server, PLAYERCOUNT_ONLYPLAYER);
 							bool bSkipServer = false;
-							if (m_sbFilters.bServerNotFull && server.m_nPlayers == server.m_nMaxPlayers) bSkipServer = true;
-							else if (m_sbFilters.bHasUsersPlaying && iPlayersCount == 0) bSkipServer = true;
-							else if (m_sbFilters.bIsNotPasswordProtected && server.m_bPassword) bSkipServer = true;
-							else if (m_sbFilters.iAntiCheat == ANTICHEAT_OFF && server.m_bSecure) bSkipServer = true;
-							else if (m_sbFilters.iAntiCheat == ANTICHEAT_ON && !server.m_bSecure) bSkipServer = true;
-							else if (m_sbFilters.iMaxPing != 0 && server.m_nPing > m_sbFilters.iMaxPing) bSkipServer = true;
-							else if (ServerBlacklisted(server)) bSkipServer = true;
-							else if (m_sbFilters.iMaxPlayerCount > 0 && iPlayersCount > m_sbFilters.iMaxPlayerCount) bSkipServer = true;
+							if (m_sbFilters.bServerNotFull && server.m_nPlayers == server.m_nMaxPlayers)
+								bSkipServer = true;
+							else if (m_sbFilters.bHasUsersPlaying && iPlayersCount == 0)
+								bSkipServer = true;
+							else if (m_sbFilters.bIsNotPasswordProtected && server.m_bPassword)
+								bSkipServer = true;
+							else if (m_sbFilters.iAntiCheat == ANTICHEAT_OFF && server.m_bSecure)
+								bSkipServer = true;
+							else if (m_sbFilters.iAntiCheat == ANTICHEAT_ON && !server.m_bSecure)
+								bSkipServer = true;
+							else if (m_sbFilters.iMaxPing != 0 && server.m_nPing > m_sbFilters.iMaxPing)
+								bSkipServer = true;
+							else if (ServerBlacklisted(server))
+								bSkipServer = true;
+							else if (m_sbFilters.iMaxPlayerCount > 0 && iPlayersCount > m_sbFilters.iMaxPlayerCount)
+								bSkipServer = true;
 
 							// NEO NOTE (nullsystem): All of those wchar_t[] strings
 							// need to be zero-initialized otherwise it can crash
@@ -1815,17 +1818,17 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 							wchar_t wszMapName[k_cbMaxGameServerMapName] = {};
 							if (false == bSkipServer)
 							{
-								g_pVGuiLocalize->ConvertANSIToUnicode(
-										server.m_szMap, wszMapName, sizeof(wszMapName));
-								if (m_sbFilters.wszMapFilter[0] && nullptr == wcsstr(wszMapName, m_sbFilters.wszMapFilter)) bSkipServer = true;
+								g_pVGuiLocalize->ConvertANSIToUnicode(server.m_szMap, wszMapName, sizeof(wszMapName));
+								if (m_sbFilters.wszMapFilter[0] &&
+									nullptr == wcsstr(wszMapName, m_sbFilters.wszMapFilter))
+									bSkipServer = true;
 							}
 
 							// Tags are separated by ","
 							wchar_t wszTags[k_cbMaxGameServerTags] = {};
 							if (false == bSkipServer)
 							{
-								g_pVGuiLocalize->ConvertANSIToUnicode(
-										server.m_szGameTags, wszTags, sizeof(wszTags));
+								g_pVGuiLocalize->ConvertANSIToUnicode(server.m_szGameTags, wszTags, sizeof(wszTags));
 								if (m_sbFilters.wszTagsFilter[0])
 								{
 									bool bInFilter = false;
@@ -1843,7 +1846,8 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 										V_wcscpy_safe(mutWszTagsFilter, m_sbFilters.wszTagsFilter);
 
 										wchar_t *pwszBufTagsFilter = nullptr;
-										wchar_t *pwszBufTokenTagFilter = wcstok(mutWszTagsFilter, L",", &pwszBufTagsFilter);
+										wchar_t *pwszBufTokenTagFilter =
+											wcstok(mutWszTagsFilter, L",", &pwszBufTagsFilter);
 										while (pwszBufTokenTagFilter && !bInFilter)
 										{
 											bInFilter = (0 == V_wcscmp(pwszTokenTag, pwszBufTokenTagFilter));
@@ -1877,7 +1881,8 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 									}
 									else
 									{
-										m_iSelectedServer = LoopAroundInArray(m_iSelectedServer + m_iUpDownDirection, static_cast<int>(sbTab->m_filteredServers.size()));
+										m_iSelectedServer = LoopAroundInArray(m_iSelectedServer + m_iUpDownDirection,
+											static_cast<int>(sbTab->m_filteredServers.size()));
 									}
 								}
 								continue;
@@ -1892,22 +1897,19 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 							wchar_t wszIPAddress[SteamNetworkingIPAddr::k_cchMaxString] = {};
 
 							g_pVGuiLocalize->ConvertANSIToUnicode(
-									server.GetName(), wszServerName, sizeof(wszServerName));
+								server.GetName(), wszServerName, sizeof(wszServerName));
 							if (server.m_nBotPlayers > 0)
 							{
-								V_swprintf_safe(wszPlayers, L"%d/%d (%d)",
-										iPlayersCount,
-										server.m_nMaxPlayers,
-										server.m_nBotPlayers);
+								V_swprintf_safe(wszPlayers, L"%d/%d (%d)", iPlayersCount, server.m_nMaxPlayers,
+									server.m_nBotPlayers);
 							}
 							else
 							{
-								V_swprintf_safe(wszPlayers, L"%d/%d",
-										server.m_nPlayers,
-										server.m_nMaxPlayers);
+								V_swprintf_safe(wszPlayers, L"%d/%d", server.m_nPlayers, server.m_nMaxPlayers);
 							}
 							V_swprintf_safe(wszPing, L"%d", server.m_nPing);
-							g_pVGuiLocalize->ConvertANSIToUnicode(server.m_NetAdr.GetConnectionAddressString(), wszIPAddress, sizeof(wszIPAddress));
+							g_pVGuiLocalize->ConvertANSIToUnicode(
+								server.m_NetAdr.GetConnectionAddressString(), wszIPAddress, sizeof(wszIPAddress));
 
 							NeoUI::NextTableRowFlags rowFlags = NeoUI::NEXTTABLEROWFLAG_SELECTABLE;
 							if (m_iSelectedServer == i)
@@ -1929,7 +1931,8 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 							{
 								m_iUpDownDirection = (btn.bKeyUpPressed) ? -1 : +1;
 								m_iUpDownInitialServer = i;
-								m_iSelectedServer = LoopAroundInArray(m_iSelectedServer + m_iUpDownDirection, static_cast<int>(sbTab->m_filteredServers.size()));
+								m_iSelectedServer = LoopAroundInArray(m_iSelectedServer + m_iUpDownDirection,
+									static_cast<int>(sbTab->m_filteredServers.size()));
 								if (m_iSelectedServer == m_iUpDownInitialServer)
 								{
 									m_iUpDownDirection = 0;
@@ -1941,15 +1944,18 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 								m_iSelectedServer = i;
 								if (btn.bMouseRightPressed)
 								{
-									NeoUI::OpenPopup(NEOPOPUP_ACTIONSERVER, NeoUI::Dim{
-												.x = g_uiCtx.iMouseAbsX,
-												.y = g_uiCtx.iMouseAbsY,
-												.wide = NeoUI::SuitableWideByWStr(L"Add to blacklist", NeoUI::SUITABLEWIDE_POPUP),
-												.tall = g_uiCtx.layout.iDefRowTall * 2,
-											});
+									NeoUI::OpenPopup(NEOPOPUP_ACTIONSERVER,
+										NeoUI::Dim{
+											.x = g_uiCtx.iMouseAbsX,
+											.y = g_uiCtx.iMouseAbsY,
+											.wide = NeoUI::SuitableWideByWStr(
+												L"Add to blacklist", NeoUI::SUITABLEWIDE_POPUP),
+											.tall = g_uiCtx.layout.iDefRowTall * 2,
+										});
 
 									// NetAdrIsFavorite cached here for the popup
-									const auto *gameServer = &m_serverBrowser[m_iServerBrowserTab].m_filteredServers[m_iSelectedServer];
+									const auto *gameServer =
+										&m_serverBrowser[m_iServerBrowserTab].m_filteredServers[m_iSelectedServer];
 									const servernetadr_t &netAdr = gameServer->m_NetAdr;
 									m_bFavCacheIsFav = NetAdrIsFavorite(netAdr);
 									m_favCacheNetAdr = netAdr;
@@ -1965,7 +1971,8 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 					if (endBtn.bKeyUpPressed || endBtn.bKeyDownPressed)
 					{
 						m_iUpDownDirection = (endBtn.bKeyUpPressed) ? -1 : +1;
-						m_iSelectedServer = (endBtn.bKeyUpPressed) ? static_cast<int>(sbTab->m_filteredServers.size()) - 1 : 0;
+						m_iSelectedServer =
+							(endBtn.bKeyUpPressed) ? static_cast<int>(sbTab->m_filteredServers.size()) - 1 : 0;
 						m_iUpDownInitialServer = m_iSelectedServer;
 						if (m_iSelectedServer == m_iUpDownInitialServer)
 						{
@@ -1985,7 +1992,8 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 		NeoUI::EndSection();
 		g_uiCtx.dPanel.y += g_uiCtx.dPanel.tall;
 		g_uiCtx.dPanel.tall = g_uiCtx.layout.iRowTall;
-		if (bTabShowFilterPanel) g_uiCtx.dPanel.tall += g_uiCtx.layout.iRowTall * FILTER_ROWS;
+		if (bTabShowFilterPanel)
+			g_uiCtx.dPanel.tall += g_uiCtx.layout.iRowTall * FILTER_ROWS;
 		NeoUI::BeginSection(NeoUI::SECTIONFLAG_ROWWIDGETS);
 		{
 			NeoUI::SwapFont(NeoUI::FONT_NTNORMAL);
@@ -1998,7 +2006,7 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 				NeoUI::RingBox(L"Anti-cheat", ANTICHEAT_LABELS, ARRAYSIZE(ANTICHEAT_LABELS), &m_sbFilters.iAntiCheat);
 				NeoUI::SliderInt(L"Maximum ping", &m_sbFilters.iMaxPing, 0, 500, 10, L"No limit");
 				NeoUI::TextEdit(L"Map", m_sbFilters.wszMapFilter, SZWSZ_LEN(m_sbFilters.wszMapFilter));
-				NeoUI::SliderInt(L"Max player count", &m_sbFilters.iMaxPlayerCount, 0, MAX_PLAYERS-1, 1, L"No limit");
+				NeoUI::SliderInt(L"Max player count", &m_sbFilters.iMaxPlayerCount, 0, MAX_PLAYERS - 1, 1, L"No limit");
 
 				NeoUI::BeginMultiWidgetHighlighter(2);
 				{
@@ -2069,8 +2077,10 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 						if (NeoUI::Button(L"Details").bPressed)
 						{
 							m_state = STATE_SERVERDETAILS;
-							const auto *gameServer = &m_serverBrowser[m_iServerBrowserTab].m_filteredServers[m_iSelectedServer];
-							m_serverPlayers.RequestList(gameServer->m_NetAdr.GetIP(), gameServer->m_NetAdr.GetQueryPort());
+							const auto *gameServer =
+								&m_serverBrowser[m_iServerBrowserTab].m_filteredServers[m_iSelectedServer];
+							m_serverPlayers.RequestList(
+								gameServer->m_NetAdr.GetIP(), gameServer->m_NetAdr.GetQueryPort());
 						}
 					}
 					else
@@ -2099,8 +2109,7 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 							eEnterServer = ENTERSERVER_PING;
 						}
 					}
-					if (m_iSelectedServer >= 0
-							|| m_serverPingEnter.m_serverInfo.m_NetAdr.GetIP() != 0)
+					if (m_iSelectedServer >= 0 || m_serverPingEnter.m_serverInfo.m_NetAdr.GetIP() != 0)
 					{
 						// NEO NOTE (nullsystem): When entering a server, must ping the
 						// server to check the player count just before properly entering.
@@ -2108,12 +2117,13 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 						// go into auto-join state if server's full.
 						if (ENTERSERVER_PING == eEnterServer && m_iSelectedServer >= 0)
 						{
-							m_serverPingEnter.m_serverInfo = m_serverBrowser[m_iServerBrowserTab].m_filteredServers[m_iSelectedServer];
+							m_serverPingEnter.m_serverInfo =
+								m_serverBrowser[m_iServerBrowserTab].m_filteredServers[m_iSelectedServer];
 							m_serverPingEnter.RequestPing();
 							eEnterServer = ENTERSERVER_NIL;
 						}
-						else if (m_serverPingEnter.m_serverInfo.m_NetAdr.GetIP() != 0
-								&& CNeoServerPing::PINGSTATE_NIL != m_serverPingEnter.m_ePingState)
+						else if (m_serverPingEnter.m_serverInfo.m_NetAdr.GetIP() != 0 &&
+							CNeoServerPing::PINGSTATE_NIL != m_serverPingEnter.m_ePingState)
 						{
 							// Regardless of success state or not, just refresh to NIL and try to enter
 							m_serverPingEnter.m_ePingState = CNeoServerPing::PINGSTATE_NIL;
@@ -2121,8 +2131,10 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 							// otherwise don't try
 							if (m_iSelectedServer >= 0)
 							{
-								const auto &gameServerSelected = m_serverBrowser[m_iServerBrowserTab].m_filteredServers[m_iSelectedServer];
-								if (gameServerSelected.m_NetAdr.GetIP() == m_serverPingEnter.m_serverInfo.m_NetAdr.GetIP())
+								const auto &gameServerSelected =
+									m_serverBrowser[m_iServerBrowserTab].m_filteredServers[m_iSelectedServer];
+								if (gameServerSelected.m_NetAdr.GetIP() ==
+									m_serverPingEnter.m_serverInfo.m_NetAdr.GetIP())
 								{
 									OnEnterServer(m_serverPingEnter.m_serverInfo, nullptr);
 								}
@@ -2140,7 +2152,8 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 	{
 		const bool bIsValid = (m_iServerBrowserTab != GS_BLACKLIST && m_iSelectedServer >= 0);
 		Assert(bIsValid);
-		const auto *pGameServer = bIsValid ? &m_serverBrowser[m_iServerBrowserTab].m_filteredServers[m_iSelectedServer] : nullptr;
+		const auto *pGameServer =
+			bIsValid ? &m_serverBrowser[m_iServerBrowserTab].m_filteredServers[m_iSelectedServer] : nullptr;
 
 		if (NeoUI::Button(m_bFavCacheIsFav ? L"Unfavorite" : L"Favorite").bPressed)
 		{
@@ -2150,22 +2163,13 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 				const servernetadr_t &netAdr = pGameServer->m_NetAdr;
 				if (NetAdrIsFavorite(netAdr))
 				{
-					smm->RemoveFavoriteGame(
-							engine->GetAppID(),
-							netAdr.GetIP(),
-							netAdr.GetConnectionPort(),
-							netAdr.GetQueryPort(),
-							k_unFavoriteFlagFavorite);
+					smm->RemoveFavoriteGame(engine->GetAppID(), netAdr.GetIP(), netAdr.GetConnectionPort(),
+						netAdr.GetQueryPort(), k_unFavoriteFlagFavorite);
 				}
 				else
 				{
-					smm->AddFavoriteGame(
-							engine->GetAppID(),
-							netAdr.GetIP(),
-							netAdr.GetConnectionPort(),
-							netAdr.GetQueryPort(),
-							k_unFavoriteFlagFavorite,
-							0);
+					smm->AddFavoriteGame(engine->GetAppID(), netAdr.GetIP(), netAdr.GetConnectionPort(),
+						netAdr.GetQueryPort(), k_unFavoriteFlagFavorite, 0);
 				}
 			}
 			NeoUI::ClosePopup();
@@ -2200,53 +2204,22 @@ void CNeoRoot::MainLoopServerBrowser(const MainLoopParam param)
 	}
 }
 
-static constexpr const wchar_t *CREDITSPEOPLELABEL_NAMES[] = {
-	L"[title]", // NT;RE Contributors
-	L"Adam \"Zwiadowca\" Tomaszewski",
-	L"Agiel",
-	L"Alan \"FCC\" Shen",
-	L"brekiy",
-	L"bryson",
-	L"DESTROYGIRL!",
-	L"kinoko",
-	L"Linn \"Bl\u00E5berry\" Engstr\u00F6m",
-	L"Masterkatze",
-	L"nullsystem",
-	L"plowie",
-	L"Rain",
-	L"StellaNova",
-	L"wak (borntofrag.net)",
-	L"Wray \"wraybies\" Burgess",
-	L"You're Pissed Off",
+static constexpr const wchar_t *CREDITSPEOPLELABEL_NAMES[] = {L"[title]", // NT;RE Contributors
+	L"Adam \"Zwiadowca\" Tomaszewski", L"Agiel", L"Alan \"FCC\" Shen", L"brekiy", L"bryson", L"DESTROYGIRL!", L"kinoko",
+	L"Linn \"Bl\u00E5berry\" Engstr\u00F6m", L"Masterkatze", L"nullsystem", L"plowie", L"Rain", L"StellaNova",
+	L"wak (borntofrag.net)", L"Wray \"wraybies\" Burgess", L"You're Pissed Off",
 	L"[title]", // STUDIO RADI-8
-	L"Justin \"Grey\" Harvey",
-	L"Leri \"pushBAK\" Greer",
-	L"Sam \"Gato\" Greer",
-	L"Jason \"Deej\" Woronicz",
-	L"Finn \"Operation Ivy\" Allen",
-	L"Brian \"Tatsur0\" Comer",
-	L"Jeffery \"Filter Decay\" Pitts",
-	L"Erik \"KillahMo\" Grant",
-	L"Edward \"0edit\" Harrison",
-	L"Glasseater",
+	L"Justin \"Grey\" Harvey", L"Leri \"pushBAK\" Greer", L"Sam \"Gato\" Greer", L"Jason \"Deej\" Woronicz",
+	L"Finn \"Operation Ivy\" Allen", L"Brian \"Tatsur0\" Comer", L"Jeffery \"Filter Decay\" Pitts",
+	L"Erik \"KillahMo\" Grant", L"Edward \"0edit\" Harrison", L"Glasseater",
 	L"[title]", // NT Contributors
-	L"Violet \"McVee\" McVinnie",
-	L"Joshua \"Supernaut\" Winkelmann",
-	L"Viktor \"Slick Vick\" Svensson",
+	L"Violet \"McVee\" McVinnie", L"Joshua \"Supernaut\" Winkelmann", L"Viktor \"Slick Vick\" Svensson",
 	L"Ryan \"Stenchy\" Anderson",
 	L"[title]", // Special Thanks
-	L"Dragoteryx",
-	L"Kasietti",
-	L"Kerim \"Nbc66\" Camdzic",
-	L"Tony \"omega\" Sergi"
-};
+	L"Dragoteryx", L"Kasietti", L"Kerim \"Nbc66\" Camdzic", L"Tony \"omega\" Sergi"};
 
 static constexpr const wchar_t *CREDITSTITLELABEL_NAMES[] = {
-	NEO_GAME_NAME L" Contributors",
-	L"STUDIO RADI-8",
-	L"NEOTOKYO\u00B0 Contributors",
-	L"Special Thanks"
-};
+	NEO_GAME_NAME L" Contributors", L"STUDIO RADI-8", L"NEOTOKYO\u00B0 Contributors", L"Special Thanks"};
 
 void CNeoRoot::MainLoopCredits(const MainLoopParam param)
 {
@@ -2336,21 +2309,20 @@ void CNeoRoot::MainLoopOverlay(const MainLoopParam param)
 				if (NeoUI::Button(L"Set team").bPressed)
 				{
 					NeoUI::OpenPopup(NEOPOPUP_OVERLAY_TEAM_PRESET,
-							NeoUI::Dim{
-								.x = g_uiCtx.rWidgetArea.x0,
-								.y = g_uiCtx.rWidgetArea.y1,
-								.wide = g_uiCtx.irWidgetWide,
-								.tall = g_uiCtx.layout.iDefRowTall * iMinPresetRows,
-							});
+						NeoUI::Dim{
+							.x = g_uiCtx.rWidgetArea.x0,
+							.y = g_uiCtx.rWidgetArea.y1,
+							.wide = g_uiCtx.irWidgetWide,
+							.tall = g_uiCtx.layout.iDefRowTall * iMinPresetRows,
+						});
 					m_iSetTeamPreset = TEAM_JINRAI;
 				}
 				g_uiCtx.eButtonTextStyle = NeoUI::TEXTSTYLE_LEFT;
 			}
 			NeoUI::SetPerRowLayout(1, nullptr, iThisRowTall * 4);
 			NeoUI::ImageTexture(m_szLogoPathJinrai, L"No logo applied", "",
-					NeoUI::TEXTUREOPTFLAGS_DONOTCROPTOPANEL
-						| NeoUI::TEXTUREOPTFLAGS_DONOTCACHEIFINVALID
-						| NeoUI::TEXTUREOPTFLAGS_RESIZETO256);
+				NeoUI::TEXTUREOPTFLAGS_DONOTCROPTOPANEL | NeoUI::TEXTUREOPTFLAGS_DONOTCACHEIFINVALID |
+					NeoUI::TEXTUREOPTFLAGS_RESIZETO256);
 
 			NeoUI::SetPerRowLayout(2, NeoUI::ROWLAYOUT_TWOSPLIT, iThisRowTall);
 			NeoUI::Divider(L"NSF");
@@ -2370,34 +2342,31 @@ void CNeoRoot::MainLoopOverlay(const MainLoopParam param)
 				if (NeoUI::Button(L"Set team").bPressed)
 				{
 					NeoUI::OpenPopup(NEOPOPUP_OVERLAY_TEAM_PRESET,
-							NeoUI::Dim{
-								.x = g_uiCtx.rWidgetArea.x0,
-								.y = g_uiCtx.rWidgetArea.y1,
-								.wide = g_uiCtx.irWidgetWide,
-								.tall = g_uiCtx.layout.iDefRowTall * iMinPresetRows,
-							});
+						NeoUI::Dim{
+							.x = g_uiCtx.rWidgetArea.x0,
+							.y = g_uiCtx.rWidgetArea.y1,
+							.wide = g_uiCtx.irWidgetWide,
+							.tall = g_uiCtx.layout.iDefRowTall * iMinPresetRows,
+						});
 					m_iSetTeamPreset = TEAM_NSF;
 				}
 				g_uiCtx.eButtonTextStyle = NeoUI::TEXTSTYLE_LEFT;
 			}
 			NeoUI::SetPerRowLayout(1, nullptr, iThisRowTall * 4);
 			NeoUI::ImageTexture(m_szLogoPathNSF, L"No logo applied", "",
-					NeoUI::TEXTUREOPTFLAGS_DONOTCROPTOPANEL
-						| NeoUI::TEXTUREOPTFLAGS_DONOTCACHEIFINVALID
-						| NeoUI::TEXTUREOPTFLAGS_RESIZETO256);
+				NeoUI::TEXTUREOPTFLAGS_DONOTCROPTOPANEL | NeoUI::TEXTUREOPTFLAGS_DONOTCACHEIFINVALID |
+					NeoUI::TEXTUREOPTFLAGS_RESIZETO256);
 
-			if (FILEIODLGMODE_TEAMLOGO_JINRAI == eNextFileIOMode
-					|| FILEIODLGMODE_TEAMLOGO_NSF == eNextFileIOMode)
+			if (FILEIODLGMODE_TEAMLOGO_JINRAI == eNextFileIOMode || FILEIODLGMODE_TEAMLOGO_NSF == eNextFileIOMode)
 			{
 				if (m_pFileIODialog)
 				{
 					m_pFileIODialog->MarkForDeletion();
 				}
 				m_pFileIODialog = new vgui::FileOpenDialog(this,
-						(FILEIODLGMODE_TEAMLOGO_JINRAI == eNextFileIOMode)
-							? "Import Jinrai team logo"
-							: "Import NSF team logo",
-						vgui::FOD_OPEN);
+					(FILEIODLGMODE_TEAMLOGO_JINRAI == eNextFileIOMode) ? "Import Jinrai team logo"
+																	   : "Import NSF team logo",
+					vgui::FOD_OPEN);
 				if (m_szNextLogoPathStartDir[0])
 				{
 					m_pFileIODialog->SetStartDirectory(m_szNextLogoPathStartDir);
@@ -2545,9 +2514,8 @@ void CNeoRoot::MainLoopSprayPicker(const MainLoopParam param)
 	{
 		vecStaticSprays.Purge();
 		FileFindHandle_t findHdl;
-		for (const char *pszFilename = filesystem->FindFirst("materials/vgui/logos/ui/*.vmt", &findHdl);
-				pszFilename;
-				pszFilename = filesystem->FindNext(findHdl))
+		for (const char *pszFilename = filesystem->FindFirst("materials/vgui/logos/ui/*.vmt", &findHdl); pszFilename;
+			pszFilename = filesystem->FindNext(findHdl))
 		{
 			// spray.vmt is only used for currently applying spray
 			if (V_strcmp(pszFilename, "spray.vmt") == 0)
@@ -2609,9 +2577,8 @@ void CNeoRoot::MainLoopSprayPicker(const MainLoopParam param)
 	g_uiCtx.dPanel.y = (param.tall / 2) - (iTallTotal / 2);
 	g_uiCtx.dPanel.tall = iNormTall * (g_iRowsInScreen + 1);
 	g_uiCtx.colors.sectionBg = COLOR_BLACK_TRANSPARENT;
-	NeoUI::BeginContext(&g_uiCtx, param.eMode,
-						(m_state == STATE_SPRAYPICKER) ? L"Pick spray" : L"Delete spray",
-						(m_state == STATE_SPRAYPICKER) ? "CtxSprayPicker" : "CtxSprayDeleter");
+	NeoUI::BeginContext(&g_uiCtx, param.eMode, (m_state == STATE_SPRAYPICKER) ? L"Pick spray" : L"Delete spray",
+		(m_state == STATE_SPRAYPICKER) ? "CtxSprayPicker" : "CtxSprayDeleter");
 	{
 		NeoUI::BeginSection(NeoUI::SECTIONFLAG_DEFAULTFOCUS);
 		{
@@ -2670,8 +2637,7 @@ void CNeoRoot::MainLoopServerDetails(const MainLoopParam param)
 	g_uiCtx.colors.sectionBg = COLOR_BLACK_TRANSPARENT;
 
 	// NEO TODO (nullsystem): Save and restore it cross sessions
-	if (NeoUI::MODE_PAINT == g_uiCtx.eMode && g_uiCtx.dPanel.wide > 0 &&
-			false == m_bColsWideDetailedPlayerListInit)
+	if (NeoUI::MODE_PAINT == g_uiCtx.eMode && g_uiCtx.dPanel.wide > 0 && false == m_bColsWideDetailedPlayerListInit)
 	{
 		int iAccX = 0;
 		for (int i = 0; i < (GSPS__TOTAL - 1); ++i)
@@ -2690,23 +2656,25 @@ void CNeoRoot::MainLoopServerDetails(const MainLoopParam param)
 		{
 			const bool bP = param.eMode == NeoUI::MODE_PAINT;
 			wchar_t wszText[128];
-			if (bP) g_pVGuiLocalize->ConvertANSIToUnicode(gameServer->GetName(), wszText, sizeof(wszText));
+			if (bP)
+				g_pVGuiLocalize->ConvertANSIToUnicode(gameServer->GetName(), wszText, sizeof(wszText));
 			NeoUI::Label(L"Name:", wszText);
 			if (!cl_neo_streamermode.GetBool())
 			{
-				if (bP) g_pVGuiLocalize->ConvertANSIToUnicode(gameServer->m_NetAdr.GetConnectionAddressString(), wszText, sizeof(wszText));
+				if (bP)
+					g_pVGuiLocalize->ConvertANSIToUnicode(
+						gameServer->m_NetAdr.GetConnectionAddressString(), wszText, sizeof(wszText));
 				NeoUI::Label(L"Address:", wszText);
 			}
-			if (bP) g_pVGuiLocalize->ConvertANSIToUnicode(gameServer->m_szMap, wszText, sizeof(wszText));
+			if (bP)
+				g_pVGuiLocalize->ConvertANSIToUnicode(gameServer->m_szMap, wszText, sizeof(wszText));
 			NeoUI::Label(L"Map:", wszText);
 			if (bP)
 			{
 				if (gameServer->m_nBotPlayers)
 				{
-					V_swprintf_safe(wszText, L"%d/%d (%d)",
-							PlayersCount(gameServer, PLAYERCOUNT_ONLYPLAYER),
-							gameServer->m_nMaxPlayers,
-							gameServer->m_nBotPlayers);
+					V_swprintf_safe(wszText, L"%d/%d (%d)", PlayersCount(gameServer, PLAYERCOUNT_ONLYPLAYER),
+						gameServer->m_nMaxPlayers, gameServer->m_nBotPlayers);
 				}
 				else
 				{
@@ -2714,9 +2682,11 @@ void CNeoRoot::MainLoopServerDetails(const MainLoopParam param)
 				}
 			}
 			NeoUI::Label(L"Players:", wszText);
-			if (bP) V_swprintf_safe(wszText, L"%ls", gameServer->m_bSecure ? L"Enabled" : L"Disabled");
+			if (bP)
+				V_swprintf_safe(wszText, L"%ls", gameServer->m_bSecure ? L"Enabled" : L"Disabled");
 			NeoUI::Label(L"VAC:", wszText);
-			if (bP) V_swprintf_safe(wszText, L"%d", gameServer->m_nPing);
+			if (bP)
+				V_swprintf_safe(wszText, L"%d", gameServer->m_nPing);
 			NeoUI::Label(L"Ping:", wszText);
 
 			// TODO: Header same-style as serverlist's header
@@ -2755,9 +2725,9 @@ void CNeoRoot::MainLoopServerDetails(const MainLoopParam param)
 				g_uiCtx.dPanel.tall = g_uiCtx.layout.iRowTall;
 				NeoUI::BeginSection();
 				{
-					m_headerModFlagsPlayers |= NeoUI::TableHeader(TABLE_HEADERS_PLAYER, GSPS__TOTAL,
-							m_iColsWideDetailedPlayerList, &m_serverPlayers.m_sortCtx.col,
-							&m_serverPlayers.m_sortCtx.bDescending, 1);
+					m_headerModFlagsPlayers |=
+						NeoUI::TableHeader(TABLE_HEADERS_PLAYER, GSPS__TOTAL, m_iColsWideDetailedPlayerList,
+							&m_serverPlayers.m_sortCtx.col, &m_serverPlayers.m_sortCtx.bDescending, 1);
 				}
 				NeoUI::EndSection();
 
@@ -2790,7 +2760,8 @@ void CNeoRoot::MainLoopServerDetails(const MainLoopParam param)
 								{
 									const int iHrs = player.flTimePlayed / FL_SECSINHRS;
 									const int iMin = (player.flTimePlayed - (iHrs * FL_SECSINHRS)) / FL_SECSINMIN;
-									const int iSec = player.flTimePlayed - (iHrs * FL_SECSINHRS) - (iMin * FL_SECSINMIN);
+									const int iSec =
+										player.flTimePlayed - (iHrs * FL_SECSINHRS) - (iMin * FL_SECSINMIN);
 									V_swprintf_safe(wszText, L"%dh %dm %ds", iHrs, iMin, iSec);
 								}
 							}
@@ -2825,8 +2796,8 @@ void CNeoRoot::MainLoopServerDetails(const MainLoopParam param)
 					// if not, search through with GetFavoriteGame + GetFavoriteGameCount
 					const servernetadr_t &netAdr = gameServer->m_NetAdr;
 					if (m_favCacheNetAdr.GetIP() != netAdr.GetIP() ||
-							m_favCacheNetAdr.GetConnectionPort() != netAdr.GetConnectionPort() ||
-							m_favCacheNetAdr.GetQueryPort() != netAdr.GetQueryPort())
+						m_favCacheNetAdr.GetConnectionPort() != netAdr.GetConnectionPort() ||
+						m_favCacheNetAdr.GetQueryPort() != netAdr.GetQueryPort())
 					{
 						m_bFavCacheIsFav = NetAdrIsFavorite(netAdr);
 						m_favCacheNetAdr = netAdr;
@@ -2835,12 +2806,8 @@ void CNeoRoot::MainLoopServerDetails(const MainLoopParam param)
 					{
 						if (NeoUI::Button(L"Unfavorite").bPressed)
 						{
-							smm->RemoveFavoriteGame(
-									engine->GetAppID(),
-									netAdr.GetIP(),
-									netAdr.GetConnectionPort(),
-									netAdr.GetQueryPort(),
-									k_unFavoriteFlagFavorite);
+							smm->RemoveFavoriteGame(engine->GetAppID(), netAdr.GetIP(), netAdr.GetConnectionPort(),
+								netAdr.GetQueryPort(), k_unFavoriteFlagFavorite);
 							m_favCacheNetAdr = servernetadr_t{};
 							m_bAutoRefreshFav = true;
 						}
@@ -2849,13 +2816,8 @@ void CNeoRoot::MainLoopServerDetails(const MainLoopParam param)
 					{
 						if (NeoUI::Button(L"Favorite").bPressed)
 						{
-							smm->AddFavoriteGame(
-									engine->GetAppID(),
-									netAdr.GetIP(),
-									netAdr.GetConnectionPort(),
-									netAdr.GetQueryPort(),
-									k_unFavoriteFlagFavorite,
-									0);
+							smm->AddFavoriteGame(engine->GetAppID(), netAdr.GetIP(), netAdr.GetConnectionPort(),
+								netAdr.GetQueryPort(), k_unFavoriteFlagFavorite, 0);
 							m_favCacheNetAdr = servernetadr_t{};
 							m_bAutoRefreshFav = true;
 						}
@@ -2899,21 +2861,19 @@ void CNeoRoot::MainLoopPopup(const MainLoopParam param)
 			{
 				NeoUI::Label(m_wszBindingText);
 				NeoUI::SwapFont(NeoUI::FONT_NTNORMAL);
-				NeoUI::Label(NeoUI::HintAlt(
-							L"Press ESC to cancel or DEL to remove keybind",
-							L"Press START to cancel or SELECT to remove keybind"));
+				NeoUI::Label(NeoUI::HintAlt(L"Press ESC to cancel or DEL to remove keybind",
+					L"Press START to cancel or SELECT to remove keybind"));
 			}
 			break;
 			case STATE_CONFIRMSETTINGS:
 			{
-				NeoUI::Label((m_ns.bIsValid) ?
-						L"Settings changed: Do you want to apply the settings?" :
-						L"Error: Invalid settings, cannot save.");
+				NeoUI::Label((m_ns.bIsValid) ? L"Settings changed: Do you want to apply the settings?"
+											 : L"Error: Invalid settings, cannot save.");
 				NeoUI::SwapFont(NeoUI::FONT_NTNORMAL);
 
 				if (m_ns.video.iFov > maxSupportedFov && m_ns.video.iFov != neo_fov.GetInt())
 				{
-					wchar_t warning[77+1];
+					wchar_t warning[77 + 1];
 					V_swprintf_safe(warning,
 						L"Current FOV (%d) is > max. supported (%d), which may cause visual artifacts!",
 						m_ns.video.iFov, maxSupportedFov);
@@ -2926,15 +2886,17 @@ void CNeoRoot::MainLoopPopup(const MainLoopParam param)
 					g_uiCtx.iLayoutX = (g_uiCtx.iMarginX / 2);
 					if (m_ns.bIsValid)
 					{
-						if (NeoUI::Button(NeoUI::HintAlt(L"Save (Enter)", L"Save (A)")).bPressed || NeoUI::BindKeyEnter())
+						if (NeoUI::Button(NeoUI::HintAlt(L"Save (Enter)", L"Save (A)")).bPressed ||
+							NeoUI::BindKeyEnter())
 						{
 							NeoSettingsSave(&m_ns);
 							m_state = STATE_ROOT;
 						}
 					}
-					static constexpr const ButtonCode_t BUTTON_CODES_DISCARD[] = { KEY_BACKSPACE, KEY_XBUTTON_X, STEAMCONTROLLER_X };
+					static constexpr const ButtonCode_t BUTTON_CODES_DISCARD[] = {
+						KEY_BACKSPACE, KEY_XBUTTON_X, STEAMCONTROLLER_X};
 					if (NeoUI::Button(NeoUI::HintAlt(L"Discard (Backspace)", L"Discard (X)")).bPressed ||
-							NeoUI::Bind(BUTTON_CODES_DISCARD, ARRAYSIZE(BUTTON_CODES_DISCARD)))
+						NeoUI::Bind(BUTTON_CODES_DISCARD, ARRAYSIZE(BUTTON_CODES_DISCARD)))
 					{
 						m_state = STATE_ROOT;
 					}
@@ -2976,16 +2938,18 @@ void CNeoRoot::MainLoopPopup(const MainLoopParam param)
 					NeoUI::SetPerRowLayout(2, NeoUI::ROWLAYOUT_TWOSPLIT);
 					NeoUI::Label(L"Password:");
 					NeoUI::TextEdit(m_wszServerPassword, SZWSZ_LEN(m_wszServerPassword),
-							NeoUI::TEXTEDITFLAG_PASSWORD | NeoUI::TEXTEDITFLAG_FORCEACTIVE);
+						NeoUI::TEXTEDITFLAG_PASSWORD | NeoUI::TEXTEDITFLAG_FORCEACTIVE);
 				}
 				NeoUI::SetPerRowLayout(3);
 				{
 					if (NeoUI::Button(L"Enter (Enter)").bPressed || NeoUI::BindKeyEnter())
 					{
-						const auto &gameServer = m_serverBrowser[m_iServerBrowserTab].m_filteredServers[m_iSelectedServer];
+						const auto &gameServer =
+							m_serverBrowser[m_iServerBrowserTab].m_filteredServers[m_iSelectedServer];
 
 						char szServerPassword[ARRAYSIZE(m_wszServerPassword)];
-						g_pVGuiLocalize->ConvertUnicodeToANSI(m_wszServerPassword, szServerPassword, sizeof(szServerPassword));
+						g_pVGuiLocalize->ConvertUnicodeToANSI(
+							m_wszServerPassword, szServerPassword, sizeof(szServerPassword));
 						OnEnterServer(gameServer, szServerPassword);
 					}
 					NeoUI::Pad();
@@ -3023,10 +2987,9 @@ void CNeoRoot::MainLoopPopup(const MainLoopParam param)
 				const int iTexSprayWH = g_uiCtx.layout.iRowTall * TEXWH;
 				int scrWide, scrTall;
 				vgui::surface()->GetScreenSize(scrWide, scrTall);
-				NeoUI::Texture(m_sprayToDelete.szPath,
-							   (scrWide / 2) - (iTexSprayWH / 2),
-							   (scrTall / 3) - (iTexSprayWH / 2),
-							   iTexSprayWH, iTexSprayWH, "", NeoUI::TEXTUREOPTFLAGS_DONOTCROPTOPANEL);
+				NeoUI::Texture(m_sprayToDelete.szPath, (scrWide / 2) - (iTexSprayWH / 2),
+					(scrTall / 3) - (iTexSprayWH / 2), iTexSprayWH, iTexSprayWH, "",
+					NeoUI::TEXTUREOPTFLAGS_DONOTCROPTOPANEL);
 
 				NeoUI::Label(L"Do you want to delete this spray?");
 				NeoUI::SwapFont(NeoUI::FONT_NTNORMAL);
@@ -3039,12 +3002,12 @@ void CNeoRoot::MainLoopPopup(const MainLoopParam param)
 						{
 							static constexpr const char PSZ_CURRENT_SPRAY[] = "materials/vgui/logos/spray.vtf";
 							char szPathToAboutToDel[MAX_PATH];
-							V_sprintf_safe(szPathToAboutToDel, "materials/vgui/logos/%s.vtf", m_sprayToDelete.szBaseName);
+							V_sprintf_safe(
+								szPathToAboutToDel, "materials/vgui/logos/%s.vtf", m_sprayToDelete.szBaseName);
 
 							bool bDelCurSpray = false;
 
-							if (filesystem->FileExists(PSZ_CURRENT_SPRAY) &&
-									filesystem->FileExists(szPathToAboutToDel))
+							if (filesystem->FileExists(PSZ_CURRENT_SPRAY) && filesystem->FileExists(szPathToAboutToDel))
 							{
 								const unsigned int uSizeCurSpray = filesystem->Size(PSZ_CURRENT_SPRAY);
 								const unsigned int uSizeDelSpray = filesystem->Size(szPathToAboutToDel);
@@ -3055,8 +3018,8 @@ void CNeoRoot::MainLoopPopup(const MainLoopParam param)
 									FileHandle_t hdlDelSpray = filesystem->Open(szPathToAboutToDel, "rb");
 									if (hdlCurSpray && hdlDelSpray)
 									{
-										unsigned char *pbCurSpray = reinterpret_cast<unsigned char *>(calloc(
-													uSizeSpray * 2, sizeof(unsigned char)));
+										unsigned char *pbCurSpray = reinterpret_cast<unsigned char *>(
+											calloc(uSizeSpray * 2, sizeof(unsigned char)));
 
 										if (pbCurSpray)
 										{
@@ -3072,8 +3035,10 @@ void CNeoRoot::MainLoopPopup(const MainLoopParam param)
 											free(pbCurSpray);
 										}
 									}
-									if (hdlCurSpray) filesystem->Close(hdlCurSpray);
-									if (hdlDelSpray) filesystem->Close(hdlDelSpray);
+									if (hdlCurSpray)
+										filesystem->Close(hdlCurSpray);
+									if (hdlDelSpray)
+										filesystem->Close(hdlDelSpray);
 								}
 							}
 
@@ -3120,20 +3085,21 @@ void CNeoRoot::MainLoopPopup(const MainLoopParam param)
 				NeoUI::SwapFont(NeoUI::FONT_NTNORMAL);
 				{
 					static const wchar_t *BLACKLIST_TYPES_LABELS[SBLIST_TYPE__TOTAL] = {
-						L"Hostname/IP:", 	// SBLIST_TYPE_NETADR
-						L"Name contains:", 	// SBLIST_TYPE_SUBNAME
+						L"Hostname/IP:",   // SBLIST_TYPE_NETADR
+						L"Name contains:", // SBLIST_TYPE_SUBNAME
 					};
 					NeoUI::SetPerRowLayout(2, NeoUI::ROWLAYOUT_TWOSPLIT);
 					NeoUI::RingBox(BLACKLIST_TYPES_LABELS, SBLIST_TYPE__TOTAL, &m_iServerNewBlacklistType);
-					NeoUI::TextEdit(m_wszServerNewBlacklist, SZWSZ_LEN(m_wszServerNewBlacklist),
-							NeoUI::TEXTEDITFLAG_FORCEACTIVE);
+					NeoUI::TextEdit(
+						m_wszServerNewBlacklist, SZWSZ_LEN(m_wszServerNewBlacklist), NeoUI::TEXTEDITFLAG_FORCEACTIVE);
 				}
 				NeoUI::SetPerRowLayout(3);
 				{
 					if (NeoUI::Button(L"Enter (Enter)").bPressed || NeoUI::Bind(KEY_ENTER))
 					{
 						char szServerNewBlacklist[128] = {};
-						g_pVGuiLocalize->ConvertUnicodeToANSI(m_wszServerNewBlacklist, szServerNewBlacklist, sizeof(szServerNewBlacklist));
+						g_pVGuiLocalize->ConvertUnicodeToANSI(
+							m_wszServerNewBlacklist, szServerNewBlacklist, sizeof(szServerNewBlacklist));
 
 						ServerBlacklistInfo sbInfo = {};
 
@@ -3274,8 +3240,7 @@ static void OnFileSelectedMode_Spray(const char *szFullpath)
 		if (pVTFTexture->Unserialize(buf))
 		{
 			const bool bDirectCopy = ((pVTFTexture->Width() == pVTFTexture->Height()) &&
-									  ((pVTFTexture->Format() == IMAGE_FORMAT_DXT1) ||
-									   (pVTFTexture->Format() == IMAGE_FORMAT_DXT5)));
+				((pVTFTexture->Format() == IMAGE_FORMAT_DXT1) || (pVTFTexture->Format() == IMAGE_FORMAT_DXT5)));
 			if (bDirectCopy)
 			{
 				if (!engine->CopyLocalFile(szFullpath, "materials/vgui/logos/spray.vtf"))
@@ -3286,8 +3251,8 @@ static void OnFileSelectedMode_Spray(const char *szFullpath)
 			else
 			{
 				pVTFTexture->ConvertImageFormat(IMAGE_FORMAT_RGBA8888, false);
-				uint8 *data = NeoUtils::CropScaleTo256(pVTFTexture->ImageData(0, 0, 0),
-													   pVTFTexture->Width(), pVTFTexture->Height());
+				uint8 *data = NeoUtils::CropScaleTo256(
+					pVTFTexture->ImageData(0, 0, 0), pVTFTexture->Width(), pVTFTexture->Height());
 				NeoUtils::SerializeVTFDXTSprayToBuffer(&sprayBuffer, data);
 				free(data);
 			}
@@ -3308,9 +3273,7 @@ static void OnFileSelectedMode_Spray(const char *szFullpath)
 		{
 			uint8 *rgbaData = reinterpret_cast<uint8 *>(calloc(width * height, sizeof(uint8) * 4));
 
-			ImageLoader::ConvertImageFormat(data, IMAGE_FORMAT_RGB888,
-											rgbaData, IMAGE_FORMAT_RGBA8888,
-											width, height);
+			ImageLoader::ConvertImageFormat(data, IMAGE_FORMAT_RGB888, rgbaData, IMAGE_FORMAT_RGBA8888, width, height);
 
 			stbi_image_free(data);
 			data = rgbaData;
@@ -3337,7 +3300,7 @@ static void OnFileSelectedMode_Spray(const char *szFullpath)
 #else
 			'/'
 #endif
-		;
+			;
 
 		const char *pLastSlash = V_strrchr(szFullpath, OS_PATH_SEP);
 
@@ -3390,7 +3353,8 @@ LightmappedGeneric
 "$decal" "1"
 "$decalscale" "0.250"
 }
-)VMT", pszBaseName);
+)VMT",
+				pszBaseName);
 
 			CUtlBuffer bufVmt(0, 0, CUtlBuffer::TEXT_BUFFER);
 			bufVmt.PutString(szStrBuffer);
@@ -3415,7 +3379,8 @@ LightmappedGeneric
 "$no_fullbright" 1
 "$ignorez" 1
 }
-)VMT", pszBaseName);
+)VMT",
+				pszBaseName);
 
 			CUtlBuffer bufVmt(0, 0, CUtlBuffer::TEXT_BUFFER);
 			bufVmt.PutString(szStrBuffer);
@@ -3442,11 +3407,11 @@ void CNeoRoot::OnFileSelected(const char *szFullpath)
 	if (IN_BETWEEN_AR(0, m_eFileIOMode, FILEIODLGMODE__TOTAL))
 	{
 		static void (*FILESELMODEFNS[FILEIODLGMODE__TOTAL])(const char *) = {
-			&OnFileSelectedMode_Spray,		// FILEIODLGMODE_SPRAY
-			&ServerBlacklistRead,			// FILEIODLGMODE_BLACKLIST_IMPORT
-			&ServerBlacklistWrite,			// FILEIODLGMODE_BLACKLIST_EXPORT
-			&OnFileSelectedTeamLogo,		// FILEIODLGMODE_TEAMLOGO_JINRAI
-			&OnFileSelectedTeamLogo,		// FILEIODLGMODE_TEAMLOGO_NSF
+			&OnFileSelectedMode_Spray, // FILEIODLGMODE_SPRAY
+			&ServerBlacklistRead,      // FILEIODLGMODE_BLACKLIST_IMPORT
+			&ServerBlacklistWrite,     // FILEIODLGMODE_BLACKLIST_EXPORT
+			&OnFileSelectedTeamLogo,   // FILEIODLGMODE_TEAMLOGO_JINRAI
+			&OnFileSelectedTeamLogo,   // FILEIODLGMODE_TEAMLOGO_NSF
 		};
 		(*FILESELMODEFNS[m_eFileIOMode])(szFullpath);
 	}

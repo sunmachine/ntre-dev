@@ -491,7 +491,7 @@ class CClientDLLSharedAppSystems : public IClientDLLSharedAppSystems
 public:
 	CClientDLLSharedAppSystems()
 	{
-		#define DLL_EXT_STRING DLLExtTokenPaste2( _DLL_EXT )
+		#define DLL_EXT_STRING DLLExtTokenPaste2( _DLL_EXT ) // NEO
 		
 		AddAppSystem( "soundemittersystem" DLL_EXT_STRING, SOUNDEMITTERSYSTEM_INTERFACE_VERSION );
 		AddAppSystem( "scenefilecache" DLL_EXT_STRING, SCENE_FILE_CACHE_INTERFACE_VERSION );

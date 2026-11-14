@@ -6,14 +6,18 @@
 
 IMPLEMENT_NETWORKCLASS_ALIASED(WeaponJitteS, DT_WeaponJitteS)
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CWeaponJitteS, DT_WeaponJitteS)
 	DEFINE_NEO_BASE_WEP_NETWORK_TABLE
 END_NETWORK_TABLE()
+	// clang-format on
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CWeaponJitteS)
 	DEFINE_NEO_BASE_WEP_PREDICTION
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
 NEO_IMPLEMENT_ACTTABLE(CWeaponJitteS)

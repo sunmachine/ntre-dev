@@ -75,9 +75,9 @@ extern ConVar replay_rendersetting_renderglow;
 #include "ui/neo_scoreboard.h"
 #endif
 
-#ifdef GLOWS_ENABLE
-#include "clienteffectprecachesystem.h"
-#endif
+#ifdef GLOWS_ENABLE // NEO
+#include "clienteffectprecachesystem.h" // NEO
+#endif // NEO
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -105,7 +105,7 @@ extern ConVar cl_neo_streamermode;
 
 static vgui::HContext s_hVGuiContext = DEFAULT_VGUI_CONTEXT;
 
-ConVar cl_drawhud( "cl_drawhud", "1", FCVAR_NONE, "Enable the rendering of the hud" );
+ConVar cl_drawhud( "cl_drawhud", "1", FCVAR_NONE, "Enable the rendering of the hud" ); // NEO
 ConVar hud_takesshots( "hud_takesshots", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, "Auto-save a scoreboard screenshot at the end of a map." );
 ConVar hud_freezecamhide( "hud_freezecamhide", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, "Hide the HUD during freeze-cam" );
 ConVar cl_show_num_particle_systems( "cl_show_num_particle_systems", "0", FCVAR_CLIENTDLL, "Display the number of active particle systems." );
@@ -940,9 +940,9 @@ int ClientModeShared::HudElementKeyInput( int down, ButtonCode_t keynum, const c
 //-----------------------------------------------------------------------------
 bool ClientModeShared::DoPostScreenSpaceEffects( const CViewSetup *pSetup )
 {
-#ifdef GLOWS_ENABLE
-	g_GlowObjectManager.RenderGlowEffects(pSetup, 0);
-#endif
+#ifdef GLOWS_ENABLE // NEO
+	g_GlowObjectManager.RenderGlowEffects(pSetup, 0); // NEO
+#endif // NEO
 #if defined( REPLAY_ENABLED )
 	if ( engine->IsPlayingDemo() )
 	{
@@ -1203,8 +1203,8 @@ void ClientModeShared::FireGameEvent( IGameEvent *event )
 #endif
 
 #ifndef NEO // ???
-		C_BasePlayer *pPlayer = USERID2PLAYER( event->GetInt("userid") );
-		if ( !hudChat || !pPlayer )
+		C_BasePlayer *pPlayer = USERID2PLAYER( event->GetInt("userid") ); // NEO
+		if ( !hudChat || !pPlayer ) // NEO
 #endif
 		// Josh: There used to be code here that would get the player entity here to get the name
 		// Big problem with that. The player entity is probably already gone -- they disconnected after all!
@@ -1298,7 +1298,7 @@ void ClientModeShared::FireGameEvent( IGameEvent *event )
 
 			if ( !IsInCommentaryMode() )
 			{
-				bool weWantToChat = false;
+				bool weWantToChat = false; // NEO
 
 				wchar_t wszLocalized[100];
 				if ( bAutoTeamed )
@@ -1331,13 +1331,13 @@ void ClientModeShared::FireGameEvent( IGameEvent *event )
 					g_pVGuiLocalize->ConstructString_safe( wszLocalized, bUsingCustomTeamName ? g_pVGuiLocalize->Find( "#game_player_joined_team_party_leader" ) : g_pVGuiLocalize->Find( "#game_player_joined_team" ), 2, wszPlayerName, wszTeam );
 				}
 
-				if (weWantToChat)
-				{
+				if (weWantToChat) // NEO
+				{ // NEO
 					char szLocalized[100];
-					g_pVGuiLocalize->ConvertUnicodeToANSI(wszLocalized, szLocalized, sizeof(szLocalized));
+					g_pVGuiLocalize->ConvertUnicodeToANSI(wszLocalized, szLocalized, sizeof(szLocalized)); // NEO
 
-					hudChat->Printf(CHAT_FILTER_TEAMCHANGE, "%s", szLocalized);
-				}
+					hudChat->Printf(CHAT_FILTER_TEAMCHANGE, "%s", szLocalized); // NEO
+				} // NEO
 			}
 		}
 

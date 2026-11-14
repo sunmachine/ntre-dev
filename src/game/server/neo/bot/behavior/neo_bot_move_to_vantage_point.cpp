@@ -10,21 +10,21 @@ extern ConVar neo_bot_path_lookahead_range;
 
 
 //---------------------------------------------------------------------------------------------
-CNEOBotMoveToVantagePoint::CNEOBotMoveToVantagePoint( float maxTravelDistance )
+CNEOBotMoveToVantagePoint::CNEOBotMoveToVantagePoint(float maxTravelDistance)
 {
 	m_maxTravelDistance = maxTravelDistance;
 }
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotMoveToVantagePoint::OnStart( CNEOBot *me, Action< CNEOBot > *priorAction )
+ActionResult<CNEOBot> CNEOBotMoveToVantagePoint::OnStart(CNEOBot *me, Action<CNEOBot> *priorAction)
 {
-	m_path.SetMinLookAheadDistance( me->GetDesiredPathLookAheadRange() );
+	m_path.SetMinLookAheadDistance(me->GetDesiredPathLookAheadRange());
 
-	m_vantageArea = me->FindVantagePoint( m_maxTravelDistance );
-	if ( !m_vantageArea )
+	m_vantageArea = me->FindVantagePoint(m_maxTravelDistance);
+	if (!m_vantageArea)
 	{
-		return Done( "No vantage point found" );
+		return Done("No vantage point found");
 	}
 
 	m_path.Invalidate();
@@ -35,33 +35,33 @@ ActionResult< CNEOBot >	CNEOBotMoveToVantagePoint::OnStart( CNEOBot *me, Action<
 
 
 //---------------------------------------------------------------------------------------------
-ActionResult< CNEOBot >	CNEOBotMoveToVantagePoint::Update( CNEOBot *me, float interval )
+ActionResult<CNEOBot> CNEOBotMoveToVantagePoint::Update(CNEOBot *me, float interval)
 {
 	const CKnownEntity *threat = me->GetVisionInterface()->GetPrimaryKnownThreat();
-	if ( threat && threat->IsVisibleInFOVNow() )
+	if (threat && threat->IsVisibleInFOVNow())
 	{
-		return Done( "Enemy is visible" );
+		return Done("Enemy is visible");
 	}
 
-	if ( !m_path.IsValid() && m_repathTimer.IsElapsed() )
+	if (!m_path.IsValid() && m_repathTimer.IsElapsed())
 	{
-		m_repathTimer.Start( 1.0f );
+		m_repathTimer.Start(1.0f);
 
-		if ( !CNEOBotPathCompute( me, m_path, m_vantageArea->GetCenter(), FASTEST_ROUTE ) )
+		if (!CNEOBotPathCompute(me, m_path, m_vantageArea->GetCenter(), FASTEST_ROUTE))
 		{
-			return Done( "No path to vantage point exists" );
+			return Done("No path to vantage point exists");
 		}
 	}
 
 	// move along path to vantage point
-	m_path.Update( me );
+	m_path.Update(me);
 
 	return Continue();
 }
 
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotMoveToVantagePoint::OnStuck( CNEOBot *me )
+EventDesiredResult<CNEOBot> CNEOBotMoveToVantagePoint::OnStuck(CNEOBot *me)
 {
 	m_path.Invalidate();
 	return TryContinue();
@@ -69,17 +69,16 @@ EventDesiredResult< CNEOBot > CNEOBotMoveToVantagePoint::OnStuck( CNEOBot *me )
 
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotMoveToVantagePoint::OnMoveToSuccess( CNEOBot *me, const Path *path )
+EventDesiredResult<CNEOBot> CNEOBotMoveToVantagePoint::OnMoveToSuccess(CNEOBot *me, const Path *path)
 {
-	return TryDone( RESULT_CRITICAL, "Vantage point reached" );
+	return TryDone(RESULT_CRITICAL, "Vantage point reached");
 }
 
 
 //---------------------------------------------------------------------------------------------
-EventDesiredResult< CNEOBot > CNEOBotMoveToVantagePoint::OnMoveToFailure( CNEOBot *me, const Path *path, MoveToFailureType reason )
+EventDesiredResult<CNEOBot> CNEOBotMoveToVantagePoint::OnMoveToFailure(
+	CNEOBot *me, const Path *path, MoveToFailureType reason)
 {
 	m_path.Invalidate();
 	return TryContinue();
 }
-
-

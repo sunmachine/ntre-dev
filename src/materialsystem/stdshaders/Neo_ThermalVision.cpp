@@ -8,12 +8,14 @@
 
 BEGIN_SHADER_FLAGS(Neo_ThermalVision, "Help for the thermalvision shader.", SHADER_NOT_EDITABLE)
 
+// clang-format off
 BEGIN_SHADER_PARAMS
 SHADER_PARAM(FBTEXTURE, SHADER_PARAM_TYPE_TEXTURE, "_rt_FullFrameFB", "")
 SHADER_PARAM(TVTEXTURE, SHADER_PARAM_TYPE_TEXTURE, "dev/tvgrad2", "")
 SHADER_PARAM(NOISETEXTURE, SHADER_PARAM_TYPE_TEXTURE, "dev/noise", "")
 SHADER_PARAM(NOISETRANSFORM, SHADER_PARAM_TYPE_VEC2, "[0 0]", "")
 END_SHADER_PARAMS
+// clang-format on
 
 SHADER_INIT
 {
@@ -64,9 +66,9 @@ SHADER_DRAW
 		pShaderShadow->EnableTexture(SHADER_SAMPLER0, true);
 		pShaderShadow->EnableTexture(SHADER_SAMPLER1, true);
 		pShaderShadow->EnableTexture(SHADER_SAMPLER2, true);
-		
+
 		pShaderShadow->VertexShaderVertexFormat(VERTEX_POSITION, 1, NULL, 0);
-		
+
 		pShaderShadow->EnableDepthWrites(false);
 
 		DECLARE_STATIC_VERTEX_SHADER(neo_passthrough_vs30);
@@ -81,7 +83,7 @@ SHADER_DRAW
 		BindTexture(SHADER_SAMPLER0, FBTEXTURE);
 		BindTexture(SHADER_SAMPLER1, TVTEXTURE);
 		BindTexture(SHADER_SAMPLER2, NOISETEXTURE);
-		
+
 		//s_pShaderAPI->SetPixelShaderConstant(0, NOISETRANSFORM);
 		float vNoiseTransform[2] = {0, 0};
 		params[NOISETRANSFORM]->GetVecValue(vNoiseTransform, 2);

@@ -23,6 +23,7 @@
 class CWeaponMX : public CNEOBaseCombatWeapon
 {
 	DECLARE_CLASS(CWeaponMX, CNEOBaseCombatWeapon);
+
 public:
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -41,6 +42,7 @@ public:
 
 	bool CanBePickedUpByClass(int classId) OVERRIDE;
 	virtual bool UsesTracers() override final { return true; }
+
 protected:
 	virtual float GetFastestDryRefireTime() const OVERRIDE { return 0.2f; }
 

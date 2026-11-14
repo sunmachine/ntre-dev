@@ -16,10 +16,10 @@ static const float NEO_BOT_HEADROOM_CHECK_INTERVAL = 0.2f;
 static const float NEO_BOT_HEADROOM_CROUCH_HOLD = 0.3f;
 
 //-----------------------------------------------------------------------------------------
-void CNEOBotLocomotion::Update( void )
+void CNEOBotLocomotion::Update(void)
 {
-	CNEOBot* me = ToNEOBot( GetBot()->GetEntity() );
-	if ( !me || me->GetNeoFlags() & NEO_FL_FREEZETIME)
+	CNEOBot *me = ToNEOBot(GetBot()->GetEntity());
+	if (!me || me->GetNeoFlags() & NEO_FL_FREEZETIME)
 	{
 		return;
 	}
@@ -27,12 +27,12 @@ void CNEOBotLocomotion::Update( void )
 	BaseClass::Update();
 
 	// always 'crouch jump'
-	if ( IsOnGround() )
+	if (IsOnGround())
 	{
-		CNavArea* currentArea = me->GetLastKnownArea();
+		CNavArea *currentArea = me->GetLastKnownArea();
 		if (currentArea && (currentArea->GetAttributes() & NAV_MESH_CROUCH))
 		{
-			me->PressCrouchButton( 0.3f );
+			me->PressCrouchButton(0.3f);
 		}
 #ifdef NEO
 		// NEO JANK resetting of crouch timer moved to NextBotPlayer::PressJumpButton
@@ -48,10 +48,10 @@ void CNEOBotLocomotion::Update( void )
 		// Don't try to crouch jump if we are climbing a ladder
 		if (!me->IsBotOnLadder())
 		{
-			me->PressCrouchButton( 0.3f );
+			me->PressCrouchButton(0.3f);
 		}
 #else
-		me->PressCrouchButton( 0.3f );
+		me->PressCrouchButton(0.3f);
 #endif
 	}
 }
@@ -59,68 +59,68 @@ void CNEOBotLocomotion::Update( void )
 
 //-----------------------------------------------------------------------------------------
 // Move directly towards the given position
-void CNEOBotLocomotion::Approach( const Vector& pos, float goalWeight )
+void CNEOBotLocomotion::Approach(const Vector &pos, float goalWeight)
 {
-	BaseClass::Approach( pos, goalWeight );
+	BaseClass::Approach(pos, goalWeight);
 }
 
 
 //-----------------------------------------------------------------------------------------
 // Duck when a standing hull would hit something just ahead but a crouched one would not: a beam,
 // light fitting or lintel at head height. The bot template this came from never crouched to navigate
-void CNEOBotLocomotion::AdjustPosture( const Vector &moveGoal )
+void CNEOBotLocomotion::AdjustPosture(const Vector &moveGoal)
 {
-	if ( !IsOnGround() )
+	if (!IsOnGround())
 	{
 		return;
 	}
 
-	CNEOBot *me = ToNEOBot( GetBot()->GetEntity() );
-	if ( !me || me->IsBotOnLadder() )
+	CNEOBot *me = ToNEOBot(GetBot()->GetEntity());
+	if (!me || me->IsBotOnLadder())
 	{
 		return;
 	}
 
 	// A crouch area already holds the duck, and a bot at a ladder's foot or top lines up with the ladder standing
 	const CNavArea *area = me->GetLastKnownArea();
-	if ( area && ( area->HasAttributes( NAV_MESH_CROUCH ) || IsLadderEnd( area ) ) )
+	if (area && (area->HasAttributes(NAV_MESH_CROUCH) || IsLadderEnd(area)))
 	{
 		return;
 	}
 
-	if ( !m_headroomTimer.IsElapsed() )
+	if (!m_headroomTimer.IsElapsed())
 	{
 		return;
 	}
 
-	m_headroomTimer.Start( NEO_BOT_HEADROOM_CHECK_INTERVAL );
+	m_headroomTimer.Start(NEO_BOT_HEADROOM_CHECK_INTERVAL);
 
 	// look as far as the bot moves before the next check, plus a hull width
-	const float flReach = MAX( NEO_BOT_HEADROOM_LOOKAHEAD,
-		GetGroundSpeed() * NEO_BOT_HEADROOM_CHECK_INTERVAL + GetBot()->GetBodyInterface()->GetHullWidth() );
-	if ( IsOnlyCrouchClearAhead( moveGoal, flReach ) )
+	const float flReach = MAX(NEO_BOT_HEADROOM_LOOKAHEAD,
+		GetGroundSpeed() * NEO_BOT_HEADROOM_CHECK_INTERVAL + GetBot()->GetBodyInterface()->GetHullWidth());
+	if (IsOnlyCrouchClearAhead(moveGoal, flReach))
 	{
-		me->PressCrouchButton( NEO_BOT_HEADROOM_CROUCH_HOLD );
+		me->PressCrouchButton(NEO_BOT_HEADROOM_CROUCH_HOLD);
 	}
 }
 
 
 //-----------------------------------------------------------------------------------------
-bool CNEOBotLocomotion::IsLadderEnd( const CNavArea *area )
+bool CNEOBotLocomotion::IsLadderEnd(const CNavArea *area)
 {
-	return area->GetLadders( CNavLadder::LADDER_UP )->Count() > 0
-		|| area->GetLadders( CNavLadder::LADDER_DOWN )->Count() > 0;
+	return area->GetLadders(CNavLadder::LADDER_UP)->Count() > 0 ||
+		area->GetLadders(CNavLadder::LADDER_DOWN)->Count() > 0;
 }
 
 
 //-----------------------------------------------------------------------------------------
-bool CNEOBotLocomotion::IsOnlyCrouchClearAhead( const Vector &moveGoal, float flReach ) const
+bool CNEOBotLocomotion::IsOnlyCrouchClearAhead(const Vector &moveGoal, float flReach) const
 {
 	const Vector &feet = GetFeet();
 	Vector toGoal = moveGoal - feet;
 	toGoal.z = 0.0f;
 	const float flGoalDist = toGoal.NormalizeInPlace();
-	if ( flGoalDist < 1.0f )
+	if (flGoalDist < 1.0f)
 	{
 		return false;
 	}
@@ -129,36 +129,36 @@ bool CNEOBotLocomotion::IsOnlyCrouchClearAhead( const Vector &moveGoal, float fl
 	const IBody *body = GetBot()->GetBodyInterface();
 	const float flStep = GetStepHeight();
 	const float flHalfWidth = 0.5f * body->GetHullWidth();
-	const Vector mins( -flHalfWidth, -flHalfWidth, 0.0f );
-	const Vector standMaxs( flHalfWidth, flHalfWidth, body->GetStandHullHeight() - flStep );
-	const Vector crouchMaxs( flHalfWidth, flHalfWidth, body->GetCrouchHullHeight() - flStep );
-	const Vector from = feet + Vector( 0.0f, 0.0f, flStep );
-	const Vector to = from + toGoal * Min( flGoalDist, flReach );
+	const Vector mins(-flHalfWidth, -flHalfWidth, 0.0f);
+	const Vector standMaxs(flHalfWidth, flHalfWidth, body->GetStandHullHeight() - flStep);
+	const Vector crouchMaxs(flHalfWidth, flHalfWidth, body->GetCrouchHullHeight() - flStep);
+	const Vector from = feet + Vector(0.0f, 0.0f, flStep);
+	const Vector to = from + toGoal * Min(flGoalDist, flReach);
 
 	// Players move out of the way, so only the world and props count
-	NextBotTraceFilterIgnoreActors filter( GetBot()->GetEntity(), COLLISION_GROUP_NONE );
+	NextBotTraceFilterIgnoreActors filter(GetBot()->GetEntity(), COLLISION_GROUP_NONE);
 	trace_t trace;
-	TraceHull( from, to, mins, standMaxs, body->GetSolidMask(), &filter, &trace );
-	if ( trace.fraction >= 1.0f && !trace.startsolid )
+	TraceHull(from, to, mins, standMaxs, body->GetSolidMask(), &filter, &trace);
+	if (trace.fraction >= 1.0f && !trace.startsolid)
 	{
 		return false;
 	}
 
-	TraceHull( from, to, mins, crouchMaxs, body->GetSolidMask(), &filter, &trace );
+	TraceHull(from, to, mins, crouchMaxs, body->GetSolidMask(), &filter, &trace);
 	return trace.fraction >= 1.0f && !trace.startsolid;
 }
 
 
 //-----------------------------------------------------------------------------------------
 // Distance at which we will die if we fall
-float CNEOBotLocomotion::GetDeathDropHeight( void ) const
+float CNEOBotLocomotion::GetDeathDropHeight(void) const
 {
-	CNEOBot* me = ( CNEOBot* )GetBot()->GetEntity();
+	CNEOBot *me = (CNEOBot *)GetBot()->GetEntity();
 
-	// misyl: Fall damage only deals 10 health otherwise. 
-	if ( falldamage.GetInt() != 1 )
+	// misyl: Fall damage only deals 10 health otherwise.
+	if (falldamage.GetInt() != 1)
 	{
-		if ( me->GetHealth() > 10.0f )
+		if (me->GetHealth() > 10.0f)
 			return MAX_COORD_FLOAT;
 
 		// #define PLAYER_MAX_SAFE_FALL_SPEED	526.5f // approx 20 feet sqrt( 2 * gravity * 20 * 12 )
@@ -173,19 +173,19 @@ float CNEOBotLocomotion::GetDeathDropHeight( void ) const
 
 //-----------------------------------------------------------------------------------------
 // Get maximum running speed
-float CNEOBotLocomotion::GetRunSpeed( void ) const
+float CNEOBotLocomotion::GetRunSpeed(void) const
 {
 	CNEOBot *me = (CNEOBot *)GetBot()->GetEntity();
 	return me->GetSprintSpeed_WithActiveWepEncumberment();
 }
 
-float CNEOBotLocomotion::GetWalkSpeed( void ) const
+float CNEOBotLocomotion::GetWalkSpeed(void) const
 {
 	CNEOBot *me = (CNEOBot *)GetBot()->GetEntity();
 	return me->GetNormSpeed_WithActiveWepEncumberment();
 }
 
-bool CNEOBotLocomotion::IsRunning( void ) const
+bool CNEOBotLocomotion::IsRunning(void) const
 {
 	return GetSpeed() > GetWalkSpeed();
 }
@@ -193,11 +193,11 @@ bool CNEOBotLocomotion::IsRunning( void ) const
 
 //-----------------------------------------------------------------------------------------
 // Return true if given area can be used for navigation
-bool CNEOBotLocomotion::IsAreaTraversable( const CNavArea* area ) const
+bool CNEOBotLocomotion::IsAreaTraversable(const CNavArea *area) const
 {
-	CNEOBot* me = ( CNEOBot* )GetBot()->GetEntity();
+	CNEOBot *me = (CNEOBot *)GetBot()->GetEntity();
 
-	if ( area->IsBlocked( me->GetTeamNumber() ) )
+	if (area->IsBlocked(me->GetTeamNumber()))
 	{
 		return false;
 	}
@@ -207,26 +207,26 @@ bool CNEOBotLocomotion::IsAreaTraversable( const CNavArea* area ) const
 
 
 //-----------------------------------------------------------------------------------------
-bool CNEOBotLocomotion::IsEntityTraversable( CBaseEntity* obstacle, TraverseWhenType when ) const
+bool CNEOBotLocomotion::IsEntityTraversable(CBaseEntity *obstacle, TraverseWhenType when) const
 {
 	// assume all players are "traversable" in that they will move or can be killed
-	if ( obstacle && obstacle->IsPlayer() )
+	if (obstacle && obstacle->IsPlayer())
 	{
 		return true;
 	}
 
-	if ( obstacle )
+	if (obstacle)
 	{
 		// misyl:
 		// override the base brush logic here to work better for hl2mp (w/ solid flags)
 		// changing this for TF would be scary.
 		//
 		// if we hit a clip brush, ignore it if it is not BRUSHSOLID_ALWAYS
-		if ( FClassnameIs( obstacle, "func_brush" ) )
+		if (FClassnameIs(obstacle, "func_brush"))
 		{
-			CFuncBrush* brush = ( CFuncBrush* )obstacle;
+			CFuncBrush *brush = (CFuncBrush *)obstacle;
 
-			switch ( brush->m_iSolidity )
+			switch (brush->m_iSolidity)
 			{
 			case CFuncBrush::BRUSHSOLID_ALWAYS:
 				return false;
@@ -238,6 +238,6 @@ bool CNEOBotLocomotion::IsEntityTraversable( CBaseEntity* obstacle, TraverseWhen
 		}
 	}
 
-	const bool bIsTraversable = PlayerLocomotion::IsEntityTraversable( obstacle, when );
+	const bool bIsTraversable = PlayerLocomotion::IsEntityTraversable(obstacle, when);
 	return bIsTraversable || GetBot()->IsAbleToBreak(obstacle);
 }

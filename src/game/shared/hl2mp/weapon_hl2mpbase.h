@@ -57,7 +57,7 @@ public:
 
 	virtual void FireBullets( const FireBulletsInfo_t &info );
 	virtual void FallInit( void );
-	virtual bool Reload();
+	virtual bool Reload(); // NEO
 	
 public:
 	#if defined( CLIENT_DLL )

@@ -30,6 +30,7 @@
 
 IMPLEMENT_NETWORKCLASS_ALIASED(WeaponDetpack, DT_WeaponDetpack)
 
+// clang-format off
 BEGIN_NETWORK_TABLE(CWeaponDetpack, DT_WeaponDetpack)
 #ifdef CLIENT_DLL
 	RecvPropBool(RECVINFO(m_fDrawbackFinished)),
@@ -43,14 +44,17 @@ BEGIN_NETWORK_TABLE(CWeaponDetpack, DT_WeaponDetpack)
 	SendPropBool(SENDINFO(m_bRemoteHasBeenTriggered)),
 #endif
 END_NETWORK_TABLE()
+	// clang-format on
 
 #ifdef CLIENT_DLL
+// clang-format off
 BEGIN_PREDICTION_DATA(CWeaponDetpack)
 	DEFINE_PRED_FIELD(m_fDrawbackFinished, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_bWantsToThrowThisDetpack, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_bThisDetpackHasBeenThrown, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_bRemoteHasBeenTriggered, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 END_PREDICTION_DATA()
+// clang-format on
 #endif
 
 NEO_IMPLEMENT_ACTTABLE(CWeaponDetpack)
@@ -58,12 +62,14 @@ NEO_IMPLEMENT_ACTTABLE(CWeaponDetpack)
 LINK_ENTITY_TO_CLASS(weapon_remotedet, CWeaponDetpack);
 
 #ifdef GAME_DLL
+// clang-format off
 BEGIN_DATADESC(CWeaponDetpack)
 	DEFINE_FIELD(m_fDrawbackFinished, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_bWantsToThrowThisDetpack, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_bThisDetpackHasBeenThrown, FIELD_BOOLEAN),
 	DEFINE_FIELD(m_bRemoteHasBeenTriggered, FIELD_BOOLEAN),
 END_DATADESC()
+// clang-format on
 #endif
 
 PRECACHE_WEAPON_REGISTER(weapon_remotedet);
@@ -108,7 +114,7 @@ bool CWeaponDetpack::Deploy(void)
 }
 
 // Output : Returns true on success, false on failure.
-bool CWeaponDetpack::Holster(CBaseCombatWeapon* pSwitchingTo)
+bool CWeaponDetpack::Holster(CBaseCombatWeapon *pSwitchingTo)
 {
 	// Cannot put away the det once the trigger is pulled (parity).
 	if (m_bRemoteHasBeenTriggered)
@@ -144,7 +150,7 @@ void CWeaponDetpack::PrimaryAttack(void)
 		return;
 	}
 
-	auto* pPlayer = static_cast<CNEO_Player*>(GetOwner());
+	auto *pPlayer = static_cast<CNEO_Player *>(GetOwner());
 	if (!pPlayer)
 	{
 		Assert(false);
@@ -158,7 +164,7 @@ void CWeaponDetpack::PrimaryAttack(void)
 	if ((m_bThisDetpackHasBeenThrown) && (gpGlobals->curtime > m_flNextPrimaryAttack))
 	{
 		m_bRemoteHasBeenTriggered = true;
-#if(0)
+#if (0)
 		DevMsg("Pulling remote trigger\n");
 #endif
 		SendWeaponAnim(ACT_VM_PRIMARYATTACK_DEPLOYED);
@@ -172,7 +178,7 @@ void CWeaponDetpack::PrimaryAttack(void)
 		{
 			m_bWantsToThrowThisDetpack = true;
 			WeaponSound(SINGLE);
-#if(0)
+#if (0)
 			DevMsg("Preparing primary attack\n");
 #endif
 			SendWeaponAnim(ACT_VM_PRIMARYATTACK);
@@ -183,7 +189,7 @@ void CWeaponDetpack::PrimaryAttack(void)
 	}
 }
 
-void CWeaponDetpack::DecrementAmmo(CBaseCombatCharacter* pOwner)
+void CWeaponDetpack::DecrementAmmo(CBaseCombatCharacter *pOwner)
 {
 	pOwner->RemoveAmmo(1, m_iPrimaryAmmoType);
 }
@@ -200,14 +206,14 @@ void CWeaponDetpack::ItemPostFrame(void)
 
 	if (m_fDrawbackFinished)
 	{
-		auto pOwner = static_cast<CNEO_Player*>(GetOwner());
+		auto pOwner = static_cast<CNEO_Player *>(GetOwner());
 
 		if ((m_bRemoteHasBeenTriggered) && (gpGlobals->curtime > m_flNextPrimaryAttack))
 		{
 #ifdef GAME_DLL
 			if (m_pDetpack)
 			{
-#if(0)
+#if (0)
 				DevMsg("REMOTE ATK\n");
 #endif
 				g_EventQueue.AddEvent(m_pDetpack, "RemoteDetonate", 0, GetOwner(), GetOwner());
@@ -274,13 +280,13 @@ bool CWeaponDetpack::CanDrop()
 }
 
 extern ConVar sv_neo_exp_dmg_modifier;
-void CWeaponDetpack::TossDetpack(CBasePlayer* pPlayer)
+void CWeaponDetpack::TossDetpack(CBasePlayer *pPlayer)
 {
 	Assert(HasPrimaryAmmo());
 	Assert(pPlayer);
 	DecrementAmmo(pPlayer);
 
-#if(0)
+#if (0)
 	DevMsg("TossDetpack\n");
 #endif
 
@@ -295,7 +301,8 @@ void CWeaponDetpack::TossDetpack(CBasePlayer* pPlayer)
 
 	Vector vecThrow = vForward + pPlayer->GetAbsVelocity();
 
-	m_pDetpack = static_cast<CNEODeployedDetpack*>(NEODeployedDetpack_Create(vecSrc, vec3_angle, vecThrow, AngularImpulse(600, random->RandomInt(-1200, 1200), 0), pPlayer));
+	m_pDetpack = static_cast<CNEODeployedDetpack *>(NEODeployedDetpack_Create(
+		vecSrc, vec3_angle, vecThrow, AngularImpulse(600, random->RandomInt(-1200, 1200), 0), pPlayer));
 
 	if (m_pDetpack)
 	{
@@ -309,9 +316,10 @@ void CWeaponDetpack::TossDetpack(CBasePlayer* pPlayer)
 
 	// Notify bots after pressing keypad since reacting immediately to press fire is unforgiving
 	// especially since the sound clip has some silence at the beginning
-	CSoundEnt::InsertSound( SOUND_COMBAT, pPlayer->GetAbsOrigin(), 256, 0.2, pPlayer, SOUNDENT_CHANNEL_WEAPON );
+	CSoundEnt::InsertSound(SOUND_COMBAT, pPlayer->GetAbsOrigin(), 256, 0.2, pPlayer, SOUNDENT_CHANNEL_WEAPON);
 #endif
-	if (GetOwner()->IsPlayer()) // NEO NOTE (Adam) if else taken from CBaseCombatWeapon::Equip, this must be what was fixing the viewmodel previously after dropping and picking up the detremote
+	if (GetOwner()
+			->IsPlayer()) // NEO NOTE (Adam) if else taken from CBaseCombatWeapon::Equip, this must be what was fixing the viewmodel previously after dropping and picking up the detremote
 	{
 		SetModel(GetViewModel());
 	}
@@ -320,7 +328,7 @@ void CWeaponDetpack::TossDetpack(CBasePlayer* pPlayer)
 		SetModel(GetWorldModel());
 	}
 	Precache();
-	DefaultDeploy((char*)GetViewModel(), (char*)GetModel(), ACT_VM_DRAW_DEPLOYED, (char*)GetAnimPrefix());
+	DefaultDeploy((char *)GetViewModel(), (char *)GetModel(), ACT_VM_DRAW_DEPLOYED, (char *)GetAnimPrefix());
 
 	pPlayer->SetAnimation(PLAYER_ATTACK1);
 }
@@ -331,9 +339,9 @@ bool CWeaponDetpack::CanBePickedUpByClass(int classId)
 }
 
 #ifndef CLIENT_DLL
-void CWeaponDetpack::Operator_HandleAnimEvent(animevent_t* pEvent, CBaseCombatCharacter* pOperator)
+void CWeaponDetpack::Operator_HandleAnimEvent(animevent_t *pEvent, CBaseCombatCharacter *pOperator)
 {
-	CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 	Assert(pOwner);
 
 	bool fThrewGrenade = false;

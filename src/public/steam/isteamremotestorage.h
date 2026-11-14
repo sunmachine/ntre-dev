@@ -1,4 +1,4 @@
-//====== Copyright (C) 1996-2008, Valve Corporation, All rights reserved. =======
+//====== Copyright (C) 1996-2008, Valve Corporation, All rights reserved. ======= // NEO
 //
 // Purpose: public interface to user remote file storage in Steam
 //

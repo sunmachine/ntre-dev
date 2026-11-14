@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -9,10 +9,11 @@
 #include "convar.h"
 #include "Neo_refract_dx9_helper.h"
 
-DEFINE_FALLBACK_SHADER( Neo_Refract, Neo_Refract_DX90 )
+DEFINE_FALLBACK_SHADER(Neo_Refract, Neo_Refract_DX90)
 
-BEGIN_VS_SHADER( Neo_Refract_DX90, "Help for Neo_Refract" )
+BEGIN_VS_SHADER(Neo_Refract_DX90, "Help for Neo_Refract")
 
+// clang-format off
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM_OVERRIDE( COLOR, SHADER_PARAM_TYPE_COLOR, "{255 255 255}", "unused", SHADER_PARAM_NOT_EDITABLE )
 		SHADER_PARAM_OVERRIDE(ALPHA, SHADER_PARAM_TYPE_FLOAT, "1.0", "Alpha", SHADER_PARAM_NOT_EDITABLE)
@@ -40,75 +41,76 @@ BEGIN_VS_SHADER( Neo_Refract_DX90, "Help for Neo_Refract" )
 		SHADER_PARAM( VERTEXCOLORMODULATE, SHADER_PARAM_TYPE_BOOL, "0","Use the vertex color to effect refract color. alpha will adjust refract amount" )
 		SHADER_PARAM( FORCEALPHAWRITE, SHADER_PARAM_TYPE_BOOL, "0","Force the material to write alpha to the dest buffer" )
 	END_SHADER_PARAMS
+// clang-format on
 // FIXME: doesn't support Fresnel!
 
-	void SetupVars( Neo_Refract_DX9_Vars_t& info )
+void SetupVars(Neo_Refract_DX9_Vars_t &info)
+{
+	info.m_nBaseTexture = BASETEXTURE;
+	info.m_nFrame = FRAME;
+	info.m_nRefractAmount = REFRACTAMOUNT;
+	info.m_nRefractTint = REFRACTTINT;
+	info.m_nNormalMap = NORMALMAP;
+	info.m_nNormalMap2 = NORMALMAP2;
+	info.m_nBumpFrame = BUMPFRAME;
+	info.m_nBumpFrame2 = BUMPFRAME2;
+	info.m_nBumpTransform = BUMPTRANSFORM;
+	info.m_nBumpTransform2 = BUMPTRANSFORM2;
+	info.m_nBlurAmount = BLURAMOUNT;
+	info.m_nFadeOutOnSilhouette = FADEOUTONSILHOUETTE;
+	info.m_nEnvmap = ENVMAP;
+	info.m_nEnvmapFrame = ENVMAPFRAME;
+	info.m_nEnvmapTint = ENVMAPTINT;
+	info.m_nEnvmapContrast = ENVMAPCONTRAST;
+	info.m_nEnvmapSaturation = ENVMAPSATURATION;
+	info.m_nRefractTintTexture = REFRACTTINTTEXTURE;
+	info.m_nRefractTintTextureFrame = REFRACTTINTTEXTUREFRAME;
+	info.m_nFresnelReflection = FRESNELREFLECTION;
+	info.m_nNoWriteZ = NOWRITEZ;
+	info.m_nMasked = MASKED;
+	info.m_nVertexColorModulate = VERTEXCOLORMODULATE;
+	info.m_nForceAlphaWrite = FORCEALPHAWRITE;
+
+	// NEO addition
+	info.m_nAlpha = ALPHA;
+}
+
+SHADER_INIT_PARAMS()
+{
+	Neo_Refract_DX9_Vars_t info;
+	SetupVars(info);
+	InitParamsRefract_DX9(this, params, pMaterialName, info);
+}
+
+SHADER_FALLBACK
+{
+	if (g_pHardwareConfig->GetDXSupportLevel() < 82)
+		return "Refract_DX80";
+
+	return 0;
+}
+
+SHADER_INIT
+{
+	Neo_Refract_DX9_Vars_t info;
+	SetupVars(info);
+	InitRefract_DX9(this, params, info);
+}
+
+SHADER_DRAW
+{
+	Neo_Refract_DX9_Vars_t info;
+	SetupVars(info);
+
+	// If ( snapshotting ) or ( we need to draw this frame )
+	bool bHasFlashlight = this->UsingFlashlight(params);
+	if ((pShaderShadow != NULL) || (bHasFlashlight == false))
 	{
-		info.m_nBaseTexture = BASETEXTURE;
-		info.m_nFrame = FRAME;
-		info.m_nRefractAmount = REFRACTAMOUNT;
-		info.m_nRefractTint = REFRACTTINT;
-		info.m_nNormalMap = NORMALMAP;
-		info.m_nNormalMap2 = NORMALMAP2;
-		info.m_nBumpFrame = BUMPFRAME;
-		info.m_nBumpFrame2 = BUMPFRAME2;
-		info.m_nBumpTransform = BUMPTRANSFORM;
-		info.m_nBumpTransform2 = BUMPTRANSFORM2;
-		info.m_nBlurAmount = BLURAMOUNT;
-		info.m_nFadeOutOnSilhouette = FADEOUTONSILHOUETTE;
-		info.m_nEnvmap = ENVMAP;
-		info.m_nEnvmapFrame = ENVMAPFRAME;
-		info.m_nEnvmapTint = ENVMAPTINT;
-		info.m_nEnvmapContrast = ENVMAPCONTRAST;
-		info.m_nEnvmapSaturation = ENVMAPSATURATION;
-		info.m_nRefractTintTexture = REFRACTTINTTEXTURE;
-		info.m_nRefractTintTextureFrame = REFRACTTINTTEXTUREFRAME;
-		info.m_nFresnelReflection = FRESNELREFLECTION;
-		info.m_nNoWriteZ = NOWRITEZ;
-		info.m_nMasked = MASKED;
-		info.m_nVertexColorModulate = VERTEXCOLORMODULATE;
-		info.m_nForceAlphaWrite = FORCEALPHAWRITE;
-
-		// NEO addition
-		info.m_nAlpha = ALPHA;
+		DrawRefract_DX9(this, params, pShaderAPI, pShaderShadow, info, vertexCompression);
 	}
-
-	SHADER_INIT_PARAMS()
+	else
 	{
-		Neo_Refract_DX9_Vars_t info;
-		SetupVars( info );
-		InitParamsRefract_DX9( this, params, pMaterialName, info );
+		Draw(false);
 	}
-
-	SHADER_FALLBACK
-	{
-		if( g_pHardwareConfig->GetDXSupportLevel() < 82 )
-			return "Refract_DX80";
-
-		return 0;
-	}
-
-	SHADER_INIT
-	{
-		Neo_Refract_DX9_Vars_t info;
-		SetupVars( info );
-		InitRefract_DX9( this, params, info );
-	}
-
-	SHADER_DRAW
-	{
-		Neo_Refract_DX9_Vars_t info;
-		SetupVars( info );
-		
-		// If ( snapshotting ) or ( we need to draw this frame )
-		bool bHasFlashlight = this->UsingFlashlight( params );
-		if ( ( pShaderShadow != NULL ) || ( bHasFlashlight == false ) )
-		{
-			DrawRefract_DX9( this, params, pShaderAPI, pShaderShadow, info, vertexCompression );
-		}
-		else
-		{
-			Draw( false );
-		}
-	}
+}
 END_SHADER
