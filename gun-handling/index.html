@@ -119,6 +119,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--next); outl
 .toc a:hover, .toc a:focus-visible { text-decoration: underline; }
 .stamp { align-self: flex-start; font-family: var(--font-mono); font-size: 0.78rem; font-variant-numeric: tabular-nums; padding: 0.15rem 0.5rem; border-radius: 4px; background: var(--next-soft); color: var(--next); }
 .update-title { font-size: 1.3rem; }
+a.tag { text-decoration: underline; text-underline-offset: 2px; }
 .note { border-left: 3px solid var(--today); background: var(--today-soft); padding: 0.8rem 1rem; border-radius: 0 6px 6px 0; }
 footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--line); padding-top: 1.25rem; }
 @media (max-width: 720px) {
@@ -230,7 +231,7 @@ flowchart LR
 <section>
   <div class="col">
     <h2>Archetypes: seven families already exist in the numbers</h2>
-    <p>Today's values cluster on their own. Each family below lists what every member shares right now. A family holds the value most of its members use, and a gun that differs states its own. Nothing is chosen by hand. A script produces the split and the before-and-after report proves it.</p>
+    <p>Today's values cluster on their own. Each family below lists what every member shares right now. A family holds the value most of its members use, and a gun that differs states its own. Where the numbers alone do not settle a gun's family, how the gun is fired and at what range decides it. The before-and-after report proves that no gun's values change.</p>
     <div class="note"><p><b>This list is a starting point.</b> It is neither complete nor final. Families can be added, renamed, split or merged as the guns are tuned, and a gun can move from one family to another.</p></div>
   </div>
   <div class="scroll"><table>
@@ -238,8 +239,8 @@ flowchart LR
     <tbody>
       <tr><td><code>pistol</code></td><td>Milso, Tachi, Kyla</td><td>Movement speed 0.85, widest hip cone 7 degrees, widest aimed cone 4</td></tr>
       <tr><td><code>smg</code></td><td>MPN, MPN silenced, SRM, SRM silenced, Jitte, Jitte scoped, SMAC</td><td>Automatic, widest hip cone 7, tightest aimed cone 1</td></tr>
-      <tr><td><code>rifle</code></td><td>MX, MX silenced, ZR68C, ZR68S, M41, M41S</td><td>Identical spread: hip 4 to 7, aimed 0 to 3</td></tr>
-      <tr><td><code>marksman</code></td><td>ZR68L, M41L</td><td>Semi-automatic, speed 0.725, no view kick, same camera recoil</td></tr>
+      <tr><td><code>rifle</code></td><td>MX, MX silenced, ZR68C, ZR68S</td><td>Identical spread: hip 4 to 7, aimed 0 to 3</td></tr>
+      <tr><td><code>marksman</code></td><td>ZR68L, M41L, M41, M41S</td><td>Semi-automatic and built for longer range</td></tr>
       <tr><td><code>sniper</code></td><td>SRS</td><td>One member</td></tr>
       <tr><td><code>shotgun</code></td><td>AA13, Supa 7</td><td>5 degree cone throughout, same kick, no bloom from firing</td></tr>
       <tr><td><code>machinegun</code></td><td>PZ, PBK56S, BALC</td><td>Same kick and camera recoil, tightest hip cone 2</td></tr>
@@ -332,17 +333,17 @@ flowchart LR
     <p>Camera feedback comes with one player setting that scales all of it down to zero, for people who are sensitive to camera motion.</p>
     <h3>The stance matrix</h3>
     <p>Six states by five outputs, every cell a multiplier that starts at 1. The marked cells are where today's game already treats a stance differently. Those rules are the same for every gun and cannot be tuned yet.</p>
-    <div class="note"><p><b>Is every stance treated the same today?</b> Mostly, yes. Firing does not care about stance for most of these values. The exceptions are few. Crouching lets accuracy recover nearly twice as fast. Moving while firing from the hip, and being in the air, both make accuracy worse for as long as they last. Aiming switches a gun to its own tighter spread cones and its own recoil scale. Walking and leaning change nothing.</p></div>
+    <div class="note"><p><b>Is every stance treated the same today?</b> Mostly, yes. Firing does not care about stance for most of these values. The exceptions are few. Crouching lets accuracy recover nearly twice as fast. Moving while firing from the hip, and being in the air, both make accuracy worse for as long as they last. Aiming switches a gun to its own tighter spread cones and its own recoil scale. Walking and leaning change nothing. Each marked cell in the table links to the lines of the game's public source that do it.</p></div>
   </div>
   <div class="scroll"><table>
     <thead><tr><th>State</th><th>Spread</th><th>Bloom gain</th><th>Bloom recovery</th><th>Kick</th><th>Recoil</th></tr></thead>
     <tbody>
-      <tr><td>Crouched</td><td>1</td><td>1</td><td>1 <span class="tag today">recovers faster today</span></td><td>1</td><td>1</td></tr>
+      <tr><td>Crouched</td><td>1</td><td>1</td><td>1 <a class="tag today" href="https://github.com/NeotokyoRebuild/neo/blob/master/src/game/shared/neo/weapons/weapon_neobasecombatweapon.cpp#L622-L625">recovers faster today</a></td><td>1</td><td>1</td></tr>
       <tr><td>Walk key held</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-      <tr><td>Moving</td><td>1</td><td>1 <span class="tag today">grows today, hip only</span></td><td>1</td><td>1</td><td>1</td></tr>
-      <tr><td>Airborne</td><td>1</td><td>1 <span class="tag today">grows today</span></td><td>1</td><td>1</td><td>1</td></tr>
+      <tr><td>Moving</td><td>1</td><td>1 <a class="tag today" href="https://github.com/NeotokyoRebuild/neo/blob/master/src/game/shared/neo/weapons/weapon_neobasecombatweapon.cpp#L640-L643">grows today, hip only</a></td><td>1</td><td>1</td><td>1</td></tr>
+      <tr><td>Airborne</td><td>1</td><td>1 <a class="tag today" href="https://github.com/NeotokyoRebuild/neo/blob/master/src/game/shared/neo/weapons/weapon_neobasecombatweapon.cpp#L635-L638">grows today</a></td><td>1</td><td>1</td><td>1</td></tr>
       <tr><td>Leaning</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-      <tr><td>Aiming</td><td>1 <span class="tag today">own cones today</span></td><td>1</td><td>1</td><td>1</td><td>1 <span class="tag today">own scale today</span></td></tr>
+      <tr><td>Aiming</td><td>1 <a class="tag today" href="https://github.com/NeotokyoRebuild/neo/blob/master/src/game/shared/neo/weapons/weapon_neobasecombatweapon.cpp#L904-L929">own cones today</a></td><td>1</td><td>1</td><td>1</td><td>1 <a class="tag today" href="https://github.com/NeotokyoRebuild/neo/blob/master/src/game/shared/neo/weapons/weapon_neobasecombatweapon.cpp#L967">own scale today</a></td></tr>
     </tbody>
   </table></div>
 </section>
@@ -362,7 +363,7 @@ sequenceDiagram
     P->>S: set MX kick to 0.7
     S->>S: check cheats are on, clamp to range
     S->>C: MX kick is now 0.7
-    Note over S,C: both sides fire with the new value on the next shot
+    Note over S,C: live on the next shot
     P->>S: save MX
     S->>D: rewrite only the Handling block
     P->>S: reload MX
