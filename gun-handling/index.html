@@ -313,12 +313,12 @@ flowchart LR
     <p><b>Pattern kick is a new idea, added on 2026-11-15.</b> A fixed pattern climbs by the same step every time, which reads as smooth. Pattern kick keeps the pattern's path and makes each shot take a larger or smaller bite of it at random. Most shots move a little and some jump, while the average climb stays the same, so the gun feels kicky and the path can still be learned. It is a proposal: the game does not have this lever yet.</p>
     <p><b>Pattern flip is a second new idea from the same day.</b> Before each burst the gun decides whether to follow its pattern as drawn or the mirror image of it. At 0 it never flips, at 0.5 both are equally likely, and at 1 it always flips. A player can learn the shape and still has to read which way each burst is going. It is a proposal too: the game does not have this lever yet.</p>
     <p><b>One gun can carry any pattern.</b> A pattern is a list of points stored with the gun or its family. It is data, so it can be replaced while the game runs, and the levers do not change when it is.</p>
-    <p>Try it. The bench below fires bursts with one of four made-up patterns. Choose a pattern and the path changes while every lever stays where it is. The dotted line is the pattern alone, with no randomness. Its mirror image fades in as pattern flip rises, and the line as drawn fades out. The zoom under the plot stays where you put it, so the degree lines do not move when a lever does. The last five bursts stay on screen so you can see how repeatable the climb is. The numbers are illustrations, not game values.</p>
+    <p>Try it. The bench below fires bursts with one of four made-up patterns. Choose a pattern and the path changes while every lever stays where it is. The dotted line is the path an average burst takes: the pattern at its influence, plus the average of the random climb. Its mirror image fades in as pattern flip rises, and the line as drawn fades out. The zoom under the plot stays where you put it, so the degree lines do not move when a lever does. The last five bursts stay on screen so you can see how repeatable the climb is. The numbers are illustrations, not game values.</p>
   </div>
   <div class="bench">
     <div class="view">
       <div class="plot"><canvas id="bench" width="800" height="600" aria-label="Plot of where each shot of a burst lands as the camera climbs"></canvas></div>
-      <div class="zoom"><label for="zm">zoom <output id="zmv"></output></label><input type="range" id="zm" min="0.25" max="3" step="0.05" value="1.5"><button type="button" id="zr" class="ghost">Reset zoom</button></div>
+      <div class="zoom"><label for="zm">zoom <output id="zmv"></output></label><input type="range" id="zm" min="0.25" max="3" step="0.05" value="1"><button type="button" id="zr" class="ghost">Reset zoom</button></div>
       <p class="readout" id="readout"></p>
     </div>
     <div class="controls">
@@ -593,8 +593,10 @@ sequenceDiagram
     return { pts: pts, flipped: side < 0 && !off && ps > 0 };
   }
   function guide(side) {
-    var ps = +el.ps.value, n = +el.n.value, x = 0, y = 0, pts = [[0, 0]];
-    for (var i = 1; i < n; i++) { x += PATTERN[i][1] * side * ps; y += PATTERN[i][0] * ps; pts.push([x, y]); }
+    var ps = +el.ps.value, rs = +el.rs.value, n = +el.n.value, x = 0, y = 0, pts = [[0, 0]];
+    // The guide is the path of an average burst: the pattern at its influence, plus the mean of the random draw at its scale.
+    var mx = (RAND.yaw[0] + RAND.yaw[1]) / 2 * rs, my = (RAND.pitch[0] + RAND.pitch[1]) / 2 * rs;
+    for (var i = 1; i < n; i++) { x += PATTERN[i][1] * side * ps + mx; y += PATTERN[i][0] * ps + my; pts.push([x, y]); }
     return pts;
   }
   function tok(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
