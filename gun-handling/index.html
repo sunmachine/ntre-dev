@@ -84,7 +84,9 @@ pre.kv { margin: 0; background: var(--sunk); border-radius: 8px; padding: 1rem; 
 .two { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); }
 .two > * { min-width: 0; }
 .bench { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.25rem; display: grid; gap: 1.5rem; grid-template-columns: minmax(0, 1fr) minmax(0, 18rem); }
-.bench canvas { width: 100%; height: auto; aspect-ratio: 4 / 3; background: var(--sunk); border-radius: 6px; display: block; max-width: 100%; }
+.view { min-width: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.plot { position: relative; flex: 1 1 auto; min-height: 18rem; }
+.bench canvas { position: absolute; inset: 0; width: 100%; height: 100%; background: var(--sunk); border-radius: 6px; display: block; }
 .controls { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
 .ctl { display: flex; flex-direction: column; gap: 0.25rem; }
 .ctl label { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.78rem; }
@@ -93,12 +95,21 @@ pre.kv { margin: 0; background: var(--sunk); border-radius: 8px; padding: 1rem; 
 .pats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
 .pats button { font-family: var(--font-mono); font-size: 0.78rem; padding: 0.4rem 0.5rem; background: transparent; color: var(--next); }
 .pats button[aria-pressed="true"] { background: var(--next); color: var(--surface); }
+.pats .wide { grid-column: 1 / -1; }
+.ctl.off { opacity: 0.45; }
+.zoom { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-mono); font-size: 0.78rem; }
+.zoom label { white-space: nowrap; }
+.zoom output { color: var(--next); font-variant-numeric: tabular-nums; }
+.zoom input[type="range"] { flex: 1 1 auto; min-width: 0; accent-color: var(--next); }
+.zoom button { font-family: var(--font-mono); font-size: 0.78rem; padding: 0.3rem 0.6rem; }
 .ctl small { color: var(--muted); font-size: 0.8rem; line-height: 1.35; }
 button { font-family: var(--font-body); font-size: 0.9rem; font-weight: 500; padding: 0.5rem 0.9rem; border-radius: 6px; border: 1px solid var(--next); background: var(--next); color: var(--surface); cursor: pointer; }
 button.ghost { background: transparent; color: var(--next); }
+button:disabled { opacity: 0.45; cursor: default; }
 button:focus-visible, input:focus-visible { outline: 2px solid var(--next); outline-offset: 2px; }
 .btns { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.readout { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
+.readout { font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.4; min-height: 2.8em; color: var(--muted); }
+@media (max-width: 1000px) { .readout { min-height: 4.2em; } }
 .phases { display: grid; gap: 0.6rem; }
 .phase { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr) auto; gap: 0.9rem; align-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 0.9rem 1rem; }
 .phase .n { font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; line-height: 1.1; color: var(--next); }
@@ -117,6 +128,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--next); outl
 .part:hover, .part:focus-visible { text-decoration: underline; }
 .toc { display: flex; flex-direction: column; gap: 0.5rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding-block: 0.9rem; }
 .toc ol { list-style: decimal; padding-left: 1.6rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.toc ul { list-style: disc; padding-left: 1.2rem; margin-top: 0.3rem; display: flex; flex-direction: column; gap: 0.3rem; }
 .toc li::marker { font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted); }
 .toc a { font-family: var(--font-mono); font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--next); text-decoration: none; }
 .toc a:hover, .toc a:focus-visible { text-decoration: underline; }
@@ -127,6 +139,7 @@ a.tag { text-decoration: underline; text-underline-offset: 2px; }
 footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--line); padding-top: 1.25rem; }
 @media (max-width: 720px) {
   .bench { grid-template-columns: minmax(0, 1fr); }
+  .plot { flex: none; min-height: 0; aspect-ratio: 4 / 3; }
   .layer { grid-template-columns: minmax(0, 1fr); gap: 0.15rem; }
   .phase { grid-template-columns: 2rem minmax(0, 1fr); }
   .phase .h { grid-column: 2; }
@@ -155,7 +168,9 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
     <ol>
       <li><a href="#problem">Problem</a></li>
       <li><a href="#proposal">Proposal summary</a></li>
-      <li><a href="#breakdown">Breakdown</a></li>
+      <li><a href="#breakdown">Breakdown</a>
+        <ul><li><a href="#recoil-bench">Demo: pattern and randomness</a></li></ul>
+      </li>
       <li><a href="#plan">Plan</a></li>
       <li><a href="#detail">Supporting detail</a></li>
       <li><a href="#updates">Progress Updates</a></li>
@@ -291,28 +306,33 @@ flowchart LR
 
 <section>
   <div class="col">
-    <h2>Pattern and randomness, tuned separately</h2>
+    <h2 id="recoil-bench">Pattern and randomness, tuned separately</h2>
     <p>Each recoil channel computes a shot the same way. A fixed pattern and a random draw each get their own scale, so a gun can be fully learnable, fully random or any mix. Since 2026-11-15 the camera climb works this way in the game. The other two channels have the scaled random part and no pattern yet.</p>
-<pre class="kv">shot offset = pattern[shot number] x pattern scale
+<pre class="kv">shot offset = pattern[shot number] x pattern influence
             + random(min, max)     x random scale</pre>
     <p><b>Pattern kick is a new idea, added on 2026-11-15.</b> A fixed pattern climbs by the same step every time, which reads as smooth. Pattern kick keeps the pattern's path and makes each shot take a larger or smaller bite of it at random. Most shots move a little and some jump, while the average climb stays the same, so the gun feels kicky and the path can still be learned. It is a proposal: the game does not have this lever yet.</p>
+    <p><b>Pattern flip is a second new idea from the same day.</b> Before each burst the gun decides whether to follow its pattern as drawn or the mirror image of it. At 0 it never flips, at 0.5 both are equally likely, and at 1 it always flips. A player can learn the shape and still has to read which way each burst is going. It is a proposal too: the game does not have this lever yet.</p>
     <p><b>One gun can carry any pattern.</b> A pattern is a list of points stored with the gun or its family. It is data, so it can be replaced while the game runs, and the levers do not change when it is.</p>
-    <p>Try it. The bench below fires bursts with one of four made-up patterns. Choose a pattern and the path changes while every lever stays where it is. The dotted line is the pattern alone, with no randomness. The last five bursts stay on screen so you can see how repeatable the climb is. The numbers are illustrations, not game values.</p>
+    <p>Try it. The bench below fires bursts with one of four made-up patterns. Choose a pattern and the path changes while every lever stays where it is. The dotted line is the pattern alone, with no randomness. Its mirror image fades in as pattern flip rises, and the line as drawn fades out. The zoom under the plot stays where you put it, so the degree lines do not move when a lever does. The last five bursts stay on screen so you can see how repeatable the climb is. The numbers are illustrations, not game values.</p>
   </div>
   <div class="bench">
-    <div style="min-width:0">
-      <canvas id="bench" width="800" height="600" aria-label="Plot of where each shot of a burst lands as the camera climbs"></canvas>
+    <div class="view">
+      <div class="plot"><canvas id="bench" width="800" height="600" aria-label="Plot of where each shot of a burst lands as the camera climbs"></canvas></div>
+      <div class="zoom"><label for="zm">zoom <output id="zmv"></output></label><input type="range" id="zm" min="0.25" max="3" step="0.05" value="1.5"><button type="button" id="zr" class="ghost">Reset zoom</button></div>
       <p class="readout" id="readout"></p>
     </div>
     <div class="controls">
-      <div class="ctl"><label id="patl">pattern</label><div class="pats" id="pats" role="group" aria-labelledby="patl"><button type="button" data-pat="right" aria-pressed="true">Up and right</button><button type="button" data-pat="hook" aria-pressed="false">Left hook</button><button type="button" data-pat="scurve" aria-pressed="false">S-curve</button><button type="button" data-pat="up" aria-pressed="false">Straight up</button></div><small>The fixed path the gun follows. It is data stored with the gun, and the levers below apply to whichever one is chosen.</small></div>
-      <div class="ctl"><label for="ps">pattern scale <output id="psv"></output></label><input type="range" id="ps" min="0" max="2" step="0.05" value="1.1"><small>How much of the fixed, learnable climb is applied.</small></div>
+      <div class="btns"><button id="today" type="button" class="ghost">Apply today's settings</button><button id="reset" type="button" class="ghost">Reset</button></div>
+      <p class="muted" style="font-size:0.85rem">Today's settings are pattern seed off, random scale 1, random shape 0 and no recovery. Those are the defaults every gun ships with. Reset puts the bench back to its starting values.</p>
+      <div class="ctl"><label id="patl">pattern seed</label><div class="pats" id="pats" role="group" aria-labelledby="patl"><button type="button" data-pat="right" aria-pressed="true">Up and out</button><button type="button" data-pat="hook" aria-pressed="false">Hook</button><button type="button" data-pat="scurve" aria-pressed="false">S-curve</button><button type="button" data-pat="up" aria-pressed="false">Straight up</button><button type="button" data-pat="off" aria-pressed="false" class="wide">Off</button></div><small>The fixed path the gun follows. It is data stored with the gun, and the levers below apply to whichever one is chosen. Off is a gun with no pattern, which is every gun today.</small></div>
+      <div class="ctl"><label for="pf">pattern flip <output id="pfv"></output></label><input type="range" id="pf" min="0" max="1" step="0.05" value="0.5"><small>Chance that a burst follows the mirror image of the pattern. 0 never flips, 0.5 flips half the bursts and 1 always flips.</small></div>
+      <div class="ctl"><label for="ps">pattern influence <output id="psv"></output></label><input type="range" id="ps" min="0" max="2" step="0.05" value="0.8"><small>How much of the fixed, learnable climb is applied.</small></div>
       <div class="ctl"><label for="pk">pattern kick <output id="pkv"></output></label><input type="range" id="pk" min="0" max="1" step="0.05" value="0.2"><small>Makes single shots of the pattern kick harder or softer at random. The average climb stays the same.</small></div>
       <div class="ctl"><label for="rs">random scale <output id="rsv"></output></label><input type="range" id="rs" min="0" max="2" step="0.05" value="1.6"><small>How much of the random range is applied.</small></div>
       <div class="ctl"><label for="sh">random shape <output id="shv"></output></label><input type="range" id="sh" min="0" max="1" step="0.05" value="0.1"><small>0 is a flat draw. 1 pulls draws toward the centre.</small></div>
-      <div class="ctl"><label for="rc">recovery <output id="rcv"></output></label><input type="range" id="rc" min="0" max="1" step="0.05" value="0"><small>Share of the climb the camera gives back by itself after the burst.</small></div>
-      <div class="btns"><button id="fire" type="button">Fire a burst</button><button id="today" type="button" class="ghost">Today's behaviour</button></div>
-      <p class="muted" style="font-size:0.85rem">Today's behaviour is pattern empty, random scale 1, no recovery. Those are the defaults every gun ships with.</p>
+      <div class="ctl"><label for="rc">recovery <output id="rcv"></output></label><input type="range" id="rc" min="0" max="1" step="0.05" value="0.3"><small>Share of the climb the camera gives back by itself after the burst.</small></div>
+      <div class="ctl"><label for="n">shot count <output id="nv"></output></label><input type="range" id="n" min="6" max="100" step="1" value="30"><small>Shots in one burst.</small></div>
+      <div class="btns"><button id="fire" type="button">Fire a burst</button></div>
     </div>
   </div>
 </section>
@@ -511,25 +531,41 @@ sequenceDiagram
 (function () {
   var cv = document.getElementById('bench');
   var ctx = cv.getContext('2d');
-  var ids = ['ps', 'pk', 'rs', 'sh', 'rc'];
+  var ids = ['pf', 'ps', 'pk', 'rs', 'sh', 'rc', 'n'];
   var el = {};
   ids.forEach(function (id) { el[id] = document.getElementById(id); el[id + 'v'] = document.getElementById(id + 'v'); });
   var readout = document.getElementById('readout');
-  var SHOTS = 20;
+  var MAXSHOTS = 100;
   // Illustrative patterns: degrees of pitch (up) and yaw per shot. Not game values.
-  var TURN = 2 * Math.PI / (SHOTS - 1);
+  var TURN = 2 * Math.PI / 19;
+  function rise(i) { return i < 8 ? 0.5 : i < 20 ? 0.14 : 0.05; }
   var SHAPES = {
-    right: function (i) { return [i < 8 ? 0.5 : 0.14, i < 4 ? 0.04 : 0.2]; },
-    hook: function (i) { return [i < 8 ? 0.5 : 0.14, i < 7 ? 0.1 : -0.3]; },
-    scurve: function (i) { return [0.28, 2.2 * (Math.sin(TURN * i) - Math.sin(TURN * (i - 1)))]; },
-    up: function (i) { return [i < 8 ? 0.5 : 0.14, 0]; }
+    right: function (i) { return [rise(i), i < 4 ? 0.04 : i < 20 ? 0.2 : 0.04]; },
+    hook: function (i) { return [rise(i), i < 7 ? 0.1 : i < 20 ? -0.3 : -0.04]; },
+    scurve: function (i) { return [i < 20 ? 0.28 : 0.08, 2.2 * (Math.sin(TURN * i) - Math.sin(TURN * (i - 1)))]; },
+    up: function (i) { return [rise(i), 0]; }
   };
-  var PATTERNS = {};
+  var PATTERNS = { off: [] };
+  for (var z = 0; z < MAXSHOTS; z++) PATTERNS.off.push([0, 0]);
   Object.keys(SHAPES).forEach(function (name) {
     PATTERNS[name] = [];
-    for (var i = 0; i < SHOTS; i++) PATTERNS[name].push(SHAPES[name](i));
+    for (var i = 0; i < MAXSHOTS; i++) PATTERNS[name].push(SHAPES[name](i));
   });
   var PATTERN = PATTERNS.right;
+  var off = false, patName = 'right';
+  var todayBtn = document.getElementById('today'), resetBtn = document.getElementById('reset'), zoomBtn = document.getElementById('zr');
+  // The starting values of the bench, which Reset restores.
+  var START = { pat: patName };
+  ids.forEach(function (id) { START[id] = +el[id].value; });
+  var TODAY = { rs: 1, sh: 0, rc: 0 };
+  // A button is greyed out while the bench already holds what it would apply.
+  function buttons() {
+    todayBtn.disabled = off && Object.keys(TODAY).every(function (id) { return +el[id].value === TODAY[id]; });
+    resetBtn.disabled = patName === START.pat && ids.every(function (id) { return +el[id].value === START[id]; });
+    zoomBtn.disabled = zm.value === ZOOM0;
+  }
+  var zm = document.getElementById('zm'), zmv = document.getElementById('zmv');
+  var ZOOM0 = zm.value;
   var patButtons = Array.prototype.slice.call(document.querySelectorAll('#pats button'));
   var RAND = { pitch: [0.0, 0.45], yaw: [-0.5, 0.5] };
   var seed = 7;
@@ -543,15 +579,22 @@ sequenceDiagram
   }
   function burst() {
     var r = rng(seed++);
-    var ps = +el.ps.value, pk = +el.pk.value, rs = +el.rs.value, sh = +el.sh.value;
+    var ps = +el.ps.value, pk = +el.pk.value, rs = +el.rs.value, sh = +el.sh.value, n = +el.n.value;
+    // Pattern flip: one draw per burst decides whether the burst follows the pattern or its mirror image.
+    var side = r() < +el.pf.value ? -1 : 1;
     var x = 0, y = 0, pts = [[0, 0]];
-    for (var i = 1; i < SHOTS; i++) {
+    for (var i = 1; i < n; i++) {
       // Pattern kick: each shot's share of the pattern is multiplied by a random factor whose average is 1, so single shots kick harder or softer and the average climb is unchanged.
       var k = pk > 0 ? (1 - pk) + pk * -Math.log(1 - r()) : 1;
       y += PATTERN[i][0] * ps * k + draw1(r, RAND.pitch[0], RAND.pitch[1], sh) * rs;
-      x += PATTERN[i][1] * ps * k + draw1(r, RAND.yaw[0], RAND.yaw[1], sh) * rs;
+      x += PATTERN[i][1] * side * ps * k + draw1(r, RAND.yaw[0], RAND.yaw[1], sh) * rs;
       pts.push([x, y]);
     }
+    return { pts: pts, flipped: side < 0 && !off && ps > 0 };
+  }
+  function guide(side) {
+    var ps = +el.ps.value, n = +el.n.value, x = 0, y = 0, pts = [[0, 0]];
+    for (var i = 1; i < n; i++) { x += PATTERN[i][1] * side * ps; y += PATTERN[i][0] * ps; pts.push([x, y]); }
     return pts;
   }
   function tok(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
@@ -559,31 +602,41 @@ sequenceDiagram
     var W = cv.width, H = cv.height;
     ctx.clearRect(0, 0, W, H);
     var line = tok('--line'), muted = tok('--muted'), next = tok('--next'), today = tok('--today');
-    var scale = 26, ox = W / 2, oy = H - 60;
+    var ox = W / 2, oy = H - 60;
+    var ps = +el.ps.value, pf = +el.pf.value, n = +el.n.value;
+    // The dotted guides: the pattern as drawn fades out and its mirror image fades in as pattern flip rises.
+    var guides = [];
+    if (!off && ps > 0) { if (pf < 1) guides.push({ pts: guide(1), a: 1 - pf }); if (pf > 0) guides.push({ pts: guide(-1), a: pf }); }
+    // The zoom control alone sets the scale, so the degree lines stay put when a lever moves.
+    var scale = 26 * +zm.value;
+    var visible = (oy - 20) / scale;
+    var step = visible <= 12 ? 2 : visible <= 30 ? 5 : visible <= 70 ? 10 : 20;
     ctx.lineWidth = 1; ctx.strokeStyle = line; ctx.fillStyle = muted; ctx.font = '20px ' + tok('--font-mono');
-    for (var d = 0; d <= 20; d += 5) {
+    for (var d = 0; d <= visible + 0.01; d += step) {
       var gy = oy - d * scale;
       ctx.beginPath(); ctx.moveTo(40, gy); ctx.lineTo(W - 20, gy); ctx.stroke();
-      ctx.fillText(d + '°', 44, gy - 6);
+      ctx.fillText(d + '\u00b0', 44, gy - 6);
     }
     ctx.beginPath(); ctx.moveTo(ox, 20); ctx.lineTo(ox, H - 30); ctx.stroke();
     ctx.fillText('first shot', ox + 12, oy + 28);
-    var gps = +el.ps.value;
-    if (gps > 0) {
-      var gx = 0, gy2 = 0;
-      ctx.strokeStyle = muted; ctx.lineWidth = 2; ctx.setLineDash([3, 7]);
-      ctx.beginPath(); ctx.moveTo(ox, oy);
-      for (var gi = 1; gi < SHOTS; gi++) { gx += PATTERN[gi][1] * gps; gy2 += PATTERN[gi][0] * gps; ctx.lineTo(ox + gx * scale, oy - gy2 * scale); }
-      ctx.stroke(); ctx.setLineDash([]);
-    }
-    bursts.forEach(function (pts, bi) {
-      var last = bi === bursts.length - 1;
+    ctx.strokeStyle = muted; ctx.lineWidth = 2; ctx.setLineDash([3, 7]);
+    guides.forEach(function (g) {
+      ctx.globalAlpha = g.a;
+      ctx.beginPath();
+      g.pts.forEach(function (p, i) { var px = ox + p[0] * scale, py = oy - p[1] * scale; if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py); });
+      ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+    ctx.setLineDash([]);
+    var big = n > 40 ? 3.5 : 5, small = n > 40 ? 2 : 3;
+    bursts.forEach(function (b, bi) {
+      var pts = b.pts, last = bi === bursts.length - 1;
       ctx.globalAlpha = last ? 1 : 0.22 + 0.1 * bi;
       ctx.strokeStyle = next; ctx.fillStyle = next; ctx.lineWidth = last ? 2.5 : 1.5;
       ctx.beginPath();
       pts.forEach(function (p, i) { var px = ox + p[0] * scale, py = oy - p[1] * scale; if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py); });
       ctx.stroke();
-      pts.forEach(function (p) { ctx.beginPath(); ctx.arc(ox + p[0] * scale, oy - p[1] * scale, last ? 5 : 3, 0, 6.2832); ctx.fill(); });
+      pts.forEach(function (p) { ctx.beginPath(); ctx.arc(ox + p[0] * scale, oy - p[1] * scale, last ? big : small, 0, 6.2832); ctx.fill(); });
       if (last) {
         var end = pts[pts.length - 1], rc = +el.rc.value;
         if (rc > 0) {
@@ -597,26 +650,44 @@ sequenceDiagram
       }
     });
     ctx.globalAlpha = 1;
-    var cur = bursts[bursts.length - 1], e = cur[cur.length - 1];
-    readout.textContent = SHOTS + ' shots. This burst climbed ' + e[1].toFixed(1) + ' degrees and drifted ' + Math.abs(e[0]).toFixed(1) + ' degrees ' + (e[0] < 0 ? 'left' : 'right') + '.';
+    var cur = bursts[bursts.length - 1], e = cur.pts[cur.pts.length - 1];
+    readout.textContent = n + ' shots. This burst climbed ' + e[1].toFixed(1) + ' degrees and drifted ' + Math.abs(e[0]).toFixed(1) + ' degrees ' + (e[0] < 0 ? 'left' : 'right') + '.' + (cur.flipped ? ' It followed the mirror image of the pattern.' : '');
   }
-  function labels() { ids.forEach(function (id) { el[id + 'v'].textContent = (+el[id].value).toFixed(2); }); }
+  function labels() { ids.forEach(function (id) { el[id + 'v'].textContent = id === 'n' ? el[id].value : (+el[id].value).toFixed(2); }); buttons(); }
   function fire() { bursts.push(burst()); if (bursts.length > 5) bursts.shift(); render(); }
   function refill() { bursts = []; for (var i = 0; i < 5; i++) bursts.push(burst()); render(); }
   ids.forEach(function (id) { el[id].addEventListener('input', function () { labels(); if (id === 'rc') render(); else refill(); }); });
-  patButtons.forEach(function (b) {
-    b.addEventListener('click', function () {
-      PATTERN = PATTERNS[b.getAttribute('data-pat')];
-      patButtons.forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
-      refill();
-    });
-  });
+  function setPattern(name) {
+    PATTERN = PATTERNS[name];
+    patName = name;
+    off = name === 'off';
+    patButtons.forEach(function (o) { o.setAttribute('aria-pressed', o.getAttribute('data-pat') === name ? 'true' : 'false'); });
+    // With no pattern the three pattern levers have nothing to act on.
+    ['pf', 'ps', 'pk'].forEach(function (id) { el[id].disabled = off; el[id].parentNode.classList.toggle('off', off); });
+    buttons();
+    refill();
+  }
+  patButtons.forEach(function (b) { b.addEventListener('click', function () { setPattern(b.getAttribute('data-pat')); }); });
+  function zoomLabel() { zmv.textContent = (+zm.value).toFixed(2) + 'x'; buttons(); }
+  zm.addEventListener('input', function () { zoomLabel(); render(); });
+  document.getElementById('zr').addEventListener('click', function () { zm.value = ZOOM0; zoomLabel(); render(); });
   document.getElementById('fire').addEventListener('click', fire);
-  document.getElementById('today').addEventListener('click', function () { el.ps.value = 0; el.pk.value = 0; el.rs.value = 1; el.sh.value = 0; el.rc.value = 0; labels(); refill(); });
+  document.getElementById('today').addEventListener('click', function () { Object.keys(TODAY).forEach(function (id) { el[id].value = TODAY[id]; }); labels(); setPattern('off'); });
+  resetBtn.addEventListener('click', function () { ids.forEach(function (id) { el[id].value = START[id]; }); labels(); setPattern(START.pat); });
   if (window.matchMedia) { var mq = window.matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', render); }
   new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(render);
-  labels(); refill();
+  // The plot fills the height of its cell. The drawing keeps a width of 800 units and takes the height that matches the box.
+  var plot = cv.parentNode;
+  function fit() {
+    var w = plot.clientWidth, h = plot.clientHeight;
+    if (!w || !h || !bursts.length) return;
+    var H = Math.max(300, Math.round(cv.width * h / w));
+    if (H !== cv.height) cv.height = H;
+    render();
+  }
+  if (window.ResizeObserver) new ResizeObserver(fit).observe(plot);
+  labels(); zoomLabel(); refill(); fit();
 })();
 </script>
 
