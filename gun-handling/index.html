@@ -107,6 +107,9 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--next); outl
 .phase .tag { display: inline-block; margin-bottom: 0.4rem; }
 .phase ul { font-size: 0.92rem; color: var(--muted); margin-block: 0.4rem; }
 .phase .result { color: var(--fg); }
+.clip { margin: 0; display: flex; flex-direction: column; gap: 0.5rem; min-width: 0; }
+.clip video { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 16 / 9; background: var(--sunk); border: 1px solid var(--line); border-radius: 8px; }
+.clip figcaption { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
 .note { border-left: 3px solid var(--today); background: var(--today-soft); padding: 0.8rem 1rem; border-radius: 0 6px 6px 0; }
 footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--line); padding-top: 1.25rem; }
 @media (max-width: 720px) {
@@ -120,7 +123,7 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
 <div class="wrap">
 
 <header class="col">
-  <span class="eyebrow">Neotokyo Rebuild / in progress / 2026-11-14</span>
+  <span class="eyebrow">Neotokyo Rebuild / in progress / 2026-11-15</span>
   <h1>Gun Handling Controller</h1>
   <p class="lede">Work under way to put every number that shapes how a gun fires and feels into one data file per gun, make those numbers adjustable while playing, and then add recoil, camera and handling mechanisms the game does not have yet.</p>
   <div class="chips">
@@ -128,10 +131,46 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
     <span class="chip done">8 rulings answered</span>
     <span class="chip done">Phases 0 to 2 done</span>
     <span class="chip done">Console tuning works in game</span>
-    <span class="chip wait">Tuning panel being built</span>
+    <span class="chip done">Tuning panel built</span>
+    <span class="chip done">Phase 3 gate passed</span>
+    <span class="chip done">Demo video recorded</span>
+    <span class="chip wait">Phase 4: 2 of 7 steps built</span>
   </div>
-  <p class="muted">On 2026-11-14 the guns read their handling from their own files, and the host of a private test server can change, print, reload and save those values from the console while playing. The docked tuning panel is being built now. The values every gun fires with are still today's, by design.</p>
+  <p class="muted">On 2026-11-15 the guns read their handling from their own files, and the host of a private test server can change, print, reload and save those values while playing, from the console or from the docked tuning panel. Phase 4 has added the first new mechanisms: randomness that can be scaled and shaped, recoil patterns that can be edited live, and a shot counter that can cool down gradually. Each one is switched off until someone tunes it, so the values every gun fires with are still today's, by design.</p>
 </header>
+
+<section>
+  <div class="col">
+    <span class="eyebrow">Demo / recorded 2026-11-15</span>
+    <h2>Live tuning, recorded in a running game</h2>
+    <p>This clip comes from the game's own frame capture on a private test server. A script typed every command. The five parts were recorded one after another and joined, with a caption added to each. The panel on the right is the tuning panel, and its top rows show the live state of the gun.</p>
+  </div>
+  <figure class="clip">
+    <video id="demo-clip" controls preload="none" playsinline poster="media/handling-demo-poster.jpg" src="media/handling-demo.mp4"></video>
+    <figcaption>H.264 with sound, 1280 by 720, 60 frames per second, 18 seconds, 3.7 MB. It downloads only when you press play.</figcaption>
+  </figure>
+  <div class="col">
+    <ol>
+      <li><b>Stock MX.</b> A short burst. The camera does not climb, because the MX has no camera recoil today.</li>
+      <li><b>A pattern, set live.</b> Twelve points of climb and drift are typed into the console while the game runs. The same burst now climbs and drifts along the pattern.</li>
+      <li><b>Pattern scale 2.</b> One lever doubles the whole pattern.</li>
+      <li><b>Shot counter cool-down.</b> With a recovery rate set, the Shot number at the top of the panel counts back down gradually after the burst. Before, it dropped to zero in one step.</li>
+      <li><b>Reload.</b> One command puts every value back to what is on disk, and the burst is stock again.</li>
+    </ol>
+    <p class="muted">The wall is the test map's measuring wall. Each tile is 128 game units square, and each figure is 72 units tall, the height of a player. The bullet holes are cleared before every part, so the marks on the wall belong to that part's burst alone.</p>
+  </div>
+  <div class="col">
+    <h3>The same five parts while aiming</h3>
+    <p>The second clip repeats the run with the sights raised before each burst. A pattern has its own scale for aimed fire, and here it is set to 1, the same as from the hip.</p>
+  </div>
+  <figure class="clip">
+    <video id="demo-clip-ads" controls preload="none" playsinline poster="media/handling-demo-ads-poster.jpg" src="media/handling-demo-ads.mp4"></video>
+    <figcaption>H.264 with sound, 1280 by 720, 60 frames per second, 19 seconds, 4.6 MB. It downloads only when you press play.</figcaption>
+  </figure>
+  <div class="col">
+    <p class="muted">Aimed fire climbed by exactly the same angles as hip fire: 3.55 degrees for the pattern, and 7.1 degrees at scale 2. The sights zoom the picture, so the same angle covers more of the screen.</p>
+  </div>
+</section>
 
 <section>
   <div class="col">
@@ -183,7 +222,7 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
       <li>Flip the target from the gun to its family to move every rifle at once. A rifle that sets its own value for that lever keeps it.</li>
       <li>Press save. Only that gun's handling block in its file changes, or that family's block in the family file, so the edit is a small, reviewable diff.</li>
     </ol>
-    <p>The panel is the part still being built. Everything behind it already works from the console: a change, a family change, a reload from disk and a save.</p>
+    <p>The panel is built, and it sends every edit through the same console commands, so the panel and the console are one path. One difference from the sketch above: the panel's reload button reloads only the gun or the family the switch points at.</p>
   </div>
   <div class="diagram"><pre class="mermaid">
 flowchart LR
@@ -260,7 +299,7 @@ flowchart LR
 <section>
   <div class="col">
     <h2>Pattern and randomness, tuned separately</h2>
-    <p>Each recoil channel will compute a shot the same way. A fixed pattern and a random draw each get their own scale, so a gun can be fully learnable, fully random or any mix.</p>
+    <p>Each recoil channel computes a shot the same way. A fixed pattern and a random draw each get their own scale, so a gun can be fully learnable, fully random or any mix. Since 2026-11-15 the camera climb works this way in the game. The other two channels have the scaled random part and no pattern yet.</p>
 <pre class="kv">shot offset = pattern[shot number] x pattern scale
             + random(min, max)     x random scale</pre>
     <p>Try it. The bench below fires bursts with a made-up pattern. The last five bursts stay on screen so you can see how repeatable the climb is. The numbers are illustrations, not game values.</p>
@@ -289,8 +328,8 @@ flowchart LR
   <div class="scroll"><table>
     <thead><tr><th>Mechanism</th><th>What a designer can now do</th><th>Affects bullets</th></tr></thead>
     <tbody>
-      <tr><td><b>Recoil patterns</b></td><td>Draw a climb and drift per shot, loop or hold it, and let the burst counter cool down gradually.</td><td>Yes</td></tr>
-      <tr><td><b>Randomness control</b></td><td>Scale the random part against the pattern and shape the draw toward the centre.</td><td>Yes</td></tr>
+      <tr><td><b>Recoil patterns</b> <span class="tag ok">Built</span></td><td>Draw a climb and drift per shot, loop or hold it, and let the burst counter cool down gradually.</td><td>Yes</td></tr>
+      <tr><td><b>Randomness control</b> <span class="tag ok">Built</span></td><td>Scale the random part against the pattern and shape the draw toward the centre.</td><td>Yes</td></tr>
       <tr><td><b>Recovery and smoothing</b></td><td>Spread a kick over a few frames, and return part of the climb after firing stops.</td><td>Yes</td></tr>
       <tr><td><b>Per-gun accuracy model</b></td><td>Give each gun its own bloom per shot, cap and recovery speed.</td><td>Yes</td></tr>
       <tr><td><b>Stance and movement</b></td><td>Multiply spread, bloom, kick and recoil for crouching, walking, moving, jumping, leaning and aiming.</td><td>Yes</td></tr>
@@ -345,23 +384,33 @@ sequenceDiagram
     <span class="eyebrow">4 / Plan</span>
     <h2>Five phases, each ending at a gate</h2>
     <p>The first three phases change nothing a player can feel. The fourth adds mechanisms whose defaults change nothing. The hours are estimates made before any code existed, with a review at each gate.</p>
-    <p>On 2026-11-14 phases 0, 1 and 2 are done and their gates passed. Phase 3 is four steps in.</p>
+    <p>On 2026-11-15 phases 0 to 3 are done and their gates passed. Phase 4 is under way: two of its seven steps are built and checked in a running game.</p>
   </div>
   <div class="phases">
     <div class="phase"><span class="n">0</span><div><span class="tag ok">Done</span><h3>Safety net</h3><p>Capture a report of every gun's handling values from today's code.</p><p class="gate">Gate: the baseline report is saved.</p><p class="result">Passed. The report was taken in a running game, and it agrees with every table the investigation had read from source.</p></div><span class="h">about 2 h</span></div>
     <div class="phase"><span class="n">1</span><div><span class="tag ok">Done</span><h3>Data</h3><p>Write the family file and each gun's handling block. Teach the game to read them. Nothing uses them yet.</p><p class="gate">Gate: the values read from files match the baseline for all 24 guns.</p><p class="result">Passed for the 23 guns the test build includes. The PBK56S is not in that build.</p></div><span class="h">about 4 h</span></div>
     <div class="phase"><span class="n">2</span><div><span class="tag ok">Done</span><h3>Controller</h3><p>Switch the fire code to the new record. Delete the table, the per-gun constants and the 38 console variables.</p><p class="gate">Gate: report matches, unit tests pass, every gun fired in game with no prediction errors.</p><p class="result">Passed. All 1219 values of the 23 built guns match the baseline. The only differences are two deliberate ones on the AA13 and the Supa 7, whose own fire code never used the value. Twenty-two guns were fired standing, crouched, moving and airborne, hip and aimed, then reloaded, and the BALC was fired on its own. A falling round count confirmed a shot in the first stage of each gun, and the other stages sent the same inputs. None of the values the new code computes printed a prediction error. The other errors that printed either also appear on the unchanged game or come from code this work does not touch.</p></div><span class="h">about 6 h</span></div>
-    <div class="phase"><span class="n">3</span><div><span class="tag next">Under way</span><h3>Live tuning</h3><p>Console commands, family edits, save, reload and the docked panel.</p>
+    <div class="phase"><span class="n">3</span><div><span class="tag ok">Done</span><h3>Live tuning</h3><p>Console commands, family edits, save, reload and the docked panel.</p>
       <ul>
         <li>3.1 Set, unset and print a gun's levers from the console. Done and checked in game.</li>
         <li>3.2 The same commands on a whole family. Done and checked in game.</li>
         <li>3.3 Reload a gun, a family or everything from the files. Done and checked in game.</li>
         <li>3.4 Save a gun or a family back to its file. Done and checked in game.</li>
-        <li>3.5 The docked tuning panel. Being built now, and not yet finished or checked.</li>
-        <li>3.6 A live readout of accuracy, cone, shot count and last kick at the top of the panel. Not started.</li>
+        <li>3.5 The docked tuning panel. Done. A scripted run found no fault, and the developer tried it in game and accepted it.</li>
+        <li>3.6 A live readout of accuracy, cone, shot count and last kick at the top of the panel. Done. A scripted run found no fault, and the developer watched it work in game.</li>
       </ul>
       <p class="gate">Gate: edit, save, restart and reload all behave, and an untouched game still matches the baseline.</p></div><span class="h">about 7 h</span></div>
-    <div class="phase"><span class="n">4</span><div><span class="tag plain">Not started</span><h3>New mechanisms</h3><p>Seven steps: randomness model, patterns, recovery, stance matrix, camera feedback, viewmodel handling and a pattern view in the panel.</p><p class="gate">Gate: defaults still match the baseline, and a demo profile shows each mechanism working on one gun.</p></div><span class="h">about 9 h</span></div>
+    <div class="phase"><span class="n">4</span><div><span class="tag next">Under way</span><h3>New mechanisms</h3><p>Seven steps. Every new lever starts at a value that changes nothing.</p>
+      <ul>
+        <li>4.1 Randomness model: a scale and a shape for the random part of each recoil channel. Done and checked in game.</li>
+        <li>4.2 Patterns: a recoil pattern for a gun or a family, live editing from the console, and a shot counter that can cool down gradually. Done and checked in game.</li>
+        <li>4.3 Recoil behaviour: smoothing and recovery. Next.</li>
+        <li>4.4 Stance matrix. Not started.</li>
+        <li>4.5 Camera feedback. Not started.</li>
+        <li>4.6 Viewmodel handling. Not started.</li>
+        <li>4.7 A pattern view in the panel. Not started.</li>
+      </ul>
+      <p class="gate">Gate: defaults still match the baseline, and a demo profile shows each mechanism working on one gun.</p></div><span class="h">about 9 h</span></div>
   </div>
   <div class="col">
     <h3>What the in-game checks of phase 3 showed</h3>
@@ -373,17 +422,27 @@ sequenceDiagram
       <li>Reload puts back the values on disk for one gun, one family or everything. A file edited by hand takes effect after a reload.</li>
       <li>Save rewrote only the MX's handling block, and one line of the rifle family's block. A second save wrote nothing. After a restart the saved values were in effect without running any command.</li>
       <li>With cheats off, the game refuses every one of these commands.</li>
+      <li>Players' machines follow every change. No test with matching values printed a prediction error. A test build that made the player's machine ignore a change printed those errors within a second of firing, for the two levers tried, so the silence means agreement.</li>
     </ul>
     <h3>What has not been checked yet</h3>
     <ul>
-      <li>Players' machines appear to follow every change, because no test printed a prediction error. That is an inference from silence. No test has yet shown that a real mismatch would print one, and the gate for phase 3 adds that test.</li>
       <li>Nobody has played the guns by hand to check that they feel the same. The direction of the kick and the magazine rule on reload are the two quick things to try.</li>
       <li>The PBK56S has not been built or compared in game.</li>
       <li>No release build has been compiled or run. Every check so far used a debug build.</li>
     </ul>
     <p>The unit tests were also checked against five published criteria for a clear unit test and rewritten so that each test checks one behaviour, which took them from 35 test functions to 111. The rewrite found one real defect, in how deeply nested a block the save code would search, and it is fixed.</p>
-    <h3>What comes after phase 3</h3>
-    <p>Phase 4 and its gate follow phase 3. After the last gate come a report on what changed and what was measured, a proposal for splitting the work, and the code that sends the server's values to players when they join.</p>
+    <h3>What the in-game checks of phase 4 have shown so far</h3>
+    <ul>
+      <li>With every new lever at its starting value, all 1219 values of the 23 built guns still match the baseline.</li>
+      <li>A three point pattern on the MX moved the camera by exactly the sum of its points over an 11 shot burst: 6.5 degrees up and 4.0 degrees to one side. Looping the pattern and doubling its scale each gave the expected total.</li>
+      <li>A pattern set on the rifle family reached the MX, which had none of its own.</li>
+      <li>With a recovery rate of 2 shots per second, a shot fired 0.8 seconds after a burst carried on from where the burst stopped. Under the old rule it started again from the first point.</li>
+      <li>Aimed fire, with the pattern's aimed scale at 1, climbed by exactly the same angles as hip fire.</li>
+      <li>One reload command removed every live change.</li>
+      <li>No fire test printed a prediction error on a handling value.</li>
+    </ul>
+    <h3>What comes after phase 4</h3>
+    <p>After the last gate come a report on what changed and what was measured, a proposal for splitting the work, and the code that sends the server's values to players when they join. Three further panel ideas are set aside for a later phase: a button that reloads everything, an overlay on the crosshair that previews a change, and memory banks that store and recall a set of lever values.</p>
     <p>All of it lands on one branch first. After review it is split into smaller upstream changes: report and tests, data, controller, live commands, panel, then one per mechanism.</p>
   </div>
 </section>
@@ -436,12 +495,11 @@ sequenceDiagram
     <h3>Still open</h3>
     <ul>
       <li>The feel check by hand, the PBK56S and a release build, as listed under the plan.</li>
-      <li>Proof that a real mismatch between the server and a player's machine shows up as an error. The gate for phase 3 adds it.</li>
     </ul>
   </div>
 </section>
 
-<footer>The investigation was read from the game source at commit dc56cb595 on 2026-11-14. The progress shown is the state of the implementation branch at commit 02d1b3d78 on 2026-11-14. Full findings, the current and proposed architecture and the step-by-step plan are in the project's gun-handling docs folder.</footer>
+<footer>The investigation was read from the game source at commit dc56cb595 on 2026-11-14. The progress shown is the state of the implementation branch at commit 7a18a71b8 on 2026-11-15. Full findings, the current and proposed architecture and the step-by-step plan are in the project's gun-handling docs folder.</footer>
 
 </div>
 
