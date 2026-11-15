@@ -90,6 +90,9 @@ pre.kv { margin: 0; background: var(--sunk); border-radius: 8px; padding: 1rem; 
 .ctl label { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.78rem; }
 .ctl output { color: var(--next); font-variant-numeric: tabular-nums; }
 .ctl input[type="range"] { width: 100%; accent-color: var(--next); }
+.pats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+.pats button { font-family: var(--font-mono); font-size: 0.78rem; padding: 0.4rem 0.5rem; background: transparent; color: var(--next); }
+.pats button[aria-pressed="true"] { background: var(--next); color: var(--surface); }
 .ctl small { color: var(--muted); font-size: 0.8rem; line-height: 1.35; }
 button { font-family: var(--font-body); font-size: 0.9rem; font-weight: 500; padding: 0.5rem 0.9rem; border-radius: 6px; border: 1px solid var(--next); background: var(--next); color: var(--surface); cursor: pointer; }
 button.ghost { background: transparent; color: var(--next); }
@@ -293,7 +296,8 @@ flowchart LR
 <pre class="kv">shot offset = pattern[shot number] x pattern scale
             + random(min, max)     x random scale</pre>
     <p><b>Pattern kick is a new idea, added on 2026-11-15.</b> A fixed pattern climbs by the same step every time, which reads as smooth. Pattern kick keeps the pattern's path and makes each shot take a larger or smaller bite of it at random. Most shots move a little and some jump, while the average climb stays the same, so the gun feels kicky and the path can still be learned. It is a proposal: the game does not have this lever yet.</p>
-    <p>Try it. The bench below fires bursts with a made-up pattern. The last five bursts stay on screen so you can see how repeatable the climb is. The numbers are illustrations, not game values.</p>
+    <p><b>One gun can carry any pattern.</b> A pattern is a list of points stored with the gun or its family. It is data, so it can be replaced while the game runs, and the levers do not change when it is.</p>
+    <p>Try it. The bench below fires bursts with one of four made-up patterns. Choose a pattern and the path changes while every lever stays where it is. The dotted line is the pattern alone, with no randomness. The last five bursts stay on screen so you can see how repeatable the climb is. The numbers are illustrations, not game values.</p>
   </div>
   <div class="bench">
     <div style="min-width:0">
@@ -301,6 +305,7 @@ flowchart LR
       <p class="readout" id="readout"></p>
     </div>
     <div class="controls">
+      <div class="ctl"><label id="patl">pattern</label><div class="pats" id="pats" role="group" aria-labelledby="patl"><button type="button" data-pat="right" aria-pressed="true">Up and right</button><button type="button" data-pat="hook" aria-pressed="false">Left hook</button><button type="button" data-pat="scurve" aria-pressed="false">S-curve</button><button type="button" data-pat="up" aria-pressed="false">Straight up</button></div><small>The fixed path the gun follows. It is data stored with the gun, and the levers below apply to whichever one is chosen.</small></div>
       <div class="ctl"><label for="ps">pattern scale <output id="psv"></output></label><input type="range" id="ps" min="0" max="2" step="0.05" value="1.1"><small>How much of the fixed, learnable climb is applied.</small></div>
       <div class="ctl"><label for="pk">pattern kick <output id="pkv"></output></label><input type="range" id="pk" min="0" max="1" step="0.05" value="0.2"><small>Makes single shots of the pattern kick harder or softer at random. The average climb stays the same.</small></div>
       <div class="ctl"><label for="rs">random scale <output id="rsv"></output></label><input type="range" id="rs" min="0" max="2" step="0.05" value="1.6"><small>How much of the random range is applied.</small></div>
@@ -511,13 +516,21 @@ sequenceDiagram
   ids.forEach(function (id) { el[id] = document.getElementById(id); el[id + 'v'] = document.getElementById(id + 'v'); });
   var readout = document.getElementById('readout');
   var SHOTS = 20;
-  // Illustrative pattern: degrees of pitch (up) and yaw per shot. Not game values.
-  var PATTERN = [];
-  for (var i = 0; i < SHOTS; i++) {
-    var rise = i < 8 ? 0.55 : 0.12;
-    var sway = i < 6 ? 0.05 : Math.sin((i - 6) / 2.2) * 0.42;
-    PATTERN.push([rise, sway]);
-  }
+  // Illustrative patterns: degrees of pitch (up) and yaw per shot. Not game values.
+  var TURN = 2 * Math.PI / (SHOTS - 1);
+  var SHAPES = {
+    right: function (i) { return [i < 8 ? 0.5 : 0.14, i < 4 ? 0.04 : 0.2]; },
+    hook: function (i) { return [i < 8 ? 0.5 : 0.14, i < 7 ? 0.1 : -0.3]; },
+    scurve: function (i) { return [0.28, 2.2 * (Math.sin(TURN * i) - Math.sin(TURN * (i - 1)))]; },
+    up: function (i) { return [i < 8 ? 0.5 : 0.14, 0]; }
+  };
+  var PATTERNS = {};
+  Object.keys(SHAPES).forEach(function (name) {
+    PATTERNS[name] = [];
+    for (var i = 0; i < SHOTS; i++) PATTERNS[name].push(SHAPES[name](i));
+  });
+  var PATTERN = PATTERNS.right;
+  var patButtons = Array.prototype.slice.call(document.querySelectorAll('#pats button'));
   var RAND = { pitch: [0.0, 0.45], yaw: [-0.5, 0.5] };
   var seed = 7;
   var bursts = [];
@@ -555,6 +568,14 @@ sequenceDiagram
     }
     ctx.beginPath(); ctx.moveTo(ox, 20); ctx.lineTo(ox, H - 30); ctx.stroke();
     ctx.fillText('first shot', ox + 12, oy + 28);
+    var gps = +el.ps.value;
+    if (gps > 0) {
+      var gx = 0, gy2 = 0;
+      ctx.strokeStyle = muted; ctx.lineWidth = 2; ctx.setLineDash([3, 7]);
+      ctx.beginPath(); ctx.moveTo(ox, oy);
+      for (var gi = 1; gi < SHOTS; gi++) { gx += PATTERN[gi][1] * gps; gy2 += PATTERN[gi][0] * gps; ctx.lineTo(ox + gx * scale, oy - gy2 * scale); }
+      ctx.stroke(); ctx.setLineDash([]);
+    }
     bursts.forEach(function (pts, bi) {
       var last = bi === bursts.length - 1;
       ctx.globalAlpha = last ? 1 : 0.22 + 0.1 * bi;
@@ -583,6 +604,13 @@ sequenceDiagram
   function fire() { bursts.push(burst()); if (bursts.length > 5) bursts.shift(); render(); }
   function refill() { bursts = []; for (var i = 0; i < 5; i++) bursts.push(burst()); render(); }
   ids.forEach(function (id) { el[id].addEventListener('input', function () { labels(); if (id === 'rc') render(); else refill(); }); });
+  patButtons.forEach(function (b) {
+    b.addEventListener('click', function () {
+      PATTERN = PATTERNS[b.getAttribute('data-pat')];
+      patButtons.forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+      refill();
+    });
+  });
   document.getElementById('fire').addEventListener('click', fire);
   document.getElementById('today').addEventListener('click', function () { el.ps.value = 0; el.pk.value = 0; el.rs.value = 1; el.sh.value = 0; el.rc.value = 0; labels(); refill(); });
   if (window.matchMedia) { var mq = window.matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', render); }
