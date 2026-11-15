@@ -103,6 +103,10 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--next); outl
 .phase p { font-size: 0.92rem; color: var(--muted); }
 .phase .h { font-family: var(--font-mono); font-size: 0.8rem; white-space: nowrap; color: var(--muted); }
 .gate { font-size: 0.85rem; color: var(--ok); }
+.tag.plain { background: var(--sunk); color: var(--muted); }
+.phase .tag { display: inline-block; margin-bottom: 0.4rem; }
+.phase ul { font-size: 0.92rem; color: var(--muted); margin-block: 0.4rem; }
+.phase .result { color: var(--fg); }
 .note { border-left: 3px solid var(--today); background: var(--today-soft); padding: 0.8rem 1rem; border-radius: 0 6px 6px 0; }
 footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--line); padding-top: 1.25rem; }
 @media (max-width: 720px) {
@@ -116,15 +120,17 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
 <div class="wrap">
 
 <header class="col">
-  <span class="eyebrow">Neotokyo Rebuild / proposal / 2026-11-14</span>
+  <span class="eyebrow">Neotokyo Rebuild / in progress / 2026-11-14</span>
   <h1>Gun Handling Controller</h1>
-  <p class="lede">A plan to put every number that shapes how a gun fires and feels into one data file per gun, make those numbers adjustable while playing, and then add recoil, camera and handling mechanisms the game does not have yet.</p>
+  <p class="lede">Work under way to put every number that shapes how a gun fires and feels into one data file per gun, make those numbers adjustable while playing, and then add recoil, camera and handling mechanisms the game does not have yet.</p>
   <div class="chips">
     <span class="chip done">Investigation done</span>
-    <span class="chip done">Plan written</span>
     <span class="chip done">8 rulings answered</span>
-    <span class="chip wait">No game code changed yet</span>
+    <span class="chip done">Phases 0 to 2 done</span>
+    <span class="chip done">Console tuning works in game</span>
+    <span class="chip wait">Tuning panel being built</span>
   </div>
+  <p class="muted">On 2026-11-14 the guns read their handling from their own files, and the host of a private test server can change, print, reload and save those values from the console while playing. The docked tuning panel is being built now. The values every gun fires with are still today's, by design.</p>
 </header>
 
 <section>
@@ -157,7 +163,7 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
     <h2>One record per gun, one place to tune it, and a proof that nothing moved</h2>
     <ol class="steps">
       <li><div><b>One handling record per gun, built on archetypes.</b> Every lever becomes a named value. A gun belongs to a family, such as rifle or shotgun, and states only what makes it different.</div></li>
-      <li><div><b>One lever list in code.</b> The file reader, the file writer, the console commands and the tuning panel are all generated from it. Adding a lever later is a one-line change plus the code that uses it.</div></li>
+      <li><div><b>One lever list in code.</b> The file reader, the file writer, the console commands and the tuning panel are all generated from it. Adding a lever later is one row in the list and one field in the record, plus the code that uses it.</div></li>
       <li><div><b>One handling controller.</b> The maths for spread, kick and recoil moves into a single testable unit that every gun goes through.</div></li>
       <li><div><b>Live tuning.</b> On a private test server, a docked panel or a console command changes a lever while you play. A save button writes it back to the gun's file.</div></li>
       <li><div><b>New mechanisms, switched off by default.</b> Recoil patterns with separately tuned randomness, recovery, stance modifiers, camera feedback and viewmodel handling arrive as more levers. No gun changes until someone tunes it.</div></li>
@@ -174,9 +180,10 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
       <li>Start a private server on the test map and press the panel key.</li>
       <li>The panel docks on the right and shows the gun in your hands. You keep moving and shooting.</li>
       <li>Hold a key to free the mouse, drag a slider, let go, fire. The change is live on the next shot.</li>
-      <li>Flip the target from the gun to its family to move every rifle at once.</li>
-      <li>Press save. Only that gun's handling block in its file changes, so the edit is a small, reviewable diff.</li>
+      <li>Flip the target from the gun to its family to move every rifle at once. A rifle that sets its own value for that lever keeps it.</li>
+      <li>Press save. Only that gun's handling block in its file changes, or that family's block in the family file, so the edit is a small, reviewable diff.</li>
     </ol>
+    <p>The panel is the part still being built. Everything behind it already works from the console: a change, a family change, a reload from disk and a save.</p>
   </div>
   <div class="diagram"><pre class="mermaid">
 flowchart LR
@@ -188,6 +195,7 @@ flowchart LR
     C --> V["Camera and gun model<br/>feedback"]
     P["Tuning panel<br/>and console"] -->|"live change"| R
     P -->|"save"| G
+    P -->|"save"| A
     L --> P
   </pre></div>
 </section>
@@ -217,7 +225,7 @@ flowchart LR
         <div class="layer"><b>Family</b><span>What the family shares.</span></div>
         <div class="layer"><b>Built-in default</b><span>What every gun shares today.</span></div>
       </div>
-      <p class="muted">One level only. A family cannot inherit from another family. Marksman is a new name; the other six match weapon types the game already has. This grouping still needs the developer's review.</p>
+      <p class="muted">One level only. A family cannot inherit from another family. Marksman is a new name; the other six match weapon types the game already has. The developer accepted this grouping as the starting point on 2026-11-14.</p>
     </div>
     <div class="col">
       <h3>The MX, after the move</h3>
@@ -312,6 +320,7 @@ flowchart LR
   <div class="col">
     <h2>How a live change stays in step</h2>
     <p>The game runs the same shooting code twice, once on the server and once on your own machine so that firing feels instant. If the two disagree on a number, your screen stutters. So a change always goes to the server first, and the server tells every client.</p>
+    <p>This holds even for a value only your own machine uses, such as the camera effects that phase 4 adds, because the server's copy is the one a save writes to disk. A family change follows the same path: each side updates the family, then moves every member gun that does not set its own value, using the same rule. A reload reads the file again on the server and then on each client.</p>
   </div>
   <div class="diagram"><pre class="mermaid">
 sequenceDiagram
@@ -320,11 +329,14 @@ sequenceDiagram
     participant C as Each player's game
     participant D as Gun file on disk
     P->>S: set MX kick to 0.7
-    S->>S: check test mode, clamp to range
+    S->>S: check cheats are on, clamp to range
     S->>C: MX kick is now 0.7
-    Note over S,C: both sides fire with the new value
+    Note over S,C: both sides fire with the new value on the next shot
     P->>S: save MX
     S->>D: rewrite only the Handling block
+    P->>S: reload MX
+    D->>S: read the gun file again
+    S->>C: reload MX from its file
   </pre></div>
 </section>
 
@@ -332,16 +344,46 @@ sequenceDiagram
   <div class="col">
     <span class="eyebrow">4 / Plan</span>
     <h2>Five phases, each ending at a gate</h2>
-    <p>The first three phases change nothing a player can feel. The fourth adds mechanisms whose defaults change nothing. Hours are estimates for agent sessions with a review at each gate, made before any code exists.</p>
+    <p>The first three phases change nothing a player can feel. The fourth adds mechanisms whose defaults change nothing. The hours are estimates made before any code existed, with a review at each gate.</p>
+    <p>On 2026-11-14 phases 0, 1 and 2 are done and their gates passed. Phase 3 is four steps in.</p>
   </div>
   <div class="phases">
-    <div class="phase"><span class="n">0</span><div><h3>Safety net</h3><p>Capture a report of every gun's handling values from today's code.</p><p class="gate">Gate: the baseline report is saved.</p></div><span class="h">about 2 h</span></div>
-    <div class="phase"><span class="n">1</span><div><h3>Data</h3><p>Write the family file and each gun's handling block. Teach the game to read them. Nothing uses them yet.</p><p class="gate">Gate: the values read from files match the baseline for all 24 guns.</p></div><span class="h">about 4 h</span></div>
-    <div class="phase"><span class="n">2</span><div><h3>Controller</h3><p>Switch the fire code to the new record. Delete the table, the per-gun constants and the 38 console variables.</p><p class="gate">Gate: report matches, unit tests pass, every gun fired in game with no prediction errors.</p></div><span class="h">about 6 h</span></div>
-    <div class="phase"><span class="n">3</span><div><h3>Live tuning</h3><p>Console commands, family edits, save, reload and the docked panel.</p><p class="gate">Gate: edit, save, restart and reload all behave, and an untouched game still matches the baseline.</p></div><span class="h">about 7 h</span></div>
-    <div class="phase"><span class="n">4</span><div><h3>New mechanisms</h3><p>Randomness model, patterns, recovery, stance matrix, camera feedback, viewmodel handling and a pattern view in the panel.</p><p class="gate">Gate: defaults still match the baseline, and a demo profile shows each mechanism working on one gun.</p></div><span class="h">about 9 h</span></div>
+    <div class="phase"><span class="n">0</span><div><span class="tag ok">Done</span><h3>Safety net</h3><p>Capture a report of every gun's handling values from today's code.</p><p class="gate">Gate: the baseline report is saved.</p><p class="result">Passed. The report was taken in a running game, and it agrees with every table the investigation had read from source.</p></div><span class="h">about 2 h</span></div>
+    <div class="phase"><span class="n">1</span><div><span class="tag ok">Done</span><h3>Data</h3><p>Write the family file and each gun's handling block. Teach the game to read them. Nothing uses them yet.</p><p class="gate">Gate: the values read from files match the baseline for all 24 guns.</p><p class="result">Passed for the 23 guns the test build includes. The PBK56S is not in that build.</p></div><span class="h">about 4 h</span></div>
+    <div class="phase"><span class="n">2</span><div><span class="tag ok">Done</span><h3>Controller</h3><p>Switch the fire code to the new record. Delete the table, the per-gun constants and the 38 console variables.</p><p class="gate">Gate: report matches, unit tests pass, every gun fired in game with no prediction errors.</p><p class="result">Passed. All 1219 values of the 23 built guns match the baseline. The only differences are two deliberate ones on the AA13 and the Supa 7, whose own fire code never used the value. Twenty-two guns were fired standing, crouched, moving and airborne, hip and aimed, then reloaded, and the BALC was fired on its own. A falling round count confirmed a shot in the first stage of each gun, and the other stages sent the same inputs. None of the values the new code computes printed a prediction error. The other errors that printed either also appear on the unchanged game or come from code this work does not touch.</p></div><span class="h">about 6 h</span></div>
+    <div class="phase"><span class="n">3</span><div><span class="tag next">Under way</span><h3>Live tuning</h3><p>Console commands, family edits, save, reload and the docked panel.</p>
+      <ul>
+        <li>3.1 Set, unset and print a gun's levers from the console. Done and checked in game.</li>
+        <li>3.2 The same commands on a whole family. Done and checked in game.</li>
+        <li>3.3 Reload a gun, a family or everything from the files. Done and checked in game.</li>
+        <li>3.4 Save a gun or a family back to its file. Done and checked in game.</li>
+        <li>3.5 The docked tuning panel. Being built now, and not yet finished or checked.</li>
+        <li>3.6 A live readout of accuracy, cone, shot count and last kick at the top of the panel. Not started.</li>
+      </ul>
+      <p class="gate">Gate: edit, save, restart and reload all behave, and an untouched game still matches the baseline.</p></div><span class="h">about 7 h</span></div>
+    <div class="phase"><span class="n">4</span><div><span class="tag plain">Not started</span><h3>New mechanisms</h3><p>Seven steps: randomness model, patterns, recovery, stance matrix, camera feedback, viewmodel handling and a pattern view in the panel.</p><p class="gate">Gate: defaults still match the baseline, and a demo profile shows each mechanism working on one gun.</p></div><span class="h">about 9 h</span></div>
   </div>
   <div class="col">
+    <h3>What the in-game checks of phase 3 showed</h3>
+    <p>Each of steps 3.1 to 3.4 was checked on a private test server with cheats on, while firing.</p>
+    <ul>
+      <li>A change takes effect on the next shot. Switching the MX to semi-automatic made a held trigger fire once, and switching it to automatic made the same hold fire eleven rounds. A value outside a lever's range is pulled back to the limit, and the reply says so.</li>
+      <li>A change to the rifle family reached the MX, the silenced MX and the ZR68C, which do not set their own kick. It left the M41, the M41S and the ZR68S alone, because they do, and it touched no gun outside the family.</li>
+      <li>A gun's own value beats its family's, and clearing it returns the gun to the family's current value.</li>
+      <li>Reload puts back the values on disk for one gun, one family or everything. A file edited by hand takes effect after a reload.</li>
+      <li>Save rewrote only the MX's handling block, and one line of the rifle family's block. A second save wrote nothing. After a restart the saved values were in effect without running any command.</li>
+      <li>With cheats off, the game refuses every one of these commands.</li>
+    </ul>
+    <h3>What has not been checked yet</h3>
+    <ul>
+      <li>Players' machines appear to follow every change, because no test printed a prediction error. That is an inference from silence. No test has yet shown that a real mismatch would print one, and the gate for phase 3 adds that test.</li>
+      <li>Nobody has played the guns by hand to check that they feel the same. The direction of the kick and the magazine rule on reload are the two quick things to try.</li>
+      <li>The PBK56S has not been built or compared in game.</li>
+      <li>No release build has been compiled or run. Every check so far used a debug build.</li>
+    </ul>
+    <p>The unit tests were also checked against five published criteria for a clear unit test and rewritten so that each test checks one behaviour, which took them from 35 test functions to 111. The rewrite found one real defect, in how deeply nested a block the save code would search, and it is fixed.</p>
+    <h3>What comes after phase 3</h3>
+    <p>Phase 4 and its gate follow phase 3. After the last gate come a report on what changed and what was measured, a proposal for splitting the work, and the code that sends the server's values to players when they join.</p>
     <p>All of it lands on one branch first. After review it is split into smaller upstream changes: report and tests, data, controller, live commands, panel, then one per mechanism.</p>
   </div>
 </section>
@@ -367,7 +409,7 @@ sequenceDiagram
   <div class="col">
     <h3>Two accepted consequences</h3>
     <div class="note"><p><b>Camera climb is trusted to the player's machine.</b> The server cannot check it, so a modified game client can skip a patterned climb, as it can skip the Kyla's climb today.</p></div>
-    <div class="note"><p><b>Not for public servers yet.</b> Until the server sends its values to joining players, a player could remove camera recoil with a text edit, and a server with custom tuning would feel uneven to players with stock files. That sync must land with, or before, the upstream change that moves camera recoil into files.</p></div>
+    <div class="note"><p><b>Not for public servers yet.</b> Until the server sends its values to joining players, a player could remove camera recoil with a text edit, and a server with custom tuning would feel uneven to players with stock files. That sync must land with, or before, the upstream change that moves camera recoil into files. Until then a live edit also lasts only until a reload, a save or the game closes, and a player who joins after an edit gets the values on disk.</p></div>
   </div>
 </section>
 
@@ -393,13 +435,13 @@ sequenceDiagram
     </ul>
     <h3>Still open</h3>
     <ul>
-      <li>The seven-family grouping needs the developer's review.</li>
-      <li>Nothing in the investigation was measured in a running game. It was all read from source.</li>
+      <li>The feel check by hand, the PBK56S and a release build, as listed under the plan.</li>
+      <li>Proof that a real mismatch between the server and a player's machine shows up as an error. The gate for phase 3 adds it.</li>
     </ul>
   </div>
 </section>
 
-<footer>Read from the game source at commit dc56cb595 on 2026-11-14. Full findings, the current and proposed architecture and the step-by-step plan are in the project's gun-handling docs folder.</footer>
+<footer>The investigation was read from the game source at commit dc56cb595 on 2026-11-14. The progress shown is the state of the implementation branch at commit 02d1b3d78 on 2026-11-14. Full findings, the current and proposed architecture and the step-by-step plan are in the project's gun-handling docs folder.</footer>
 
 </div>
 
