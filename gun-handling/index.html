@@ -110,6 +110,15 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--next); outl
 .clip { margin: 0; display: flex; flex-direction: column; gap: 0.5rem; min-width: 0; }
 .clip video { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 16 / 9; background: var(--sunk); border: 1px solid var(--line); border-radius: 8px; }
 .clip figcaption { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
+.part { align-self: flex-start; font-family: var(--font-mono); font-size: 1.05rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--next); text-decoration: none; scroll-margin-top: 1rem; }
+.part:hover, .part:focus-visible { text-decoration: underline; }
+.toc { display: flex; flex-direction: column; gap: 0.5rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding-block: 0.9rem; }
+.toc ol { list-style: decimal; padding-left: 1.6rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.toc li::marker { font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted); }
+.toc a { font-family: var(--font-mono); font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--next); text-decoration: none; }
+.toc a:hover, .toc a:focus-visible { text-decoration: underline; }
+.stamp { align-self: flex-start; font-family: var(--font-mono); font-size: 0.78rem; font-variant-numeric: tabular-nums; padding: 0.15rem 0.5rem; border-radius: 4px; background: var(--next-soft); color: var(--next); }
+.update-title { font-size: 1.3rem; }
 .note { border-left: 3px solid var(--today); background: var(--today-soft); padding: 0.8rem 1rem; border-radius: 0 6px 6px 0; }
 footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--line); padding-top: 1.25rem; }
 @media (max-width: 720px) {
@@ -125,6 +134,7 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
 <header class="col">
   <span class="eyebrow">Neotokyo Rebuild / in progress / 2026-11-15</span>
   <h1>Gun Handling Controller</h1>
+  <span class="eyebrow">Mission statement</span>
   <p class="lede">Work under way to put every number that shapes how a gun fires and feels into one data file per gun, make those numbers adjustable while playing, and then add recoil, camera and handling mechanisms the game does not have yet.</p>
   <div class="chips">
     <span class="chip done">Investigation done</span>
@@ -136,45 +146,23 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
     <span class="chip done">Demo video recorded</span>
     <span class="chip wait">Phase 4: 2 of 7 steps built</span>
   </div>
-  <p class="muted">On 2026-11-15 the guns read their handling from their own files, and the host of a private test server can change, print, reload and save those values while playing, from the console or from the docked tuning panel. Phase 4 has added the first new mechanisms: randomness that can be scaled and shaped, recoil patterns that can be edited live, and a shot counter that can cool down gradually. Each one is switched off until someone tunes it, so the values every gun fires with are still today's, by design.</p>
+  <nav class="toc" aria-label="Contents">
+    <span class="eyebrow">Contents</span>
+    <ol>
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#proposal">Proposal summary</a></li>
+      <li><a href="#breakdown">Breakdown</a></li>
+      <li><a href="#plan">Plan</a></li>
+      <li><a href="#detail">Supporting detail</a></li>
+      <li><a href="#updates">Progress Updates</a></li>
+    </ol>
+  </nav>
+  
 </header>
 
 <section>
   <div class="col">
-    <span class="eyebrow">Demo / recorded 2026-11-15</span>
-    <h2>Live tuning, recorded in a running game</h2>
-    <p>This clip comes from the game's own frame capture on a private test server. A script typed every command. The five parts were recorded one after another and joined, with a caption added to each. The panel on the right is the tuning panel, and its top rows show the live state of the gun.</p>
-  </div>
-  <figure class="clip">
-    <video id="demo-clip" controls preload="none" playsinline poster="media/handling-demo-poster.jpg" src="media/handling-demo.mp4"></video>
-    <figcaption>H.264 with sound, 1280 by 720, 60 frames per second, 18 seconds, 3.7 MB. It downloads only when you press play.</figcaption>
-  </figure>
-  <div class="col">
-    <ol>
-      <li><b>Stock MX.</b> A short burst. The camera does not climb, because the MX has no camera recoil today.</li>
-      <li><b>A pattern, set live.</b> Twelve points of climb and drift are typed into the console while the game runs. The same burst now climbs and drifts along the pattern.</li>
-      <li><b>Pattern scale 2.</b> One lever doubles the whole pattern.</li>
-      <li><b>Shot counter cool-down.</b> With a recovery rate set, the Shot number at the top of the panel counts back down gradually after the burst. Before, it dropped to zero in one step.</li>
-      <li><b>Reload.</b> One command puts every value back to what is on disk, and the burst is stock again.</li>
-    </ol>
-    <p class="muted">The wall is the test map's measuring wall. Each tile is 128 game units square, and each figure is 72 units tall, the height of a player. The bullet holes are cleared before every part, so the marks on the wall belong to that part's burst alone.</p>
-  </div>
-  <div class="col">
-    <h3>The same five parts while aiming</h3>
-    <p>The second clip repeats the run with the sights raised before each burst. A pattern has its own scale for aimed fire, and here it is set to 1, the same as from the hip.</p>
-  </div>
-  <figure class="clip">
-    <video id="demo-clip-ads" controls preload="none" playsinline poster="media/handling-demo-ads-poster.jpg" src="media/handling-demo-ads.mp4"></video>
-    <figcaption>H.264 with sound, 1280 by 720, 60 frames per second, 19 seconds, 4.6 MB. It downloads only when you press play.</figcaption>
-  </figure>
-  <div class="col">
-    <p class="muted">Aimed fire climbed by exactly the same angles as hip fire: 3.55 degrees for the pattern, and 7.1 degrees at scale 2. The sights zoom the picture, so the same angle covers more of the screen.</p>
-  </div>
-</section>
-
-<section>
-  <div class="col">
-    <span class="eyebrow">1 / Problem</span>
+    <a class="part" id="problem" href="#problem">1 / Problem</a>
     <h2>A gun's feel is held in five places, and four of them need a programmer</h2>
     <p>Today a designer cannot see one gun's full set of numbers in one place. Most of them can only change with a compiler and a restart. Nothing shows that a change to one gun left the others alone.</p>
   </div>
@@ -198,7 +186,7 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
 
 <section>
   <div class="col">
-    <span class="eyebrow">2 / Proposal summary</span>
+    <a class="part" id="proposal" href="#proposal">2 / Proposal summary</a>
     <h2>One record per gun, one place to tune it, and a proof that nothing moved</h2>
     <ol class="steps">
       <li><div><b>One handling record per gun, built on archetypes.</b> Every lever becomes a named value. A gun belongs to a family, such as rifle or shotgun, and states only what makes it different.</div></li>
@@ -213,7 +201,7 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
 
 <section>
   <div class="col">
-    <span class="eyebrow">3 / Breakdown</span>
+    <a class="part" id="breakdown" href="#breakdown">3 / Breakdown</a>
     <h2>What tuning looks like afterwards</h2>
     <ol>
       <li>Start a private server on the test map and press the panel key.</li>
@@ -243,6 +231,7 @@ flowchart LR
   <div class="col">
     <h2>Archetypes: seven families already exist in the numbers</h2>
     <p>Today's values cluster on their own. Each family below lists what every member shares right now. A family holds the value most of its members use, and a gun that differs states its own. Nothing is chosen by hand. A script produces the split and the before-and-after report proves it.</p>
+    <div class="note"><p><b>This list is a starting point.</b> It is neither complete nor final. Families can be added, renamed, split or merged as the guns are tuned, and a gun can move from one family to another.</p></div>
   </div>
   <div class="scroll"><table>
     <thead><tr><th>Family</th><th>Guns</th><th>Shared today</th></tr></thead>
@@ -302,6 +291,7 @@ flowchart LR
     <p>Each recoil channel computes a shot the same way. A fixed pattern and a random draw each get their own scale, so a gun can be fully learnable, fully random or any mix. Since 2026-11-15 the camera climb works this way in the game. The other two channels have the scaled random part and no pattern yet.</p>
 <pre class="kv">shot offset = pattern[shot number] x pattern scale
             + random(min, max)     x random scale</pre>
+    <p><b>Pattern kick is a new idea, added on 2026-11-15.</b> A fixed pattern climbs by the same step every time, which reads as smooth. Pattern kick keeps the pattern's path and makes each shot take a larger or smaller bite of it at random. Most shots move a little and some jump, while the average climb stays the same, so the gun feels kicky and the path can still be learned. It is a proposal: the game does not have this lever yet.</p>
     <p>Try it. The bench below fires bursts with a made-up pattern. The last five bursts stay on screen so you can see how repeatable the climb is. The numbers are illustrations, not game values.</p>
   </div>
   <div class="bench">
@@ -310,9 +300,10 @@ flowchart LR
       <p class="readout" id="readout"></p>
     </div>
     <div class="controls">
-      <div class="ctl"><label for="ps">pattern scale <output id="psv"></output></label><input type="range" id="ps" min="0" max="2" step="0.05" value="1"><small>How much of the fixed, learnable climb is applied.</small></div>
-      <div class="ctl"><label for="rs">random scale <output id="rsv"></output></label><input type="range" id="rs" min="0" max="2" step="0.05" value="0.5"><small>How much of the random range is applied.</small></div>
-      <div class="ctl"><label for="sh">random shape <output id="shv"></output></label><input type="range" id="sh" min="0" max="1" step="0.05" value="0"><small>0 is a flat draw. 1 pulls draws toward the centre.</small></div>
+      <div class="ctl"><label for="ps">pattern scale <output id="psv"></output></label><input type="range" id="ps" min="0" max="2" step="0.05" value="1.1"><small>How much of the fixed, learnable climb is applied.</small></div>
+      <div class="ctl"><label for="pk">pattern kick <output id="pkv"></output></label><input type="range" id="pk" min="0" max="1" step="0.05" value="0.2"><small>Makes single shots of the pattern kick harder or softer at random. The average climb stays the same.</small></div>
+      <div class="ctl"><label for="rs">random scale <output id="rsv"></output></label><input type="range" id="rs" min="0" max="2" step="0.05" value="1.6"><small>How much of the random range is applied.</small></div>
+      <div class="ctl"><label for="sh">random shape <output id="shv"></output></label><input type="range" id="sh" min="0" max="1" step="0.05" value="0.1"><small>0 is a flat draw. 1 pulls draws toward the centre.</small></div>
       <div class="ctl"><label for="rc">recovery <output id="rcv"></output></label><input type="range" id="rc" min="0" max="1" step="0.05" value="0"><small>Share of the climb the camera gives back by itself after the burst.</small></div>
       <div class="btns"><button id="fire" type="button">Fire a burst</button><button id="today" type="button" class="ghost">Today's behaviour</button></div>
       <p class="muted" style="font-size:0.85rem">Today's behaviour is pattern empty, random scale 1, no recovery. Those are the defaults every gun ships with.</p>
@@ -340,17 +331,18 @@ flowchart LR
   <div class="col">
     <p>Camera feedback comes with one player setting that scales all of it down to zero, for people who are sensitive to camera motion.</p>
     <h3>The stance matrix</h3>
-    <p>Six states by five outputs, every cell a multiplier that starts at 1. Today only three of these thirty relationships exist at all, and they are fixed for every gun.</p>
+    <p>Six states by five outputs, every cell a multiplier that starts at 1. The marked cells are where today's game already treats a stance differently. Those rules are the same for every gun and cannot be tuned yet.</p>
+    <div class="note"><p><b>Is every stance treated the same today?</b> Mostly, yes. Firing does not care about stance for most of these values. The exceptions are few. Crouching lets accuracy recover nearly twice as fast. Moving while firing from the hip, and being in the air, both make accuracy worse for as long as they last. Aiming switches a gun to its own tighter spread cones and its own recoil scale. Walking and leaning change nothing.</p></div>
   </div>
   <div class="scroll"><table>
     <thead><tr><th>State</th><th>Spread</th><th>Bloom gain</th><th>Bloom recovery</th><th>Kick</th><th>Recoil</th></tr></thead>
     <tbody>
-      <tr><td>Crouched</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+      <tr><td>Crouched</td><td>1</td><td>1</td><td>1 <span class="tag today">recovers faster today</span></td><td>1</td><td>1</td></tr>
       <tr><td>Walk key held</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-      <tr><td>Moving</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-      <tr><td>Airborne</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+      <tr><td>Moving</td><td>1</td><td>1 <span class="tag today">grows today, hip only</span></td><td>1</td><td>1</td><td>1</td></tr>
+      <tr><td>Airborne</td><td>1</td><td>1 <span class="tag today">grows today</span></td><td>1</td><td>1</td><td>1</td></tr>
       <tr><td>Leaning</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-      <tr><td>Aiming</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+      <tr><td>Aiming</td><td>1 <span class="tag today">own cones today</span></td><td>1</td><td>1</td><td>1</td><td>1 <span class="tag today">own scale today</span></td></tr>
     </tbody>
   </table></div>
 </section>
@@ -381,7 +373,7 @@ sequenceDiagram
 
 <section>
   <div class="col">
-    <span class="eyebrow">4 / Plan</span>
+    <a class="part" id="plan" href="#plan">4 / Plan</a>
     <h2>Five phases, each ending at a gate</h2>
     <p>The first three phases change nothing a player can feel. The fourth adds mechanisms whose defaults change nothing. The hours are estimates made before any code existed, with a review at each gate.</p>
     <p>On 2026-11-15 phases 0 to 3 are done and their gates passed. Phase 4 is under way: two of its seven steps are built and checked in a running game.</p>
@@ -412,44 +404,11 @@ sequenceDiagram
       </ul>
       <p class="gate">Gate: defaults still match the baseline, and a demo profile shows each mechanism working on one gun.</p></div><span class="h">about 9 h</span></div>
   </div>
-  <div class="col">
-    <h3>What the in-game checks of phase 3 showed</h3>
-    <p>Each of steps 3.1 to 3.4 was checked on a private test server with cheats on, while firing.</p>
-    <ul>
-      <li>A change takes effect on the next shot. Switching the MX to semi-automatic made a held trigger fire once, and switching it to automatic made the same hold fire eleven rounds. A value outside a lever's range is pulled back to the limit, and the reply says so.</li>
-      <li>A change to the rifle family reached the MX, the silenced MX and the ZR68C, which do not set their own kick. It left the M41, the M41S and the ZR68S alone, because they do, and it touched no gun outside the family.</li>
-      <li>A gun's own value beats its family's, and clearing it returns the gun to the family's current value.</li>
-      <li>Reload puts back the values on disk for one gun, one family or everything. A file edited by hand takes effect after a reload.</li>
-      <li>Save rewrote only the MX's handling block, and one line of the rifle family's block. A second save wrote nothing. After a restart the saved values were in effect without running any command.</li>
-      <li>With cheats off, the game refuses every one of these commands.</li>
-      <li>Players' machines follow every change. No test with matching values printed a prediction error. A test build that made the player's machine ignore a change printed those errors within a second of firing, for the two levers tried, so the silence means agreement.</li>
-    </ul>
-    <h3>What has not been checked yet</h3>
-    <ul>
-      <li>Nobody has played the guns by hand to check that they feel the same. The direction of the kick and the magazine rule on reload are the two quick things to try.</li>
-      <li>The PBK56S has not been built or compared in game.</li>
-      <li>No release build has been compiled or run. Every check so far used a debug build.</li>
-    </ul>
-    <p>The unit tests were also checked against five published criteria for a clear unit test and rewritten so that each test checks one behaviour, which took them from 35 test functions to 111. The rewrite found one real defect, in how deeply nested a block the save code would search, and it is fixed.</p>
-    <h3>What the in-game checks of phase 4 have shown so far</h3>
-    <ul>
-      <li>With every new lever at its starting value, all 1219 values of the 23 built guns still match the baseline.</li>
-      <li>A three point pattern on the MX moved the camera by exactly the sum of its points over an 11 shot burst: 6.5 degrees up and 4.0 degrees to one side. Looping the pattern and doubling its scale each gave the expected total.</li>
-      <li>A pattern set on the rifle family reached the MX, which had none of its own.</li>
-      <li>With a recovery rate of 2 shots per second, a shot fired 0.8 seconds after a burst carried on from where the burst stopped. Under the old rule it started again from the first point.</li>
-      <li>Aimed fire, with the pattern's aimed scale at 1, climbed by exactly the same angles as hip fire.</li>
-      <li>One reload command removed every live change.</li>
-      <li>No fire test printed a prediction error on a handling value.</li>
-    </ul>
-    <h3>What comes after phase 4</h3>
-    <p>After the last gate come a report on what changed and what was measured, a proposal for splitting the work, and the code that sends the server's values to players when they join. Three further panel ideas are set aside for a later phase: a button that reloads everything, an overlay on the crosshair that previews a change, and memory banks that store and recall a set of lever values.</p>
-    <p>All of it lands on one branch first. After review it is split into smaller upstream changes: report and tests, data, controller, live commands, panel, then one per mechanism.</p>
-  </div>
 </section>
 
 <section>
   <div class="col">
-    <span class="eyebrow">5 / Supporting detail</span>
+    <a class="part" id="detail" href="#detail">5 / Supporting detail</a>
     <h2>Decisions already made</h2>
   </div>
   <div class="scroll"><table>
@@ -499,7 +458,46 @@ sequenceDiagram
   </div>
 </section>
 
-<footer>The investigation was read from the game source at commit dc56cb595 on 2026-11-14. The progress shown is the state of the implementation branch at commit 7a18a71b8 on 2026-11-15. Full findings, the current and proposed architecture and the step-by-step plan are in the project's gun-handling docs folder.</footer>
+<section>
+  <div class="col">
+    <a class="part" id="updates" href="#updates">6 / Progress Updates</a>
+    <h2>Dated notes and recordings as the work moves</h2>
+    <p class="muted">Each entry carries the date it was recorded or written. The newest is first.</p>
+  </div>
+  <div class="col">
+    <span class="stamp">2026-11-15</span>
+    <h3 class="update-title">Live tuning, recorded in a running game</h3>
+    <p>This clip comes from the game's own frame capture on a private test server. A script typed every command. The five parts were recorded one after another and joined, with a caption added to each. The panel on the right is the tuning panel, and its top rows show the live state of the gun.</p>
+  </div>
+  <figure class="clip">
+    <video id="demo-clip" controls preload="none" playsinline poster="media/handling-demo-poster.jpg" src="media/handling-demo.mp4"></video>
+    <figcaption>H.264 with sound, 1280 by 720, 60 frames per second, 18 seconds, 3.7 MB. It downloads only when you press play.</figcaption>
+  </figure>
+  <div class="col">
+    <ol>
+      <li><b>Stock MX.</b> A short burst. The camera does not climb, because the MX has no camera recoil today.</li>
+      <li><b>A pattern, set live.</b> Twelve points of climb and drift are typed into the console while the game runs. The same burst now climbs and drifts along the pattern.</li>
+      <li><b>Pattern scale 2.</b> One lever doubles the whole pattern.</li>
+      <li><b>Shot counter cool-down.</b> With a recovery rate set, the Shot number at the top of the panel counts back down gradually after the burst. Before, it dropped to zero in one step.</li>
+      <li><b>Reload.</b> One command puts every value back to what is on disk, and the burst is stock again.</li>
+    </ol>
+    <p class="muted">The wall is the test map's measuring wall. Each tile is 128 game units square, and each figure is 72 units tall, the height of a player. The bullet holes are cleared before every part, so the marks on the wall belong to that part's burst alone.</p>
+  </div>
+  <div class="col">
+    <span class="stamp">2026-11-15</span>
+    <h3 class="update-title">The same five parts while aiming</h3>
+    <p>The second clip repeats the run with the sights raised before each burst. A pattern has its own scale for aimed fire, and here it is set to 1, the same as from the hip.</p>
+  </div>
+  <figure class="clip">
+    <video id="demo-clip-ads" controls preload="none" playsinline poster="media/handling-demo-ads-poster.jpg" src="media/handling-demo-ads.mp4"></video>
+    <figcaption>H.264 with sound, 1280 by 720, 60 frames per second, 19 seconds, 4.6 MB. It downloads only when you press play.</figcaption>
+  </figure>
+  <div class="col">
+    <p class="muted">Aimed fire climbed by exactly the same angles as hip fire: 3.55 degrees for the pattern, and 7.1 degrees at scale 2. The sights zoom the picture, so the same angle covers more of the screen.</p>
+  </div>
+</section>
+
+<footer>The investigation read the game's source as it stood on 2026-11-14. The progress shown is the state of the work on 2026-11-15. The full findings, the current and proposed architecture and the step-by-step plan are kept with the project's working documents, and the developer can share them on request.</footer>
 
 </div>
 
@@ -507,7 +505,7 @@ sequenceDiagram
 (function () {
   var cv = document.getElementById('bench');
   var ctx = cv.getContext('2d');
-  var ids = ['ps', 'rs', 'sh', 'rc'];
+  var ids = ['ps', 'pk', 'rs', 'sh', 'rc'];
   var el = {};
   ids.forEach(function (id) { el[id] = document.getElementById(id); el[id + 'v'] = document.getElementById(id + 'v'); });
   var readout = document.getElementById('readout');
@@ -531,11 +529,13 @@ sequenceDiagram
   }
   function burst() {
     var r = rng(seed++);
-    var ps = +el.ps.value, rs = +el.rs.value, sh = +el.sh.value;
+    var ps = +el.ps.value, pk = +el.pk.value, rs = +el.rs.value, sh = +el.sh.value;
     var x = 0, y = 0, pts = [[0, 0]];
     for (var i = 1; i < SHOTS; i++) {
-      y += PATTERN[i][0] * ps + draw1(r, RAND.pitch[0], RAND.pitch[1], sh) * rs;
-      x += PATTERN[i][1] * ps + draw1(r, RAND.yaw[0], RAND.yaw[1], sh) * rs;
+      // Pattern kick: each shot's share of the pattern is multiplied by a random factor whose average is 1, so single shots kick harder or softer and the average climb is unchanged.
+      var k = pk > 0 ? (1 - pk) + pk * -Math.log(1 - r()) : 1;
+      y += PATTERN[i][0] * ps * k + draw1(r, RAND.pitch[0], RAND.pitch[1], sh) * rs;
+      x += PATTERN[i][1] * ps * k + draw1(r, RAND.yaw[0], RAND.yaw[1], sh) * rs;
       pts.push([x, y]);
     }
     return pts;
@@ -583,7 +583,7 @@ sequenceDiagram
   function refill() { bursts = []; for (var i = 0; i < 5; i++) bursts.push(burst()); render(); }
   ids.forEach(function (id) { el[id].addEventListener('input', function () { labels(); if (id === 'rc') render(); else refill(); }); });
   document.getElementById('fire').addEventListener('click', fire);
-  document.getElementById('today').addEventListener('click', function () { el.ps.value = 0; el.rs.value = 1; el.sh.value = 0; el.rc.value = 0; labels(); refill(); });
+  document.getElementById('today').addEventListener('click', function () { el.ps.value = 0; el.pk.value = 0; el.rs.value = 1; el.sh.value = 0; el.rc.value = 0; labels(); refill(); });
   if (window.matchMedia) { var mq = window.matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', render); }
   new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(render);
