@@ -87,9 +87,25 @@ pre.kv { margin: 0; background: var(--sunk); border-radius: 8px; padding: 1rem; 
 .view { min-width: 0; display: flex; flex-direction: column; gap: 0.5rem; }
 .plot { position: relative; flex: 1 1 auto; min-height: 18rem; }
 .bench canvas { position: absolute; inset: 0; width: 100%; height: 100%; background: var(--sunk); border-radius: 6px; display: block; }
-.controls { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
-.ctl { display: flex; flex-direction: column; gap: 0.25rem; }
-.ctl label { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.78rem; }
+.controls { display: flex; flex-direction: column; gap: 0.7rem; min-width: 0; }
+.ctl { display: flex; flex-direction: column; gap: 0.25rem; position: relative; }
+.ctl label { display: flex; justify-content: flex-start; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.78rem; }
+.ctl label .mv { margin-left: auto; color: var(--today); white-space: nowrap; }
+.ctl label.check .mv, #patl .mv { margin-left: 0; }
+.ctl label output { margin-left: 0.1rem; }
+.ctl label.master { color: var(--today); }
+.ctl label.master input { accent-color: var(--today); }
+.legend { position: absolute; top: 3%; left: 5%; z-index: 2; max-width: 70%; font-family: var(--font-mono); font-size: 0.72rem; color: var(--fg); background: transparent; }
+.legend summary { cursor: pointer; color: var(--muted); width: fit-content; }
+.legend ul { list-style: none; margin: 0.3rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.15rem; }
+.legend li { display: flex; align-items: center; gap: 0.4rem; margin: 0; }
+.legend li[hidden], #msrow[hidden] { display: none; }
+.legend svg { flex: none; width: 28px; height: 12px; }
+.ctl .info { flex: none; width: 1.15rem; height: 1.15rem; min-width: 0; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--muted); font: italic 700 0.72rem/1 Georgia, serif; cursor: help; }
+.ctl .info:hover, .ctl .info:focus-visible, .ctl.open .info { color: var(--next); border-color: var(--next); }
+.ctl.tip > small { display: none; position: absolute; left: 0; right: 0; top: 1.55rem; z-index: 5; background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 0.5rem 0.6rem; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); }
+.ctl.tip.open > small { display: block; }
+.ctl.off.open { opacity: 1; }
 .ctl output { color: var(--next); font-variant-numeric: tabular-nums; }
 .ctl input[type="range"] { width: 100%; accent-color: var(--next); }
 .pats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
@@ -97,6 +113,8 @@ pre.kv { margin: 0; background: var(--sunk); border-radius: 8px; padding: 1rem; 
 .pats button[aria-pressed="true"] { background: var(--next); color: var(--surface); }
 .pats .wide { grid-column: 1 / -1; }
 .ctl.off { opacity: 0.45; }
+.ctl label.check { justify-content: flex-start; align-items: center; gap: 0.5rem; }
+.ctl label.check input { accent-color: var(--next); margin: 0; }
 .zoom { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-mono); font-size: 0.78rem; }
 .zoom label { white-space: nowrap; }
 .zoom output { color: var(--next); font-variant-numeric: tabular-nums; }
@@ -108,8 +126,13 @@ button.ghost { background: transparent; color: var(--next); }
 button:disabled { opacity: 0.45; cursor: default; }
 button:focus-visible, input:focus-visible { outline: 2px solid var(--next); outline-offset: 2px; }
 .btns { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.readout { font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.4; min-height: 2.8em; color: var(--muted); }
-@media (max-width: 1000px) { .readout { min-height: 4.2em; } }
+.btns.three button { flex: 1 1 0; min-width: 0; padding: 0.45rem 0.3rem; font-family: var(--font-mono); font-size: 0.78rem; white-space: nowrap; }
+#overlay { border-color: var(--today); color: var(--today); }
+#overlay[aria-pressed="true"] { background: var(--today); color: var(--surface); }
+.callout { margin: 0; border: 1px solid var(--line); border-left: 4px solid var(--today); border-radius: 6px; background: var(--sunk); padding: 0.45rem 0.6rem; font-size: 0.82rem; }
+.grp { margin: 0.2rem 0 0; padding-top: 0.6rem; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.readout { font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.4; min-height: 4.2em; color: var(--muted); }
+@media (max-width: 1000px) { .readout { min-height: 7em; } }
 .phases { display: grid; gap: 0.6rem; }
 .phase { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr) auto; gap: 0.9rem; align-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 0.9rem 1rem; }
 .phase .n { font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; line-height: 1.1; color: var(--next); }
@@ -313,26 +336,38 @@ flowchart LR
     <p><b>Pattern kick is a new idea, added on 2026-11-15.</b> A fixed pattern climbs by the same step every time, which reads as smooth. Pattern kick keeps the pattern's path and makes each shot take a larger or smaller bite of it at random. Most shots move a little and some jump, while the average climb stays the same, so the gun feels kicky and the path can still be learned. It is a proposal: the game does not have this lever yet.</p>
     <p><b>Pattern flip is a second new idea from the same day.</b> Before each burst the gun decides whether to follow its pattern as drawn or the mirror image of it. At 0 it never flips, at 0.5 both are equally likely, and at 1 it always flips. A player can learn the shape and still has to read which way each burst is going. It is a proposal too: the game does not have this lever yet.</p>
     <p><b>One gun can carry any pattern.</b> A pattern is a list of points stored with the gun or its family. It is data, so it can be replaced while the game runs, and the levers do not change when it is.</p>
-    <p>Try it. The bench below fires bursts with one of four made-up patterns. Choose a pattern and the path changes while every lever stays where it is. The dotted line is the path an average burst takes: the pattern at its influence, plus the average of the random climb. Its mirror image fades in as pattern flip rises, and the line as drawn fades out. The zoom under the plot stays where you put it, so the degree lines do not move when a lever does. The last five bursts stay on screen so you can see how repeatable the climb is. The numbers are illustrations, not game values.</p>
+    <p>Try it. The bench calls a pattern the camera climb path, and it fires bursts with one of four made-up climb paths. Choose one and the path changes while every lever stays where it is. The dotted line is the path an average burst takes: the climb path at its influence, plus the average of the random climb. Its mirror image fades in as climb path flip rises, and the line as drawn fades out. With bullet spread on, the dots are bullets and the shaded band is where they can land. The rulers along the base and sides give the distance at the range set under the plot, so the same spread can be read at 10 metres or at 100. The master button applies the MX as it ships, and overlay draws that in orange over whatever is being tuned. The zoom under the plot stays where you put it, so the degree lines do not move when a lever does. The last five bursts stay on screen so you can see how repeatable the climb is. Apart from the master settings, the numbers are illustrations, not game values.</p>
   </div>
   <div class="bench">
     <div class="view">
-      <div class="plot"><canvas id="bench" width="800" height="600" aria-label="Plot of where each shot of a burst lands as the camera climbs"></canvas></div>
-      <div class="zoom"><label for="zm">zoom <output id="zmv"></output></label><input type="range" id="zm" min="0.25" max="3" step="0.05" value="1"><button type="button" id="zr" class="ghost">Reset zoom</button></div>
+      <div class="plot"><canvas id="bench" width="800" height="600" aria-label="Plot of where each shot of a burst lands, with rulers that give the distance at the chosen range"></canvas><details class="legend" open><summary>Legend</summary><ul><li id="lg_path"><svg viewBox="0 0 28 12" aria-hidden="true"><line x1="1" y1="6" x2="27" y2="6" style="stroke:var(--next);stroke-width:2.5"/></svg>camera path of the newest burst</li><li id="lg_shot"><svg viewBox="0 0 28 12" aria-hidden="true"><circle cx="14" cy="6" r="4" style="fill:var(--next)"/></svg><span id="lg_shot_t">shot</span></li><li id="lg_first"><svg viewBox="0 0 28 12" aria-hidden="true"><polygon points="14,0.5 15.6,4.2 19.7,4.5 16.6,7.1 17.6,11 14,8.9 10.4,11 11.4,7.1 8.3,4.5 12.4,4.2" style="fill:var(--next)"/></svg>first shot of a burst</li><li id="lg_old"><svg viewBox="0 0 28 12" aria-hidden="true"><line x1="1" y1="6" x2="27" y2="6" style="stroke:var(--next);stroke-width:1.5;opacity:0.4"/><circle cx="14" cy="6" r="2.5" style="fill:var(--next);opacity:0.4"/></svg>earlier simulations</li><li id="lg_guide"><svg viewBox="0 0 28 12" aria-hidden="true"><line x1="1" y1="6" x2="27" y2="6" style="stroke:var(--muted);stroke-width:2;stroke-dasharray:2 4"/></svg>approximate climb path</li><li id="lg_band"><svg viewBox="0 0 28 12" aria-hidden="true"><rect x="1" y="1" width="26" height="10" rx="5" style="fill:var(--next);opacity:0.25"/></svg>where bullets can land</li><li id="lg_ring"><svg viewBox="0 0 28 12" aria-hidden="true"><circle cx="14" cy="6" r="5" style="fill:none;stroke:var(--fg);stroke-width:1.5"/></svg>spread on the first shot</li><li id="lg_peak"><svg viewBox="0 0 28 12" aria-hidden="true"><circle cx="14" cy="6" r="5" style="fill:none;stroke:var(--fg);stroke-width:1.5;stroke-dasharray:1.5 2.5"/></svg>spread in held fire</li><li id="lg_settle"><svg viewBox="0 0 28 12" aria-hidden="true"><line x1="1" y1="6" x2="17" y2="6" style="stroke:var(--fg);stroke-width:1.5;stroke-dasharray:4 3"/><circle cx="22" cy="6" r="4" style="fill:none;stroke:var(--fg);stroke-width:1.5"/></svg>recovery settle point</li><li id="lg_master"><svg viewBox="0 0 28 12" aria-hidden="true"><circle cx="14" cy="6" r="5" style="fill:none;stroke:var(--today);stroke-width:1.5"/></svg>spread on master, first shot and held fire</li><li id="lg_mshot"><svg viewBox="0 0 28 12" aria-hidden="true"><circle cx="14" cy="6" r="3.5" style="fill:var(--today)"/></svg>bullet on master</li><li id="lg_figure"><svg viewBox="0 0 28 12" aria-hidden="true"><rect x="9" y="1" width="10" height="10" rx="3" style="fill:var(--fg);opacity:0.18"/></svg>a player's hitboxes at the range</li></ul></details></div>
+      <div class="zoom"><label for="zm">zoom <output id="zmv"></output></label><input type="range" id="zm" min="0.25" max="3" step="0.05" value="2"><button type="button" id="zr" class="ghost">Reset zoom</button></div>
+      <div class="zoom"><label for="rg">range <output id="rgv"></output></label><input type="range" id="rg" min="1" max="50" step="1" value="4"></div>
       <p class="readout" id="readout"></p>
     </div>
     <div class="controls">
-      <div class="btns"><button id="today" type="button" class="ghost">Apply today's settings</button><button id="reset" type="button" class="ghost">Reset</button></div>
-      <p class="muted" style="font-size:0.85rem">Today's settings are pattern seed off, random scale 1, random shape 0 and no recovery. Those are the defaults every gun ships with. Reset puts the bench back to its starting values.</p>
-      <div class="ctl"><label id="patl">pattern seed</label><div class="pats" id="pats" role="group" aria-labelledby="patl"><button type="button" data-pat="right" aria-pressed="true">Up and out</button><button type="button" data-pat="hook" aria-pressed="false">Hook</button><button type="button" data-pat="scurve" aria-pressed="false">S-curve</button><button type="button" data-pat="up" aria-pressed="false">Straight up</button><button type="button" data-pat="off" aria-pressed="false" class="wide">Off</button></div><small>The fixed path the gun follows. It is data stored with the gun, and the levers below apply to whichever one is chosen. Off is a gun with no pattern, which is every gun today.</small></div>
-      <div class="ctl"><label for="pf">pattern flip <output id="pfv"></output></label><input type="range" id="pf" min="0" max="1" step="0.05" value="0.5"><small>Chance that a burst follows the mirror image of the pattern. 0 never flips, 0.5 flips half the bursts and 1 always flips.</small></div>
-      <div class="ctl"><label for="ps">pattern influence <output id="psv"></output></label><input type="range" id="ps" min="0" max="2" step="0.05" value="0.8"><small>How much of the fixed, learnable climb is applied.</small></div>
-      <div class="ctl"><label for="pk">pattern kick <output id="pkv"></output></label><input type="range" id="pk" min="0" max="1" step="0.05" value="0.2"><small>Makes single shots of the pattern kick harder or softer at random. The average climb stays the same.</small></div>
-      <div class="ctl"><label for="rs">random scale <output id="rsv"></output></label><input type="range" id="rs" min="0" max="2" step="0.05" value="1.6"><small>How much of the random range is applied.</small></div>
-      <div class="ctl"><label for="sh">random shape <output id="shv"></output></label><input type="range" id="sh" min="0" max="1" step="0.05" value="0.1"><small>0 is a flat draw. 1 pulls draws toward the centre.</small></div>
-      <div class="ctl"><label for="rc">recovery <output id="rcv"></output></label><input type="range" id="rc" min="0" max="1" step="0.05" value="0.3"><small>Share of the climb the camera gives back by itself after the burst.</small></div>
-      <div class="ctl"><label for="n">shot count <output id="nv"></output></label><input type="range" id="n" min="6" max="100" step="1" value="30"><small>Shots in one burst.</small></div>
-      <div class="btns"><button id="fire" type="button">Fire a burst</button></div>
+      <p class="callout">Based off of the MX's settings on <code>master</code>.</p>
+      <div class="btns three"><button id="today" type="button" class="ghost" title="Apply the MX's settings on master">master</button><button id="reset" type="button" class="ghost" title="Apply the starting example">new example</button><button id="overlay" type="button" class="ghost" aria-pressed="false" title="Draw the master settings in orange over the current ones">overlay</button></div>
+      <p class="grp">Bullet spread</p>
+      <div class="ctl"><label for="bs" class="check"><input type="checkbox" id="bs" checked> bullet spread <span class="mv" id="bsm"></span></label><small>Each bullet lands at random inside a cone around where the camera points. This is the only recoil the MX shows on master. With it on, the dots are bullets and the line is the camera. With the camera climb on as well, a shaded band along the camera's path shows where bullets can land.</small></div>
+      <div class="ctl"><label for="smin">spread, first shot <span class="mv" id="sminm"></span><output id="sminv"></output></label><input type="range" id="smin" min="0" max="10" step="0.25" value="0.25"><small>How wide the cone is for a rested gun, in degrees across.</small></div>
+      <div class="ctl"><label for="smax">spread, held fire <span class="mv" id="smaxm"></span><output id="smaxv"></output></label><input type="range" id="smax" min="0" max="10" step="0.25" value="7"><small>How wide the cone is at its peak in held fire, in degrees across.</small></div>
+      <div class="ctl"><label for="sx">spread expansion rate <span class="mv" id="sxm"></span><output id="sxv"></output></label><input type="range" id="sx" min="0.001" max="5" step="0.001" value="2"><small>Seconds of held fire it takes the cone to grow from the first shot's width to its peak. The bench fires ten shots a second, as the MX does.</small></div>
+      <p class="grp">Camera climb</p>
+      <div class="ctl"><label for="cc" class="check"><input type="checkbox" id="cc" checked> camera climb <span class="mv" id="ccm"></span></label><small>The camera moves with each shot and stays there. Off, the camera never moves, as on the MX on master, and the random, recovery and climb path levers have nothing to act on.</small></div>
+      <div class="ctl"><label for="rs">random scale <span class="mv" id="rsm"></span><output id="rsv"></output></label><input type="range" id="rs" min="0" max="2" step="0.05" value="1"><small>How much of the random range is applied to the climb.</small></div>
+      <div class="ctl"><label for="sh">random shape <span class="mv" id="shm"></span><output id="shv"></output></label><input type="range" id="sh" min="0" max="1" step="0.05" value="0.1"><small>0 is a flat draw. 1 pulls draws toward the centre.</small></div>
+      <div class="ctl"><label for="rc">recovery <span class="mv" id="rcm"></span><output id="rcv"></output></label><input type="range" id="rc" min="0" max="1" step="0.05" value="0.3"><small>Share of the climb the camera gives back by itself after the burst.</small></div>
+      <p class="grp">Climb path</p>
+      <div class="ctl"><label id="patl">camera climb path <span class="mv" id="patm"></span></label><div class="pats" id="pats" role="group" aria-labelledby="patl"><button type="button" data-pat="right" aria-pressed="true">Up and out</button><button type="button" data-pat="hook" aria-pressed="false">Hook</button><button type="button" data-pat="scurve" aria-pressed="false">S-curve</button><button type="button" data-pat="up" aria-pressed="false">Straight up</button><button type="button" data-pat="off" aria-pressed="false" class="wide">Off</button></div><small>The fixed path the camera follows as it climbs. It is data stored with the gun, and the levers below apply to whichever one is chosen. Off is a gun with no climb path, which is every gun on master.</small></div>
+      <div class="ctl"><label for="pf">climb path flip <span class="mv" id="pfm"></span><output id="pfv"></output></label><input type="range" id="pf" min="0" max="1" step="0.05" value="0.5"><small>Chance that a burst follows the mirror image of the climb path. 0 never flips, 0.5 flips half the bursts and 1 always flips.</small></div>
+      <div class="ctl"><label for="ps">climb path influence <span class="mv" id="psm"></span><output id="psv"></output></label><input type="range" id="ps" min="0" max="2" step="0.05" value="0.8"><small>How much of the fixed, learnable climb is applied.</small></div>
+      <div class="ctl"><label for="pk">climb path kick <span class="mv" id="pkm"></span><output id="pkv"></output></label><input type="range" id="pk" min="0" max="1" step="0.05" value="0.2"><small>Makes single shots of the climb path kick harder or softer at random. The average climb stays the same.</small></div>
+      <p class="grp">Burst</p>
+      <div class="ctl"><label for="n">shot count <span class="mv" id="nm"></span><output id="nv"></output></label><input type="range" id="n" min="1" max="100" step="1" value="30"><small>Shots in one burst.</small></div>
+      <div class="ctl"><label for="sims">simulations shown <span class="mv" id="simsm"></span><output id="simsv"></output></label><input type="range" id="sims" min="1" max="10" step="1" value="5"><small>How many bursts stay on the plot. The newest is drawn solid and the earlier ones are faded.</small></div>
+      <div class="ctl" id="msrow" hidden><label for="ms" class="check master"><input type="checkbox" id="ms"> show simulations for <code>master</code></label></div>
+      <div class="btns"><button id="fire" type="button">Fire a burst</button><button id="anim" type="button" class="ghost">Animate</button></div>
     </div>
   </div>
 </section>
@@ -531,12 +566,14 @@ sequenceDiagram
 (function () {
   var cv = document.getElementById('bench');
   var ctx = cv.getContext('2d');
-  var ids = ['pf', 'ps', 'pk', 'rs', 'sh', 'rc', 'n'];
+  var ids = ['smin', 'smax', 'sx', 'rs', 'sh', 'rc', 'pf', 'ps', 'pk', 'n', 'sims'];
   var el = {};
   ids.forEach(function (id) { el[id] = document.getElementById(id); el[id + 'v'] = document.getElementById(id + 'v'); });
   var readout = document.getElementById('readout');
   var MAXSHOTS = 100;
-  // Illustrative patterns: degrees of pitch (up) and yaw per shot. Not game values.
+  // The bench fires ten shots a second, which is the MX's rate of fire.
+  var SHOT_TIME = 0.1;
+  // Illustrative climb paths: degrees of pitch (up) and yaw per shot. Not game values.
   var TURN = 2 * Math.PI / 19;
   function rise(i) { return i < 8 ? 0.5 : i < 20 ? 0.14 : 0.05; }
   var SHAPES = {
@@ -551,25 +588,45 @@ sequenceDiagram
     PATTERNS[name] = [];
     for (var i = 0; i < MAXSHOTS; i++) PATTERNS[name].push(SHAPES[name](i));
   });
-  var PATTERN = PATTERNS.right;
-  var off = false, patName = 'right';
-  var todayBtn = document.getElementById('today'), resetBtn = document.getElementById('reset'), zoomBtn = document.getElementById('zr');
-  // The starting values of the bench, which Reset restores.
-  var START = { pat: patName };
-  ids.forEach(function (id) { START[id] = +el[id].value; });
-  var TODAY = { rs: 1, sh: 0, rc: 0 };
-  // A button is greyed out while the bench already holds what it would apply.
-  function buttons() {
-    todayBtn.disabled = off && Object.keys(TODAY).every(function (id) { return +el[id].value === TODAY[id]; });
-    resetBtn.disabled = patName === START.pat && ids.every(function (id) { return +el[id].value === START[id]; });
-    zoomBtn.disabled = zm.value === ZOOM0;
-  }
-  var zm = document.getElementById('zm'), zmv = document.getElementById('zmv');
-  var ZOOM0 = zm.value;
   var patButtons = Array.prototype.slice.call(document.querySelectorAll('#pats button'));
+  var patName = 'right', PATTERN = PATTERNS[patName], off = false;
+  // Camera climb and bullet spread are separate choices. With the climb off the camera stays on the crosshair. With the spread on each bullet lands inside a cone around the camera.
+  var cc = document.getElementById('cc'), bs = document.getElementById('bs');
+  var climb = cc.checked, spread = bs.checked;
+  var todayBtn = document.getElementById('today'), resetBtn = document.getElementById('reset'), overlayBtn = document.getElementById('overlay'), zoomBtn = document.getElementById('zr');
+  var zm = document.getElementById('zm'), zmv = document.getElementById('zmv'), rg = document.getElementById('rg'), rgv = document.getElementById('rgv');
+  var ZOOM0 = zm.value;
+  // The starting example, which the new example button restores.
+  var START = { pat: patName, climb: climb, spread: spread };
+  ids.forEach(function (id) { START[id] = +el[id].value; });
+  // The MX on master, fired from the hip: no camera climb, and a cone of 4 degrees that reaches 7 within about two shots.
+  var MASTER = { smin: 4, smax: 7, sx: 0.2 };
+  var overlay = false;
+  var ms = document.getElementById('ms'), msrow = document.getElementById('msrow');
+  // What each control holds on master, shown beside it while the overlay is on. A climb lever does not apply to a gun whose camera does not climb, and the two bench settings are shared.
+  var ON_MASTER = { bs: 'on', smin: '4.00°', smax: '7.00°', sx: '0.200 s', cc: 'off', rs: 'N/A', sh: 'N/A', rc: 'N/A', pat: 'Off', pf: 'N/A', ps: 'N/A', pk: 'N/A', n: 'same', sims: 'same' };
+  var slots = {}, legend = {};
+  Object.keys(ON_MASTER).forEach(function (id) { slots[id] = document.getElementById(id + 'm'); });
+  ['path', 'shot', 'shot_t', 'old', 'guide', 'band', 'ring', 'peak', 'settle', 'master', 'mshot'].forEach(function (id) { legend[id] = document.getElementById('lg_' + id); });
+  function isMaster() { return !climb && spread && Object.keys(MASTER).every(function (id) { return +el[id].value === MASTER[id]; }); }
+  // A button is greyed out while the bench already holds what it would apply. The overlay locks the master button.
+  function buttons() {
+    todayBtn.disabled = overlay || isMaster();
+    resetBtn.disabled = climb === START.climb && spread === START.spread && patName === START.pat && ids.every(function (id) { return +el[id].value === START[id]; });
+    zoomBtn.disabled = zm.value === ZOOM0;
+    overlayBtn.setAttribute('aria-pressed', overlay ? 'true' : 'false');
+    msrow.hidden = !overlay;
+    Object.keys(ON_MASTER).forEach(function (id) { slots[id].textContent = overlay ? '(' + ON_MASTER[id] + ')' : ''; });
+  }
   var RAND = { pitch: [0.0, 0.45], yaw: [-0.5, 0.5] };
   var seed = 7;
-  var bursts = [];
+  var bursts = [], masterBursts = [];
+  // While a burst is being animated, this is how many of its shots are drawn so far. 0 means every shot is drawn.
+  var shown = 0, timer = null;
+  // The hitboxes of a player model in its reference pose, seen from the front. Each is the outline of one box in game units, measured from the middle of the chest box.
+  var FIGURE = [[[-5.3,-11.7],[-4.7,-25.2],[5.3,-24.8],[4.7,-11.3]],[[1.2,-34.9],[9.2,-35.0],[9.5,-33.8],[9.5,-18.9],[1.5,-18.9],[1.3,-20.1]],[[1.6,-50.5],[1.8,-52.0],[8.8,-52.1],[9.0,-34.4],[8.8,-32.9],[1.8,-32.8]],[[3.0,-49.6],[3.2,-56.5],[7.4,-56.5],[7.4,-56.4],[7.2,-49.4],[3.0,-49.5]],[[3.2,-63.0],[7.7,-63.0],[7.7,-59.0],[3.2,-59.0]],[[-9.4,-35.4],[-1.4,-35.4],[-1.4,-19.3],[-9.4,-19.3]],[[-9.0,-52.5],[-2.0,-52.5],[-1.9,-34.8],[-1.9,-33.3],[-8.9,-33.3],[-9.0,-51.0]],[[-7.7,-56.9],[-3.5,-57.0],[-3.4,-57.0],[-3.3,-50.0],[-7.5,-49.9]],[[-8.3,-62.4],[-8.0,-63.6],[-3.5,-63.4],[-3.5,-60.6],[-3.8,-59.4],[-8.3,-59.6]],[[-7.0,-15.7],[7.0,-15.7],[7.0,-4.1],[-7.0,-4.1]],[[-7.0,-6.3],[7.0,-6.3],[7.0,6.2],[-7.0,6.2]],[[-2.0,5.2],[2.0,5.2],[2.0,10.5],[-2.0,10.5]],[[-4.5,3.7],[4.5,3.7],[4.5,15.6],[-4.5,15.6]],[[4.6,1.3],[4.7,0.9],[11.0,-9.3],[15.2,-6.7],[15.2,-6.3],[8.9,3.9]],[[10.7,-7.9],[15.7,-16.1],[16.5,-17.2],[19.9,-15.1],[14.9,-6.9],[14.1,-5.8]],[[15.6,-16.4],[19.1,-22.1],[20.8,-22.7],[23.6,-20.8],[20.1,-15.0],[18.4,-14.4]],[[-15.2,-6.7],[-11.0,-9.3],[-4.7,0.9],[-4.6,1.3],[-8.9,3.9],[-15.2,-6.3]],[[-19.9,-15.1],[-16.5,-17.2],[-15.7,-16.1],[-10.7,-7.9],[-14.1,-5.8],[-14.9,-6.9]],[[-23.6,-20.8],[-20.8,-22.7],[-19.1,-22.1],[-15.6,-16.4],[-18.4,-14.4],[-20.1,-15.0]]];
+  // The game counts one unit as one inch when it shows a distance in metres.
+  var METRES_PER_UNIT = 0.0254;
   function rng(s) { return function () { s |= 0; s = s + 0x6D2B79F5 | 0; var t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   function draw1(r, lo, hi, shape) {
     var flat = r();
@@ -577,50 +634,129 @@ sequenceDiagram
     var u = flat * (1 - shape) + centred * shape;
     return lo + (hi - lo) * u;
   }
+  // Bullets around a camera path. The cone grows in a straight line from its first width to its peak over the expansion time.
+  function scatter(q, pts, lo, hi, time) {
+    var out = { bullets: [], radii: [], widest: 0 };
+    pts.forEach(function (c, i) {
+      var grown = time > 0 ? Math.min(1, i * SHOT_TIME / time) : 1;
+      var half = (lo + (hi - lo) * grown) / 2, ux, uy;
+      // A bullet's offset is two draws on each axis, taken again until the point is inside the circle, so bullets gather toward the centre.
+      do { ux = q() + q() - 1; uy = q() + q() - 1; } while (ux * ux + uy * uy > 1);
+      out.widest = Math.max(out.widest, half * 2);
+      out.radii.push(half);
+      out.bullets.push([c[0] + ux * half, c[1] + uy * half]);
+    });
+    return out;
+  }
   function burst() {
     var r = rng(seed++);
     var ps = +el.ps.value, pk = +el.pk.value, rs = +el.rs.value, sh = +el.sh.value, n = +el.n.value;
-    // Pattern flip: one draw per burst decides whether the burst follows the pattern or its mirror image.
+    // Climb path flip: one draw per burst decides whether the burst follows the path or its mirror image.
     var side = r() < +el.pf.value ? -1 : 1;
     var x = 0, y = 0, pts = [[0, 0]];
     for (var i = 1; i < n; i++) {
-      // Pattern kick: each shot's share of the pattern is multiplied by a random factor whose average is 1, so single shots kick harder or softer and the average climb is unchanged.
-      var k = pk > 0 ? (1 - pk) + pk * -Math.log(1 - r()) : 1;
-      y += PATTERN[i][0] * ps * k + draw1(r, RAND.pitch[0], RAND.pitch[1], sh) * rs;
-      x += PATTERN[i][1] * side * ps * k + draw1(r, RAND.yaw[0], RAND.yaw[1], sh) * rs;
+      if (climb) {
+        // Climb path kick: each shot's share of the path is multiplied by a random factor whose average is 1, so single shots kick harder or softer and the average climb is unchanged.
+        var k = pk > 0 ? (1 - pk) + pk * -Math.log(1 - r()) : 1;
+        y += PATTERN[i][0] * ps * k + draw1(r, RAND.pitch[0], RAND.pitch[1], sh) * rs;
+        x += PATTERN[i][1] * side * ps * k + draw1(r, RAND.yaw[0], RAND.yaw[1], sh) * rs;
+      }
       pts.push([x, y]);
     }
-    return { pts: pts, flipped: side < 0 && !off && ps > 0 };
+    var out = { pts: pts, flipped: climb && side < 0 && !off && ps > 0, bullets: null, radii: null, widest: 0 };
+    if (spread) {
+      // The spread has its own stream of draws, so switching it on does not change the camera's path.
+      var s = scatter(rng(seed * 7919 + 13), pts, +el.smin.value, +el.smax.value, +el.sx.value);
+      out.bullets = s.bullets; out.radii = s.radii; out.widest = s.widest;
+    }
+    return out;
+  }
+  // The burst the overlay draws: the same number of shots with the master settings, around a camera that does not move.
+  function masterShots() {
+    var n = +el.n.value, still = [];
+    for (var i = 0; i < n; i++) still.push([0, 0]);
+    return scatter(rng(seed * 104729 + 7), still, MASTER.smin, MASTER.smax, MASTER.sx);
   }
   function guide(side) {
     var ps = +el.ps.value, rs = +el.rs.value, n = +el.n.value, x = 0, y = 0, pts = [[0, 0]];
-    // The guide is the path of an average burst: the pattern at its influence, plus the mean of the random draw at its scale.
+    // The guide is the path of an average burst: the climb path at its influence, plus the mean of the random draw at its scale.
     var mx = (RAND.yaw[0] + RAND.yaw[1]) / 2 * rs, my = (RAND.pitch[0] + RAND.pitch[1]) / 2 * rs;
     for (var i = 1; i < n; i++) { x += PATTERN[i][1] * side * ps + mx; y += PATTERN[i][0] * ps + my; pts.push([x, y]); }
     return pts;
   }
   function tok(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  // A length at the chosen range, written in metres or in centimetres below one metre.
+  function metres(m) { return m < 1 ? Math.round(m * 100) + ' cm' : (m < 10 ? +m.toFixed(1) : Math.round(m)) + ' m'; }
+  // How far apart two lines are at the range when they are this many degrees apart at the gun.
+  function across(deg) { return 2 * +rg.value * Math.tan(deg / 2 * Math.PI / 180); }
+  // A round step of 1, 2 or 5 times a power of ten at or above the given length.
+  function roundStep(m) {
+    var p = Math.pow(10, Math.floor(Math.log(m) / Math.LN10)), f = m / p;
+    var lead = f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10;
+    return { step: lead * p, lead: lead === 10 ? 1 : lead };
+  }
   function render() {
     var W = cv.width, H = cv.height;
     ctx.clearRect(0, 0, W, H);
     var line = tok('--line'), muted = tok('--muted'), next = tok('--next'), today = tok('--today');
-    var ox = W / 2, oy = H - 60;
-    var ps = +el.ps.value, pf = +el.pf.value, n = +el.n.value;
-    // The dotted guides: the pattern as drawn fades out and its mirror image fades in as pattern flip rises.
+    var mono = tok('--font-mono');
+    // The plot's frame. The rulers sit outside it: one along the base and one on each side.
+    var L = 24, R = W - 70, T = 16, B = H - 44;
+    // One layout for every setting. The first shot sits 15 degrees above the base, and at a zoom of 1 at least 30 degrees fit above it.
+    var base = Math.min(18, (B - T) / 45);
+    var ox = (L + R) / 2, oy = B - 15 * base;
+    var ps = +el.ps.value, pf = +el.pf.value, n = +el.n.value, range = +rg.value;
+    // The dotted guides: the climb path as drawn fades out and its mirror image fades in as climb path flip rises.
     var guides = [];
-    if (!off && ps > 0) { if (pf < 1) guides.push({ pts: guide(1), a: 1 - pf }); if (pf > 0) guides.push({ pts: guide(-1), a: pf }); }
+    if (climb && !off && ps > 0) { if (pf < 1) guides.push({ pts: guide(1), a: 1 - pf }); if (pf > 0) guides.push({ pts: guide(-1), a: pf }); }
     // The zoom control alone sets the scale, so the degree lines stay put when a lever moves.
-    var scale = 26 * +zm.value;
-    var visible = (oy - 20) / scale;
-    var step = visible <= 12 ? 2 : visible <= 30 ? 5 : visible <= 70 ? 10 : 20;
-    ctx.lineWidth = 1; ctx.strokeStyle = line; ctx.fillStyle = muted; ctx.font = '20px ' + tok('--font-mono');
-    for (var d = 0; d <= visible + 0.01; d += step) {
+    var scale = base * +zm.value;
+    var up = (oy - T) / scale, down = (B - oy) / scale;
+    var step = up <= 12 ? 2 : up <= 30 ? 5 : up <= 70 ? 10 : 20;
+
+    ctx.save();
+    ctx.beginPath(); ctx.rect(L, T, R - L, B - T); ctx.clip();
+    var fg = tok('--fg');
+    // A soft figure behind everything, drawn to size for the range, with the middle of the chest hitbox on the crosshair.
+    (function () {
+      var ppu = Math.atan(0.01 / range) * 180 / Math.PI * scale * 100 * METRES_PER_UNIT;
+      ctx.beginPath();
+      FIGURE.forEach(function (box) {
+        var q = box.map(function (p) { return [ox + p[0] * ppu, oy - p[1] * ppu]; }), area = 0;
+        // Every box must wind the same way, or the single fill would cut holes where two boxes overlap.
+        q.forEach(function (v, i) { var w = q[(i + 1) % q.length]; area += v[0] * w[1] - w[0] * v[1]; });
+        if (area < 0) q.reverse();
+        q.forEach(function (v, i) { if (i) ctx.lineTo(v[0], v[1]); else ctx.moveTo(v[0], v[1]); });
+        ctx.closePath();
+      });
+      ctx.globalAlpha = 0.1; ctx.fillStyle = fg; ctx.fill(); ctx.globalAlpha = 1;
+    })();
+    ctx.lineWidth = 1; ctx.fillStyle = muted; ctx.font = '20px ' + mono;
+    for (var d = -Math.floor(down / step) * step; d <= up + 0.01; d += step) {
       var gy = oy - d * scale;
-      ctx.beginPath(); ctx.moveTo(40, gy); ctx.lineTo(W - 20, gy); ctx.stroke();
-      ctx.fillText(d + '\u00b0', 44, gy - 6);
+      ctx.strokeStyle = d === 0 ? muted : line;
+      ctx.beginPath(); ctx.moveTo(L, gy); ctx.lineTo(R, gy); ctx.stroke();
+      ctx.textAlign = 'right';
+      ctx.fillText(d + '°', R - 8, gy - 6);
     }
-    ctx.beginPath(); ctx.moveTo(ox, 20); ctx.lineTo(ox, H - 30); ctx.stroke();
-    ctx.fillText('first shot', ox + 12, oy + 28);
+    ctx.textAlign = 'left';
+    ctx.strokeStyle = line;
+    ctx.beginPath(); ctx.moveTo(ox, T); ctx.lineTo(ox, B); ctx.stroke();
+    // With the camera still, the cone is drawn at its narrowest and widest around the crosshair.
+    function rings(lo, hi, colour) {
+      ctx.strokeStyle = colour; ctx.lineWidth = 2;
+      [lo, hi].forEach(function (deg, held) {
+        var rr = deg / 2 * scale;
+        if (!(rr > 0)) return;
+        // The first shot's cone is a solid line and the held fire cone a dotted one.
+        ctx.setLineDash(held ? [2, 6] : []);
+        ctx.beginPath(); ctx.arc(ox, oy, rr, 0, 6.2832); ctx.stroke();
+      });
+      ctx.setLineDash([]); ctx.lineWidth = 1;
+    }
+    if (!climb && spread) rings(+el.smin.value, +el.smax.value, fg);
+    ctx.fillStyle = muted;
+    ctx.fillText(climb ? 'first shot' : 'crosshair', ox + 12, oy + 28);
     ctx.strokeStyle = muted; ctx.lineWidth = 2; ctx.setLineDash([3, 7]);
     guides.forEach(function (g) {
       ctx.globalAlpha = g.a;
@@ -630,52 +766,207 @@ sequenceDiagram
     });
     ctx.globalAlpha = 1;
     ctx.setLineDash([]);
+    // With the climb and the spread both on, the cone travels with the camera. The band is every place a bullet of the newest burst could have landed.
+    function band(pts, radii) {
+      ctx.beginPath();
+      var qx, qy, qr;
+      pts.forEach(function (p, i) {
+        var cx = ox + p[0] * scale, cy = oy - p[1] * scale, cr = radii[i] * scale;
+        if (cr > 0) { ctx.moveTo(cx + cr, cy); ctx.arc(cx, cy, cr, 0, 6.2832); }
+        if (i) {
+          var dx = cx - qx, dy = cy - qy, len = Math.sqrt(dx * dx + dy * dy);
+          if (len > 0) {
+            var nx = -dy / len, ny = dx / len;
+            var quad = [[qx + nx * qr, qy + ny * qr], [cx + nx * cr, cy + ny * cr], [cx - nx * cr, cy - ny * cr], [qx - nx * qr, qy - ny * qr]];
+            // Every piece must wind the same way as the circles, or the fill would cut holes where two pieces overlap.
+            var area = 0;
+            quad.forEach(function (v, j) { var w = quad[(j + 1) % 4]; area += v[0] * w[1] - w[0] * v[1]; });
+            if (area < 0) quad.reverse();
+            quad.forEach(function (v, j) { if (j) ctx.lineTo(v[0], v[1]); else ctx.moveTo(v[0], v[1]); });
+            ctx.closePath();
+          }
+        }
+        qx = cx; qy = cy; qr = cr;
+      });
+      ctx.globalAlpha = 0.16; ctx.fillStyle = next; ctx.fill();
+    }
+    // The first shot of a burst is a star, so it stands out from the shots that follow it.
+    function star(cx, cy, r) {
+      ctx.beginPath();
+      for (var i = 0; i < 10; i++) {
+        var a = -Math.PI / 2 + i * Math.PI / 5, rad = i % 2 ? r * 0.45 : r;
+        if (i) ctx.lineTo(cx + Math.cos(a) * rad, cy + Math.sin(a) * rad); else ctx.moveTo(cx + Math.cos(a) * rad, cy + Math.sin(a) * rad);
+      }
+      ctx.closePath(); ctx.fill();
+    }
+    function marks(list, big, small) {
+      list.forEach(function (p, i) {
+        var cx = ox + p[0] * scale, cy = oy - p[1] * scale;
+        if (!i) { star(cx, cy, big * 2.4); return; }
+        ctx.beginPath(); ctx.arc(cx, cy, small, 0, 6.2832); ctx.fill();
+      });
+    }
+    var newest = bursts[bursts.length - 1];
+    // Only the newest burst is animated, so only its lists are cut to the shots drawn so far.
+    function cut(list, last) { return last && shown ? list.slice(0, shown) : list; }
+    if (climb && newest.bullets) band(cut(newest.pts, true), cut(newest.radii, true));
     var big = n > 40 ? 3.5 : 5, small = n > 40 ? 2 : 3;
     bursts.forEach(function (b, bi) {
-      var pts = b.pts, last = bi === bursts.length - 1;
+      var last = bi === bursts.length - 1, pts = cut(b.pts, last);
       ctx.globalAlpha = last ? 1 : 0.22 + 0.1 * bi;
       ctx.strokeStyle = next; ctx.fillStyle = next; ctx.lineWidth = last ? 2.5 : 1.5;
-      ctx.beginPath();
-      pts.forEach(function (p, i) { var px = ox + p[0] * scale, py = oy - p[1] * scale; if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py); });
-      ctx.stroke();
-      pts.forEach(function (p) { ctx.beginPath(); ctx.arc(ox + p[0] * scale, oy - p[1] * scale, last ? big : small, 0, 6.2832); ctx.fill(); });
-      if (last) {
+      if (climb) {
+        ctx.beginPath();
+        pts.forEach(function (p, i) { var px = ox + p[0] * scale, py = oy - p[1] * scale; if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py); });
+        ctx.stroke();
+      }
+      marks(b.bullets ? cut(b.bullets, last) : pts, last ? big : small, last ? big : small);
+      if (last && climb && !shown) {
         var end = pts[pts.length - 1], rc = +el.rc.value;
-        if (rc > 0) {
+        if (rc > 0 && (end[0] !== 0 || end[1] !== 0)) {
           var ex = ox + end[0] * scale, ey = oy - end[1] * scale;
           var rx = ox + end[0] * (1 - rc) * scale, ry = oy - end[1] * (1 - rc) * scale;
-          ctx.globalAlpha = 1; ctx.strokeStyle = today; ctx.fillStyle = today; ctx.setLineDash([8, 8]); ctx.lineWidth = 2;
+          ctx.globalAlpha = 1; ctx.strokeStyle = fg; ctx.setLineDash([8, 8]); ctx.lineWidth = 2;
           ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(rx, ry); ctx.stroke(); ctx.setLineDash([]);
-          ctx.beginPath(); ctx.arc(rx, ry, 7, 0, 6.2832); ctx.fill();
-          ctx.fillText('camera settles here', Math.min(rx + 14, W - 250), ry + 6);
+          ctx.beginPath(); ctx.arc(rx, ry, 7, 0, 6.2832); ctx.stroke();
         }
       }
     });
+    // The overlay: the master settings in orange, on top of whatever is being tuned. The cone is always drawn, and the bullets of each simulation when asked for.
+    if (overlay) {
+      ctx.globalAlpha = 1; ctx.lineWidth = 2;
+      rings(MASTER.smin, MASTER.smax, today);
+      if (ms.checked) {
+        ctx.fillStyle = today;
+        masterBursts.forEach(function (mb, bi) {
+          var last = bi === masterBursts.length - 1;
+          ctx.globalAlpha = last ? 0.95 : 0.22 + 0.06 * bi;
+          marks(cut(mb.bullets, last), last ? big - 1 : small, last ? big - 1 : small);
+        });
+      }
+    }
     ctx.globalAlpha = 1;
-    var cur = bursts[bursts.length - 1], e = cur.pts[cur.pts.length - 1];
-    readout.textContent = n + ' shots. This burst climbed ' + e[1].toFixed(1) + ' degrees and drifted ' + Math.abs(e[0]).toFixed(1) + ' degrees ' + (e[0] < 0 ? 'left' : 'right') + '.' + (cur.flipped ? ' It followed the mirror image of the pattern.' : '');
+    ctx.restore();
+
+    // The rulers give the distance at the chosen range. A tick at a length sits at the angle that length covers from the gun.
+    // A labelled tick stands at a round number of metres. Between two of them sit a taller tick at the half and short ticks at the tenths, as on a ruler, in the finest division that leaves the ticks apart.
+    function at(m) { return Math.atan(m / range) * 180 / Math.PI * scale; }
+    var major = roundStep(range * Math.tan(Math.min(80, 80 / scale) * Math.PI / 180));
+    var parts = 1;
+    (major.lead === 2 ? [10, 4, 2] : major.lead === 5 ? [10, 5] : [10, 5, 2]).some(function (div) { if (at(major.step / div) >= 7) { parts = div; return true; } return false; });
+    ctx.strokeStyle = muted; ctx.fillStyle = muted; ctx.lineWidth = 1; ctx.font = '16px ' + mono;
+    ctx.beginPath(); ctx.moveTo(L, B); ctx.lineTo(R, B); ctx.moveTo(L, T); ctx.lineTo(L, B); ctx.moveTo(R, T); ctx.lineTo(R, B); ctx.stroke();
+    ctx.textAlign = 'center';
+    // Far from the centre the same length covers less and less of the plot, so a tick or a label that would crowd the one before it is left out.
+    var tickAt = -100, labelAt = -100;
+    for (var k = 0; k < 4000; k++) {
+      var m = k * major.step / parts, px = at(m);
+      // Past 75 degrees from the centre a ruler says nothing useful, so it stops there.
+      if ((ox + px > R && oy - px < T && oy + px > B) || m > range * 3.7) break;
+      if (px - tickAt < 4) continue;
+      tickAt = px;
+      var whole = k % parts === 0, half = !whole && parts % 2 === 0 && k % (parts / 2) === 0;
+      var len = whole ? 14 : half ? 10 : 5, text = whole && px - labelAt >= 60 ? (k ? +m.toFixed(2) + ' m' : '0') : '';
+      if (text) labelAt = px;
+      [-1, 1].forEach(function (sign) {
+        if (!k && sign > 0) return;
+        var tx = ox + sign * px;
+        if (tx >= L && tx <= R) {
+          ctx.beginPath(); ctx.moveTo(tx, B); ctx.lineTo(tx, B + len); ctx.stroke();
+          if (text && tx > L + 120) ctx.fillText(text, tx, B + 32);
+        }
+        var ty = oy - sign * px;
+        if (ty >= T && ty <= B) {
+          ctx.beginPath(); ctx.moveTo(L - len, ty); ctx.lineTo(L, ty); ctx.moveTo(R, ty); ctx.lineTo(R + len, ty); ctx.stroke();
+          if (text) { ctx.textAlign = 'left'; ctx.fillText(text, R + 18, ty + 5); ctx.textAlign = 'center'; }
+        }
+      });
+    }
+    ctx.textAlign = 'left';
+    ctx.fillText('at ' + range + ' m', L, B + 32);
+
+    // The legend lists only what is on the plot.
+    var sims = bursts.length, settle = climb && +el.rc.value > 0;
+    legend.path.hidden = !climb;
+    legend.shot_t.textContent = spread ? 'bullet' : 'shot';
+    legend.old.hidden = sims < 2;
+    legend.guide.hidden = !guides.length;
+    legend.band.hidden = !(climb && spread);
+    legend.ring.hidden = !(!climb && spread);
+    legend.peak.hidden = legend.ring.hidden;
+    legend.settle.hidden = !settle;
+    legend.master.hidden = !overlay;
+    legend.mshot.hidden = !(overlay && ms.checked);
+
+    var cur = newest, seen = cut(cur.pts, true), e = seen[seen.length - 1];
+    var widest = cur.radii ? Math.max.apply(null, cut(cur.radii, true)) * 2 : 0;
+    var cone = '';
+    if (spread) {
+      var first = +el.smin.value;
+      cone = widest > first
+        ? ' Bullets spread ' + (+first.toFixed(2)) + ' degrees across on the first shot and up to ' + widest.toFixed(1) + ' after, which is ' + metres(across(first)) + ' and ' + metres(across(widest)) + ' across at ' + range + ' m.'
+        : ' Bullets spread ' + (+first.toFixed(2)) + ' degrees across, which is ' + metres(across(first)) + ' across at ' + range + ' m.';
+    }
+    var shots = shown ? seen.length + ' of ' + n + ' shots.' : n + (n === 1 ? ' shot.' : ' shots.');
+    if (!climb) { readout.textContent = shots + ' The camera did not climb.' + (cone || ' Every bullet went to the crosshair.'); return; }
+    if (e[0] === 0 && e[1] === 0) { readout.textContent = shots + ' The camera did not climb or drift.' + cone; return; }
+    readout.textContent = shots + ' This burst climbed ' + e[1].toFixed(1) + ' degrees and drifted ' + Math.abs(e[0]).toFixed(1) + ' degrees ' + (e[0] < 0 ? 'left' : 'right') + '.' + (cur.flipped ? ' It followed the mirror image of the climb path.' : '') + cone;
   }
-  function labels() { ids.forEach(function (id) { el[id + 'v'].textContent = id === 'n' ? el[id].value : (+el[id].value).toFixed(2); }); buttons(); }
-  function fire() { bursts.push(burst()); if (bursts.length > 5) bursts.shift(); render(); }
-  function refill() { bursts = []; for (var i = 0; i < 5; i++) bursts.push(burst()); render(); }
+  function labels() {
+    ids.forEach(function (id) {
+      var v = +el[id].value;
+      el[id + 'v'].textContent = id === 'n' || id === 'sims' ? el[id].value : id === 'sx' ? v.toFixed(3) + ' s' : id === 'smin' || id === 'smax' ? v.toFixed(2) + '°' : v.toFixed(2);
+    });
+    buttons();
+  }
+  // Each simulation of the example has a simulation of master beside it, so the overlay can show as many.
+  function settle() { if (timer) clearInterval(timer); timer = null; shown = 0; }
+  function fire() { settle(); var keep = +el.sims.value; bursts.push(burst()); masterBursts.push(masterShots()); while (bursts.length > keep) { bursts.shift(); masterBursts.shift(); } render(); }
+  function refill() { settle(); bursts = []; masterBursts = []; for (var i = 0, keep = +el.sims.value; i < keep; i++) { bursts.push(burst()); masterBursts.push(masterShots()); } render(); }
   ids.forEach(function (id) { el[id].addEventListener('input', function () { labels(); if (id === 'rc') render(); else refill(); }); });
+  // A lever is greyed out while it has nothing to act on: the climb path levers with no path, every climb lever with the climb off, and the cone sliders with the spread off.
+  function gate() {
+    ['pf', 'ps', 'pk'].forEach(function (id) { var g = off || !climb; el[id].disabled = g; el[id].parentNode.classList.toggle('off', g); });
+    ['rs', 'sh', 'rc'].forEach(function (id) { el[id].disabled = !climb; el[id].parentNode.classList.toggle('off', !climb); });
+    ['smin', 'smax', 'sx'].forEach(function (id) { el[id].disabled = !spread; el[id].parentNode.classList.toggle('off', !spread); });
+    patButtons.forEach(function (o) { o.disabled = !climb; });
+  }
   function setPattern(name) {
     PATTERN = PATTERNS[name];
     patName = name;
     off = name === 'off';
     patButtons.forEach(function (o) { o.setAttribute('aria-pressed', o.getAttribute('data-pat') === name ? 'true' : 'false'); });
-    // With no pattern the three pattern levers have nothing to act on.
-    ['pf', 'ps', 'pk'].forEach(function (id) { el[id].disabled = off; el[id].parentNode.classList.toggle('off', off); });
+    gate();
     buttons();
     refill();
   }
+  function setScheme(c, b) { climb = c; spread = b; cc.checked = c; bs.checked = b; }
+  [cc, bs].forEach(function (box) { box.addEventListener('change', function () { climb = cc.checked; spread = bs.checked; gate(); buttons(); refill(); }); });
   patButtons.forEach(function (b) { b.addEventListener('click', function () { setPattern(b.getAttribute('data-pat')); }); });
-  function zoomLabel() { zmv.textContent = (+zm.value).toFixed(2) + 'x'; buttons(); }
-  zm.addEventListener('input', function () { zoomLabel(); render(); });
-  document.getElementById('zr').addEventListener('click', function () { zm.value = ZOOM0; zoomLabel(); render(); });
+  function viewLabels() { zmv.textContent = (+zm.value).toFixed(2) + 'x'; rgv.textContent = rg.value + ' m'; buttons(); }
+  zm.addEventListener('input', function () { viewLabels(); render(); });
+  rg.addEventListener('input', function () { viewLabels(); render(); });
+  zoomBtn.addEventListener('click', function () { zm.value = ZOOM0; viewLabels(); render(); });
   document.getElementById('fire').addEventListener('click', fire);
-  document.getElementById('today').addEventListener('click', function () { Object.keys(TODAY).forEach(function (id) { el[id].value = TODAY[id]; }); labels(); setPattern('off'); });
-  resetBtn.addEventListener('click', function () { ids.forEach(function (id) { el[id].value = START[id]; }); labels(); setPattern(START.pat); });
+  // Animate fires a new burst and draws it one shot at a time, at the ten shots a second the bench fires. With the overlay on, master's burst is drawn in step with it.
+  document.getElementById('anim').addEventListener('click', function () {
+    if (overlay) ms.checked = true;
+    fire();
+    if (+el.n.value < 2) return;
+    shown = 1;
+    render();
+    timer = setInterval(function () {
+      shown++;
+      if (shown >= +el.n.value) settle();
+      render();
+    }, SHOT_TIME * 1000);
+  });
+  // Master applies the MX's settings. It leaves the climb levers where they are, greyed out, so switching the climb back on returns to them.
+  todayBtn.addEventListener('click', function () { setScheme(false, true); Object.keys(MASTER).forEach(function (id) { el[id].value = MASTER[id]; }); labels(); gate(); refill(); });
+  // New example restores the starting values and leaves the overlay as it is.
+  resetBtn.addEventListener('click', function () { setScheme(START.climb, START.spread); ids.forEach(function (id) { el[id].value = START[id]; }); labels(); setPattern(START.pat); });
+  overlayBtn.addEventListener('click', function () { overlay = !overlay; buttons(); render(); });
+  ms.addEventListener('change', render);
   if (window.matchMedia) { var mq = window.matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', render); }
   new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(render);
@@ -689,7 +980,29 @@ sequenceDiagram
     render();
   }
   if (window.ResizeObserver) new ResizeObserver(fit).observe(plot);
-  labels(); zoomLabel(); refill(); fit();
+  // Each control's description sits behind an info button, which shows it on hover, on focus and on a tap.
+  var openTip = null;
+  function showTip(c, b, on) { c.classList.toggle('open', on); b.setAttribute('aria-expanded', on ? 'true' : 'false'); openTip = on ? b : openTip === b ? null : openTip; }
+  Array.prototype.slice.call(document.querySelectorAll('.bench .ctl')).forEach(function (c, i) {
+    var note = c.querySelector('small'), label = c.querySelector('label');
+    if (!note || !label) return;
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'info'; b.textContent = 'i';
+    note.id = 'benchtip' + i;
+    b.setAttribute('aria-label', 'About this control'); b.setAttribute('aria-describedby', note.id); b.setAttribute('aria-expanded', 'false');
+    var out = label.querySelector('output');
+    var before = label.querySelector('.mv') || label.querySelector('output');
+    if (before) label.insertBefore(b, before); else label.appendChild(b);
+    c.classList.add('tip');
+    b.addEventListener('mouseenter', function () { showTip(c, b, true); });
+    b.addEventListener('mouseleave', function () { showTip(c, b, false); });
+    b.addEventListener('focus', function () { showTip(c, b, true); });
+    b.addEventListener('blur', function () { showTip(c, b, false); });
+    // A click inside a label would also act on the label's own control, so it is stopped here.
+    b.addEventListener('click', function (e) { e.preventDefault(); showTip(c, b, true); });
+  });
+  if (document.addEventListener) document.addEventListener('click', function (e) { if (openTip && e.target !== openTip) showTip(openTip.parentNode.parentNode, openTip, false); });
+  gate(); labels(); viewLabels(); refill(); fit();
 })();
 </script>
 
