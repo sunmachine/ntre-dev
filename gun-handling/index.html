@@ -184,7 +184,7 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
     <span class="chip done">Tuning panel built</span>
     <span class="chip done">Phase 3 gate passed</span>
     <span class="chip done">Demo video recorded</span>
-    <span class="chip wait">Phase 4: 2 of 7 steps built</span>
+    <span class="chip wait">Phase 4: 3 of 6 steps built</span>
   </div>
   <nav class="toc" aria-label="Contents">
     <span class="eyebrow">Contents</span>
@@ -352,7 +352,8 @@ flowchart LR
       <div class="ctl"><label for="bs" class="check"><input type="checkbox" id="bs" checked> bullet spread <span class="mv" id="bsm"></span></label><small>Each bullet lands at random inside a cone around where the camera points. This is the only recoil the MX shows on master. With it on, the dots are bullets and the line is the camera. With the camera climb on as well, a shaded band along the camera's path shows where bullets can land.</small></div>
       <div class="ctl"><label for="smin">spread, first shot <span class="mv" id="sminm"></span><output id="sminv"></output></label><input type="range" id="smin" min="0" max="10" step="0.25" value="1.5"><small>How wide the cone is for a rested gun, in degrees across.</small></div>
       <div class="ctl"><label for="smax">spread, held fire <span class="mv" id="smaxm"></span><output id="smaxv"></output></label><input type="range" id="smax" min="0" max="10" step="0.25" value="7"><small>How wide the cone is at its peak in held fire, in degrees across.</small></div>
-      <div class="ctl"><label for="sx">spread expansion rate <span class="mv" id="sxm"></span><output id="sxv"></output></label><input type="range" id="sx" min="0.001" max="5" step="0.001" value="1.6"><small>Seconds of held fire it takes the cone to grow from the first shot's width to its peak. The bench fires ten shots a second, as the MX does.</small></div>
+      <div class="ctl"><label for="gp">spread growth per shot <span class="mv" id="gpm"></span><output id="gpv"></output></label><input type="range" id="gp" min="0" max="2" step="0.01" value="0.18"><small>How far each shot moves the cone from its first shot width toward its held fire width. 1 is the whole way in one shot. The game stores this value for each gun.</small></div>
+      <div class="ctl"><label for="gd">spread decay per second <span class="mv" id="gdm"></span><output id="gdv"></output></label><input type="range" id="gd" min="0" max="10" step="0.05" value="1.2"><small>How fast the cone closes again, all the time, firing or not. 1 closes the whole way in one second. The bench fires ten shots a second, as the MX does, so a tenth of this comes off between two shots. The game stores this value for each gun.</small></div>
       <p class="grp">Camera climb</p>
       <div class="ctl"><label for="cc" class="check"><input type="checkbox" id="cc" checked> camera climb <span class="mv" id="ccm"></span></label><small>The camera moves with each shot and stays there. Off, the camera never moves, as on the MX on master, and the random, recovery and climb path levers have nothing to act on.</small></div>
       <div class="ctl"><label for="rs">random scale <span class="mv" id="rsm"></span><output id="rsv"></output></label><input type="range" id="rs" min="0" max="2" step="0.05" value="1"><small>How much of the random range is applied to the climb.</small></div>
@@ -382,7 +383,7 @@ flowchart LR
     <tbody>
       <tr><td><b>Recoil patterns</b> <span class="tag ok">Built</span></td><td>Draw a climb and drift per shot, loop or hold it, and let the burst counter cool down gradually.</td><td>Yes</td></tr>
       <tr><td><b>Randomness control</b> <span class="tag ok">Built</span></td><td>Scale the random part against the pattern and shape the draw toward the centre.</td><td>Yes</td></tr>
-      <tr><td><b>Recovery and smoothing</b></td><td>Spread a kick over a few frames, and return part of the climb after firing stops.</td><td>Yes</td></tr>
+      <tr><td><b>Recovery and smoothing</b> <span class="tag ok">Built</span></td><td>Spread a kick over a few frames, and return part of the climb after firing stops.</td><td>Yes</td></tr>
       <tr><td><b>Per-gun accuracy model</b></td><td>Give each gun its own bloom per shot, cap and recovery speed.</td><td>Yes</td></tr>
       <tr><td><b>Stance and movement</b></td><td>Multiply spread, bloom, kick and recoil for crouching, walking, moving, jumping, leaning and aiming.</td><td>Yes</td></tr>
       <tr><td><b>Camera feedback</b></td><td>Add shake, a roll kick, a brief zoom punch and a shove on each shot.</td><td>No</td></tr>
@@ -437,7 +438,7 @@ sequenceDiagram
     <a class="part" id="plan" href="#plan">4 / Plan</a>
     <h2>Five phases, each ending at a gate</h2>
     <p>The first three phases change nothing a player can feel. The fourth adds mechanisms whose defaults change nothing. The hours are estimates made before any code existed, with a review at each gate.</p>
-    <p>On 2026-11-15 phases 0 to 3 are done and their gates passed. Phase 4 is under way: two of its seven steps are built and checked in a running game.</p>
+    <p>On 2026-11-15 phases 0 to 3 are done and their gates passed. Phase 4 is under way: three of its six steps are built and checked in a running game.</p>
   </div>
   <div class="phases">
     <div class="phase"><span class="n">0</span><div><span class="tag ok">Done</span><h3>Safety net</h3><p>Capture a report of every gun's handling values from today's code.</p><p class="gate">Gate: the baseline report is saved.</p><p class="result">Passed. The report was taken in a running game, and it agrees with every table the investigation had read from source.</p></div><span class="h">about 2 h</span></div>
@@ -453,15 +454,14 @@ sequenceDiagram
         <li>3.6 A live readout of accuracy, cone, shot count and last kick at the top of the panel. Done. A scripted run found no fault, and the developer watched it work in game.</li>
       </ul>
       <p class="gate">Gate: edit, save, restart and reload all behave, and an untouched game still matches the baseline.</p></div><span class="h">about 7 h</span></div>
-    <div class="phase"><span class="n">4</span><div><span class="tag next">Under way</span><h3>New mechanisms</h3><p>Seven steps. Every new lever starts at a value that changes nothing.</p>
+    <div class="phase"><span class="n">4</span><div><span class="tag next">Under way</span><h3>New mechanisms</h3><p>Six steps. Every new lever starts at a value that changes nothing.</p>
       <ul>
         <li>4.1 Randomness model: a scale and a shape for the random part of each recoil channel. Done and checked in game.</li>
         <li>4.2 Patterns: a recoil pattern for a gun or a family, live editing from the console, and a shot counter that can cool down gradually. Done and checked in game.</li>
-        <li>4.3 Recoil behaviour: smoothing and recovery. Next.</li>
-        <li>4.4 Stance matrix. Not started.</li>
+        <li>4.3 Recoil behaviour: a spring per gun for the view punch, a climb that can arrive over a set time, and a share of the climb that returns by itself. Done and checked in game.</li>
+        <li>4.4 Stance matrix. Next.</li>
         <li>4.5 Camera feedback. Not started.</li>
         <li>4.6 Viewmodel handling. Not started.</li>
-        <li>4.7 A pattern view in the panel. Not started.</li>
       </ul>
       <p class="gate">Gate: defaults still match the baseline, and a demo profile shows each mechanism working on one gun.</p></div><span class="h">about 9 h</span></div>
   </div>
@@ -566,7 +566,7 @@ sequenceDiagram
 (function () {
   var cv = document.getElementById('bench');
   var ctx = cv.getContext('2d');
-  var ids = ['smin', 'smax', 'sx', 'rs', 'sh', 'rc', 'pf', 'ps', 'pk', 'n', 'sims'];
+  var ids = ['smin', 'smax', 'gp', 'gd', 'rs', 'sh', 'rc', 'pf', 'ps', 'pk', 'n', 'sims'];
   var el = {};
   ids.forEach(function (id) { el[id] = document.getElementById(id); el[id + 'v'] = document.getElementById(id + 'v'); });
   var readout = document.getElementById('readout');
@@ -599,12 +599,12 @@ sequenceDiagram
   // The starting example, which the new example button restores.
   var START = { pat: patName, climb: climb, spread: spread };
   ids.forEach(function (id) { START[id] = +el[id].value; });
-  // The MX on master, fired from the hip: no camera climb, and a cone of 4 degrees that reaches 7 within about two shots.
-  var MASTER = { smin: 4, smax: 7, sx: 0.2 };
+  // The MX on master, fired from the hip: no camera climb, a cone of 4 degrees that widens to 7, and the growth and decay every gun ships with.
+  var MASTER = { smin: 4, smax: 7, gp: 0.8, gd: 1.2 };
   var overlay = false;
   var ms = document.getElementById('ms'), msrow = document.getElementById('msrow');
   // What each control holds on master, shown beside it while the overlay is on. A climb lever does not apply to a gun whose camera does not climb, and the two bench settings are shared.
-  var ON_MASTER = { bs: 'on', smin: '4.00°', smax: '7.00°', sx: '0.200 s', cc: 'off', rs: 'N/A', sh: 'N/A', rc: 'N/A', pat: 'Off', pf: 'N/A', ps: 'N/A', pk: 'N/A', n: 'same', sims: 'same' };
+  var ON_MASTER = { bs: 'on', smin: '4.00°', smax: '7.00°', gp: '0.80', gd: '1.20', cc: 'off', rs: 'N/A', sh: 'N/A', rc: 'N/A', pat: 'Off', pf: 'N/A', ps: 'N/A', pk: 'N/A', n: 'same', sims: 'same' };
   var slots = {}, legend = {};
   Object.keys(ON_MASTER).forEach(function (id) { slots[id] = document.getElementById(id + 'm'); });
   ['path', 'shot', 'shot_t', 'old', 'guide', 'band', 'ring', 'peak', 'settle', 'master', 'mshot'].forEach(function (id) { legend[id] = document.getElementById('lg_' + id); });
@@ -634,17 +634,17 @@ sequenceDiagram
     var u = flat * (1 - shape) + centred * shape;
     return lo + (hi - lo) * u;
   }
-  // Bullets around a camera path. The cone grows in a straight line from its first width to its peak over the expansion time.
-  function scatter(q, pts, lo, hi, time) {
-    var out = { bullets: [], radii: [], widest: 0 };
-    pts.forEach(function (c, i) {
-      var grown = time > 0 ? Math.min(1, i * SHOT_TIME / time) : 1;
-      var half = (lo + (hi - lo) * grown) / 2, ux, uy;
+  // Bullets around a camera path. The cone widens with a penalty from 0 to 1, as in the game: a shot is fired with the penalty as it stands, the shot then adds the growth, and the decay takes its share until the next shot.
+  function scatter(q, pts, lo, hi, growth, decay) {
+    var out = { bullets: [], radii: [], widest: 0 }, penalty = 0;
+    pts.forEach(function (c) {
+      var half = (lo + (hi - lo) * penalty) / 2, ux, uy;
       // A bullet's offset is two draws on each axis, taken again until the point is inside the circle, so bullets gather toward the centre.
       do { ux = q() + q() - 1; uy = q() + q() - 1; } while (ux * ux + uy * uy > 1);
       out.widest = Math.max(out.widest, half * 2);
       out.radii.push(half);
       out.bullets.push([c[0] + ux * half, c[1] + uy * half]);
+      penalty = Math.max(0, Math.min(1, penalty + growth) - decay * SHOT_TIME);
     });
     return out;
   }
@@ -666,7 +666,7 @@ sequenceDiagram
     var out = { pts: pts, flipped: climb && side < 0 && !off && ps > 0, bullets: null, radii: null, widest: 0 };
     if (spread) {
       // The spread has its own stream of draws, so switching it on does not change the camera's path.
-      var s = scatter(rng(seed * 7919 + 13), pts, +el.smin.value, +el.smax.value, +el.sx.value);
+      var s = scatter(rng(seed * 7919 + 13), pts, +el.smin.value, +el.smax.value, +el.gp.value, +el.gd.value);
       out.bullets = s.bullets; out.radii = s.radii; out.widest = s.widest;
     }
     return out;
@@ -675,7 +675,7 @@ sequenceDiagram
   function masterShots() {
     var n = +el.n.value, still = [];
     for (var i = 0; i < n; i++) still.push([0, 0]);
-    return scatter(rng(seed * 104729 + 7), still, MASTER.smin, MASTER.smax, MASTER.sx);
+    return scatter(rng(seed * 104729 + 7), still, MASTER.smin, MASTER.smax, MASTER.gp, MASTER.gd);
   }
   function guide(side) {
     var ps = +el.ps.value, rs = +el.rs.value, n = +el.n.value, x = 0, y = 0, pts = [[0, 0]];
@@ -915,7 +915,7 @@ sequenceDiagram
   function labels() {
     ids.forEach(function (id) {
       var v = +el[id].value;
-      el[id + 'v'].textContent = id === 'n' || id === 'sims' ? el[id].value : id === 'sx' ? v.toFixed(3) + ' s' : id === 'smin' || id === 'smax' ? v.toFixed(2) + '°' : v.toFixed(2);
+      el[id + 'v'].textContent = id === 'n' || id === 'sims' ? el[id].value : id === 'smin' || id === 'smax' ? v.toFixed(2) + '°' : v.toFixed(2);
     });
     buttons();
   }
@@ -928,7 +928,7 @@ sequenceDiagram
   function gate() {
     ['pf', 'ps', 'pk'].forEach(function (id) { var g = off || !climb; el[id].disabled = g; el[id].parentNode.classList.toggle('off', g); });
     ['rs', 'sh', 'rc'].forEach(function (id) { el[id].disabled = !climb; el[id].parentNode.classList.toggle('off', !climb); });
-    ['smin', 'smax', 'sx'].forEach(function (id) { el[id].disabled = !spread; el[id].parentNode.classList.toggle('off', !spread); });
+    ['smin', 'smax', 'gp', 'gd'].forEach(function (id) { el[id].disabled = !spread; el[id].parentNode.classList.toggle('off', !spread); });
     patButtons.forEach(function (o) { o.disabled = !climb; });
   }
   function setPattern(name) {
