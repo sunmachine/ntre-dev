@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Recoil Bench</title>
+<title>Gun Handling Controller</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
 /* Layout: one reading column of about 46rem, wide bands for tables and the recoil bench. Two semantic hues carry the argument: rust for "today", blue for "proposed". */
@@ -16,6 +16,7 @@
   --next-soft: #dfeaf7;
   --ok: #2c7a56;
   --ok-soft: #dcf0e6;
+  --roll: #1f62a8; --fov: #a8502c; --push: #2c7a56; --shake: #7a4bb0;
   --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
   --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -24,12 +25,14 @@
   :root:not([data-theme="light"]) {
     --bg: #12161d; --surface: #1a2029; --sunk: #0d1016; --fg: #e6e9ef; --muted: #9aa5b6; --line: #2e3745;
     --today: #e39a76; --today-soft: #3a2519; --next: #7fb4ee; --next-soft: #16293f; --ok: #72c79d; --ok-soft: #15301f;
+    --roll: #7fb4ee; --fov: #e39a76; --push: #72c79d; --shake: #b99be6;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #12161d; --surface: #1a2029; --sunk: #0d1016; --fg: #e6e9ef; --muted: #9aa5b6; --line: #2e3745;
   --today: #e39a76; --today-soft: #3a2519; --next: #7fb4ee; --next-soft: #16293f; --ok: #72c79d; --ok-soft: #15301f;
+    --roll: #7fb4ee; --fov: #e39a76; --push: #72c79d; --shake: #b99be6;
   color-scheme: dark;
 }
 body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.6; }
@@ -160,6 +163,18 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--next); outl
 .stamp { align-self: flex-start; font-family: var(--font-mono); font-size: 0.78rem; font-variant-numeric: tabular-nums; padding: 0.15rem 0.5rem; border-radius: 4px; background: var(--next-soft); color: var(--next); }
 .update-title { font-size: 1.3rem; }
 a.tag { text-decoration: underline; text-underline-offset: 2px; }
+a.btn { align-self: flex-start; display: inline-block; font-family: var(--font-body); font-size: 0.9rem; font-weight: 500; padding: 0.5rem 0.9rem; border-radius: 6px; border: 1px solid var(--next); background: var(--next); color: var(--surface); text-decoration: none; }
+a.btn:focus-visible { outline: 2px solid var(--next); outline-offset: 2px; }
+h2[id], h3[id] { scroll-margin-top: 1rem; }
+.tag.kind { margin-left: 0.4rem; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+.cambench { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.25rem; }
+.cambench canvas { width: 100%; height: auto; background: var(--sunk); border-radius: 6px; display: block; }
+.cambench .readout { min-height: 0; }
+.camlegend { display: flex; flex-direction: row; flex-wrap: wrap; gap: 0.4rem 1rem; list-style: none; padding: 0; font-family: var(--font-mono); font-size: 0.78rem; }
+.camlegend i { display: inline-block; width: 1.4rem; height: 3px; vertical-align: middle; margin-right: 0.35rem; border-radius: 2px; }
+.cambench .ctl label output { margin-left: auto; }
+@media (max-width: 720px) { .cambench { grid-template-columns: minmax(0, 1fr); } }
+.col a:not(.part):not(.tag):not(.btn) { color: var(--next); }
 .note { border-left: 3px solid var(--today); background: var(--today-soft); padding: 0.8rem 1rem; border-radius: 0 6px 6px 0; }
 footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--line); padding-top: 1.25rem; }
 @media (max-width: 720px) {
@@ -173,10 +188,60 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
 
 <div class="wrap">
 
+<header class="col">
+  <span class="eyebrow">Neotokyo Rebuild / in progress / 2026-11-16</span>
+  <h1>Gun Handling Controller</h1>
+  <span class="eyebrow">Mission statement</span>
+  <p class="lede">Work under way to put every number that shapes how a gun fires and feels into one data file per gun, make those numbers adjustable while playing, and then add recoil, camera and handling mechanisms the game does not have yet.</p>
+  <div class="chips">
+    <span class="chip done">Investigation done</span>
+    <span class="chip done">8 rulings answered</span>
+    <span class="chip done">Phases 0 to 2 done</span>
+    <span class="chip done">Console tuning works in game</span>
+    <span class="chip done">Tuning panel built</span>
+    <span class="chip done">Phase 3 gate passed</span>
+    <span class="chip done">Demo video recorded</span>
+    <span class="chip wait">Phase 4: 6 of 6 steps built, gate in review</span>
+  </div>
+  <nav class="toc" aria-label="Contents">
+    <span class="eyebrow">Contents</span>
+    <a href="#recoil-bench">Recoil bench: try it first</a>
+    <ol>
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#proposal">Proposal summary</a></li>
+      <li><a href="#breakdown">Breakdown</a>
+        <ul><li><a href="#archetypes">Archetypes</a></li><li><a href="#recoil-today">Recoil today</a></li><li><a href="#pattern-randomness">Pattern and randomness</a></li><li><a href="#mechanisms">The new mechanisms</a></li><li><a href="#stance-matrix">The stance matrix</a></li><li><a href="#live-change">How a live change stays in step</a></li></ul>
+      </li>
+      <li><a href="#plan">Plan</a></li>
+      <li><a href="#detail">Supporting detail</a>
+        <ul><li><a href="#decisions">Decisions already made</a></li><li><a href="#consequences">Two accepted consequences</a></li><li><a href="#findings">What the investigation turned up</a></li></ul>
+      </li>
+      <li><a href="#updates">Progress Updates</a>
+        <ul><li><a href="#component-review">2026-11-16 Component review</a></li><li><a href="#stance-camera">2026-11-15 Stance matrix and camera feedback</a></li><li><a href="#camera-bench">Camera bench</a></li><li><a href="#live-tuning-clip">2026-11-15 Live tuning clip</a></li><li><a href="#aimed-clip">2026-11-15 Aimed fire clip</a></li></ul>
+      </li>
+    </ol>
+  </nav>
+  
+</header>
+
 <section>
   <div class="col">
-    <h1 id="recoil-bench">Recoil Bench</h1>
-    <p class="muted">The MX and the MPN on master use the game's values. Every other number is an illustration, and climb path flip and climb path kick are proposals the game does not have yet.</p>
+    <a class="part" id="recoil-bench" href="#recoil-bench">Recoil bench</a>
+    <h2>Tune a burst and watch where it goes</h2>
+    <ul>
+      <li>Choose a camera climb path, the fixed pattern a gun's recoil can follow. Every lever stays where it is when the path changes.</li>
+      <li>The line is the camera, the dots are bullets, and the shaded band is where bullets can land.</li>
+      <li>The dotted line is the path of an average burst. Its mirror image fades in as climb path flip rises.</li>
+      <li>The rulers give the distance at the range set under the plot.</li>
+      <li>The gun menu applies the MX or the MPN as it ships on master. Overlay draws that gun in orange over yours.</li>
+    </ul>
+    <p class="muted">The starting numbers and the four climb paths are made-up examples of what is possible. No gun in the game has them. Only the master settings are real values. Climb path kick and climb path flip are proposals the game does not have yet.</p>
+    <span class="eyebrow">See more</span>
+    <ul>
+      <li><a href="#pattern-randomness">The reasoning behind these levers</a></li>
+      <li><a href="https://sunmachine.github.io/ntre-dev/gun-handling-components/">What the other handling components look like outside of weapon recoil</a> <span class="tag ok kind">Video clips</span></li>
+      <li><a href="#camera-bench">The camera bench, for camera feedback</a> <span class="tag next kind">Interactive</span></li>
+    </ul>
   </div>
   <div class="bench">
     <div class="view">
@@ -216,6 +281,389 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
     </div>
   </div>
 </section>
+
+<section>
+  <div class="col">
+    <a class="part" id="problem" href="#problem">1 / Problem</a>
+    <h2>A gun's feel is held in five places, and four of them need a programmer</h2>
+    <p>Today a designer cannot see one gun's full set of numbers in one place. Most of them can only change with a compiler and a restart. Nothing shows that a change to one gun left the others alone.</p>
+  </div>
+  <div class="grid">
+    <div class="store"><span class="tag ok">Text file</span><h3>Weapon script</h3><p>Damage, fire rate, pellets, penetration, clip size, aim zoom.</p></div>
+    <div class="store"><span class="tag today">Compiled</span><h3>One big table</h3><p>Spread cones, view kick and camera recoil for every gun.</p></div>
+    <div class="store"><span class="tag today">Compiled</span><h3>Per-gun code</h3><p>Movement speed, dry-fire timing, tracers.</p></div>
+    <div class="store"><span class="tag today">Console only</span><h3>38 console variables</h3><p>A burst recoil path that is switched off for most guns.</p></div>
+    <div class="store"><span class="tag today">Compiled</span><h3>Scattered checks</h3><p>Automatic or semi, slug damage, heat, slide lock.</p></div>
+  </div>
+  <div class="col">
+    <p>The feel itself has little to tune. Every gun shares one accuracy model with no per-gun values. Recoil is a flat random draw with no pattern, no recovery and no smoothing. Crouching, walking and leaning barely matter. Nothing moves the camera or the gun model from code when a shot fires, beyond a small punch.</p>
+  </div>
+  <div class="facts">
+    <div class="fact"><b>24</b><span>guns in scope: 23 firearms and the BALC</span></div>
+    <div class="fact"><b>19</b><span>of those are empty templates that differ only in numbers</span></div>
+    <div class="fact"><b>1</b><span>accuracy model shared by all, with no per-gun values</span></div>
+    <div class="fact"><b>0</b><span>tests or reports that prove a gun did not change</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <a class="part" id="proposal" href="#proposal">2 / Proposal summary</a>
+    <h2>One record per gun, one place to tune it, and a proof that nothing moved</h2>
+    <ol class="steps">
+      <li><div><b>One handling record per gun, built on archetypes.</b> Every lever becomes a named value. A gun belongs to a family, such as rifle or shotgun, and states only what makes it different.</div></li>
+      <li><div><b>One lever list in code.</b> The file reader, the file writer, the console commands and the tuning panel are all generated from it. Adding a lever later is one row in the list and one field in the record, plus the code that uses it.</div></li>
+      <li><div><b>One handling controller.</b> The maths for spread, kick and recoil moves into a single testable unit that every gun goes through.</div></li>
+      <li><div><b>Live tuning.</b> On a private test server, a docked panel or a console command changes a lever while you play. A save button writes it back to the gun's file.</div></li>
+      <li><div><b>New mechanisms, switched off by default.</b> Recoil patterns with separately tuned randomness, recovery, stance modifiers, camera feedback and viewmodel handling arrive as more levers. No gun changes until someone tunes it.</div></li>
+    </ol>
+    <p>The move is a pure reorganisation. A report of every gun's values is captured before the work and compared after every step. They must match.</p>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <a class="part" id="breakdown" href="#breakdown">3 / Breakdown</a>
+    <h2>What tuning looks like afterwards</h2>
+    <ol>
+      <li>Start a private server on the test map and press the panel key.</li>
+      <li>The panel docks on the right and shows the gun in your hands. You keep moving and shooting.</li>
+      <li>Hold a key to free the mouse, drag a slider, let go, fire. The change is live on the next shot.</li>
+      <li>Flip the target from the gun to its family to move every rifle at once. A rifle that sets its own value for that lever keeps it.</li>
+      <li>Press save. Only that gun's handling block in its file changes, or that family's block in the family file, so the edit is a small, reviewable diff.</li>
+    </ol>
+    <p>The panel is built, and it sends every edit through the same console commands, so the panel and the console are one path. One difference from the sketch above: the panel's reload button reloads only the gun or the family the switch points at.</p>
+  </div>
+  <div class="diagram"><pre class="mermaid">
+flowchart LR
+    A["Family file<br/>pistol, smg, rifle ..."] --> R["Handling record<br/>per gun"]
+    G["Gun file<br/>only its differences"] --> R
+    L["Lever list<br/>names, ranges, defaults"] --> R
+    R --> C["Handling controller"]
+    C --> F["Fire code<br/>spread, kick, recoil"]
+    C --> V["Camera and gun model<br/>feedback"]
+    P["Tuning panel<br/>and console"] -->|"live change"| R
+    P -->|"save"| G
+    P -->|"save"| A
+    L --> P
+  </pre></div>
+</section>
+
+<section>
+  <div class="col">
+    <h2 id="archetypes">Archetypes: seven families already exist in the numbers</h2>
+    <p>Today's values cluster on their own. Each family below lists what every member shares right now. A family holds the value most of its members use, and a gun that differs states its own. Where the numbers alone do not settle a gun's family, how the gun is fired and at what range decides it. The before-and-after report proves that no gun's values change.</p>
+    <div class="note"><p><b>This list is a starting point.</b> It is neither complete nor final. Families can be added, renamed, split or merged as the guns are tuned, and a gun can move from one family to another.</p></div>
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Family</th><th>Guns</th><th>Shared today</th></tr></thead>
+    <tbody>
+      <tr><td><code>pistol</code></td><td>Milso, Tachi, Kyla</td><td>Movement speed 0.85, widest hip cone 7 degrees, widest aimed cone 4</td></tr>
+      <tr><td><code>smg</code></td><td>MPN, MPN silenced, SRM, SRM silenced, Jitte, Jitte scoped, SMAC</td><td>Automatic, widest hip cone 7, tightest aimed cone 1</td></tr>
+      <tr><td><code>rifle</code></td><td>MX, MX silenced, ZR68C, ZR68S</td><td>Identical spread: hip 4 to 7, aimed 0 to 3</td></tr>
+      <tr><td><code>marksman</code></td><td>ZR68L, M41L, M41, M41S</td><td>Semi-automatic and built for longer range</td></tr>
+      <tr><td><code>sniper</code></td><td>SRS</td><td>One member</td></tr>
+      <tr><td><code>shotgun</code></td><td>AA13, Supa 7</td><td>5 degree cone throughout, same kick, no bloom from firing</td></tr>
+      <tr><td><code>machinegun</code></td><td>PZ, PBK56S, BALC</td><td>Same kick and camera recoil, tightest hip cone 2</td></tr>
+    </tbody>
+  </table></div>
+  <div class="two">
+    <div class="col">
+      <h3>How a value is resolved</h3>
+      <div class="layers">
+        <div class="layer top"><b>Gun</b><span>What makes this gun different. Wins.</span></div>
+        <div class="layer"><b>Family</b><span>What the family shares.</span></div>
+        <div class="layer"><b>Built-in default</b><span>What every gun shares today.</span></div>
+      </div>
+      <p class="muted">One level only. A family cannot inherit from another family. Marksman is a new name; the other six match weapon types the game already has. The developer accepted this grouping as the starting point on 2026-11-14.</p>
+    </div>
+    <div class="col">
+      <h3>The MX, after the move</h3>
+<pre class="kv">"Handling"
+{
+    "archetype"   "rifle"
+    "tracers"     "1"
+}</pre>
+      <p class="muted">The rifle family supplies fire mode, speed, spread and kick. The MX only says it has tracers.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <h2 id="recoil-today">Recoil today: three channels, all purely random</h2>
+    <p>The game has three separate ways a shot disturbs your aim. Each gun uses a different mix, and every one draws a flat random number between a minimum and a maximum.</p>
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Channel</th><th>What you see</th><th>Builds over a burst</th><th>Server can check it</th><th>Guns using it</th></tr></thead>
+    <tbody>
+      <tr><td><b>View punch</b></td><td>The camera jumps and springs back. It nudges the next bullet.</td><td>No, it is reset each shot</td><td>Yes</td><td>16</td></tr>
+      <tr><td><b>Camera climb</b></td><td>The camera rises and stays until you pull it down.</td><td>Yes</td><td>No</td><td>9</td></tr>
+      <tr><td><b>Shot rotation</b></td><td>Bullets leave above the crosshair. The camera does not move.</td><td>Yes</td><td>Yes</td><td>3, by accident</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <p>Patterns will be built on the <b>camera climb</b>, as ruled. It is the channel a player fights with the mouse, which is what makes a pattern learnable.</p>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <h2 id="pattern-randomness">Pattern and randomness, tuned separately</h2>
+    <p>Each recoil channel computes a shot the same way. A fixed pattern and a random draw each get their own scale, so a gun can be fully learnable, fully random or any mix. Since 2026-11-15 the camera climb works this way in the game. The other two channels have the scaled random part and no pattern yet.</p>
+<pre class="kv">shot offset = pattern[shot number] x pattern influence
+            + random(min, max)     x random scale</pre>
+    <p><b>Pattern kick is a new idea, added on 2026-11-15.</b> A fixed pattern climbs by the same step every time, which reads as smooth. Pattern kick keeps the pattern's path and makes each shot take a larger or smaller bite of it at random. Most shots move a little and some jump, while the average climb stays the same, so the gun feels kicky and the path can still be learned. It is a proposal: the game does not have this lever yet.</p>
+    <p><b>Pattern flip is a second new idea from the same day.</b> Before each burst the gun decides whether to follow its pattern as drawn or the mirror image of it. At 0 it never flips, at 0.5 both are equally likely, and at 1 it always flips. A player can learn the shape and still has to read which way each burst is going. It is a proposal too: the game does not have this lever yet.</p>
+    <p><b>One gun can carry any pattern.</b> A pattern is a list of points stored with the gun or its family. It is data, so it can be replaced while the game runs, and the levers do not change when it is.</p>
+    <p>The recoil bench at the top of the page lets you try each of these levers.</p>
+    <a class="btn" href="#recoil-bench">Back to the recoil bench</a>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <h2 id="mechanisms">The new mechanisms</h2>
+    <p>All of these are added as levers on the same record, in the same panel, with defaults that reproduce today's game.</p>
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Mechanism</th><th>What a designer can now do</th><th>Affects bullets</th></tr></thead>
+    <tbody>
+      <tr><td><b>Recoil patterns</b> <span class="tag ok">Built</span></td><td>Draw a climb and drift per shot, loop or hold it, and let the burst counter cool down gradually.</td><td>Yes</td></tr>
+      <tr><td><b>Randomness control</b> <span class="tag ok">Built</span></td><td>Scale the random part against the pattern and shape the draw toward the centre.</td><td>Yes</td></tr>
+      <tr><td><b>Recovery and smoothing</b> <span class="tag ok">Built</span></td><td>Spread a kick over a few frames, and return part of the climb after firing stops.</td><td>Yes</td></tr>
+      <tr><td><b>Per-gun accuracy model</b></td><td>Give each gun its own bloom per shot, cap and recovery speed.</td><td>Yes</td></tr>
+      <tr><td><b>Stance and movement</b> <span class="tag ok">Built</span></td><td>Multiply spread, bloom, kick and recoil for crouching, walking, moving, jumping, leaning and aiming.</td><td>Yes</td></tr>
+      <tr><td><b>Camera feedback</b> <span class="tag ok">Built</span></td><td>Add shake, a roll kick, a brief zoom punch and a shove on each shot.</td><td>No</td></tr>
+      <tr><td><b>Viewmodel handling</b> <span class="tag ok">Built</span></td><td>Add spring kickback on the gun model and per-gun sway, bob, strafe tilt and landing dip.</td><td>No</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <p>Camera feedback comes with one player setting that scales all of it down to zero, for people who are sensitive to camera motion.</p>
+    <h3 id="stance-matrix">The stance matrix</h3>
+    <p>Six states by five outputs, every cell a multiplier that starts at 1. The marked cells are where today's game already treats a stance differently. Those rules are the same for every gun and cannot be tuned yet.</p>
+    <div class="note"><p><b>Is every stance treated the same today?</b> Mostly, yes. Firing does not care about stance for most of these values. The exceptions are few. Crouching lets accuracy recover nearly twice as fast. Moving while firing from the hip, and being in the air, both make accuracy worse for as long as they last. Aiming switches a gun to its own tighter spread cones and its own recoil scale. Walking and leaning change nothing. Each marked cell in the table links to the lines of the game's public source that do it.</p></div>
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>State</th><th>Spread</th><th>Bloom gain</th><th>Bloom recovery</th><th>Kick</th><th>Recoil</th></tr></thead>
+    <tbody>
+      <tr><td>Crouched</td><td>1</td><td>1</td><td>1 <a class="tag today" href="https://github.com/NeotokyoRebuild/neo/blob/master/src/game/shared/neo/weapons/weapon_neobasecombatweapon.cpp#L622-L625">recovers faster today</a></td><td>1</td><td>1</td></tr>
+      <tr><td>Walk key held</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+      <tr><td>Moving</td><td>1</td><td>1 <a class="tag today" href="https://github.com/NeotokyoRebuild/neo/blob/master/src/game/shared/neo/weapons/weapon_neobasecombatweapon.cpp#L640-L643">grows today, hip only</a></td><td>1</td><td>1</td><td>1</td></tr>
+      <tr><td>Airborne</td><td>1</td><td>1 <a class="tag today" href="https://github.com/NeotokyoRebuild/neo/blob/master/src/game/shared/neo/weapons/weapon_neobasecombatweapon.cpp#L635-L638">grows today</a></td><td>1</td><td>1</td><td>1</td></tr>
+      <tr><td>Leaning</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+      <tr><td>Aiming</td><td>1 <a class="tag today" href="https://github.com/NeotokyoRebuild/neo/blob/master/src/game/shared/neo/weapons/weapon_neobasecombatweapon.cpp#L904-L929">own cones today</a></td><td>1</td><td>1</td><td>1</td><td>1 <a class="tag today" href="https://github.com/NeotokyoRebuild/neo/blob/master/src/game/shared/neo/weapons/weapon_neobasecombatweapon.cpp#L967">own scale today</a></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="col">
+    <h2 id="live-change">How a live change stays in step</h2>
+    <p>The game runs the same shooting code twice, once on the server and once on your own machine so that firing feels instant. If the two disagree on a number, your screen stutters. So a change always goes to the server first, and the server tells every client.</p>
+    <p>This holds even for a value only your own machine uses, such as the camera effects that phase 4 adds, because the server's copy is the one a save writes to disk. A family change follows the same path: each side updates the family, then moves every member gun that does not set its own value, using the same rule. A reload reads the file again on the server and then on each client.</p>
+  </div>
+  <div class="diagram"><pre class="mermaid">
+sequenceDiagram
+    participant P as Panel or console
+    participant S as Server
+    participant C as Each player's game
+    participant D as Gun file on disk
+    P->>S: set MX kick to 0.7
+    S->>S: check cheats are on, clamp to range
+    S->>C: MX kick is now 0.7
+    Note over S,C: live on the next shot
+    P->>S: save MX
+    S->>D: rewrite only the Handling block
+    P->>S: reload MX
+    D->>S: read the gun file again
+    S->>C: reload MX from its file
+  </pre></div>
+</section>
+
+<section>
+  <div class="col">
+    <a class="part" id="plan" href="#plan">4 / Plan</a>
+    <h2>Five phases, each ending at a gate</h2>
+    <p>The first three phases change nothing a player can feel. The fourth adds mechanisms whose defaults change nothing. The hours are estimates made before any code existed, with a review at each gate.</p>
+    <p>On 2026-11-15 phases 0 to 3 are done and their gates passed. Phase 4 is under way: all six of its steps are built and checked in a running game. On 2026-11-16 the measured half of its gate has passed, and the recorded clips are out for review.</p>
+  </div>
+  <div class="phases">
+    <div class="phase"><span class="n">0</span><div><span class="tag ok">Done</span><h3>Safety net</h3><p>Capture a report of every gun's handling values from today's code.</p><p class="gate">Gate: the baseline report is saved.</p><p class="result">Passed. The report was taken in a running game, and it agrees with every table the investigation had read from source.</p></div><span class="h">about 2 h</span></div>
+    <div class="phase"><span class="n">1</span><div><span class="tag ok">Done</span><h3>Data</h3><p>Write the family file and each gun's handling block. Teach the game to read them. Nothing uses them yet.</p><p class="gate">Gate: the values read from files match the baseline for all 24 guns.</p><p class="result">Passed for the 23 guns the test build includes. The PBK56S is not in that build.</p></div><span class="h">about 4 h</span></div>
+    <div class="phase"><span class="n">2</span><div><span class="tag ok">Done</span><h3>Controller</h3><p>Switch the fire code to the new record. Delete the table, the per-gun constants and the 38 console variables.</p><p class="gate">Gate: report matches, unit tests pass, every gun fired in game with no prediction errors.</p><p class="result">Passed. All 1219 values of the 23 built guns match the baseline. The only differences are two deliberate ones on the AA13 and the Supa 7, whose own fire code never used the value. Twenty-two guns were fired standing, crouched, moving and airborne, hip and aimed, then reloaded, and the BALC was fired on its own. A falling round count confirmed a shot in the first stage of each gun, and the other stages sent the same inputs. None of the values the new code computes printed a prediction error. The other errors that printed either also appear on the unchanged game or come from code this work does not touch.</p></div><span class="h">about 6 h</span></div>
+    <div class="phase"><span class="n">3</span><div><span class="tag ok">Done</span><h3>Live tuning</h3><p>Console commands, family edits, save, reload and the docked panel.</p>
+      <ul>
+        <li>3.1 Set, unset and print a gun's levers from the console. Done and checked in game.</li>
+        <li>3.2 The same commands on a whole family. Done and checked in game.</li>
+        <li>3.3 Reload a gun, a family or everything from the files. Done and checked in game.</li>
+        <li>3.4 Save a gun or a family back to its file. Done and checked in game.</li>
+        <li>3.5 The docked tuning panel. Done. A scripted run found no fault, and the developer tried it in game and accepted it.</li>
+        <li>3.6 A live readout of accuracy, cone, shot count and last kick at the top of the panel. Done. A scripted run found no fault, and the developer watched it work in game.</li>
+      </ul>
+      <p class="gate">Gate: edit, save, restart and reload all behave, and an untouched game still matches the baseline.</p></div><span class="h">about 7 h</span></div>
+    <div class="phase"><span class="n">4</span><div><span class="tag next">Under way</span><h3>New mechanisms</h3><p>Six steps. Every new lever starts at a value that changes nothing.</p>
+      <ul>
+        <li>4.1 Randomness model: a scale and a shape for the random part of each recoil channel. Done and checked in game.</li>
+        <li>4.2 Patterns: a recoil pattern for a gun or a family, live editing from the console, and a shot counter that can cool down gradually. Done and checked in game.</li>
+        <li>4.3 Recoil behaviour: a spring per gun for the view punch, a climb that can arrive over a set time, and a share of the climb that returns by itself. Done and checked in game.</li>
+        <li>4.4 Stance matrix: thirty multipliers per gun, for six player states by five outputs, on one panel tab. Done and checked in game.</li>
+        <li>4.5 Camera feedback: ten levers per gun for shake, roll, a field of view kick and a push, on one panel tab, with one player setting that scales it all. Done and checked in game.</li>
+        <li>4.6 Viewmodel handling: twelve levers per gun for a kick of the gun model, sway, bob, strafe tilt and landing dip, on one panel tab, and a zoom time per gun. Done and checked in game. Nobody has watched the gun model move yet.</li>
+      </ul>
+      <p class="gate">Gate: defaults still match the baseline, and a demo profile shows each mechanism working on one gun.</p></div><span class="h">about 9 h</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <a class="part" id="detail" href="#detail">5 / Supporting detail</a>
+    <h2 id="decisions">Decisions already made</h2>
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Question</th><th>Ruling</th></tr></thead>
+    <tbody>
+      <tr><td>How are spread cones written in the files?</td><td>In degrees. The values differ from today's constants by at most 0.0004 degrees, because the old constants were rounded.</td></tr>
+      <tr><td>Three guns get burst recoil by accident. Keep it?</td><td>Keep it as data and flag it for the first tuning pass.</td></tr>
+      <tr><td>Fix the defects found along the way?</td><td>No. Preserve each one and file it upstream separately.</td></tr>
+      <tr><td>Which channel carries patterns?</td><td>Camera climb.</td></tr>
+      <tr><td>How does save write the file?</td><td>It rewrites only the handling block, so comments in the file survive.</td></tr>
+      <tr><td>Per-gun values only, or families?</td><td>Families now.</td></tr>
+      <tr><td>Wait for the upstream "Smooth recoil" change?</td><td>No. It is being coordinated directly with its author.</td></tr>
+      <tr><td>Send the server's values to players when they join?</td><td>Later, before the upstream split.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <h3 id="consequences">Two accepted consequences</h3>
+    <div class="note"><p><b>Camera climb is trusted to the player's machine.</b> The server cannot check it, so a modified game client can skip a patterned climb, as it can skip the Kyla's climb today.</p></div>
+    <div class="note"><p><b>Not for public servers yet.</b> Until the server sends its values to joining players, a player could remove camera recoil with a text edit, and a server with custom tuning would feel uneven to players with stock files. That sync must land with, or before, the upstream change that moves camera recoil into files. Until then a live edit also lasts only until a reload, a save or the game closes, and a player who joins after an edit gets the values on disk.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <h2 id="findings">What the investigation turned up</h2>
+    <p>Thirteen defects and oddities were found. None is fixed by this work. The ones a designer would notice:</p>
+    <ul>
+      <li>The scoped Jitte identifies itself as the plain Jitte, so anything that looks for the scoped one never finds it.</li>
+      <li>Two loadout entries both hand out the silenced M41. The scoped M41L cannot be picked from a loadout.</li>
+      <li>The display names for the M41L and M41S are swapped in one table.</li>
+      <li>AA13 and Supa 7 shells never penetrate walls. Only the slug does.</li>
+      <li>Reloading throws away the rounds left in the magazine. This reads as the original game's rule.</li>
+      <li>The MX and the Tachi show a different viewmodel field of view from the one written in their files, because the game reads a different key.</li>
+    </ul>
+    <h3>Not in this work</h3>
+    <ul>
+      <li>Any change to how a gun feels. Tuning starts after this lands.</li>
+      <li>Knife, grenades, detpack and ghost.</li>
+      <li>Bot behaviour tables.</li>
+      <li>Folding the AA13 and Supa 7 into the shared fire routine.</li>
+      <li>Live tuning on dedicated servers.</li>
+    </ul>
+    <h3>Still open</h3>
+    <ul>
+      <li>The feel check by hand, the PBK56S and a release build, as listed under the plan.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <a class="part" id="updates" href="#updates">6 / Progress Updates</a>
+    <h2>Dated notes and recordings as the work moves</h2>
+    <p class="muted">Each entry carries the date it was recorded or written. The newest is first.</p>
+  </div>
+  <div class="col">
+    <span class="stamp">2026-11-16</span>
+    <h3 class="update-title" id="component-review">Component review: the new mechanisms on video</h3>
+    <p>Firing patterns and recoil are only one part of weapon feel. A separate review page shows the other handling components as recorded clips: recoil behaviour, the stance matrix, camera feedback, viewmodel motion and aim time. Each clip has a verdict to pick and a note to fill in, and the page builds a summary to send back.</p>
+    <a class="btn" href="https://sunmachine.github.io/ntre-dev/gun-handling-components/">Open the component review</a>
+  </div>
+  <div class="col">
+    <span class="stamp">2026-11-15</span>
+    <h3 class="update-title" id="stance-camera">Stance matrix and camera feedback, measured in game</h3>
+    <p>Both sets of levers were driven by script on one MX on a private test server and read back from the game. Every default leaves the game as it was. The component review above is the check by eye.</p>
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Check</th><th>Expected</th><th>Measured</th></tr></thead>
+    <tbody>
+      <tr><td>Stance multiplier on camera climb, five shots at 0.5 degrees each</td><td>2.5 degrees at 1, 5.0 at 2, 0.0 at 0</td><td>Exact in all six states. Airborne ran three shots and scaled the same way.</td></tr>
+      <tr><td>Nothing set</td><td>No gun changes</td><td>1219 of 1219 values across 23 guns equal the baseline, and the picture does not move.</td></tr>
+      <tr><td>Camera roll, one shot</td><td>Peak 2.574 degrees, then 0</td><td>Peak 2.571 degrees, then exactly 0.</td></tr>
+      <tr><td>Camera push, one shot</td><td>Peak 5.148 units back, then the start</td><td>5.140 units back along the view, then the exact start.</td></tr>
+      <tr><td>The aim does not move</td><td>The same climb with feedback on or off</td><td>Exactly 2.5 degrees both ways.</td></tr>
+      <tr><td>Player setting</td><td>0 removes it, 0.5 halves it</td><td>Roll read exactly 0 at 0, and 0.499 to 0.501 of full at 0.5.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <p class="muted">The roll and push peaks come from a spring set far softer than its default, so that a script could read the motion. One fault was found and fixed: with a walking multiplier set, the player's game and the server read the walk key at different moments and disagreed for one tick. Two things have no reading a script can take, and unit tests cover their arithmetic: the size of the field of view kick, and the stance multipliers on spread and kick.</p>
+  </div>
+  <div class="col">
+    <h3 id="camera-bench">Camera bench</h3>
+    <p>This plot runs the same arithmetic as the game for one gun firing ten shots a second, as the MX does. It shows how far each part of the camera feedback moves the picture over time. The starting values are an example and are not in the game, where every amplitude is 0.</p>
+  </div>
+  <div class="cambench">
+    <div class="view">
+      <canvas id="cam-plot" width="800" height="420" aria-label="Plot of roll, field of view, push and shake against time for a burst"></canvas>
+      <ul class="camlegend">
+        <li><i style="background:var(--roll)"></i>roll, degrees</li>
+        <li><i style="background:var(--fov)"></i>field of view, degrees</li>
+        <li><i style="background:var(--push)"></i>push, units</li>
+        <li><i style="background:var(--shake)"></i>shake pitch, degrees</li>
+      </ul>
+      <p class="readout" id="cam-readout"></p>
+    </div>
+    <div class="controls">
+      <p class="grp">Burst</p>
+      <div class="ctl"><label for="cam-shots">shots <output id="cam-shotsv"></output></label><input type="range" id="cam-shots" min="1" max="15" step="1" value="3"></div>
+      <div class="ctl"><label for="cam-scale">cl_neo_camera_feedback <output id="cam-scalev"></output></label><input type="range" id="cam-scale" min="0" max="1" step="0.05" value="1"></div>
+      <p class="grp">Spring</p>
+      <div class="ctl"><label for="cam-roll">roll <output id="cam-rollv"></output></label><input type="range" id="cam-roll" min="0" max="5" step="0.05" value="1"></div>
+      <div class="ctl"><label for="cam-fov">fov_punch <output id="cam-fovv"></output></label><input type="range" id="cam-fov" min="-10" max="10" step="0.05" value="1.5"></div>
+      <div class="ctl"><label for="cam-push">push <output id="cam-pushv"></output></label><input type="range" id="cam-push" min="0" max="8" step="0.05" value="0.5"></div>
+      <div class="ctl"><label for="cam-spring">spring <output id="cam-springv"></output></label><input type="range" id="cam-spring" min="0" max="500" step="1" value="65"></div>
+      <div class="ctl"><label for="cam-damping">damping <output id="cam-dampingv"></output></label><input type="range" id="cam-damping" min="0" max="100" step="0.5" value="9"></div>
+      <p class="grp">Shake</p>
+      <div class="ctl"><label for="cam-amp">shake_amplitude <output id="cam-ampv"></output></label><input type="range" id="cam-amp" min="0" max="5" step="0.05" value="0.5"></div>
+      <div class="ctl"><label for="cam-freq">shake_frequency <output id="cam-freqv"></output></label><input type="range" id="cam-freq" min="1" max="60" step="0.5" value="20"></div>
+      <div class="ctl"><label for="cam-dur">shake_duration <output id="cam-durv"></output></label><input type="range" id="cam-dur" min="0.01" max="1" step="0.01" value="0.15"></div>
+      <div class="btns"><button type="button" class="ghost" id="cam-alt" aria-pressed="true">roll_alternate: on</button><button type="button" class="ghost" id="cam-reset">Reset example</button></div>
+    </div>
+  </div>
+  <div class="col">
+    <span class="stamp">2026-11-15</span>
+    <h3 class="update-title" id="live-tuning-clip">Live tuning, recorded in a running game</h3>
+    <p>This clip comes from the game's own frame capture on a private test server. A script typed every command. The five parts were recorded one after another and joined, with a caption added to each. The panel on the right is the tuning panel, and its top rows show the live state of the gun.</p>
+  </div>
+  <figure class="clip">
+    <video id="demo-clip" controls preload="none" playsinline poster="media/handling-demo-poster.jpg" src="media/handling-demo.mp4"></video>
+    <figcaption>H.264 with sound, 1280 by 720, 60 frames per second, 18 seconds, 3.7 MB. It downloads only when you press play.</figcaption>
+  </figure>
+  <div class="col">
+    <ol>
+      <li><b>Stock MX.</b> A short burst. The camera does not climb, because the MX has no camera recoil today.</li>
+      <li><b>A pattern, set live.</b> Twelve points of climb and drift are typed into the console while the game runs. The same burst now climbs and drifts along the pattern.</li>
+      <li><b>Pattern scale 2.</b> One lever doubles the whole pattern.</li>
+      <li><b>Shot counter cool-down.</b> With a recovery rate set, the Shot number at the top of the panel counts back down gradually after the burst. Before, it dropped to zero in one step.</li>
+      <li><b>Reload.</b> One command puts every value back to what is on disk, and the burst is stock again.</li>
+    </ol>
+    <p class="muted">The wall is the test map's measuring wall. Each tile is 128 game units square, and each figure is 72 units tall, the height of a player. The bullet holes are cleared before every part, so the marks on the wall belong to that part's burst alone.</p>
+  </div>
+  <div class="col">
+    <span class="stamp">2026-11-15</span>
+    <h3 class="update-title" id="aimed-clip">The same five parts while aiming</h3>
+    <p>The second clip repeats the run with the sights raised before each burst. A pattern has its own scale for aimed fire, and here it is set to 1, the same as from the hip.</p>
+  </div>
+  <figure class="clip">
+    <video id="demo-clip-ads" controls preload="none" playsinline poster="media/handling-demo-ads-poster.jpg" src="media/handling-demo-ads.mp4"></video>
+    <figcaption>H.264 with sound, 1280 by 720, 60 frames per second, 19 seconds, 4.6 MB. It downloads only when you press play.</figcaption>
+  </figure>
+  <div class="col">
+    <p class="muted">Aimed fire climbed by exactly the same angles as hip fire: 3.55 degrees for the pattern, and 7.1 degrees at scale 2. The sights zoom the picture, so the same angle covers more of the screen.</p>
+  </div>
+</section>
+
+<footer>The investigation read the game's source as it stood on 2026-11-14. The progress shown is the state of the work on 2026-11-16. The full findings, the current and proposed architecture and the step-by-step plan are kept with the project's working documents, and the developer can share them on request.</footer>
 
 </div>
 
@@ -714,5 +1162,166 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
   gate(); labels(); viewLabels(); refill(); fit();
 })();
 </script>
+
+<script>
+(function () {
+  var ids = ["shots", "scale", "roll", "fov", "push", "spring", "damping", "amp", "freq", "dur"];
+  var el = {}, start = {};
+  ids.forEach(function (id) { el[id] = document.getElementById("cam-" + id); start[id] = el[id].getAttribute("value"); });
+  var altBtn = document.getElementById("cam-alt"), alt = true;
+  var canvas = document.getElementById("cam-plot"), ctx = canvas.getContext("2d");
+  var STEP = 1 / 256, KICK = 20, SHOT_GAP = 0.1, REST = 0.001;
+
+  function num(id) { return parseFloat(el[id].value); }
+  function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  // The game's arithmetic: a kick adds twenty times the lever to the speed, and the spring moves in steps of 1/256 second.
+  function simulate() {
+    var p = {}; ids.forEach(function (id) { p[id] = num(id); });
+    var tail = 1.2, total = (p.shots - 1) * SHOT_GAP + tail, n = Math.ceil(total / STEP);
+    var ax = { roll: { o: 0, v: 0 }, fov: { o: 0, v: 0 }, push: { o: 0, v: 0 } };
+    var shakes = [], side = 0, fired = 0;
+    var out = { t: [], roll: [], fov: [], push: [], shake: [], total: total };
+    var damp = Math.max(0, 1 - p.damping * STEP), force = Math.min(2, Math.max(0, p.spring * STEP));
+    for (var i = 0; i <= n; i++) {
+      var t = i * STEP;
+      while (fired < p.shots && t >= fired * SHOT_GAP - 1e-9) {
+        side = alt ? (side > 0 ? -1 : 1) : (((fired * 7 + 3) % 5) < 2.5 ? -1 : 1);
+        if (p.roll !== 0) { ax.roll.v += p.roll * side * KICK; }
+        ax.fov.v += p.fov * KICK; ax.push.v += p.push * KICK;
+        if (p.amp !== 0) { shakes.push({ t0: t, w: (fired % 2 ? -0.8 : 1) }); }
+        fired++;
+      }
+      var s = 0;
+      shakes.forEach(function (k) {
+        var age = t - k.t0;
+        if (age < p.dur) { s += p.amp * (1 - age / p.dur) * Math.sin(2 * Math.PI * p.freq * age) * k.w; }
+      });
+      out.t.push(t); out.roll.push(ax.roll.o * p.scale); out.fov.push(ax.fov.o * p.scale); out.push.push(ax.push.o * p.scale); out.shake.push(s * p.scale);
+      var o2 = 0, v2 = 0, k;
+      for (k in ax) { o2 += ax[k].o * ax[k].o; v2 += ax[k].v * ax[k].v; }
+      if (o2 <= REST && v2 <= REST) { for (k in ax) { ax[k].o = 0; ax[k].v = 0; } continue; }
+      for (k in ax) {
+        ax[k].o += ax[k].v * STEP; ax[k].v *= damp; ax[k].v -= ax[k].o * force;
+        ax[k].o = Math.max(-89, Math.min(89, ax[k].o));
+      }
+    }
+    return out;
+  }
+
+  function peak(a) { var m = 0; a.forEach(function (x) { if (Math.abs(x) > Math.abs(m)) { m = x; } }); return m; }
+
+  function draw() {
+    ids.forEach(function (id) { document.getElementById("cam-" + id + "v").textContent = el[id].value; });
+    var d = simulate(), W = canvas.width, H = canvas.height, L = 46, R = 10, T = 12, B = 28;
+    var series = [["roll", "--roll"], ["fov", "--fov"], ["push", "--push"], ["shake", "--shake"]];
+    var m = 0.5; series.forEach(function (s) { m = Math.max(m, Math.abs(peak(d[s[0]]))); });
+    var top = Math.ceil(m * 1.1 * 2) / 2;
+    function x(t) { return L + (t / d.total) * (W - L - R); }
+    function y(v) { return T + (1 - (v + top) / (2 * top)) * (H - T - B); }
+    ctx.clearRect(0, 0, W, H);
+    ctx.font = "12px " + css("--font-mono"); ctx.fillStyle = css("--muted"); ctx.strokeStyle = css("--line"); ctx.lineWidth = 1;
+    var gy = top / 2;
+    for (var v = -top; v <= top + 1e-9; v += gy) {
+      ctx.beginPath(); ctx.moveTo(L, y(v)); ctx.lineTo(W - R, y(v)); ctx.stroke();
+      ctx.textAlign = "right"; ctx.fillText(v.toFixed(2), L - 6, y(v) + 4);
+    }
+    ctx.textAlign = "center";
+    for (var t = 0; t <= d.total + 1e-9; t += 0.25) {
+      ctx.beginPath(); ctx.moveTo(x(t), T); ctx.lineTo(x(t), H - B); ctx.stroke();
+      ctx.fillText(t.toFixed(2) + " s", x(t), H - 8);
+    }
+    ctx.strokeStyle = css("--fg"); ctx.beginPath(); ctx.moveTo(L, y(0)); ctx.lineTo(W - R, y(0)); ctx.stroke();
+    series.forEach(function (s) {
+      ctx.strokeStyle = css(s[1]); ctx.lineWidth = 2; ctx.beginPath();
+      for (var i = 0; i < d.t.length; i += 2) { if (i === 0) { ctx.moveTo(x(d.t[i]), y(d[s[0]][i])); } else { ctx.lineTo(x(d.t[i]), y(d[s[0]][i])); } }
+      ctx.stroke();
+    });
+    document.getElementById("cam-readout").textContent = "Largest offsets in this burst: roll " + peak(d.roll).toFixed(2) + " degrees, field of view " + peak(d.fov).toFixed(2) + " degrees, push " + peak(d.push).toFixed(2) + " units, shake " + peak(d.shake).toFixed(2) + " degrees.";
+  }
+
+  ids.forEach(function (id) { el[id].addEventListener("input", draw); });
+  altBtn.addEventListener("click", function () { alt = !alt; altBtn.setAttribute("aria-pressed", String(alt)); altBtn.textContent = "roll_alternate: " + (alt ? "on" : "off"); draw(); });
+  document.getElementById("cam-reset").addEventListener("click", function () { ids.forEach(function (id) { el[id].value = start[id]; }); alt = true; altBtn.setAttribute("aria-pressed", "true"); altBtn.textContent = "roll_alternate: on"; draw(); });
+  if (window.matchMedia) { window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw); }
+  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  draw();
+})();
+</script>
+
+<style>.mermaid-diagram{margin-block:4px}.mermaid-diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}</style>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>(function(){
+var CFG={"palettes":{"light":{"surface":"#f4efe4","text":"#42392e","line":"#8a7f6d","border":"#7a6c52","bg":"#fffdf8"},"dark":{"surface":"#262b34","text":"#f2f3f5","line":"#a8adb8","border":"#9aa4b8","bg":"#1f232b"}}};
+if(typeof mermaid==='undefined')return;
+var pres=Array.prototype.slice.call(document.querySelectorAll('pre.mermaid')).filter(function(p){if(p.hasAttribute('data-claude-mermaid-claimed'))return false;p.setAttribute('data-claude-mermaid-claimed','1');return true;});
+if(!pres.length)return;
+var mq=window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):null;
+var root=document.documentElement;
+var items=pres.map(function(pre){
+var mount=document.createElement('div');mount.className='mermaid-diagram';
+return {pre:pre,mount:mount,src:pre.textContent||''};
+});
+var seq=0;
+var renderGen=0;
+var lastKey='';
+function pageBg(fallback){
+var els=[document.body,document.documentElement];
+for(var i=0;i<els.length;i++){
+var c=els[i]&&getComputedStyle(els[i]).backgroundColor;
+if(c&&c!=='transparent'&&c!=='rgba(0, 0, 0, 0)')return c;
+}
+return fallback;
+}
+function render(){
+var theme=root.getAttribute('data-theme');
+var dark=theme==='dark'||(!!(mq&&mq.matches)&&theme!=='light');
+var pal=dark?CFG.palettes.dark:CFG.palettes.light;
+var bg=pageBg(pal.bg);
+var key=(dark?'d':'l')+'|'+bg;
+if(key===lastKey)return;
+lastKey=key;
+var gen=++renderGen;
+var font=getComputedStyle(document.body).fontFamily||'sans-serif';
+var nat={useMaxWidth:false};
+mermaid.initialize({
+startOnLoad:false,securityLevel:'strict',theme:'base',
+flowchart:nat,sequence:nat,er:nat,state:nat,class:nat,pie:nat,
+gantt:nat,journey:nat,timeline:nat,gitGraph:nat,mindmap:nat,xyChart:nat,
+quadrantChart:nat,sankey:nat,c4:nat,requirement:nat,block:nat,
+packet:nat,kanban:nat,architecture:nat,radar:nat,
+themeVariables:{background:bg,mainBkg:pal.surface,primaryColor:pal.surface,
+primaryTextColor:pal.text,lineColor:pal.line,primaryBorderColor:pal.border,
+nodeBorder:pal.border,clusterBorder:pal.border,edgeLabelBackground:bg,
+clusterBkg:'rgba(127,127,127,0.07)',titleColor:pal.text,
+darkMode:dark,rowOdd:bg,rowEven:'rgba(127,127,127,0.07)',
+attributeBackgroundColorOdd:bg,attributeBackgroundColorEven:'rgba(127,127,127,0.07)',
+fontSize:'16px',fontFamily:font},
+themeCSS:'.node rect, .node circle, .node polygon, .node path, .cluster rect { stroke-width: 2px; }'
+});
+items.forEach(function(it){
+var id='claude-mermaid-'+seq++;
+mermaid.render(id,it.src).then(function(r){
+if(gen!==renderGen)return;
+var prev=it.pre.previousElementSibling;
+if(prev&&prev.className==='mermaid-diagram'&&prev!==it.mount)return;
+it.mount.innerHTML=r.svg;
+if(!it.mount.parentNode)it.pre.parentNode.insertBefore(it.mount,it.pre);
+it.pre.style.display='none';
+},function(){
+var scratch=document.getElementById(id);
+if(scratch)scratch.parentNode.removeChild(scratch);
+scratch=document.getElementById('d'+id);
+if(scratch)scratch.parentNode.removeChild(scratch);
+if(gen!==renderGen)return;
+if(it.mount.parentNode)it.mount.parentNode.removeChild(it.mount);
+it.pre.style.display='';
+});
+});
+}
+render();
+if(mq&&mq.addEventListener)mq.addEventListener('change',render);
+if(typeof MutationObserver!=='undefined')new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
+})();</script>
 
 </body></html>
