@@ -289,6 +289,8 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
   }
   var seed = 7;
   var bursts = [], masterBursts = [];
+  // Master's simulations draw from their own seed, so moving a lever of the example never changes them.
+  var mseed = 7;
   // While a burst is being animated, this is how many of its shots are drawn so far. 0 means every shot is drawn.
   var shown = 0, timer = null;
   // The hitboxes of a player model in its reference pose, seen from the front. Each is the outline of one box in game units, measured from the middle of the chest box.
@@ -345,7 +347,7 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
   // The burst the overlay draws: the same number of shots with the chosen gun's master settings. The MX's camera does not move, and the MPN's climbs at random.
   function masterShots() {
     var m = gun.set;
-    return sim({ climb: gun.climb, spread: true, pattern: PATTERNS.off, noPath: true, pf: 0, ps: 0, pk: 0, rs: m.rs || 0, sh: m.sh || 0, rl: m.rl || 0, rh: m.rh || 0, rd: m.rd || 0, n: +el.n.value, smin: m.smin, smax: m.smax, gp: m.gp, gd: m.gd, shotTime: 1 / m.rof }, rng(seed * 104729 + 11), rng(seed * 104729 + 7));
+    return sim({ climb: gun.climb, spread: true, pattern: PATTERNS.off, noPath: true, pf: 0, ps: 0, pk: 0, rs: m.rs || 0, sh: m.sh || 0, rl: m.rl || 0, rh: m.rh || 0, rd: m.rd || 0, n: +el.n.value, smin: m.smin, smax: m.smax, gp: m.gp, gd: m.gd, shotTime: 1 / m.rof }, rng(mseed * 104729 + 11), rng(mseed++ * 104729 + 7));
   }
   function guide(side) {
     var ps = +el.ps.value, rs = +el.rs.value, n = +el.n.value, x = 0, y = 0, pts = [[0, 0]];
@@ -609,8 +611,16 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
   // Each simulation of the example has a simulation of master beside it, so the overlay can show as many.
   function settle() { if (timer) clearInterval(timer); timer = null; shown = 0; }
   function fire() { settle(); var keep = +el.sims.value; bursts.push(burst()); masterBursts.push(masterShots()); while (bursts.length > keep) { bursts.shift(); masterBursts.shift(); } render(); }
-  function refill() { settle(); bursts = []; masterBursts = []; for (var i = 0, keep = +el.sims.value; i < keep; i++) { bursts.push(burst()); masterBursts.push(masterShots()); } render(); }
-  ids.forEach(function (id) { el[id].addEventListener('input', function () { labels(); if (id === 'rc') render(); else refill(); }); });
+  // A lever of the example simulates the example again and leaves master's simulations as they are. Master is simulated again only when its gun, the shot count or the number of simulations changes, and Fire a burst adds one to each.
+  function refill(keepMaster) {
+    settle();
+    var keep = +el.sims.value, i;
+    bursts = [];
+    for (i = 0; i < keep; i++) bursts.push(burst());
+    if (!keepMaster || masterBursts.length !== keep) { masterBursts = []; for (i = 0; i < keep; i++) masterBursts.push(masterShots()); }
+    render();
+  }
+  ids.forEach(function (id) { el[id].addEventListener('input', function () { labels(); if (id === 'rc') render(); else refill(id !== 'n' && id !== 'sims'); }); });
   // A lever is greyed out while it has nothing to act on: the climb path levers with no path, every climb lever with the climb off, and the cone sliders with the spread off.
   function gate() {
     ['pf', 'ps', 'pk'].forEach(function (id) { var g = off || !climb; el[id].disabled = g; el[id].parentNode.classList.toggle('off', g); });
@@ -625,10 +635,10 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
     patButtons.forEach(function (o) { o.setAttribute('aria-pressed', o.getAttribute('data-pat') === name ? 'true' : 'false'); });
     gate();
     buttons();
-    refill();
+    refill(true);
   }
   function setScheme(c, b) { climb = c; spread = b; cc.checked = c; bs.checked = b; }
-  [cc, bs].forEach(function (box) { box.addEventListener('change', function () { climb = cc.checked; spread = bs.checked; gate(); buttons(); refill(); }); });
+  [cc, bs].forEach(function (box) { box.addEventListener('change', function () { climb = cc.checked; spread = bs.checked; gate(); buttons(); refill(true); }); });
   patButtons.forEach(function (b) { b.addEventListener('click', function () { setPattern(b.getAttribute('data-pat')); }); });
   function viewLabels() { zmv.textContent = (+zm.value).toFixed(2) + 'x'; rgv.textContent = rg.value + ' m'; buttons(); }
   zm.addEventListener('input', function () { viewLabels(); render(); });
@@ -653,12 +663,13 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
     setScheme(gun.climb, true);
     Object.keys(gun.set).forEach(function (id) { el[id].value = gun.set[id]; });
     labels();
-    if (gun.climb) setPattern('off'); else { gate(); refill(); }
+    if (gun.climb) setPattern('off'); else { gate(); refill(true); }
   }
   todayBtn.addEventListener('click', applyMaster);
   // Choosing a gun applies its master settings, as the master button would. While the overlay is on the master button is locked, so the choice changes only what the overlay draws.
   gunSel.addEventListener('change', function () {
     gun = GUNS[gunSel.value] || GUNS.mx;
+    masterBursts = [];
     if (overlay) { buttons(); refill(); } else applyMaster();
   });
   // New example restores the starting values and leaves the overlay as it is.
