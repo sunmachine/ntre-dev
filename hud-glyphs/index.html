@@ -1,362 +1,338 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>HUD Glyphs and Ammo Rail</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jura:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=Overpass+Mono:wght@400;700&display=swap">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><title>HUD Tweaks</title>
+</head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-html{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}
-/* Layout: one reading column for findings and tables, full-width grids for captures, a dialog lightbox for scenes. Dark first, since the captures are dark. Same tokens as the HUD Series Captures page this one follows. */
-:root{--bg:#0e1318;--surface:#151c23;--line:#243039;--fg:#e4ebf1;--muted:#8d9ca9;--accent:#7fd3dc;--ok:#79cf9c;--warn:#e3b765;--bad:#ef8a80;
---display:"Jura","IBM Plex Sans",system-ui,sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,sans-serif;--mono:"Overpass Mono",ui-monospace,Menlo,monospace;color-scheme:dark}
-@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#f2f5f7;--surface:#ffffff;--line:#d7dee4;--fg:#162028;--muted:#5a6a77;--accent:#167d87;--ok:#1f8a4c;--warn:#9a6b10;--bad:#b3372b;color-scheme:light}}
-:root[data-theme="light"]{--bg:#f2f5f7;--surface:#ffffff;--line:#d7dee4;--fg:#162028;--muted:#5a6a77;--accent:#167d87;--ok:#1f8a4c;--warn:#9a6b10;--bad:#b3372b;color-scheme:light}
-body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--body);padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-main{max-width:1180px;margin:0 auto;display:grid;gap:44px}
-main>*{min-width:0}
-header h1{font:700 clamp(28px,4vw,40px)/1.1 var(--display);letter-spacing:.02em;margin:0 0 8px;text-wrap:balance}
-header p{max-width:68ch;margin:0;color:var(--muted)}
-.eyebrow{font:700 12px/1 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
-h2{font:700 22px/1.2 var(--display);letter-spacing:.02em;margin:0 0 6px;text-wrap:balance}
-h3{font:600 15px/1.3 var(--body);margin:22px 0 8px}
-section>p,section>ul,section>ol{max-width:68ch;color:var(--muted);margin:0 0 16px}
-section>p strong,li strong{color:var(--fg);font-weight:600}
-table{border-collapse:collapse;width:100%;font-size:14px}
-.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface);margin:0 0 16px}
-th,td{text-align:left;padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
-thead th{border-top:0;font:600 12px/1.2 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-td.num,td code{font-family:var(--mono);font-variant-numeric:tabular-nums}
-td.num{white-space:nowrap}
-code{font:400 13px var(--mono);color:var(--fg)}
-.pill{display:inline-block;font:600 12px/1 var(--body);padding:4px 8px;border-radius:999px;letter-spacing:.03em;white-space:nowrap}
-.pill.ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
-.pill.warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
-.pill.bad{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad)}
-.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));margin:0 0 16px}
-.grid.scenes{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
-.grid.cuts{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
-.grid.pairs{grid-template-columns:repeat(auto-fill,minmax(min(100%,460px),1fr))}
-figure{margin:0;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden}
-figure.wide{grid-column:1/-1}
-figure img{display:block;width:100%;height:auto;max-width:100%;background:#000}
-figure.cut img{image-rendering:pixelated}
-figure.scene img{cursor:zoom-in;aspect-ratio:16/9;object-fit:cover}
-figcaption{padding:8px 10px;font-size:13px;color:var(--muted)}
-figcaption b{color:var(--fg);font-weight:600}
-ul,ol{padding-left:20px} li{margin:4px 0}
-.textout{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface);margin:0 0 16px}
-.textout pre{margin:0;padding:12px 14px;font:400 12px/1.35 var(--mono);color:var(--fg);white-space:pre}
-.textout pre.glyph{font-size:9px;line-height:1.05;letter-spacing:.5px}
-.split{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));margin:0 0 16px}
-.split>*{min-width:0;margin:0}
-.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 16px;padding:0;list-style:none;color:var(--muted);font-size:14px;max-width:none}
-.legend li{display:flex;align-items:center;gap:8px;margin:0}
-.sw{width:22px;height:4px;border-radius:1px;flex:none}
-.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 14px}
-.toolbar button{background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:4px;font:600 13px var(--body);padding:7px 12px;cursor:pointer}
-.toolbar button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
-.toolbar span{color:var(--muted);font-size:13px}
-dialog{border:0;padding:0;background:transparent;max-width:min(96vw,1600px);max-height:96vh}
-dialog::backdrop{background:rgba(0,0,0,.82)}
-dialog img{display:block;max-width:min(96vw,1600px);max-height:90vh;width:auto;height:auto;border-radius:6px;image-rendering:pixelated}
-dialog p{margin:8px 0 0;color:#dfe6ec;font-size:13px;text-align:center}
-dialog button{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:4px;font:600 13px var(--body);padding:6px 10px;cursor:pointer}
-button:focus-visible,figure.scene img:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-@media (prefers-reduced-motion: no-preference){dialog[open]{animation:in .15s ease-out}}
-@keyframes in{from{opacity:0}to{opacity:1}}
-.part{font:700 12px/1 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0;padding-bottom:10px;border-bottom:1px solid var(--line)}
-.cmps{width:min(1600px,calc(100vw - 32px));margin-left:calc(50% - min(800px,calc(50vw - 16px)));display:grid;gap:18px;margin-bottom:16px}
-.cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px;align-items:start}
-.cmp h4{grid-column:1/-1;margin:0;font:600 14px/1.3 var(--body)}
-.cmp h4 span{font-weight:400;color:var(--muted)}
-.cmp figure{background:var(--surface)}
-.cmp figure img{cursor:zoom-in;background:#000}
-.cmp .tag{display:block;padding:6px 10px 5px;font:600 11px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.cmp .tag.new{color:var(--accent)}
-.cmp img:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-@media (max-width:720px){.cmp{grid-template-columns:minmax(0,1fr)}}
+/* Layout: one reading column; each capture pair sits side by side when it fits and stacks when it does not.
+   A single dark look, on purpose: the captures are dark game frames and read best on a dark ground. */
+:root {
+  --ground: #0e1114;
+  --panel: #161b20;
+  --line: #262e36;
+  --ink: #dbe2e8;
+  --muted: #8b97a3;
+  --master: #d6a65c;
+  --tweaks: #6fc2d4;
+  --display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+html { background: var(--ground); }
+body { background: var(--ground); color: var(--ink); font: 15px/1.55 var(--body); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2 { font-family: var(--display); font-weight: 600; letter-spacing: 0.02em; text-wrap: balance; margin: 0; }
+h1 { font-size: 2rem; line-height: 1.15; }
+h2 { font-size: 1.35rem; }
+h2 a { color: inherit; text-decoration: none; }
+h2 a:hover, h2 a:focus-visible { color: var(--tweaks); }
+.lede { max-width: 68ch; color: var(--muted); margin: 10px 0 0; }
+.builds { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 16px 0 0; padding: 0; list-style: none; font: 13px/1.4 var(--mono); color: var(--muted); }
+.builds b { font-weight: 500; }
+.builds .m b { color: var(--master); }
+.builds .t b { color: var(--tweaks); }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--ground); border-bottom: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; padding-block: 12px; margin-top: 20px; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--ground); }
+.group { display: flex; align-items: center; gap: 8px; font: 12px/1 var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.seg button { font: 13px/1 var(--body); color: var(--ink); background: transparent; border: 0; padding: 8px 12px; cursor: pointer; text-transform: none; letter-spacing: 0; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--panel); color: var(--tweaks); }
+.seg button:focus-visible { outline: 2px solid var(--tweaks); outline-offset: -2px; }
+.hint { font-size: 13px; color: var(--muted); }
+nav ol { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 0; margin: 18px 0 0; list-style: none; font-size: 14px; }
+nav a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line); }
+nav a:hover, nav a:focus-visible { color: var(--tweaks); border-color: var(--tweaks); }
+section { margin-top: 44px; display: grid; gap: 18px; scroll-margin-top: 80px; }
+.note { margin: 0; max-width: 72ch; color: var(--muted); }
+figure.cmp { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; min-width: 0; }
+figcaption { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.scene { font-weight: 500; }
+.dims { font: 12px/1.6 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.pair { display: flex; flex-wrap: wrap; gap: 12px; overflow-x: auto; }
+.shot { position: relative; flex: 0 1 var(--w); min-width: 0; max-width: 100%; }
+body[data-zoom="2"] .shot { flex-basis: calc(var(--w) * 2); max-width: none; }
+.shot img { display: block; width: 100%; height: auto; background: #000; border-radius: 3px; image-rendering: auto; }
+body[data-zoom="2"] .shot img { width: calc(var(--w) * 2); max-width: none; image-rendering: pixelated; }
+.tag { position: absolute; top: 6px; left: 6px; font: 11px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 4px 6px; border-radius: 3px; background: rgba(14, 17, 20, 0.82); }
+.master .tag { color: var(--master); }
+.stack .tag { color: var(--tweaks); }
+.master img { outline: 1px solid color-mix(in srgb, var(--master) 45%, transparent); }
+.stack img { outline: 1px solid color-mix(in srgb, var(--tweaks) 45%, transparent); }
+figure.full .shot { flex-basis: 100%; }
+body[data-zoom="2"] figure.full .shot { flex-basis: calc(var(--w) * 1); }
+body[data-zoom="2"] figure.full .shot img { width: var(--w); image-rendering: auto; }
+/* Flip: one capture at a time, in the same place, so a shift of a pixel shows as movement */
+body[data-mode="flip"] .pair { display: grid; }
+body[data-mode="flip"] .shot { grid-area: 1 / 1; cursor: pointer; }
+body[data-mode="flip"] figure:not(.showing-master) .master { visibility: hidden; }
+body[data-mode="flip"] figure.showing-master .stack { visibility: hidden; }
+table.rail { margin-top: 12px; border-collapse: collapse; font: 13px/1.4 var(--mono); font-variant-numeric: tabular-nums; width: 100%; max-width: 640px; }
+table.rail th, table.rail td { text-align: left; padding: 5px 10px 5px 0; border-top: 1px solid var(--line); vertical-align: top; }
+table.rail thead th { color: var(--muted); font-weight: 400; border-top: 0; }
+table.rail tbody th { font-weight: 500; white-space: nowrap; }
+footer { margin-top: 56px; color: var(--muted); font-size: 13px; max-width: 72ch; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
-</head>
-<body>
-<main>
-<header>
-<p class="eyebrow">NT;RE HUD consistency, measuring pass and ammo rail</p>
-<h1>HUD Glyphs and Ammo Rail</h1>
-<p>Captured on Linux at 1920 by 1080. The comparisons in part 2 were all captured on 2026-11-10, both sides in the same scenes on <code>ntre_oilstain_ctg</code> with bots, so names and counts differ between them. The left side of each is <code>master</code> of NeotokyoRebuild/neo at <code>aa8f099d4</code>, with only the Linux font loading fix applied so its fonts draw as they do on Windows. The right side is the HUD proposed in the HUD consistency pull requests, #28 to #32 on <a href="https://github.com/sunmachine/ntre-dev/pulls">sunmachine/ntre-dev</a>, with three additions on top: a debug view that measures HUD text, a fix for the cut fire mode icons, and a new layout for the ammo rail and the mag count. None of the three is in a pull request yet.</p>
-</header>
 
-<p class="part">Part 1. How it is measured</p>
-<section>
-<h2>The debug view</h2>
-<p>The debug frames here are from the measuring set of 2026-11-09. <code>cl_neo_hud_debug_draw 1</code> outlines every text run and every box the HUD draws. At <code>2</code> it also underlines each character's ink. <code>cl_neo_hud_debug_dump label</code> writes the same rectangles of one frame to <code>hud_debug_label.txt</code> in the game folder. Both are off by default and neither is a cheat.</p>
-<ul class="legend">
-<li><span class="sw" style="background:#00ffff"></span>Font's line box</li>
-<li><span class="sw" style="background:#ff3030"></span>Its top edge, where glyphs are cut</li>
-<li><span class="sw" style="background:#ff00ff"></span>Baseline</li>
-<li><span class="sw" style="background:#ffff00"></span>Ink edges the text was placed by</li>
-<li><span class="sw" style="background:#00ff00"></span>A box or a column</li>
-<li><span class="sw" style="background:#ff9600"></span>One character's ink, at level 2</li>
-</ul>
-<div class="grid pairs">
-<figure class="crop"><img src="img/w_mx_vitals_dbg.png" alt="Vitals with the debug view on" loading="lazy"><figcaption>Vitals. The build hash above the box is drawn by the same panel.</figcaption></figure>
-<figure class="crop wide"><img src="img/p_list_dash_dbg.png" alt="Dash with the debug view on" loading="lazy"><figcaption>Dash, playing.</figcaption></figure>
-<figure class="crop"><img src="img/p_list_squad_dbg.png" alt="Squad list with the debug view on" loading="lazy"><figcaption>Squad list, top left. Each column is its own run.</figcaption></figure>
-<figure class="crop"><img src="img/p_avatars_feed_dbg.png" alt="Kill feed with the debug view on" loading="lazy"><figcaption>Kill feed below the avatars.</figcaption></figure>
-<figure class="crop"><img src="img/w_mx_compass_dbg.png" alt="Compass with the debug view on" loading="lazy"><figcaption>Compass.</figcaption></figure>
+<div class="wrap">
+  <header>
+    <h1>HUD Tweaks</h1>
+    <p class="lede">The HUD tweaks stack against master, panel by panel, at 1920 × 1080. Both builds draw every text in master's fonts. Each scene was played once per build, so bot names, timers and kill feed entries differ between the two captures; the panels' shapes and placements are what to compare.</p>
+    <ul class="builds">
+      <li class="m"><b>Master</b> neo/master 6f53bb238</li>
+      <li class="t"><b>HUD tweaks</b> the hud-tweaks branches, each panel captured once its changes were final</li>
+      <li>Captured 2026-11-20, Linux</li>
+    </ul>
+    <nav aria-label="Panels"><ol><li><a href="#rails">Rail rounds</a></li><li><a href="#fire">Fire mode icons</a></li><li><a href="#ammo">Ammo panel</a></li><li><a href="#vitals">Vitals</a></li><li><a href="#compass">Compass</a></li><li><a href="#dash">Dash</a></li><li><a href="#squad">Squad list</a></li><li><a href="#feed">Kill feed</a></li><li><a href="#killer">Killer info</a></li><li><a href="#spectator">Spectator overlay</a></li><li><a href="#frames">Full frames</a></li></ol></nav>
+  </header>
+
+  <div class="bar" role="toolbar" aria-label="View">
+    <div class="group">View
+      <span class="seg"><button type="button" id="mode-pair" data-mode="pair" aria-pressed="true">Side by side</button><button type="button" id="mode-flip" data-mode="flip" aria-pressed="false">Flip</button></span>
+    </div>
+    <div class="group">Zoom
+      <span class="seg"><button type="button" id="zoom-1" data-zoom="1" aria-pressed="true">1×</button><button type="button" id="zoom-2" data-zoom="2" aria-pressed="false">2×</button></span>
+    </div>
+    <span class="hint" id="hint">Flip shows one build at a time in the same place. Tap a capture, or press F, to switch.</span>
+  </div>
+
+    <section id="rails">
+      <h2><a href="#rails">Rail rounds</a></h2>
+      <p class="note">The MX, the SRM and the PZ252 draw their rounds smaller than the font&#x27;s size, by scaling the glyph&#x27;s quad. That path stood each round at a fractional position and size, so the surface sampled the glyph differently for each round: widths changed by a pixel from round to round, and on the PZ252 and the MX the rounds ran into each other. The fix stands smaller rounds on a whole-pixel pitch with whole-pixel quads, and holds the scale so each round&#x27;s ink stops a pixel short of the next. Before and after were both captured with a wider mag column than the stack keeps, so the MX&#x27;s rounds draw smaller here. Each crop is the rail&#x27;s first 150 px, enlarged 4 times. In the stack the MX&#x27;s rounds stand at full size, where the font itself sets them edge to edge with a dimmer antialiased seam between; the Ammo panel below shows it.</p>
+      <figure class="cmp" style="--w:600px">
+        <figcaption><span class="scene">MX, measuring capture</span><span class="dims">150 × 50 px at 4×</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Before</span><img src="img/railink-w_mx-before.png" width="600" height="200" loading="lazy" alt="MX, measuring capture before the fix"></div><div class="shot stack"><span class="tag">After</span><img src="img/railink-w_mx-after.png" width="600" height="200" loading="lazy" alt="MX, measuring capture after the fix"></div></div><table class="rail"><thead><tr><th scope="col"></th><th scope="col">Rounds standing apart</th><th scope="col">Round widths</th><th scope="col">Flags</th></tr></thead><tbody><tr><th scope="row">Before</th><td>12 of 30</td><td>7, 8 px</td><td>rounds meet at seam, round widths differ</td></tr><tr><th scope="row">After</th><td>30 of 30</td><td>6 px</td><td>none</td></tr></tbody></table>
+      </figure>
+      <figure class="cmp" style="--w:600px">
+        <figcaption><span class="scene">MX, debug view</span><span class="dims">150 × 50 px at 4×</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Before</span><img src="img/raildbg-w_mx-before.png" width="600" height="200" loading="lazy" alt="MX, debug view before the fix"></div><div class="shot stack"><span class="tag">After</span><img src="img/raildbg-w_mx-after.png" width="600" height="200" loading="lazy" alt="MX, debug view after the fix"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:600px">
+        <figcaption><span class="scene">SRM, measuring capture</span><span class="dims">150 × 50 px at 4×</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Before</span><img src="img/railink-w_srm-before.png" width="600" height="200" loading="lazy" alt="SRM, measuring capture before the fix"></div><div class="shot stack"><span class="tag">After</span><img src="img/railink-w_srm-after.png" width="600" height="200" loading="lazy" alt="SRM, measuring capture after the fix"></div></div><table class="rail"><thead><tr><th scope="col"></th><th scope="col">Rounds standing apart</th><th scope="col">Round widths</th><th scope="col">Flags</th></tr></thead><tbody><tr><th scope="row">Before, row 1</th><td>25 of 25</td><td>5, 6 px</td><td>round widths differ</td></tr><tr><th scope="row">Before, row 2</th><td>25 of 25</td><td>5, 6 px</td><td>round widths differ</td></tr><tr><th scope="row">After, row 1</th><td>25 of 25</td><td>5 px</td><td>none</td></tr><tr><th scope="row">After, row 2</th><td>25 of 25</td><td>5 px</td><td>none</td></tr></tbody></table>
+      </figure>
+      <figure class="cmp" style="--w:600px">
+        <figcaption><span class="scene">SRM, debug view</span><span class="dims">150 × 50 px at 4×</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Before</span><img src="img/raildbg-w_srm-before.png" width="600" height="200" loading="lazy" alt="SRM, debug view before the fix"></div><div class="shot stack"><span class="tag">After</span><img src="img/raildbg-w_srm-after.png" width="600" height="200" loading="lazy" alt="SRM, debug view after the fix"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:600px">
+        <figcaption><span class="scene">PZ252, measuring capture</span><span class="dims">150 × 50 px at 4×</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Before</span><img src="img/railink-w_pz-before.png" width="600" height="200" loading="lazy" alt="PZ252, measuring capture before the fix"></div><div class="shot stack"><span class="tag">After</span><img src="img/railink-w_pz-after.png" width="600" height="200" loading="lazy" alt="PZ252, measuring capture after the fix"></div></div><table class="rail"><thead><tr><th scope="col"></th><th scope="col">Rounds standing apart</th><th scope="col">Round widths</th><th scope="col">Flags</th></tr></thead><tbody><tr><th scope="row">Before, row 1</th><td>4 of 50</td><td>4, 5, 10 px</td><td>rounds touch, round widths differ</td></tr><tr><th scope="row">Before, row 2</th><td>11 of 50</td><td>4, 5 px</td><td>rounds meet at seam, round widths differ</td></tr><tr><th scope="row">After, row 1</th><td>50 of 50</td><td>4 px</td><td>none</td></tr><tr><th scope="row">After, row 2</th><td>50 of 50</td><td>4 px</td><td>none</td></tr></tbody></table>
+      </figure>
+      <figure class="cmp" style="--w:600px">
+        <figcaption><span class="scene">PZ252, debug view</span><span class="dims">150 × 50 px at 4×</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Before</span><img src="img/raildbg-w_pz-before.png" width="600" height="200" loading="lazy" alt="PZ252, debug view before the fix"></div><div class="shot stack"><span class="tag">After</span><img src="img/raildbg-w_pz-after.png" width="600" height="200" loading="lazy" alt="PZ252, debug view after the fix"></div></div>
+      </figure>
+    </section>
+    <section id="fire">
+      <h2><a href="#fire">Fire mode icons</a></h2>
+      <p class="note">The fire mode icons lose their top rows on master: on Linux the engine draws nothing above a font&#x27;s win ascent, and NOCR&#x27;s is 1757 units while these icons reach 1916. The icons now draw from nocr_icons.ttf, NOCR&#x27;s icon glyphs with their outlines unchanged and the win ascent raised to 1950, at a tall that keeps their size. It is the first branch of the stack, hud-tweaks/fire-mode-font. Before is the stack without it, after is with it. Each crop is enlarged 4 times; in the debug view the red line is the line box&#x27;s top edge, where the glyph is cut.</p>
+      <figure class="cmp" style="--w:272px">
+        <figcaption><span class="scene">Automatic, MX, measuring capture</span><span class="dims">68 × 74 px at 4×</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Before</span><img src="img/fireink-w_mx-before.png" width="272" height="296" loading="lazy" alt="Automatic, MX, measuring capture before the fix"></div><div class="shot stack"><span class="tag">After</span><img src="img/fireink-w_mx-after.png" width="272" height="296" loading="lazy" alt="Automatic, MX, measuring capture after the fix"></div></div><table class="rail"><thead><tr><th scope="col"></th><th scope="col">Font</th><th scope="col">Line box top</th><th scope="col">Ink</th><th scope="col">Flags</th></tr></thead><tbody><tr><th scope="row">Before</th><td>NOCR 63 px</td><td>y 1011</td><td>y 1011 to 1060, x 1479 to 1523</td><td>cut top</td></tr><tr><th scope="row">After</th><td>NOCR Icons 60 px</td><td>y 1005</td><td>y 1008 to 1060, x 1479 to 1523</td><td>none</td></tr></tbody></table>
+      </figure>
+      <figure class="cmp" style="--w:272px">
+        <figcaption><span class="scene">Automatic, MX, debug view</span><span class="dims">68 × 74 px at 4×</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Before</span><img src="img/firedbg-w_mx-before.png" width="272" height="296" loading="lazy" alt="Automatic, MX, debug view before the fix"></div><div class="shot stack"><span class="tag">After</span><img src="img/firedbg-w_mx-after.png" width="272" height="296" loading="lazy" alt="Automatic, MX, debug view after the fix"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:272px">
+        <figcaption><span class="scene">Semi-automatic, Milso, measuring capture</span><span class="dims">68 × 74 px at 4×</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Before</span><img src="img/fireink-w_milso-before.png" width="272" height="296" loading="lazy" alt="Semi-automatic, Milso, measuring capture before the fix"></div><div class="shot stack"><span class="tag">After</span><img src="img/fireink-w_milso-after.png" width="272" height="296" loading="lazy" alt="Semi-automatic, Milso, measuring capture after the fix"></div></div><table class="rail"><thead><tr><th scope="col"></th><th scope="col">Font</th><th scope="col">Line box top</th><th scope="col">Ink</th><th scope="col">Flags</th></tr></thead><tbody><tr><th scope="row">Before</th><td>NOCR 63 px</td><td>y 1011</td><td>y 1011 to 1062, x 1479 to 1523</td><td>cut top</td></tr><tr><th scope="row">After</th><td>NOCR Icons 60 px</td><td>y 1005</td><td>y 1007 to 1062, x 1479 to 1523</td><td>none</td></tr></tbody></table>
+      </figure>
+      <figure class="cmp" style="--w:272px">
+        <figcaption><span class="scene">Semi-automatic, Milso, debug view</span><span class="dims">68 × 74 px at 4×</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Before</span><img src="img/firedbg-w_milso-before.png" width="272" height="296" loading="lazy" alt="Semi-automatic, Milso, debug view before the fix"></div><div class="shot stack"><span class="tag">After</span><img src="img/firedbg-w_milso-after.png" width="272" height="296" loading="lazy" alt="Semi-automatic, Milso, debug view after the fix"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:272px">
+        <figcaption><span class="scene">Pump, SUPA 7, measuring capture</span><span class="dims">68 × 74 px at 4×</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Before</span><img src="img/fireink-w_supa7-before.png" width="272" height="296" loading="lazy" alt="Pump, SUPA 7, measuring capture before the fix"></div><div class="shot stack"><span class="tag">After</span><img src="img/fireink-w_supa7-after.png" width="272" height="296" loading="lazy" alt="Pump, SUPA 7, measuring capture after the fix"></div></div><table class="rail"><thead><tr><th scope="col"></th><th scope="col">Font</th><th scope="col">Line box top</th><th scope="col">Ink</th><th scope="col">Flags</th></tr></thead><tbody><tr><th scope="row">Before</th><td>NOCR 63 px</td><td>y 1011</td><td>y 1011 to 1062, x 1480 to 1522</td><td>cut top</td></tr><tr><th scope="row">After</th><td>NOCR Icons 60 px</td><td>y 1005</td><td>y 1010 to 1062, x 1480 to 1522</td><td>none</td></tr></tbody></table>
+      </figure>
+      <figure class="cmp" style="--w:272px">
+        <figcaption><span class="scene">Pump, SUPA 7, debug view</span><span class="dims">68 × 74 px at 4×</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Before</span><img src="img/firedbg-w_supa7-before.png" width="272" height="296" loading="lazy" alt="Pump, SUPA 7, debug view before the fix"></div><div class="shot stack"><span class="tag">After</span><img src="img/firedbg-w_supa7-after.png" width="272" height="296" loading="lazy" alt="Pump, SUPA 7, debug view after the fix"></div></div>
+      </figure>
+    </section>
+    <section id="ammo">
+      <h2><a href="#ammo">Ammo panel</a></h2>
+      <p class="note">The name and the counts share the top row. The round count ends on the panel&#x27;s right edge, where the mag count ends, with the round glyph before it, sized to the digits. The mag column is 59 px, so the MX&#x27;s rounds stand at full size, and the fire mode icons show their tops. Smaller rounds, as on the SRM and the PZ252, stand 2 px apart with wider gaps between batches, and their rows fill the rail.</p>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">MX</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_mx-master.png" width="480" height="105" loading="lazy" alt="MX on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_mx-stack.png" width="480" height="105" loading="lazy" alt="MX on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">SRM</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_srm-master.png" width="480" height="105" loading="lazy" alt="SRM on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_srm-stack.png" width="480" height="105" loading="lazy" alt="SRM on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">PZ252</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_pz-master.png" width="480" height="105" loading="lazy" alt="PZ252 on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_pz-stack.png" width="480" height="105" loading="lazy" alt="PZ252 on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">SUPA 7</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_supa7-master.png" width="480" height="105" loading="lazy" alt="SUPA 7 on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_supa7-stack.png" width="480" height="105" loading="lazy" alt="SUPA 7 on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">Milso</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_milso-master.png" width="480" height="105" loading="lazy" alt="Milso on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_milso-stack.png" width="480" height="105" loading="lazy" alt="Milso on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">Kyla</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_kyla-master.png" width="480" height="105" loading="lazy" alt="Kyla on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_kyla-stack.png" width="480" height="105" loading="lazy" alt="Kyla on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">Frag grenade</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_grenade-master.png" width="480" height="105" loading="lazy" alt="Frag grenade on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_grenade-stack.png" width="480" height="105" loading="lazy" alt="Frag grenade on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">Smoke grenade</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_smokegrenade-master.png" width="480" height="105" loading="lazy" alt="Smoke grenade on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_smokegrenade-stack.png" width="480" height="105" loading="lazy" alt="Smoke grenade on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">Knife</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_knife-master.png" width="480" height="105" loading="lazy" alt="Knife on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_knife-stack.png" width="480" height="105" loading="lazy" alt="Knife on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">BALC, idle</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-balc_idle-master.png" width="480" height="105" loading="lazy" alt="BALC, idle on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-balc_idle-stack.png" width="480" height="105" loading="lazy" alt="BALC, idle on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">BALC, firing</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-balc_hot-master.png" width="480" height="105" loading="lazy" alt="BALC, firing on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-balc_hot-stack.png" width="480" height="105" loading="lazy" alt="BALC, firing on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">BALC, overheated</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-balc_overheat-master.png" width="480" height="105" loading="lazy" alt="BALC, overheated on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-balc_overheat-stack.png" width="480" height="105" loading="lazy" alt="BALC, overheated on the HUD tweaks stack"></div></div>
+      </figure>
+    </section>
+    <section id="vitals">
+      <h2><a href="#vitals">Vitals</a></h2>
+      <p class="note">Labels and numbers keep master&#x27;s text size, Neuropol2 at 20 px, with the font&#x27;s own spacing. They sit on the bottom edge of their bars, and the box&#x27;s side insets match its top and bottom padding.</p>
+      <figure class="cmp" style="--w:470px">
+        <figcaption><span class="scene">MX</span><span class="dims">470 × 115 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/vitals-w_mx-master.png" width="470" height="115" loading="lazy" alt="MX on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/vitals-w_mx-stack.png" width="470" height="115" loading="lazy" alt="MX on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:470px">
+        <figcaption><span class="scene">BALC, overheated</span><span class="dims">470 × 115 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/vitals-balc_overheat-master.png" width="470" height="115" loading="lazy" alt="BALC, overheated on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/vitals-balc_overheat-stack.png" width="470" height="115" loading="lazy" alt="BALC, overheated on the HUD tweaks stack"></div></div>
+      </figure>
+    </section>
+    <section id="compass">
+      <h2><a href="#compass">Compass</a></h2>
+      <p class="note">Wider padding at the ends, and the directions centered on a baseline. They stand 6 px from the top and 7 px from the bottom.</p>
+      <figure class="cmp" style="--w:520px">
+        <figcaption><span class="scene">MX</span><span class="dims">520 × 60 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/compass-w_mx-master.png" width="520" height="60" loading="lazy" alt="MX on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/compass-w_mx-stack.png" width="520" height="60" loading="lazy" alt="MX on the HUD tweaks stack"></div></div>
+      </figure>
+    </section>
+    <section id="dash">
+      <h2><a href="#dash">Dash</a></h2>
+      <p class="note">The box keeps master&#x27;s width, 260 px, with the logos inset at its ends. The clock&#x27;s digits keep Neuropol2&#x27;s own widths and spacing, and the colon stays on the box&#x27;s center, on one axis with the round counter and the alive counts, centered on the digits&#x27; height. The rows are 7 px apart.</p>
+      <figure class="cmp" style="--w:720px">
+        <figcaption><span class="scene">Playing, squad list</span><span class="dims">720 × 125 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/dash-p_list-master.png" width="720" height="125" loading="lazy" alt="Playing, squad list on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/dash-p_list-stack.png" width="720" height="125" loading="lazy" alt="Playing, squad list on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:720px">
+        <figcaption><span class="scene">Playing, avatars</span><span class="dims">720 × 125 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/dash-p_avatars-master.png" width="720" height="125" loading="lazy" alt="Playing, avatars on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/dash-p_avatars-stack.png" width="720" height="125" loading="lazy" alt="Playing, avatars on the HUD tweaks stack"></div></div>
+      </figure>
+    </section>
+    <section id="squad">
+      <h2><a href="#squad">Squad list</a></h2>
+      <p class="note">Rows in Neuropol2 with the tiny text in Verdana, as on master. The health column ends on one edge by its ink, so values of any width line up. The columns start after the longest teammate name, so they move from game to game.</p>
+      <figure class="cmp" style="--w:640px">
+        <figcaption><span class="scene">Playing, squad list</span><span class="dims">640 × 135 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/squad-p_list-master.png" width="640" height="135" loading="lazy" alt="Playing, squad list on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/squad-p_list-stack.png" width="640" height="135" loading="lazy" alt="Playing, squad list on the HUD tweaks stack"></div></div>
+      </figure>
+    </section>
+    <section id="feed">
+      <h2><a href="#feed">Kill feed</a></h2>
+      <p class="note">Rows tall enough for their icons, padded 5 px top and bottom, and the feed starts below the avatars.</p>
+      <figure class="cmp" style="--w:520px">
+        <figcaption><span class="scene">Playing, squad list</span><span class="dims">520 × 320 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/feed-p_list-master.png" width="520" height="320" loading="lazy" alt="Playing, squad list on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/feed-p_list-stack.png" width="520" height="320" loading="lazy" alt="Playing, squad list on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:520px">
+        <figcaption><span class="scene">Playing, avatars</span><span class="dims">520 × 320 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/feed-p_avatars-master.png" width="520" height="320" loading="lazy" alt="Playing, avatars on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/feed-p_avatars-stack.png" width="520" height="320" loading="lazy" alt="Playing, avatars on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:520px">
+        <figcaption><span class="scene">Just killed</span><span class="dims">520 × 320 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/feed-k_info-master.png" width="520" height="320" loading="lazy" alt="Just killed on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/feed-k_info-stack.png" width="520" height="320" loading="lazy" alt="Just killed on the HUD tweaks stack"></div></div>
+      </figure>
+    </section>
+    <section id="killer">
+      <h2><a href="#killer">Killer info</a></h2>
+      <p class="note">The card&#x27;s margin matches its avatar inset.</p>
+      <figure class="cmp" style="--w:520px">
+        <figcaption><span class="scene">Just killed</span><span class="dims">520 × 135 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/killer-k_info-master.png" width="520" height="135" loading="lazy" alt="Just killed on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/killer-k_info-stack.png" width="520" height="135" loading="lazy" alt="Just killed on the HUD tweaks stack"></div></div>
+      </figure>
+    </section>
+    <section id="spectator">
+      <h2><a href="#spectator">Spectator overlay</a></h2>
+      <p class="note">XP and death columns line up across a team, and long names are cut with three dots. The dash in the overlay keeps master&#x27;s width too.</p>
+      <figure class="cmp" style="--w:1920px">
+        <figcaption><span class="scene">Spectator overlay</span><span class="dims">1920 × 360 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/spectator-s_overlay-master.png" width="1920" height="360" loading="lazy" alt="Spectator overlay on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/spectator-s_overlay-stack.png" width="1920" height="360" loading="lazy" alt="Spectator overlay on the HUD tweaks stack"></div></div>
+      </figure>
+    </section>
+    <section id="frames">
+      <h2><a href="#frames">Full frames</a></h2><p class="note">Scoreboard: even margins, a rank glyph before each rank name, and its own body font. Verdana draws as Liberation Sans on Linux. The XP and D headers and values center on one axis, and the rank glyph&#x27;s ink centers on the rank name&#x27;s capitals.</p>
+      <figure class="cmp full" style="--w:1920px">
+        <figcaption><span class="scene">Scoreboard</span><span class="dims">1920 × 1080 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/full-sb_alive-master.jpg" width="1920" height="1080" loading="lazy" alt="Scoreboard on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/full-sb_alive-stack.jpg" width="1920" height="1080" loading="lazy" alt="Scoreboard on the HUD tweaks stack"></div></div>
+      </figure><p class="note">Spectator overlay in context.</p>
+      <figure class="cmp full" style="--w:1920px">
+        <figcaption><span class="scene">Spectator overlay</span><span class="dims">1920 × 1080 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/full-s_overlay-master.jpg" width="1920" height="1080" loading="lazy" alt="Spectator overlay on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/full-s_overlay-stack.jpg" width="1920" height="1080" loading="lazy" alt="Spectator overlay on the HUD tweaks stack"></div></div>
+      </figure><p class="note">Playing with avatars beside the dash.</p>
+      <figure class="cmp full" style="--w:1920px">
+        <figcaption><span class="scene">Playing, avatars</span><span class="dims">1920 × 1080 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/full-p_avatars-master.jpg" width="1920" height="1080" loading="lazy" alt="Playing, avatars on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/full-p_avatars-stack.jpg" width="1920" height="1080" loading="lazy" alt="Playing, avatars on the HUD tweaks stack"></div></div>
+      </figure><p class="note">Holding the MX.</p>
+      <figure class="cmp full" style="--w:1920px">
+        <figcaption><span class="scene">MX</span><span class="dims">1920 × 1080 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/full-w_mx-master.jpg" width="1920" height="1080" loading="lazy" alt="MX on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/full-w_mx-stack.jpg" width="1920" height="1080" loading="lazy" alt="MX on the HUD tweaks stack"></div></div>
+      </figure>
+    </section>
+
+  <footer>
+    Crops are cut from the full captures at the panel boxes the game reported, with a margin for master's layout.
+  </footer>
 </div>
-<h3>The dump</h3>
-<p>One line per box, text run and character, tab separated, in screen pixels. These are the ammo panel's first lines with the MILSO in hand, after the icon fix.</p>
-<div class="textout"><pre># screen  1920  1080  frame  208837
-# kind  element     name         scheme_font    font_family  tall  ascent  x0    y0    x1    y1    baseline  ink_left  ink_right  text
-box     NHudWeapon  box          -              -            0     0       1464  996   1920  1074  0         0         0
-box     NHudWeapon  icon column  -              -            0     0       1477  996   1526  1074  0         0         0
-text    NHudWeapon  -            NHudFireMode   NOCR Icons   60    58      1477  1005  1526  1065  1063      1479      1524       h</pre></div>
-<h3>The report</h3>
-<p><code>hud_debug_report.py</code> reads a dump and the capture of the same frame. It finds the ink inside each character's columns, compares it with the font's outline, and flags a cut, ink outside its box, or ink away from where it was placed. This is its whole output for the MILSO's ammo panel before the icon fix.</p>
-<div class="textout"><pre>17 text runs, 1 flagged, 1 boxes
 
-== NHudWeapon
-  NHudFireMode (NOCR 63 px) "h"
-    line box x 1477..1526 y 1011..1074, baseline 1063; ink x 1479..1523 y 1011..1062
-    in box [1464, 996, 1920, 1074]: left 15, top 15, right 396, bottom 11 px to its edges
-    FLAGS CUT_TOP
-    - 'h' outline reaches 4.9 px above its line box, and the capture's ink stops flat on that edge</pre></div>
-<p>After the icon fix every scene reports no cut. Two kill feed runs per scene are still flagged: the assist separator is drawn as a plus sign with a space on each side, and the view counts the spaces as ink it was placed by. That is the tool's error, not the feed's.</p>
-</section>
-
-<section>
-<h2>How the engine sizes a font</h2>
-<p>The working assumption was that the engine sizes a font so its win ascent plus win descent fills the requested height. The first attempt at the fire mode icon fix in part 2 was built on that and came out about 6% too large in game. So five copies of NOCR were made, each changing one thing, and drawn in one launch. The engine's own numbers for each are below.</p>
-<div class="tablewrap"><table>
-<thead><tr><th>Font</th><th>What changed</th><th>Scheme font, height</th><th>Ascent the engine reports</th><th>Glyph advance</th><th>Reading</th></tr></thead>
-<tbody>
-<tr><td>NOCR</td><td>Nothing. Win 1757 and 362, lowest glyph at -362.</td><td class="num">63 / 55 / 22 / 72 / 78 px</td><td class="num">52 / 46 / 18 / 60 / 65</td><td class="num">j 49, c 10, c 4, a 14, g 31</td><td>The reference.</td></tr>
-<tr><td>Copy A</td><td>Win ascent 1950, win descent 169.</td><td class="num">63 px</td><td class="num">53</td><td class="num">j 45</td><td>The glyph shrank. The box is 1950 plus 362: the new ascent, and the old lowest glyph rather than the new win descent.</td></tr>
-<tr><td>Copy B</td><td>hhea ascent and descent only.</td><td class="num">55 px</td><td class="num">46</td><td class="num">c 10</td><td>No change. The hhea table is not read.</td></tr>
-<tr><td>Copy C</td><td>Typo ascent and descent only.</td><td class="num">22 px</td><td class="num">18</td><td class="num">c 4</td><td>No change. The typo metrics are not read.</td></tr>
-<tr><td>Copy D</td><td>Only the icon glyphs kept, so the lowest glyph is at -53. No metric changed.</td><td class="num">72 px</td><td class="num">70</td><td class="num">a 16</td><td>The glyph grew. The box is 1757 plus 53.</td></tr>
-<tr><td>Copy E</td><td>Icon glyphs only, and win ascent 1950.</td><td class="num">78 px</td><td class="num">76</td><td class="num">g 33</td><td>The box is 1950 plus 53.</td></tr>
-</tbody></table></div>
-<p><strong>The rule on Linux:</strong> a font's line box runs from its OS/2 win ascent down to its lowest glyph. The font is sized so that box fills the requested height, and nothing is drawn above the box. For every font the HUD loads today the lowest glyph sits on the win descent, so that assumption gave the right sizes. It fails only for a font whose glyphs stop short of the win descent, which is what a font made of icons is. Windows is untested.</p>
-<p>The icon fix in part 2 follows the rule. <code>NOCR Icons</code> has win ascent 1950 and win descent 53, a line box of 2003 units where NOCR's is 2119, and the scheme font's <code>tall</code> drops from 28 to 27 to make up the difference.</p>
-</section>
-
-<p class="part">Part 2. What changed</p>
-
-<section>
-<h2>Fire mode icons</h2>
-<p>The automatic, semi-automatic and pump icons lost 3, 4 and 1 rows from their top at 1080p. The engine draws nothing above a font's line box, and NOCR's line box stops below these three glyphs. A font file holding NOCR's icon glyphs with a taller line box removes the cut and keeps each icon's width to the pixel.</p>
-<p>The measuring capture with the world blacked out, enlarged five times, with the dumped rectangles drawn on it. Red is the top of the font's line box, where the engine stops drawing. Before, the round sits flat against it. After, the line box starts above the glyph.</p>
-<div class="grid pairs"><figure class="cut"><img src="img/cut_master.png" alt="Semi-automatic and automatic icons on master, the round above each letter cut flat" loading="lazy"><figcaption><b>On master.</b> Semi-automatic and automatic, enlarged five times. The round above the letter is cut flat in the same way, so the cut is not new to the pull requests.</figcaption></figure></div>
-<p>The six figures below are measuring captures from the pull requests' HUD, before and after the icon fix.</p>
-<div class="grid cuts">
-<figure class="cut"><img src="img/cut_h_before.png" alt="Semi-automatic icon before, its top flat against the red line" loading="lazy"><figcaption><b>Semi, before.</b> Ink starts on the line box's first row.</figcaption></figure>
-<figure class="cut"><img src="img/cut_h_after.png" alt="Semi-automatic icon after, whole" loading="lazy"><figcaption><b>Semi, after.</b> 4 rows back, 11 px above and below.</figcaption></figure>
-<figure class="cut"><img src="img/cut_j_before.png" alt="Automatic icon before" loading="lazy"><figcaption><b>Auto, before.</b></figcaption></figure>
-<figure class="cut"><img src="img/cut_j_after.png" alt="Automatic icon after" loading="lazy"><figcaption><b>Auto, after.</b> 3 rows back.</figcaption></figure>
-<figure class="cut"><img src="img/cut_l_before.png" alt="Pump icon before" loading="lazy"><figcaption><b>Pump, before.</b></figcaption></figure>
-<figure class="cut"><img src="img/cut_l_after.png" alt="Pump icon after" loading="lazy"><figcaption><b>Pump, after.</b> 1 row back.</figcaption></figure>
-</div>
-<div class="tablewrap"><table>
-<thead><tr><th>Icon</th><th>Glyph</th><th>Outline top, font units</th><th>Line box, before</th><th>Ink rows, before</th><th>Line box, after</th><th>Ink rows, after</th><th>Ink columns</th></tr></thead>
-<tbody>
-<tr><td>Semi-automatic</td><td><code>h</code></td><td class="num">1916</td><td class="num">y 1011..1074</td><td class="num">1011..1062, 52 rows</td><td class="num">y 1005..1065</td><td class="num">1007..1062, 56 rows</td><td class="num">1479..1523 both</td></tr>
-<tr><td>Automatic</td><td><code>j</code></td><td class="num">1864</td><td class="num">y 1011..1074</td><td class="num">1011..1060, 50 rows</td><td class="num">y 1005..1065</td><td class="num">1008..1060, 53 rows</td><td class="num">1479..1523 both</td></tr>
-<tr><td>Pump</td><td><code>l</code></td><td class="num">1805</td><td class="num">y 1011..1074</td><td class="num">1011..1062, 52 rows</td><td class="num">y 1005..1065</td><td class="num">1010..1062, 53 rows</td><td class="num">1480..1522 both</td></tr>
-</tbody></table></div>
-<p>NOCR's win ascent is 1757 units. The panel runs from y 996 to 1074, so the whole semi-automatic icon stands 11 px from its top and 11 px from its bottom.</p>
-<h3>The same icon as text</h3>
-<p>The script prints any glyph's pixels as characters, so a cut can be read without opening an image. Left is before, right is after.</p>
-<div class="split">
-<div class="textout"><pre class="glyph">NHudFireMode 'h': line box y 1011..1074
- 1007      :::::::::::::::::::::::::::::::::::::::::::::::::::
- 1008      :::::::::::::::::::::::::::::::::::::::::::::::::::
- 1009      :::::::::::::::::::::::::::::::::::::::::::::::::::
- 1010      :::::::::::::::::::::::::::::::::::::::::::::::::::
- 1011 top  ::::=############################+*###########*-:::
- 1012      ::::=############################+*############+:::
- 1013      ::::=############################+*############*:::
- 1014      ::::=############################+*############*:::
- 1015      ::::=############################+*############+:::
- 1016      ::::=############################+*###########*-:::
- 1017      ::::=############################+*##########*-::::
- 1018      ::::=############################+*########*+-:::::
- 1019      ::::=############################+*#####*+=-:::::::
- 1020      ::::=#+-*####################*-::::::::::::::::::::
- 1021      ::::-+-:=++++++++++++++++++++-:::::::::::::::::::::
- 1022      :::::::::::::::::::::::::::::::::::::::::::::::::::
- 1023      :::::::::::::::::::::::::::::::::::::::::::::::::::
- 1024      :::::::::::::::::::::::::::::::::::::::::::::::::::
- 1025      :::::::::-=++******##############****++-:::::::::::
- 1026      :::::::=*###############################*+-::::::::
- 1027      ::::::+###################################*=:::::::
- 1028      :::::+#####################################*-::::::</pre></div>
-<div class="textout"><pre class="glyph">NHudFireMode 'h': line box y 1005..1065
- 1003      :::::::::::::::::::::::::::::::::::::::::::::::::::
- 1004      :::::::::::::::::::::::::::::::::::::::::::::::::::
- 1005 top  :::::::::::::::::::::::::::::::::::::::::::::::::::
- 1006      :::::::::::::::::::::::::::::::::::::::::::::::::::
- 1007      ::::=*=-*###################*+-::::::::::::::::::::
- 1008      ::::=############################+*#####*+=-:::::::
- 1009      ::::=############################+*########*+-:::::
- 1010      ::::=############################+*##########*-::::
- 1011      ::::=############################+*###########*-:::
- 1012      ::::=############################+*############+:::
- 1013      ::::=############################+*############*:::
- 1014      ::::=############################+*############*:::
- 1015      ::::=############################+*############+:::
- 1016      ::::=############################+*###########*-:::
- 1017      ::::=############################+*##########*-::::
- 1018      ::::=############################+*########*+-:::::
- 1019      ::::=############################+*#####*+=-:::::::
- 1020      ::::=#+-*####################*-::::::::::::::::::::
- 1021      ::::-+-:=++++++++++++++++++++-:::::::::::::::::::::
- 1022      :::::::::::::::::::::::::::::::::::::::::::::::::::
- 1023      :::::::::::::::::::::::::::::::::::::::::::::::::::
- 1024      :::::::::::::::::::::::::::::::::::::::::::::::::::
- 1025      :::::::::-=++******##############****++-:::::::::::
- 1026      :::::::=*###############################*+-::::::::</pre></div>
-</div>
-</section>
-
-<section>
-<h2>Ammo rail and mag count</h2>
-<p>On <code>master</code> every round is drawn at one size in a single row, a plus sign marks a mag that holds more rounds than the row shows, and the panel has no round count. The latest layout draws one round per round, gives each gun its own rows and batches, adds the round count over the rail and stands the mag count at the end of the rack. </p>
-<ol>
-<li><strong>Two rows for the PZ252, SMAC and SRM only.</strong> Their rounds are drawn small, and the lower row empties first.</li>
-<li><strong>One row for every other bulleted gun,</strong> with rounds at full size when the mag fits the rail and smaller when it does not. A smaller row stands in the middle of a full round's height.</li>
-<li><strong>Rounds stand in batches.</strong> The batch size is set per gun in its weapon script, and the space between batches is 0.4 of a round's width.</li>
-<li><strong>The mag count stands at the end of the rack,</strong> at the panel's right edge and level with the rail, opposite the fire mode icon. It is the number alone on <code>master</code>, and here it carries a round glyph.</li>
-<li><strong>The round count sits over the rail's right edge</strong> on the top row.</li>
-</ol>
-<h3>Against master</h3>
-<p>Twice native size. Click an image for its full size.</p>
-<div class="cmps">
-<div class="cmp"><h4>PZ252. <span>100 rounds in two rows of 50, a space after every 10.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_pz_master.png" alt="PZ252 on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_pz_latest.png" alt="PZ252, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>SRM. <span>50 rounds in two rows of 25, a space after every 5.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_srm_master.png" alt="SRM on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_srm_latest.png" alt="SRM, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>MX. <span>30 rounds in one row at full size, a space after every 10.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_mx_master.png" alt="MX on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_mx_latest.png" alt="MX, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>MilSO. <span>12 rounds in one row at full size, a space after every 4.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_milso_master.png" alt="MilSO on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_milso_latest.png" alt="MilSO, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>KYLA. <span>6 rounds in one row at full size, no spaces.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_kyla_master.png" alt="KYLA on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_kyla_latest.png" alt="KYLA, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>SUPA 7. <span>7 shells in one row. The two reserve counts stack across the rail's height, shells over slugs.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_supa7_master.png" alt="SUPA 7 on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_supa7_latest.png" alt="SUPA 7, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>SMAC. <span>90 rounds in two rows, 50 over 40, a space after every 10.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_smac_master.png" alt="SMAC on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_smac_latest.png" alt="SMAC, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>Jitte. <span>30 rounds in one row, a space after every 10, drawn smaller so the row fits.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_jitte_master.png" alt="Jitte on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_jitte_latest.png" alt="Jitte, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>MPN45. <span>30 rounds in one row, a space after every 10, smaller as on the Jitte.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_mpn_master.png" alt="MPN45 on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_mpn_latest.png" alt="MPN45, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>M41. <span>15 rounds in one row at full size, a space after every 5.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_m41_master.png" alt="M41 on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_m41_latest.png" alt="M41, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>TACHI. <span>15 rounds in one row at full size, a space after every 5.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_tachi_master.png" alt="TACHI on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_tachi_latest.png" alt="TACHI, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>SRS. <span>5 rounds in one row at full size, no spaces.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_srs_master.png" alt="SRS on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_srs_latest.png" alt="SRS, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>AA13. <span>16 shells in one row at full size, as on master.</span></h4><figure><span class="tag">master</span><img src="img/cmp/ammo_aa13_master.png" alt="AA13 on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/ammo_aa13_latest.png" alt="AA13, latest" loading="lazy" tabindex="0"></figure></div>
-</div>
-<div class="tablewrap"><table>
-<thead><tr><th>Gun</th><th>Mag</th><th>Rows</th><th>Batch</th><th>Round size</th></tr></thead>
-<tbody>
-<tr><td>PZ252</td><td class="num">100</td><td class="num">2</td><td class="num">10</td><td>Small</td></tr>
-<tr><td>SMAC</td><td class="num">90</td><td class="num">2</td><td class="num">10</td><td>Small</td></tr>
-<tr><td>SRM, SRM-S</td><td class="num">50</td><td class="num">2</td><td class="num">5</td><td>Small</td></tr>
-<tr><td>MX, MX Silenced, ZR68C, ZR68S, PBK56S</td><td class="num">30</td><td class="num">1</td><td class="num">10</td><td>Full</td></tr>
-<tr><td>Jitte, Jitte scoped, both MPN45</td><td class="num">30</td><td class="num">1</td><td class="num">10</td><td>Smaller, to fit the rail</td></tr>
-<tr><td>M41, M41S, TACHI</td><td class="num">15</td><td class="num">1</td><td class="num">5</td><td>Full</td></tr>
-<tr><td>MilSO</td><td class="num">12</td><td class="num">1</td><td class="num">4</td><td>Full</td></tr>
-<tr><td>M41L, ZR68L</td><td class="num">10</td><td class="num">1</td><td class="num">5</td><td>Not captured</td></tr>
-<tr><td>KYLA</td><td class="num">6</td><td class="num">1</td><td>None</td><td>Full</td></tr>
-<tr><td>SRS</td><td class="num">5</td><td class="num">1</td><td>None</td><td>Full</td></tr>
-</tbody></table></div>
-<p>On the SUPA 7 the two count lines run from y 1029 to 1062 at 1080p, and the shells on the rail run from y 1028 to 1062. The slug glyph spells its name and is about 42 px wide, so the lower line starts further left than the upper one. Both lines end on the same right edge.</p>
-</section>
-
-<section>
-<h2>Scoreboard and spectator overlay</h2>
-<p>These come from the overlay and scoreboard pull request, #32. The crops are at native size, one team's table at a time so the two sides stay readable in one row.</p>
-<ol>
-<li><strong>Scoreboard body.</strong> Verdana at the row's size on <code>master</code>. Overpass Mono at about 10 px in the pull request, with Montserrat for class and rank names, and each column keeps a margin from its edges.</li>
-<li><strong>Rank glyph.</strong> The kill feed's rank icon stands before each rank name. It was missing from earlier captures of the pull request because a refactor drew it with a call that draws nothing in the scoreboard. That is fixed in #32 and shown here.</li>
-<li><strong>Spectator cards.</strong> On <code>master</code> each card places its XP and deaths from its own numbers, so the columns wander from card to card. In the pull request the columns are as wide as the team's widest values and line up down the stack, and a long name is cut and ends in three dots.</li>
-<li><strong>Card text.</strong> Names and numbers move from Verdana to Overpass Mono, and the class label from Verdana to Montserrat.</li>
-</ol>
-<div class="cmps">
-<div class="cmp"><h4>Scoreboard alive, NSF.</h4><figure><span class="tag">master</span><img src="img/cmp/sb_alive_left_master.png" alt="Scoreboard alive, NSF on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/sb_alive_left_latest.png" alt="Scoreboard alive, NSF, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>Scoreboard alive, Jinrai.</h4><figure><span class="tag">master</span><img src="img/cmp/sb_alive_right_master.png" alt="Scoreboard alive, Jinrai on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/sb_alive_right_latest.png" alt="Scoreboard alive, Jinrai, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>Scoreboard dead, NSF. <span>After a suicide, with the damage columns. Only the master run took a hit, so only it shows a damage value.</span></h4><figure><span class="tag">master</span><img src="img/cmp/sb_dead_left_master.png" alt="Scoreboard dead, NSF on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/sb_dead_left_latest.png" alt="Scoreboard dead, NSF, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>Scoreboard dead, Jinrai.</h4><figure><span class="tag">master</span><img src="img/cmp/sb_dead_right_master.png" alt="Scoreboard dead, Jinrai on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/sb_dead_right_latest.png" alt="Scoreboard dead, Jinrai, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>Spectator cards, left team.</h4><figure><span class="tag">master</span><img src="img/cmp/spec_left_master.png" alt="Spectator cards, left team on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/spec_left_latest.png" alt="Spectator cards, left team, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>Spectator cards, right team.</h4><figure><span class="tag">master</span><img src="img/cmp/spec_right_master.png" alt="Spectator cards, right team on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/spec_right_latest.png" alt="Spectator cards, right team, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>Spectator overlay, whole screen. <span>Scaled to 1280 wide.</span></h4><figure><span class="tag">master</span><img src="img/cmp/scene_s_overlay_master.jpg" alt="Spectator overlay, whole screen on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/scene_s_overlay_latest.jpg" alt="Spectator overlay, whole screen, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>Scoreboard dead, whole screen. <span>Scaled to 1280 wide.</span></h4><figure><span class="tag">master</span><img src="img/cmp/scene_sb_dead_master.jpg" alt="Scoreboard dead, whole screen on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/scene_sb_dead_latest.jpg" alt="Scoreboard dead, whole screen, latest" loading="lazy" tabindex="0"></figure></div>
-</div>
-</section>
-
-<section>
-<h2>Vitals, compass, dash and kill feed</h2>
-<p>These come from the text foundation, dash and kill feed pull requests, #28, #30 and #31, and this pass did not change them. The crops are at native size.</p>
-<ol>
-<li><strong>Vitals and compass.</strong> Jura labels and directions, and NOCR numbers on the bars' baselines.</li>
-<li><strong>Dash.</strong> A bold clock and alive counts, with even spacing between its rows. The squad list moves to Overpass Mono in columns.</li>
-<li><strong>Kill feed.</strong> Names in Overpass Mono and words in Montserrat, with the feed starting below the avatars when they are drawn.</li>
-</ol>
-<div class="cmps">
-<div class="cmp"><h4>Vitals.</h4><figure><span class="tag">master</span><img src="img/cmp/vitals_master.png" alt="Vitals on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/vitals_latest.png" alt="Vitals, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>Compass.</h4><figure><span class="tag">master</span><img src="img/cmp/compass_master.png" alt="Compass on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/compass_latest.png" alt="Compass, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>Squad list. <span>Top left of the screen.</span></h4><figure><span class="tag">master</span><img src="img/cmp/squad_master.png" alt="Squad list on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/squad_latest.png" alt="Squad list, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>Dash, playing, avatars.</h4><figure><span class="tag">master</span><img src="img/cmp/dash_avatars_master.png" alt="Dash, playing, avatars on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/dash_avatars_latest.png" alt="Dash, playing, avatars, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>Dash, playing, squad list.</h4><figure><span class="tag">master</span><img src="img/cmp/dash_list_master.png" alt="Dash, playing, squad list on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/dash_list_latest.png" alt="Dash, playing, squad list, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>Dash, spectating, avatars.</h4><figure><span class="tag">master</span><img src="img/cmp/dash_spec_master.png" alt="Dash, spectating, avatars on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/dash_spec_latest.png" alt="Dash, spectating, avatars, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>Kill feed, avatars drawn.</h4><figure><span class="tag">master</span><img src="img/cmp/feed_avatars_master.png" alt="Kill feed, avatars drawn on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/feed_avatars_latest.png" alt="Kill feed, avatars drawn, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>Kill feed, squad list.</h4><figure><span class="tag">master</span><img src="img/cmp/feed_list_master.png" alt="Kill feed, squad list on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/feed_list_latest.png" alt="Kill feed, squad list, latest" loading="lazy" tabindex="0"></figure></div>
-<div class="cmp"><h4>Playing, whole screen. <span>Scaled to 1280 wide.</span></h4><figure><span class="tag">master</span><img src="img/cmp/scene_p_avatars_master.jpg" alt="Playing, whole screen on master" loading="lazy" tabindex="0"></figure><figure><span class="tag new">Latest</span><img src="img/cmp/scene_p_avatars_latest.jpg" alt="Playing, whole screen, latest" loading="lazy" tabindex="0"></figure></div>
-</div>
-</section>
-
-
-
-
-
-<section>
-<h2>Text and its boxes</h2>
-<p>With <code>--layout</code> the report gives each box's padding to the nearest ink and the rows inside it. These were measured after the icon fix and before the ammo rail change, so the two rows for the ammo panel's text are left out until it is measured again. Nothing here is flagged. The uneven pairs are listed so they can be ruled intended or not.</p>
-<div class="tablewrap"><table>
-<thead><tr><th>Box</th><th>Size</th><th>Left</th><th>Top</th><th>Right</th><th>Bottom</th><th>Note</th></tr></thead>
-<tbody>
-<tr><td>Vitals</td><td class="num">456 by 78</td><td class="num">9</td><td class="num">9</td><td class="num">11</td><td class="num">11</td><td>Baselines at y 1018, 1040 and 1063. The top and left paddings are 2 px smaller than the bottom and right.</td></tr>
-<tr><td>Ammo, icon column</td><td class="num">49 by 78</td><td class="num">2</td><td class="num">11 to 14</td><td class="num">2</td><td class="num">11 to 13</td><td>Fire mode icons. Frag 12 and 13, smoke 15 and 16, knife 31 and 30.</td></tr>
-<tr><td>Dash</td><td class="num">210 by 66</td><td class="num">21</td><td class="num">8</td><td class="num">20</td><td class="num">8</td><td>Round text ends at y 16, the clock runs 24 to 39, the alive counts start at 47: 7 px between rows, as designed.</td></tr>
-<tr><td>Kill feed row</td><td class="num">29 tall</td><td class="num">13 to 14</td><td class="num">5 to 7</td><td class="num">13 to 14</td><td class="num">5 to 8</td><td>Names stand on a baseline 2 px above the icons' baseline.</td></tr>
-<tr><td>Compass</td><td class="num">450 by 24</td><td class="num">n/a</td><td class="num">3 and 5</td><td class="num">n/a</td><td class="num">4 and 6</td><td>Separators, then letters.</td></tr>
-</tbody></table></div>
-</section>
-
-<section>
-<h2>Deferred captures</h2>
-<p>These wait for a later capture run.</p>
-<ul>
-<li><strong>The ammo panel for the frag grenade, smoke grenade, knife and BALC,</strong> since the rail change moved the counts.</li>
-<li><strong>The ammo panel with the debug view on,</strong> and its rows in the padding table.</li>
-<li><strong>The M41L and ZR68L.</strong> They have never been captured. The M41L could not be put in hand.</li>
-</ul>
-</section>
-
-<section>
-<h2>Still open</h2>
-<ul>
-<li>The icon font: ship <code>nocr_icons.ttf</code> made from NOCR, redraw the three icons into the team's own icon font, or leave the cut. NOCR's file names no license.</li>
-<li>The smaller rounds are drawn as scaled quads and do not report to the debug view yet, so the rail change has been checked by eye and by pixel rows, and not by the report.</li>
-<li>The rail change was built and captured at 1920 by 1080 on Linux only. Other resolutions and Windows are untested, and the line box rule is Linux only until the dump is run on Windows.</li>
-<li>The scoreboard draws through the menu toolkit in its own coordinates, so its text is dumped without a screen position.</li>
-<li>Whether the 9 and 11 px paddings in the bottom panels are intended.</li>
-</ul>
-</section>
-</main>
-<dialog id="box"><button type="button" id="close">Close</button><img id="boximg" alt=""><p id="boxcap"></p></dialog>
 <script>
-(function(){
-var box=document.getElementById('box'),img=document.getElementById('boximg'),cap=document.getElementById('boxcap');
-function open(el){img.src=el.src;img.alt=el.alt;cap.textContent=el.alt;box.showModal();}
-document.querySelectorAll('.cmp img').forEach(function(el){
-  el.addEventListener('click',function(){open(el);});
-  el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open(el);}});
-});
-document.getElementById('close').addEventListener('click',function(){box.close();});
-box.addEventListener('click',function(e){if(e.target===box)box.close();});
+(function () {
+  var body = document.body;
+  function setMode(mode) {
+    body.dataset.mode = mode;
+    document.querySelectorAll('[data-mode]').forEach(function (b) { if (b.tagName === 'BUTTON') b.setAttribute('aria-pressed', String(b.dataset.mode === mode)); });
+    try { localStorage.setItem('hudcmp-mode', mode); } catch (e) {}
+  }
+  function setZoom(z) {
+    body.dataset.zoom = z;
+    document.querySelectorAll('button[data-zoom]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.zoom === z)); });
+    try { localStorage.setItem('hudcmp-zoom', z); } catch (e) {}
+  }
+  document.querySelectorAll('button[data-mode]').forEach(function (b) { b.addEventListener('click', function () { setMode(b.dataset.mode); }); });
+  document.querySelectorAll('button[data-zoom]').forEach(function (b) { b.addEventListener('click', function () { setZoom(b.dataset.zoom); }); });
+  document.querySelectorAll('figure.cmp').forEach(function (f) {
+    f.addEventListener('click', function () { if (body.dataset.mode === 'flip') f.classList.toggle('showing-master'); });
+  });
+  document.addEventListener('keydown', function (e) {
+    if ((e.key === 'f' || e.key === 'F') && body.dataset.mode === 'flip') {
+      document.querySelectorAll('figure.cmp').forEach(function (f) { f.classList.toggle('showing-master'); });
+    }
+  });
+  var m = 'pair', z = '1';
+  try { m = localStorage.getItem('hudcmp-mode') || m; z = localStorage.getItem('hudcmp-zoom') || z; } catch (e) {}
+  setMode(m); setZoom(z);
 })();
 </script>
-</body>
-</html>
+
+</body></html>
