@@ -75,6 +75,8 @@ table.rail { margin-top: 12px; border-collapse: collapse; font: 13px/1.4 var(--m
 table.rail th, table.rail td { text-align: left; padding: 5px 10px 5px 0; border-top: 1px solid var(--line); vertical-align: top; }
 table.rail thead th { color: var(--muted); font-weight: 400; border-top: 0; }
 table.rail tbody th { font-weight: 500; white-space: nowrap; }
+h3.sub { font-family: var(--display); font-weight: 500; font-size: 1.05rem; margin: 10px 0 0; color: var(--muted); }
+details summary { cursor: pointer; color: var(--muted); }
 footer { margin-top: 56px; color: var(--muted); font-size: 13px; max-width: 72ch; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
@@ -159,22 +161,80 @@ footer { margin-top: 56px; color: var(--muted); font-size: 13px; max-width: 72ch
     </section>
     <section id="ammo">
       <h2><a href="#ammo">Ammo panel</a></h2>
-      <p class="note">The name and the counts share the top row. The round count ends on the panel&#x27;s right edge, where the mag count ends, with the round glyph before it, sized to the digits. The mag column is 59 px, so the MX&#x27;s rounds stand at full size, and the fire mode icons show their tops. Smaller rounds, as on the SRM and the PZ252, stand 2 px apart with wider gaps between batches, and their rows fill the rail.</p>
+      <p class="note">Every weapon in the build, captured on master <code>6f53bb238</code> and on the stack tip <code>hud-tweak</code> at 1920 × 1080, each holding the weapon after a short burst. On the stack the name, round count and mag count share the top row, the round count ends on the panel's right edge after its round glyph, and the mag count is a bare number. The rail stands each round on whole pixels, with a space after each batch where the weapon's script sets one, and closes the batch spaces first when a row would not fit, as on the MX, ZR68C and ZR68S. The fire mode icons show their tops. The PBK56S is left out: <code>INCLUDE_WEP_PBK</code> is off, so the build has no such weapon.</p>
+      <details><summary>Rail settings per weapon, from the weapon scripts</summary>
+      <table class="rail"><thead><tr><th scope="col">Weapon</th><th scope="col">Rounds</th><th scope="col">Rail rows</th><th scope="col">Batch</th></tr></thead><tbody><tr><th scope="row">MX</th><td>30</td><td>1</td><td>10</td></tr><tr><th scope="row">MX Silenced</th><td>30</td><td>1</td><td>10</td></tr><tr><th scope="row">ZR68C</th><td>30</td><td>1</td><td>10</td></tr><tr><th scope="row">ZR68S</th><td>30</td><td>1</td><td>10</td></tr><tr><th scope="row">ZR68L</th><td>10</td><td>1</td><td>5</td></tr><tr><th scope="row">M41</th><td>15</td><td>1</td><td>5</td></tr><tr><th scope="row">M41S</th><td>15</td><td>1</td><td>5</td></tr><tr><th scope="row">M41L</th><td>10</td><td>1</td><td>5</td></tr><tr><th scope="row">Jitte</th><td>30</td><td>1</td><td>10</td></tr><tr><th scope="row">Jitte, scoped</th><td>30</td><td>1</td><td>10</td></tr><tr><th scope="row">MPN45</th><td>30</td><td>1</td><td>10</td></tr><tr><th scope="row">MPN45, unsilenced</th><td>30</td><td>1</td><td>10</td></tr><tr><th scope="row">SRM</th><td>50</td><td>2</td><td>5</td></tr><tr><th scope="row">SRM-S</th><td>50</td><td>2</td><td>5</td></tr><tr><th scope="row">PZ252</th><td>100</td><td>2</td><td>10</td></tr><tr><th scope="row">SMAC</th><td>90</td><td>2</td><td>10</td></tr><tr><th scope="row">Tachi</th><td>15</td><td>1</td><td>5</td></tr><tr><th scope="row">Milso</th><td>12</td><td>1</td><td>4</td></tr><tr><th scope="row">Kyla</th><td>6</td><td>1</td><td></td></tr><tr><th scope="row">SRS</th><td>5</td><td>1</td><td></td></tr><tr><th scope="row">SUPA 7</th><td>7</td><td>1</td><td></td></tr><tr><th scope="row">AA13</th><td>16</td><td>1</td><td></td></tr><tr><th scope="row">Ghost</th><td>none</td><td></td><td></td></tr><tr><th scope="row">Detpack</th><td>none</td><td></td><td></td></tr><tr><th scope="row">Frag grenade</th><td>none</td><td></td><td></td></tr><tr><th scope="row">Smoke grenade</th><td>none</td><td></td><td></td></tr><tr><th scope="row">Knife</th><td>none</td><td></td><td></td></tr></tbody></table>
+      </details>
+      <h3 class="sub">Rifles and SMGs, one row</h3>
       <figure class="cmp" style="--w:480px">
         <figcaption><span class="scene">MX</span><span class="dims">480 × 105 px</span></figcaption>
         <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_mx-master.png" width="480" height="105" loading="lazy" alt="MX on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_mx-stack.png" width="480" height="105" loading="lazy" alt="MX on the HUD tweaks stack"></div></div>
       </figure>
       <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">MX Silenced</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_mx_silenced-master.png" width="480" height="105" loading="lazy" alt="MX Silenced on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_mx_silenced-stack.png" width="480" height="105" loading="lazy" alt="MX Silenced on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">ZR68C</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_zr68c-master.png" width="480" height="105" loading="lazy" alt="ZR68C on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_zr68c-stack.png" width="480" height="105" loading="lazy" alt="ZR68C on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">ZR68S</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_zr68s-master.png" width="480" height="105" loading="lazy" alt="ZR68S on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_zr68s-stack.png" width="480" height="105" loading="lazy" alt="ZR68S on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">ZR68L</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_zr68l-master.png" width="480" height="105" loading="lazy" alt="ZR68L on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_zr68l-stack.png" width="480" height="105" loading="lazy" alt="ZR68L on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">M41</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_m41-master.png" width="480" height="105" loading="lazy" alt="M41 on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_m41-stack.png" width="480" height="105" loading="lazy" alt="M41 on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">M41S</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_m41s-master.png" width="480" height="105" loading="lazy" alt="M41S on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_m41s-stack.png" width="480" height="105" loading="lazy" alt="M41S on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">M41L</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_m41l-master.png" width="480" height="105" loading="lazy" alt="M41L on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_m41l-stack.png" width="480" height="105" loading="lazy" alt="M41L on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">Jitte</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_jitte-master.png" width="480" height="105" loading="lazy" alt="Jitte on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_jitte-stack.png" width="480" height="105" loading="lazy" alt="Jitte on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">Jitte, scoped</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_jittescoped-master.png" width="480" height="105" loading="lazy" alt="Jitte, scoped on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_jittescoped-stack.png" width="480" height="105" loading="lazy" alt="Jitte, scoped on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">MPN45</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_mpn-master.png" width="480" height="105" loading="lazy" alt="MPN45 on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_mpn-stack.png" width="480" height="105" loading="lazy" alt="MPN45 on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">MPN45, unsilenced</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_mpn_unsilenced-master.png" width="480" height="105" loading="lazy" alt="MPN45, unsilenced on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_mpn_unsilenced-stack.png" width="480" height="105" loading="lazy" alt="MPN45, unsilenced on the HUD tweaks stack"></div></div>
+      </figure>
+      <h3 class="sub">Two rows</h3>
+      <figure class="cmp" style="--w:480px">
         <figcaption><span class="scene">SRM</span><span class="dims">480 × 105 px</span></figcaption>
         <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_srm-master.png" width="480" height="105" loading="lazy" alt="SRM on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_srm-stack.png" width="480" height="105" loading="lazy" alt="SRM on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">SRM-S</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_srm_s-master.png" width="480" height="105" loading="lazy" alt="SRM-S on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_srm_s-stack.png" width="480" height="105" loading="lazy" alt="SRM-S on the HUD tweaks stack"></div></div>
       </figure>
       <figure class="cmp" style="--w:480px">
         <figcaption><span class="scene">PZ252</span><span class="dims">480 × 105 px</span></figcaption>
         <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_pz-master.png" width="480" height="105" loading="lazy" alt="PZ252 on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_pz-stack.png" width="480" height="105" loading="lazy" alt="PZ252 on the HUD tweaks stack"></div></div>
       </figure>
       <figure class="cmp" style="--w:480px">
-        <figcaption><span class="scene">SUPA 7</span><span class="dims">480 × 105 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_supa7-master.png" width="480" height="105" loading="lazy" alt="SUPA 7 on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_supa7-stack.png" width="480" height="105" loading="lazy" alt="SUPA 7 on the HUD tweaks stack"></div></div>
+        <figcaption><span class="scene">SMAC</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_smac-master.png" width="480" height="105" loading="lazy" alt="SMAC on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_smac-stack.png" width="480" height="105" loading="lazy" alt="SMAC on the HUD tweaks stack"></div></div>
+      </figure>
+      <h3 class="sub">Pistols, revolver and sniper rifle</h3>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">Tachi</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_tachi-master.png" width="480" height="105" loading="lazy" alt="Tachi on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_tachi-stack.png" width="480" height="105" loading="lazy" alt="Tachi on the HUD tweaks stack"></div></div>
       </figure>
       <figure class="cmp" style="--w:480px">
         <figcaption><span class="scene">Milso</span><span class="dims">480 × 105 px</span></figcaption>
@@ -183,6 +243,28 @@ footer { margin-top: 56px; color: var(--muted); font-size: 13px; max-width: 72ch
       <figure class="cmp" style="--w:480px">
         <figcaption><span class="scene">Kyla</span><span class="dims">480 × 105 px</span></figcaption>
         <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_kyla-master.png" width="480" height="105" loading="lazy" alt="Kyla on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_kyla-stack.png" width="480" height="105" loading="lazy" alt="Kyla on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">SRS</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_srs-master.png" width="480" height="105" loading="lazy" alt="SRS on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_srs-stack.png" width="480" height="105" loading="lazy" alt="SRS on the HUD tweaks stack"></div></div>
+      </figure>
+      <h3 class="sub">Shotguns</h3>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">SUPA 7</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_supa7-master.png" width="480" height="105" loading="lazy" alt="SUPA 7 on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_supa7-stack.png" width="480" height="105" loading="lazy" alt="SUPA 7 on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">AA13</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_aa13-master.png" width="480" height="105" loading="lazy" alt="AA13 on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_aa13-stack.png" width="480" height="105" loading="lazy" alt="AA13 on the HUD tweaks stack"></div></div>
+      </figure>
+      <h3 class="sub">No rail</h3>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">Ghost</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_ghost-master.png" width="480" height="105" loading="lazy" alt="Ghost on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_ghost-stack.png" width="480" height="105" loading="lazy" alt="Ghost on the HUD tweaks stack"></div></div>
+      </figure>
+      <figure class="cmp" style="--w:480px">
+        <figcaption><span class="scene">Detpack</span><span class="dims">480 × 105 px</span></figcaption>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_remotedet-master.png" width="480" height="105" loading="lazy" alt="Detpack on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_remotedet-stack.png" width="480" height="105" loading="lazy" alt="Detpack on the HUD tweaks stack"></div></div>
       </figure>
       <figure class="cmp" style="--w:480px">
         <figcaption><span class="scene">Frag grenade</span><span class="dims">480 × 105 px</span></figcaption>
@@ -196,6 +278,7 @@ footer { margin-top: 56px; color: var(--muted); font-size: 13px; max-width: 72ch
         <figcaption><span class="scene">Knife</span><span class="dims">480 × 105 px</span></figcaption>
         <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_knife-master.png" width="480" height="105" loading="lazy" alt="Knife on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_knife-stack.png" width="480" height="105" loading="lazy" alt="Knife on the HUD tweaks stack"></div></div>
       </figure>
+      <h3 class="sub">BALC</h3>
       <figure class="cmp" style="--w:480px">
         <figcaption><span class="scene">BALC, idle</span><span class="dims">480 × 105 px</span></figcaption>
         <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-balc_idle-master.png" width="480" height="105" loading="lazy" alt="BALC, idle on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-balc_idle-stack.png" width="480" height="105" loading="lazy" alt="BALC, idle on the HUD tweaks stack"></div></div>
