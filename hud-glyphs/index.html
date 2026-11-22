@@ -78,6 +78,18 @@ table.rail tbody th { font-weight: 500; white-space: nowrap; }
 h3.sub { font-family: var(--display); font-weight: 500; font-size: 1.05rem; margin: 10px 0 0; color: var(--muted); }
 details summary { cursor: pointer; color: var(--muted); }
 footer { margin-top: 56px; color: var(--muted); font-size: 13px; max-width: 72ch; }
+/* Multiple resolutions: every size of one panel in one figure. These figures stay out of flip mode and the zoom,
+   and have their own scale: the same width as the 1080p crop, or each shot at its own pixel size. */
+figure.res { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; min-width: 0; display: grid; gap: 12px; }
+figure.res figcaption { margin-bottom: 0; }
+.res-row { display: grid; gap: 6px; min-width: 0; }
+.res-label { font: 12px/1.4 var(--mono); color: var(--tweaks); letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+.res-label .px { color: var(--muted); margin-left: 8px; }
+.res-img { overflow-x: auto; }
+.res-img img { display: block; width: var(--w); max-width: 100%; height: auto; background: #000; border-radius: 3px; outline: 1px solid color-mix(in srgb, var(--tweaks) 45%, transparent); }
+body[data-res="own"] .res-img img { width: var(--nw); max-width: none; }
+ul.seen { margin: 0; padding-left: 1.2em; max-width: 72ch; color: var(--muted); display: grid; gap: 4px; }
+#resolutions > .group { margin-top: 4px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
 
@@ -90,7 +102,8 @@ footer { margin-top: 56px; color: var(--muted); font-size: 13px; max-width: 72ch
       <li class="t"><b>HUD tweaks</b> the hud-tweaks branches, each panel captured once its changes were final</li>
       <li>Captured 2026-11-20 and 2026-11-21, Linux</li>
     </ul>
-    <nav aria-label="Panels"><ol><li><a href="#rails">Rail rounds</a></li><li><a href="#fire">Fire mode icons</a></li><li><a href="#ammo">Ammo panel</a></li><li><a href="#vitals">Vitals</a></li><li><a href="#compass">Compass</a></li><li><a href="#dash">Dash</a></li><li><a href="#squad">Squad list</a></li><li><a href="#feed">Kill feed</a></li><li><a href="#killer">Killer info</a></li><li><a href="#spectator">Spectator overlay</a></li><li><a href="#frames">Full frames</a></li></ol></nav>
+    <nav aria-label="Panels"><ol><li><a href="#rails">Rail rounds</a></li><li><a href="#fire">Fire mode icons</a></li><li><a href="#ammo">Ammo panel</a></li><li><a href="#vitals">Vitals</a></li><li><a href="#compass">Compass</a></li><li><a href="#dash">Dash</a></li><li><a href="#squad">Squad list</a></li><li><a href="#feed">Kill feed</a></li><li><a href="#killer">Killer info</a></li><li><a href="#spectator">Spectator overlay</a></li><li><a href="#frames">Full frames</a></li>
+<li><a href="#resolutions">Multiple resolutions</a></li></ol></nav>
   </header>
 
   <div class="bar" role="toolbar" aria-label="View">
@@ -161,7 +174,7 @@ footer { margin-top: 56px; color: var(--muted); font-size: 13px; max-width: 72ch
     </section>
     <section id="ammo">
       <h2><a href="#ammo">Ammo panel</a></h2>
-      <p class="note">Every weapon in the build, captured on master <code>6f53bb238</code> and on the stack tip <code>hud-tweak</code> at 1920 × 1080, each holding the weapon after a short burst. On the stack the name, round count and mag count share the top row, the round count ends on the panel's right edge after its round glyph, and the mag count is a bare number. The rail stands each round on whole pixels, with a space after each batch where the weapon's script sets one, and closes the batch spaces first when a row would not fit, as on the MX, ZR68C and ZR68S. The fire mode icons show their tops. The PBK56S is left out: <code>INCLUDE_WEP_PBK</code> is off, so the build has no such weapon.</p>
+      <p class="note">Every weapon in the build, captured on master <code>6f53bb238</code> and on the stack tip <code>hud-tweak</code> at 1920 × 1080, each holding the weapon after a short burst. On the stack the name, round count and mag count share the top row, the round count ends on the panel's right edge after its round glyph, and the mag count is a bare number. The rail stands each round on whole pixels, with a space after each batch where the weapon's script sets one. A row too long for the rail stands smaller rounds, and narrows its batch spaces only as far as it must, as on the PZ252 and SMAC. The fire mode icons show their tops. The PBK56S is left out: <code>INCLUDE_WEP_PBK</code> is off, so the build has no such weapon.</p>
       <details><summary>Rail settings per weapon, from the weapon scripts</summary>
       <table class="rail"><thead><tr><th scope="col">Weapon</th><th scope="col">Rounds</th><th scope="col">Rail rows</th><th scope="col">Batch</th></tr></thead><tbody><tr><th scope="row">MX</th><td>30</td><td>1</td><td>10</td></tr><tr><th scope="row">MX Silenced</th><td>30</td><td>1</td><td>10</td></tr><tr><th scope="row">ZR68C</th><td>30</td><td>1</td><td>10</td></tr><tr><th scope="row">ZR68S</th><td>30</td><td>1</td><td>10</td></tr><tr><th scope="row">ZR68L</th><td>10</td><td>1</td><td>5</td></tr><tr><th scope="row">M41</th><td>15</td><td>1</td><td>5</td></tr><tr><th scope="row">M41S</th><td>15</td><td>1</td><td>5</td></tr><tr><th scope="row">M41L</th><td>10</td><td>1</td><td>5</td></tr><tr><th scope="row">Jitte</th><td>30</td><td>1</td><td>10</td></tr><tr><th scope="row">Jitte, scoped</th><td>30</td><td>1</td><td>10</td></tr><tr><th scope="row">MPN45</th><td>30</td><td>1</td><td>10</td></tr><tr><th scope="row">MPN45, unsilenced</th><td>30</td><td>1</td><td>10</td></tr><tr><th scope="row">SRM</th><td>50</td><td>2</td><td>5</td></tr><tr><th scope="row">SRM-S</th><td>50</td><td>2</td><td>5</td></tr><tr><th scope="row">PZ252</th><td>100</td><td>2</td><td>10</td></tr><tr><th scope="row">SMAC</th><td>90</td><td>2</td><td>10</td></tr><tr><th scope="row">Tachi</th><td>15</td><td>1</td><td>5</td></tr><tr><th scope="row">Milso</th><td>12</td><td>1</td><td>4</td></tr><tr><th scope="row">Kyla</th><td>6</td><td>1</td><td></td></tr><tr><th scope="row">SRS</th><td>5</td><td>1</td><td></td></tr><tr><th scope="row">SUPA 7</th><td>7</td><td>1</td><td></td></tr><tr><th scope="row">AA13</th><td>16</td><td>1</td><td></td></tr><tr><th scope="row">Ghost</th><td>none</td><td></td><td></td></tr><tr><th scope="row">Detpack</th><td>none</td><td></td><td></td></tr><tr><th scope="row">Frag grenade</th><td>none</td><td></td><td></td></tr><tr><th scope="row">Smoke grenade</th><td>none</td><td></td><td></td></tr><tr><th scope="row">Knife</th><td>none</td><td></td><td></td></tr></tbody></table>
       </details>
@@ -200,19 +213,19 @@ footer { margin-top: 56px; color: var(--muted); font-size: 13px; max-width: 72ch
       </figure>
       <figure class="cmp" style="--w:480px">
         <figcaption><span class="scene">Jitte</span><span class="dims">480 × 105 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_jitte-master.png" width="480" height="105" loading="lazy" alt="Jitte on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_jitte-stack.png" width="480" height="105" loading="lazy" alt="Jitte on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_jitte-master.png" width="480" height="105" loading="lazy" alt="Jitte on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/rg1080-ammo-w_jitte.png" width="480" height="105" loading="lazy" alt="Jitte on the HUD tweaks stack"></div></div>
       </figure>
       <figure class="cmp" style="--w:480px">
         <figcaption><span class="scene">Jitte, scoped</span><span class="dims">480 × 105 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_jittescoped-master.png" width="480" height="105" loading="lazy" alt="Jitte, scoped on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_jittescoped-stack.png" width="480" height="105" loading="lazy" alt="Jitte, scoped on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_jittescoped-master.png" width="480" height="105" loading="lazy" alt="Jitte, scoped on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/rg1080-ammo-w_jittescoped.png" width="480" height="105" loading="lazy" alt="Jitte, scoped on the HUD tweaks stack"></div></div>
       </figure>
       <figure class="cmp" style="--w:480px">
         <figcaption><span class="scene">MPN45</span><span class="dims">480 × 105 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_mpn-master.png" width="480" height="105" loading="lazy" alt="MPN45 on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_mpn-stack.png" width="480" height="105" loading="lazy" alt="MPN45 on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_mpn-master.png" width="480" height="105" loading="lazy" alt="MPN45 on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/rg1080-ammo-w_mpn.png" width="480" height="105" loading="lazy" alt="MPN45 on the HUD tweaks stack"></div></div>
       </figure>
       <figure class="cmp" style="--w:480px">
         <figcaption><span class="scene">MPN45, unsilenced</span><span class="dims">480 × 105 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_mpn_unsilenced-master.png" width="480" height="105" loading="lazy" alt="MPN45, unsilenced on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_mpn_unsilenced-stack.png" width="480" height="105" loading="lazy" alt="MPN45, unsilenced on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_mpn_unsilenced-master.png" width="480" height="105" loading="lazy" alt="MPN45, unsilenced on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/rg1080-ammo-w_mpn_unsilenced.png" width="480" height="105" loading="lazy" alt="MPN45, unsilenced on the HUD tweaks stack"></div></div>
       </figure>
       <h3 class="sub">Two rows</h3>
       <figure class="cmp" style="--w:480px">
@@ -229,7 +242,7 @@ footer { margin-top: 56px; color: var(--muted); font-size: 13px; max-width: 72ch
       </figure>
       <figure class="cmp" style="--w:480px">
         <figcaption><span class="scene">SMAC</span><span class="dims">480 × 105 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_smac-master.png" width="480" height="105" loading="lazy" alt="SMAC on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/ammo-w_smac-stack.png" width="480" height="105" loading="lazy" alt="SMAC on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/ammo-w_smac-master.png" width="480" height="105" loading="lazy" alt="SMAC on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/rg1080-ammo-w_smac.png" width="480" height="105" loading="lazy" alt="SMAC on the HUD tweaks stack"></div></div>
       </figure>
       <h3 class="sub">Pistols, revolver and sniper rifle</h3>
       <figure class="cmp" style="--w:480px">
@@ -317,11 +330,11 @@ footer { margin-top: 56px; color: var(--muted); font-size: 13px; max-width: 72ch
       <p class="note">The box keeps master&#x27;s width, 260 px, with the logos inset at its ends. The clock&#x27;s digits keep Neuropol2&#x27;s own widths and spacing, and the colon stays on the box&#x27;s center, on one axis with the round counter and the alive counts, centered on the digits&#x27; height. The rows are 7 px apart.</p>
       <figure class="cmp" style="--w:720px">
         <figcaption><span class="scene">Playing, squad list</span><span class="dims">720 × 125 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/dash-p_list-master.png" width="720" height="125" loading="lazy" alt="Playing, squad list on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/dash-p_list-stack.png" width="720" height="125" loading="lazy" alt="Playing, squad list on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/dash-p_list-master.png" width="720" height="125" loading="lazy" alt="Playing, squad list on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/sc1080-dash-p_list.png" width="720" height="125" loading="lazy" alt="Playing, squad list on the HUD tweaks stack"></div></div>
       </figure>
       <figure class="cmp" style="--w:720px">
         <figcaption><span class="scene">Playing, avatars</span><span class="dims">720 × 125 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/dash-p_avatars-master.png" width="720" height="125" loading="lazy" alt="Playing, avatars on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/dash-p_avatars-stack.png" width="720" height="125" loading="lazy" alt="Playing, avatars on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/dash-p_avatars-master.png" width="720" height="125" loading="lazy" alt="Playing, avatars on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/sc1080-dash-p_avatars.png" width="720" height="125" loading="lazy" alt="Playing, avatars on the HUD tweaks stack"></div></div>
       </figure>
     </section>
     <section id="squad">
@@ -329,7 +342,7 @@ footer { margin-top: 56px; color: var(--muted); font-size: 13px; max-width: 72ch
       <p class="note">Rows in Neuropol2 with the tiny text in Verdana, as on master. The health column ends on one edge by its ink, so values of any width line up. Health, class and rank stand in fixed columns, each as wide as the widest text it can hold, and the name comes last at its full length. A dead teammate&#x27;s row is darker and keeps its rank, and the Juggernaut reads Jaeger.</p>
       <figure class="cmp" style="--w:640px">
         <figcaption><span class="scene">Playing, squad list</span><span class="dims">640 × 135 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/squad-p_list-master.png" width="640" height="135" loading="lazy" alt="Playing, squad list on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/squad-p_list-stack.png" width="640" height="135" loading="lazy" alt="Playing, squad list on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/squad-p_list-master.png" width="640" height="135" loading="lazy" alt="Playing, squad list on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/sc1080-squad-p_list.png" width="640" height="135" loading="lazy" alt="Playing, squad list on the HUD tweaks stack"></div></div>
       </figure>
     </section>
     <section id="feed">
@@ -337,15 +350,15 @@ footer { margin-top: 56px; color: var(--muted); font-size: 13px; max-width: 72ch
       <p class="note">Rows tall enough for their icons, padded 5 px top and bottom, and the feed starts below the avatars.</p>
       <figure class="cmp" style="--w:520px">
         <figcaption><span class="scene">Playing, squad list</span><span class="dims">520 × 320 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/feed-p_list-master.png" width="520" height="320" loading="lazy" alt="Playing, squad list on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/feed-p_list-stack.png" width="520" height="320" loading="lazy" alt="Playing, squad list on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/feed-p_list-master.png" width="520" height="320" loading="lazy" alt="Playing, squad list on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/sc1080-feed-p_list.png" width="520" height="320" loading="lazy" alt="Playing, squad list on the HUD tweaks stack"></div></div>
       </figure>
       <figure class="cmp" style="--w:520px">
         <figcaption><span class="scene">Playing, avatars</span><span class="dims">520 × 320 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/feed-p_avatars-master.png" width="520" height="320" loading="lazy" alt="Playing, avatars on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/feed-p_avatars-stack.png" width="520" height="320" loading="lazy" alt="Playing, avatars on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/feed-p_avatars-master.png" width="520" height="320" loading="lazy" alt="Playing, avatars on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/sc1080-feed-p_avatars.png" width="520" height="320" loading="lazy" alt="Playing, avatars on the HUD tweaks stack"></div></div>
       </figure>
       <figure class="cmp" style="--w:520px">
         <figcaption><span class="scene">Just killed</span><span class="dims">520 × 320 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/feed-k_info-master.png" width="520" height="320" loading="lazy" alt="Just killed on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/feed-k_info-stack.png" width="520" height="320" loading="lazy" alt="Just killed on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/feed-k_info-master.png" width="520" height="320" loading="lazy" alt="Just killed on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/sc1080-feed-k_info.png" width="520" height="320" loading="lazy" alt="Just killed on the HUD tweaks stack"></div></div>
       </figure>
     </section>
     <section id="killer">
@@ -353,7 +366,7 @@ footer { margin-top: 56px; color: var(--muted); font-size: 13px; max-width: 72ch
       <p class="note">The card&#x27;s margin matches its avatar inset.</p>
       <figure class="cmp" style="--w:520px">
         <figcaption><span class="scene">Just killed</span><span class="dims">520 × 135 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/killer-k_info-master.png" width="520" height="135" loading="lazy" alt="Just killed on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/killer-k_info-stack.png" width="520" height="135" loading="lazy" alt="Just killed on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/killer-k_info-master.png" width="520" height="135" loading="lazy" alt="Just killed on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/sc1080-killer-k_info.png" width="520" height="135" loading="lazy" alt="Just killed on the HUD tweaks stack"></div></div>
       </figure>
     </section>
     <section id="spectator">
@@ -361,26 +374,205 @@ footer { margin-top: 56px; color: var(--muted); font-size: 13px; max-width: 72ch
       <p class="note">XP and death columns line up across a team, and long names are cut with three dots. The dash in the overlay keeps master&#x27;s width too.</p>
       <figure class="cmp" style="--w:1920px">
         <figcaption><span class="scene">Spectator overlay</span><span class="dims">1920 × 360 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/spectator-s_overlay-master.png" width="1920" height="360" loading="lazy" alt="Spectator overlay on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/spectator-s_overlay-stack.png" width="1920" height="360" loading="lazy" alt="Spectator overlay on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/spectator-s_overlay-master.png" width="1920" height="360" loading="lazy" alt="Spectator overlay on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/sc1080-spectator-s_overlay.png" width="1920" height="360" loading="lazy" alt="Spectator overlay on the HUD tweaks stack"></div></div>
       </figure>
     </section>
     <section id="frames">
       <h2><a href="#frames">Full frames</a></h2><p class="note">Scoreboard: even margins, a rank glyph before each rank name, and its own body font. Verdana draws as Liberation Sans on Linux. The XP and D headers and values center on one axis, and the rank glyph&#x27;s ink centers on the rank name&#x27;s capitals.</p>
       <figure class="cmp full" style="--w:1920px">
         <figcaption><span class="scene">Scoreboard</span><span class="dims">1920 × 1080 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/full-sb_alive-master.jpg" width="1920" height="1080" loading="lazy" alt="Scoreboard on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/full-sb_alive-stack.jpg" width="1920" height="1080" loading="lazy" alt="Scoreboard on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/full-sb_alive-master.jpg" width="1920" height="1080" loading="lazy" alt="Scoreboard on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/sc1080-full-sb_alive.jpg" width="1920" height="1080" loading="lazy" alt="Scoreboard on the HUD tweaks stack"></div></div>
       </figure><p class="note">Spectator overlay in context.</p>
       <figure class="cmp full" style="--w:1920px">
         <figcaption><span class="scene">Spectator overlay</span><span class="dims">1920 × 1080 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/full-s_overlay-master.jpg" width="1920" height="1080" loading="lazy" alt="Spectator overlay on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/full-s_overlay-stack.jpg" width="1920" height="1080" loading="lazy" alt="Spectator overlay on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/full-s_overlay-master.jpg" width="1920" height="1080" loading="lazy" alt="Spectator overlay on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/sc1080-full-s_overlay.jpg" width="1920" height="1080" loading="lazy" alt="Spectator overlay on the HUD tweaks stack"></div></div>
       </figure><p class="note">Playing with avatars beside the dash.</p>
       <figure class="cmp full" style="--w:1920px">
         <figcaption><span class="scene">Playing, avatars</span><span class="dims">1920 × 1080 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/full-p_avatars-master.jpg" width="1920" height="1080" loading="lazy" alt="Playing, avatars on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/full-p_avatars-stack.jpg" width="1920" height="1080" loading="lazy" alt="Playing, avatars on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/full-p_avatars-master.jpg" width="1920" height="1080" loading="lazy" alt="Playing, avatars on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/sc1080-full-p_avatars.jpg" width="1920" height="1080" loading="lazy" alt="Playing, avatars on the HUD tweaks stack"></div></div>
       </figure><p class="note">Holding the MX.</p>
       <figure class="cmp full" style="--w:1920px">
         <figcaption><span class="scene">MX</span><span class="dims">1920 × 1080 px</span></figcaption>
-        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/full-w_mx-master.jpg" width="1920" height="1080" loading="lazy" alt="MX on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/full-w_mx-stack.jpg" width="1920" height="1080" loading="lazy" alt="MX on the HUD tweaks stack"></div></div>
+        <div class="pair"><div class="shot master"><span class="tag">Master</span><img src="img/full-w_mx-master.jpg" width="1920" height="1080" loading="lazy" alt="MX on master"></div><div class="shot stack"><span class="tag">HUD tweaks</span><img src="img/sc1080-full-w_mx.jpg" width="1920" height="1080" loading="lazy" alt="MX on the HUD tweaks stack"></div></div>
+      </figure>
+    </section>
+
+    <section id="resolutions">
+      <h2><a href="#resolutions">Multiple resolutions</a></h2>
+      <p class="note">The stack tip <code>cf0c601f8</code>, captured on 2026-11-21 inside gamescope at 1280 × 720, 2560 × 1440 and 3840 × 2160, and on the desktop at 1920 × 1080, where the panel sections above show the same captures. The panels other than the ammo panel come from the commit before the rail's batch space fix, which draws them the same. Before the fix shows the stack before its screen scaling and rail fixes, <code>3e8135e3e</code>. Each crop is the 1080p panel crop scaled by the screen's height. Bot names, timers and kill feed entries differ from run to run.</p>
+      <ul class="seen">
+        <li>Dash: its fonts now scale with the screen as its box does, so its rows keep even gaps at every size, 4, 6, 9 and 13 px above the clock at 720p, 1080p, 1440p and 2160p.</li>
+        <li>Avatars beside the dash, their names, and the squad star with the start of the squad list below it now scale with the screen. cl_neo_squad_hud_star_scale now defaults to 1, and 0 counts as 1.</li>
+        <li>Kill feed: the names, fixed words and icons scale with the rows. The spectator overlay draws its rank, death and weapon icons in the same icon font, so they now scale with its cards.</li>
+        <li>Killer info: the card has its own title and text fonts, which scale with the card and its avatar.</li>
+        <li>Squad list: the rows have their own fonts, and their gaps are sized at 1080p.</li>
+        <li>Every HUD box's rounded corners are 8 px at 1080p and scale with the screen.</li>
+        <li>Ammo panel: a row of smaller rounds now narrows its batch spaces only as far as it must to fit the rail. Before, they closed to 1 px whenever a row ran over, which hit the MX at 720p, 1440p and 2160p, and the Jitte, MPN45 and SMAC at 1080p too. The MX now keeps 2, 5 and 8 px at those sizes, the full scaled 4 px, the Jitte and MPN45 4 px at 1080p as on the MX, and the SMAC 2 px, all its rail has room for. At 1080p the PZ252, the SRM and the SUPA 7 draw as before.</li>
+        <li>At 1080p the dash's clock, scores, round and vs, the avatar names and the killer title are a pixel larger, and the kill feed's names and words and a teammate outside the squad a pixel smaller: a scaled font's size moves in steps of about 2.25 px at 1080p, and these are the nearest steps.</li>
+        <li>Still fixed in size, and unchanged by the stack: the compass's tick marks, the names over teammates in the world, and the spectator overlay's text, which reaches about 1.75 times its 1080p size at 2160p.</li>
+      </ul>
+      <div class="group">Build
+        <span class="seg"><button type="button" data-fix="after" aria-pressed="true">After the fix</button><button type="button" data-fix="before" aria-pressed="false">Before the fix</button></span>
+      </div>
+      <div class="group">Scale
+        <span class="seg"><button type="button" data-res="same" aria-pressed="true">Same width</button><button type="button" data-res="own" aria-pressed="false">Own pixels</button></span>
+      </div>
+      <h3 class="sub">Panels</h3>
+      <figure class="res" style="--w:480px">
+        <figcaption><span class="scene">Ammo panel, MX</span><span class="dims">480 × 105 px at 1080p</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">320 × 70 px</span></span><div class="res-img"><img src="img/rg720-ammo-w_mx.png" data-after="img/rg720-ammo-w_mx.png" data-before="img/res720-ammo-w_mx.png" style="--nw:320px" width="320" height="70" loading="lazy" alt="Ammo panel, MX at 1280 × 720"></div></div>
+        <div class="res-row"><span class="res-label">1920 × 1080 <span class="px">480 × 105 px</span></span><div class="res-img"><img src="img/sc1080-ammo-w_mx.png" data-after="img/sc1080-ammo-w_mx.png" data-before="img/ammo-w_mx-stack.png" style="--nw:480px" width="480" height="105" loading="lazy" alt="Ammo panel, MX at 1920 × 1080"></div></div>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">640 × 140 px</span></span><div class="res-img"><img src="img/rg1440-ammo-w_mx.png" data-after="img/rg1440-ammo-w_mx.png" data-before="img/res1440-ammo-w_mx.png" style="--nw:640px" width="640" height="140" loading="lazy" alt="Ammo panel, MX at 2560 × 1440"></div></div>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">960 × 210 px</span></span><div class="res-img"><img src="img/rg2160-ammo-w_mx.png" data-after="img/rg2160-ammo-w_mx.png" data-before="img/res2160-ammo-w_mx.png" style="--nw:960px" width="960" height="210" loading="lazy" alt="Ammo panel, MX at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:480px">
+        <figcaption><span class="scene">Ammo panel, SRM</span><span class="dims">480 × 105 px at 1080p</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">320 × 70 px</span></span><div class="res-img"><img src="img/sc720-ammo-w_srm.png" data-after="img/sc720-ammo-w_srm.png" data-before="img/res720-ammo-w_srm.png" style="--nw:320px" width="320" height="70" loading="lazy" alt="Ammo panel, SRM at 1280 × 720"></div></div>
+        <div class="res-row"><span class="res-label">1920 × 1080 <span class="px">480 × 105 px</span></span><div class="res-img"><img src="img/sc1080-ammo-w_srm.png" data-after="img/sc1080-ammo-w_srm.png" data-before="img/ammo-w_srm-stack.png" style="--nw:480px" width="480" height="105" loading="lazy" alt="Ammo panel, SRM at 1920 × 1080"></div></div>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">640 × 140 px</span></span><div class="res-img"><img src="img/sc1440-ammo-w_srm.png" data-after="img/sc1440-ammo-w_srm.png" data-before="img/res1440-ammo-w_srm.png" style="--nw:640px" width="640" height="140" loading="lazy" alt="Ammo panel, SRM at 2560 × 1440"></div></div>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">960 × 210 px</span></span><div class="res-img"><img src="img/sc2160-ammo-w_srm.png" data-after="img/sc2160-ammo-w_srm.png" data-before="img/res2160-ammo-w_srm.png" style="--nw:960px" width="960" height="210" loading="lazy" alt="Ammo panel, SRM at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:480px">
+        <figcaption><span class="scene">Ammo panel, SUPA 7</span><span class="dims">480 × 105 px at 1080p</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">320 × 70 px</span></span><div class="res-img"><img src="img/sc720-ammo-w_supa7.png" data-after="img/sc720-ammo-w_supa7.png" data-before="img/res720-ammo-w_supa7.png" style="--nw:320px" width="320" height="70" loading="lazy" alt="Ammo panel, SUPA 7 at 1280 × 720"></div></div>
+        <div class="res-row"><span class="res-label">1920 × 1080 <span class="px">480 × 105 px</span></span><div class="res-img"><img src="img/sc1080-ammo-w_supa7.png" data-after="img/sc1080-ammo-w_supa7.png" data-before="img/ammo-w_supa7-stack.png" style="--nw:480px" width="480" height="105" loading="lazy" alt="Ammo panel, SUPA 7 at 1920 × 1080"></div></div>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">640 × 140 px</span></span><div class="res-img"><img src="img/sc1440-ammo-w_supa7.png" data-after="img/sc1440-ammo-w_supa7.png" data-before="img/res1440-ammo-w_supa7.png" style="--nw:640px" width="640" height="140" loading="lazy" alt="Ammo panel, SUPA 7 at 2560 × 1440"></div></div>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">960 × 210 px</span></span><div class="res-img"><img src="img/sc2160-ammo-w_supa7.png" data-after="img/sc2160-ammo-w_supa7.png" data-before="img/res2160-ammo-w_supa7.png" style="--nw:960px" width="960" height="210" loading="lazy" alt="Ammo panel, SUPA 7 at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:480px">
+        <figcaption><span class="scene">Ammo panel, Jitte</span><span class="dims">480 × 105 px at 1080p, before the fix at 1080p only</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">320 × 70 px</span></span><div class="res-img"><img src="img/rg720-ammo-w_jitte.png" style="--nw:320px" width="320" height="70" loading="lazy" alt="Ammo panel, Jitte at 1280 × 720"></div></div>
+        <div class="res-row"><span class="res-label">1920 × 1080 <span class="px">480 × 105 px</span></span><div class="res-img"><img src="img/rg1080-ammo-w_jitte.png" data-after="img/rg1080-ammo-w_jitte.png" data-before="img/gb1080-ammo-w_jitte.png" style="--nw:480px" width="480" height="105" loading="lazy" alt="Ammo panel, Jitte at 1920 × 1080"></div></div>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">640 × 140 px</span></span><div class="res-img"><img src="img/rg1440-ammo-w_jitte.png" style="--nw:640px" width="640" height="140" loading="lazy" alt="Ammo panel, Jitte at 2560 × 1440"></div></div>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">960 × 210 px</span></span><div class="res-img"><img src="img/rg2160-ammo-w_jitte.png" style="--nw:960px" width="960" height="210" loading="lazy" alt="Ammo panel, Jitte at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:480px">
+        <figcaption><span class="scene">Ammo panel, SMAC</span><span class="dims">480 × 105 px at 1080p, before the fix at 1080p only</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">320 × 70 px</span></span><div class="res-img"><img src="img/rg720-ammo-w_smac.png" style="--nw:320px" width="320" height="70" loading="lazy" alt="Ammo panel, SMAC at 1280 × 720"></div></div>
+        <div class="res-row"><span class="res-label">1920 × 1080 <span class="px">480 × 105 px</span></span><div class="res-img"><img src="img/rg1080-ammo-w_smac.png" data-after="img/rg1080-ammo-w_smac.png" data-before="img/gb1080-ammo-w_smac.png" style="--nw:480px" width="480" height="105" loading="lazy" alt="Ammo panel, SMAC at 1920 × 1080"></div></div>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">640 × 140 px</span></span><div class="res-img"><img src="img/rg1440-ammo-w_smac.png" style="--nw:640px" width="640" height="140" loading="lazy" alt="Ammo panel, SMAC at 2560 × 1440"></div></div>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">960 × 210 px</span></span><div class="res-img"><img src="img/rg2160-ammo-w_smac.png" style="--nw:960px" width="960" height="210" loading="lazy" alt="Ammo panel, SMAC at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:470px">
+        <figcaption><span class="scene">Vitals, MX</span><span class="dims">470 × 115 px at 1080p</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">313 × 77 px</span></span><div class="res-img"><img src="img/sc720-vitals-w_mx.png" data-after="img/sc720-vitals-w_mx.png" data-before="img/res720-vitals-w_mx.png" style="--nw:313px" width="313" height="77" loading="lazy" alt="Vitals, MX at 1280 × 720"></div></div>
+        <div class="res-row"><span class="res-label">1920 × 1080 <span class="px">470 × 115 px</span></span><div class="res-img"><img src="img/sc1080-vitals-w_mx.png" data-after="img/sc1080-vitals-w_mx.png" data-before="img/vitals-w_mx-stack.png" style="--nw:470px" width="470" height="115" loading="lazy" alt="Vitals, MX at 1920 × 1080"></div></div>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">627 × 153 px</span></span><div class="res-img"><img src="img/sc1440-vitals-w_mx.png" data-after="img/sc1440-vitals-w_mx.png" data-before="img/res1440-vitals-w_mx.png" style="--nw:627px" width="627" height="153" loading="lazy" alt="Vitals, MX at 2560 × 1440"></div></div>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">940 × 230 px</span></span><div class="res-img"><img src="img/sc2160-vitals-w_mx.png" data-after="img/sc2160-vitals-w_mx.png" data-before="img/res2160-vitals-w_mx.png" style="--nw:940px" width="940" height="230" loading="lazy" alt="Vitals, MX at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:520px">
+        <figcaption><span class="scene">Compass, MX</span><span class="dims">520 × 60 px at 1080p</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">346 × 40 px</span></span><div class="res-img"><img src="img/sc720-compass-w_mx.png" data-after="img/sc720-compass-w_mx.png" data-before="img/res720-compass-w_mx.png" style="--nw:346px" width="346" height="40" loading="lazy" alt="Compass, MX at 1280 × 720"></div></div>
+        <div class="res-row"><span class="res-label">1920 × 1080 <span class="px">520 × 60 px</span></span><div class="res-img"><img src="img/sc1080-compass-w_mx.png" data-after="img/sc1080-compass-w_mx.png" data-before="img/compass-w_mx-stack.png" style="--nw:520px" width="520" height="60" loading="lazy" alt="Compass, MX at 1920 × 1080"></div></div>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">694 × 80 px</span></span><div class="res-img"><img src="img/sc1440-compass-w_mx.png" data-after="img/sc1440-compass-w_mx.png" data-before="img/res1440-compass-w_mx.png" style="--nw:694px" width="694" height="80" loading="lazy" alt="Compass, MX at 2560 × 1440"></div></div>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">1040 × 120 px</span></span><div class="res-img"><img src="img/sc2160-compass-w_mx.png" data-after="img/sc2160-compass-w_mx.png" data-before="img/res2160-compass-w_mx.png" style="--nw:1040px" width="1040" height="120" loading="lazy" alt="Compass, MX at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:720px">
+        <figcaption><span class="scene">Dash, playing, squad list</span><span class="dims">720 × 125 px at 1080p</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">480 × 83 px</span></span><div class="res-img"><img src="img/sc720-dash-p_list.png" data-after="img/sc720-dash-p_list.png" data-before="img/res720-dash-p_list.png" style="--nw:480px" width="480" height="83" loading="lazy" alt="Dash, playing, squad list at 1280 × 720"></div></div>
+        <div class="res-row"><span class="res-label">1920 × 1080 <span class="px">720 × 125 px</span></span><div class="res-img"><img src="img/sc1080-dash-p_list.png" data-after="img/sc1080-dash-p_list.png" data-before="img/dash-p_list-stack.png" style="--nw:720px" width="720" height="125" loading="lazy" alt="Dash, playing, squad list at 1920 × 1080"></div></div>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">960 × 167 px</span></span><div class="res-img"><img src="img/sc1440-dash-p_list.png" data-after="img/sc1440-dash-p_list.png" data-before="img/res1440-dash-p_list.png" style="--nw:960px" width="960" height="167" loading="lazy" alt="Dash, playing, squad list at 2560 × 1440"></div></div>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">1440 × 250 px</span></span><div class="res-img"><img src="img/sc2160-dash-p_list.png" data-after="img/sc2160-dash-p_list.png" data-before="img/res2160-dash-p_list.png" style="--nw:1440px" width="1440" height="250" loading="lazy" alt="Dash, playing, squad list at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:720px">
+        <figcaption><span class="scene">Dash, playing, avatars</span><span class="dims">720 × 125 px at 1080p</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">480 × 83 px</span></span><div class="res-img"><img src="img/sc720-dash-p_avatars.png" data-after="img/sc720-dash-p_avatars.png" data-before="img/res720-dash-p_avatars.png" style="--nw:480px" width="480" height="83" loading="lazy" alt="Dash, playing, avatars at 1280 × 720"></div></div>
+        <div class="res-row"><span class="res-label">1920 × 1080 <span class="px">720 × 125 px</span></span><div class="res-img"><img src="img/sc1080-dash-p_avatars.png" data-after="img/sc1080-dash-p_avatars.png" data-before="img/dash-p_avatars-stack.png" style="--nw:720px" width="720" height="125" loading="lazy" alt="Dash, playing, avatars at 1920 × 1080"></div></div>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">960 × 167 px</span></span><div class="res-img"><img src="img/sc1440-dash-p_avatars.png" data-after="img/sc1440-dash-p_avatars.png" data-before="img/res1440-dash-p_avatars.png" style="--nw:960px" width="960" height="167" loading="lazy" alt="Dash, playing, avatars at 2560 × 1440"></div></div>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">1440 × 250 px</span></span><div class="res-img"><img src="img/sc2160-dash-p_avatars.png" data-after="img/sc2160-dash-p_avatars.png" data-before="img/res2160-dash-p_avatars.png" style="--nw:1440px" width="1440" height="250" loading="lazy" alt="Dash, playing, avatars at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:640px">
+        <figcaption><span class="scene">Squad list, playing</span><span class="dims">640 × 135 px at 1080p</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">427 × 90 px</span></span><div class="res-img"><img src="img/sc720-squad-p_list.png" data-after="img/sc720-squad-p_list.png" data-before="img/res720-squad-p_list.png" style="--nw:427px" width="427" height="90" loading="lazy" alt="Squad list, playing at 1280 × 720"></div></div>
+        <div class="res-row"><span class="res-label">1920 × 1080 <span class="px">640 × 135 px</span></span><div class="res-img"><img src="img/sc1080-squad-p_list.png" data-after="img/sc1080-squad-p_list.png" data-before="img/squad-p_list-stack.png" style="--nw:640px" width="640" height="135" loading="lazy" alt="Squad list, playing at 1920 × 1080"></div></div>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">853 × 180 px</span></span><div class="res-img"><img src="img/sc1440-squad-p_list.png" data-after="img/sc1440-squad-p_list.png" data-before="img/res1440-squad-p_list.png" style="--nw:853px" width="853" height="180" loading="lazy" alt="Squad list, playing at 2560 × 1440"></div></div>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">1280 × 270 px</span></span><div class="res-img"><img src="img/sc2160-squad-p_list.png" data-after="img/sc2160-squad-p_list.png" data-before="img/res2160-squad-p_list.png" style="--nw:1280px" width="1280" height="270" loading="lazy" alt="Squad list, playing at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:520px">
+        <figcaption><span class="scene">Kill feed, playing, squad list</span><span class="dims">520 × 320 px at 1080p</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">347 × 213 px</span></span><div class="res-img"><img src="img/sc720-feed-p_list.png" data-after="img/sc720-feed-p_list.png" data-before="img/res720-feed-p_list.png" style="--nw:347px" width="347" height="213" loading="lazy" alt="Kill feed, playing, squad list at 1280 × 720"></div></div>
+        <div class="res-row"><span class="res-label">1920 × 1080 <span class="px">520 × 320 px</span></span><div class="res-img"><img src="img/sc1080-feed-p_list.png" data-after="img/sc1080-feed-p_list.png" data-before="img/feed-p_list-stack.png" style="--nw:520px" width="520" height="320" loading="lazy" alt="Kill feed, playing, squad list at 1920 × 1080"></div></div>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">693 × 427 px</span></span><div class="res-img"><img src="img/sc1440-feed-p_list.png" data-after="img/sc1440-feed-p_list.png" data-before="img/res1440-feed-p_list.png" style="--nw:693px" width="693" height="427" loading="lazy" alt="Kill feed, playing, squad list at 2560 × 1440"></div></div>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">1040 × 640 px</span></span><div class="res-img"><img src="img/sc2160-feed-p_list.png" data-after="img/sc2160-feed-p_list.png" data-before="img/res2160-feed-p_list.png" style="--nw:1040px" width="1040" height="640" loading="lazy" alt="Kill feed, playing, squad list at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:520px">
+        <figcaption><span class="scene">Kill feed, playing, avatars</span><span class="dims">520 × 320 px at 1080p</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">347 × 213 px</span></span><div class="res-img"><img src="img/sc720-feed-p_avatars.png" data-after="img/sc720-feed-p_avatars.png" data-before="img/res720-feed-p_avatars.png" style="--nw:347px" width="347" height="213" loading="lazy" alt="Kill feed, playing, avatars at 1280 × 720"></div></div>
+        <div class="res-row"><span class="res-label">1920 × 1080 <span class="px">520 × 320 px</span></span><div class="res-img"><img src="img/sc1080-feed-p_avatars.png" data-after="img/sc1080-feed-p_avatars.png" data-before="img/feed-p_avatars-stack.png" style="--nw:520px" width="520" height="320" loading="lazy" alt="Kill feed, playing, avatars at 1920 × 1080"></div></div>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">693 × 427 px</span></span><div class="res-img"><img src="img/sc1440-feed-p_avatars.png" data-after="img/sc1440-feed-p_avatars.png" data-before="img/res1440-feed-p_avatars.png" style="--nw:693px" width="693" height="427" loading="lazy" alt="Kill feed, playing, avatars at 2560 × 1440"></div></div>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">1040 × 640 px</span></span><div class="res-img"><img src="img/sc2160-feed-p_avatars.png" data-after="img/sc2160-feed-p_avatars.png" data-before="img/res2160-feed-p_avatars.png" style="--nw:1040px" width="1040" height="640" loading="lazy" alt="Kill feed, playing, avatars at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:520px">
+        <figcaption><span class="scene">Kill feed, just killed</span><span class="dims">520 × 320 px at 1080p</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">347 × 213 px</span></span><div class="res-img"><img src="img/sc720-feed-k_info.png" data-after="img/sc720-feed-k_info.png" data-before="img/res720-feed-k_info.png" style="--nw:347px" width="347" height="213" loading="lazy" alt="Kill feed, just killed at 1280 × 720"></div></div>
+        <div class="res-row"><span class="res-label">1920 × 1080 <span class="px">520 × 320 px</span></span><div class="res-img"><img src="img/sc1080-feed-k_info.png" data-after="img/sc1080-feed-k_info.png" data-before="img/feed-k_info-stack.png" style="--nw:520px" width="520" height="320" loading="lazy" alt="Kill feed, just killed at 1920 × 1080"></div></div>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">693 × 427 px</span></span><div class="res-img"><img src="img/sc1440-feed-k_info.png" data-after="img/sc1440-feed-k_info.png" data-before="img/res1440-feed-k_info.png" style="--nw:693px" width="693" height="427" loading="lazy" alt="Kill feed, just killed at 2560 × 1440"></div></div>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">1040 × 640 px</span></span><div class="res-img"><img src="img/sc2160-feed-k_info.png" data-after="img/sc2160-feed-k_info.png" data-before="img/res2160-feed-k_info.png" style="--nw:1040px" width="1040" height="640" loading="lazy" alt="Kill feed, just killed at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:520px">
+        <figcaption><span class="scene">Killer info, just killed</span><span class="dims">520 × 135 px at 1080p</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">346 × 90 px</span></span><div class="res-img"><img src="img/sc720-killer-k_info.png" data-after="img/sc720-killer-k_info.png" data-before="img/res720-killer-k_info.png" style="--nw:346px" width="346" height="90" loading="lazy" alt="Killer info, just killed at 1280 × 720"></div></div>
+        <div class="res-row"><span class="res-label">1920 × 1080 <span class="px">520 × 135 px</span></span><div class="res-img"><img src="img/sc1080-killer-k_info.png" data-after="img/sc1080-killer-k_info.png" data-before="img/killer-k_info-stack.png" style="--nw:520px" width="520" height="135" loading="lazy" alt="Killer info, just killed at 1920 × 1080"></div></div>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">694 × 180 px</span></span><div class="res-img"><img src="img/sc1440-killer-k_info.png" data-after="img/sc1440-killer-k_info.png" data-before="img/res1440-killer-k_info.png" style="--nw:694px" width="694" height="180" loading="lazy" alt="Killer info, just killed at 2560 × 1440"></div></div>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">1040 × 270 px</span></span><div class="res-img"><img src="img/sc2160-killer-k_info.png" data-after="img/sc2160-killer-k_info.png" data-before="img/res2160-killer-k_info.png" style="--nw:1040px" width="1040" height="270" loading="lazy" alt="Killer info, just killed at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:1920px">
+        <figcaption><span class="scene">Spectator overlay</span><span class="dims">1920 × 360 px at 1080p</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">1280 × 240 px</span></span><div class="res-img"><img src="img/sc720-spectator-s_overlay.png" data-after="img/sc720-spectator-s_overlay.png" data-before="img/res720-spectator-s_overlay.png" style="--nw:1280px" width="1280" height="240" loading="lazy" alt="Spectator overlay at 1280 × 720"></div></div>
+        <div class="res-row"><span class="res-label">1920 × 1080 <span class="px">1920 × 360 px</span></span><div class="res-img"><img src="img/sc1080-spectator-s_overlay.png" data-after="img/sc1080-spectator-s_overlay.png" data-before="img/spectator-s_overlay-stack.png" style="--nw:1920px" width="1920" height="360" loading="lazy" alt="Spectator overlay at 1920 × 1080"></div></div>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">2560 × 480 px</span></span><div class="res-img"><img src="img/sc1440-spectator-s_overlay.png" data-after="img/sc1440-spectator-s_overlay.png" data-before="img/res1440-spectator-s_overlay.png" style="--nw:2560px" width="2560" height="480" loading="lazy" alt="Spectator overlay at 2560 × 1440"></div></div>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">3840 × 720 px</span></span><div class="res-img"><img src="img/sc2160-spectator-s_overlay.png" data-after="img/sc2160-spectator-s_overlay.png" data-before="img/res2160-spectator-s_overlay.png" style="--nw:3840px" width="3840" height="720" loading="lazy" alt="Spectator overlay at 3840 × 2160"></div></div>
+      </figure>
+      <h3 class="sub">Full frames at 1280 × 720</h3>
+      <figure class="res" style="--w:1920px">
+        <figcaption><span class="scene">Scoreboard</span><span class="dims">1280 × 720 px</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">1280 × 720 px</span></span><div class="res-img"><img src="img/sc720-full-sb_alive.jpg" data-after="img/sc720-full-sb_alive.jpg" data-before="img/res720-full-sb_alive.jpg" style="--nw:1280px" width="1280" height="720" loading="lazy" alt="Scoreboard at 1280 × 720"></div></div>
+      </figure>
+      <figure class="res" style="--w:1920px">
+        <figcaption><span class="scene">Spectator overlay</span><span class="dims">1280 × 720 px</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">1280 × 720 px</span></span><div class="res-img"><img src="img/sc720-full-s_overlay.jpg" data-after="img/sc720-full-s_overlay.jpg" data-before="img/res720-full-s_overlay.jpg" style="--nw:1280px" width="1280" height="720" loading="lazy" alt="Spectator overlay at 1280 × 720"></div></div>
+      </figure>
+      <figure class="res" style="--w:1920px">
+        <figcaption><span class="scene">Playing, avatars</span><span class="dims">1280 × 720 px</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">1280 × 720 px</span></span><div class="res-img"><img src="img/sc720-full-p_avatars.jpg" data-after="img/sc720-full-p_avatars.jpg" data-before="img/res720-full-p_avatars.jpg" style="--nw:1280px" width="1280" height="720" loading="lazy" alt="Playing, avatars at 1280 × 720"></div></div>
+      </figure>
+      <figure class="res" style="--w:1920px">
+        <figcaption><span class="scene">MX</span><span class="dims">1280 × 720 px</span></figcaption>
+        <div class="res-row"><span class="res-label">1280 × 720 <span class="px">1280 × 720 px</span></span><div class="res-img"><img src="img/rg720-full-w_mx.jpg" data-after="img/rg720-full-w_mx.jpg" data-before="img/res720-full-w_mx.jpg" style="--nw:1280px" width="1280" height="720" loading="lazy" alt="MX at 1280 × 720"></div></div>
+      </figure>
+      <h3 class="sub">Full frames at 2560 × 1440</h3>
+      <figure class="res" style="--w:1920px">
+        <figcaption><span class="scene">Scoreboard</span><span class="dims">2560 × 1440 px</span></figcaption>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">2560 × 1440 px</span></span><div class="res-img"><img src="img/sc1440-full-sb_alive.jpg" data-after="img/sc1440-full-sb_alive.jpg" data-before="img/res1440-full-sb_alive.jpg" style="--nw:2560px" width="2560" height="1440" loading="lazy" alt="Scoreboard at 2560 × 1440"></div></div>
+      </figure>
+      <figure class="res" style="--w:1920px">
+        <figcaption><span class="scene">Spectator overlay</span><span class="dims">2560 × 1440 px</span></figcaption>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">2560 × 1440 px</span></span><div class="res-img"><img src="img/sc1440-full-s_overlay.jpg" data-after="img/sc1440-full-s_overlay.jpg" data-before="img/res1440-full-s_overlay.jpg" style="--nw:2560px" width="2560" height="1440" loading="lazy" alt="Spectator overlay at 2560 × 1440"></div></div>
+      </figure>
+      <figure class="res" style="--w:1920px">
+        <figcaption><span class="scene">Playing, avatars</span><span class="dims">2560 × 1440 px</span></figcaption>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">2560 × 1440 px</span></span><div class="res-img"><img src="img/sc1440-full-p_avatars.jpg" data-after="img/sc1440-full-p_avatars.jpg" data-before="img/res1440-full-p_avatars.jpg" style="--nw:2560px" width="2560" height="1440" loading="lazy" alt="Playing, avatars at 2560 × 1440"></div></div>
+      </figure>
+      <figure class="res" style="--w:1920px">
+        <figcaption><span class="scene">MX</span><span class="dims">2560 × 1440 px</span></figcaption>
+        <div class="res-row"><span class="res-label">2560 × 1440 <span class="px">2560 × 1440 px</span></span><div class="res-img"><img src="img/rg1440-full-w_mx.jpg" data-after="img/rg1440-full-w_mx.jpg" data-before="img/res1440-full-w_mx.jpg" style="--nw:2560px" width="2560" height="1440" loading="lazy" alt="MX at 2560 × 1440"></div></div>
+      </figure>
+      <h3 class="sub">Full frames at 3840 × 2160</h3>
+      <figure class="res" style="--w:1920px">
+        <figcaption><span class="scene">Scoreboard</span><span class="dims">3840 × 2160 px</span></figcaption>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">3840 × 2160 px</span></span><div class="res-img"><img src="img/sc2160-full-sb_alive.jpg" data-after="img/sc2160-full-sb_alive.jpg" data-before="img/res2160-full-sb_alive.jpg" style="--nw:3840px" width="3840" height="2160" loading="lazy" alt="Scoreboard at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:1920px">
+        <figcaption><span class="scene">Spectator overlay</span><span class="dims">3840 × 2160 px</span></figcaption>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">3840 × 2160 px</span></span><div class="res-img"><img src="img/sc2160-full-s_overlay.jpg" data-after="img/sc2160-full-s_overlay.jpg" data-before="img/res2160-full-s_overlay.jpg" style="--nw:3840px" width="3840" height="2160" loading="lazy" alt="Spectator overlay at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:1920px">
+        <figcaption><span class="scene">Playing, avatars</span><span class="dims">3840 × 2160 px</span></figcaption>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">3840 × 2160 px</span></span><div class="res-img"><img src="img/sc2160-full-p_avatars.jpg" data-after="img/sc2160-full-p_avatars.jpg" data-before="img/res2160-full-p_avatars.jpg" style="--nw:3840px" width="3840" height="2160" loading="lazy" alt="Playing, avatars at 3840 × 2160"></div></div>
+      </figure>
+      <figure class="res" style="--w:1920px">
+        <figcaption><span class="scene">MX</span><span class="dims">3840 × 2160 px</span></figcaption>
+        <div class="res-row"><span class="res-label">3840 × 2160 <span class="px">3840 × 2160 px</span></span><div class="res-img"><img src="img/rg2160-full-w_mx.jpg" data-after="img/rg2160-full-w_mx.jpg" data-before="img/res2160-full-w_mx.jpg" style="--nw:3840px" width="3840" height="2160" loading="lazy" alt="MX at 3840 × 2160"></div></div>
       </figure>
     </section>
 
@@ -415,6 +607,25 @@ footer { margin-top: 56px; color: var(--muted); font-size: 13px; max-width: 72ch
   var m = 'pair', z = '1';
   try { m = localStorage.getItem('hudcmp-mode') || m; z = localStorage.getItem('hudcmp-zoom') || z; } catch (e) {}
   setMode(m); setZoom(z);
+})();
+</script>
+<script>
+(function () {
+  var body = document.body;
+  function setRes(r) {
+    body.dataset.res = r;
+    document.querySelectorAll('button[data-res]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.res === r)); });
+    try { localStorage.setItem('hudcmp-res', r); } catch (e) {}
+  }
+  document.querySelectorAll('button[data-res]').forEach(function (b) { b.addEventListener('click', function () { setRes(b.dataset.res); }); });
+  function setFix(f) {
+    document.querySelectorAll('img[data-after]').forEach(function (i) { i.src = (f === 'before') ? i.dataset.before : i.dataset.after; });
+    document.querySelectorAll('button[data-fix]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.fix === f)); });
+  }
+  document.querySelectorAll('button[data-fix]').forEach(function (b) { b.addEventListener('click', function () { setFix(b.dataset.fix); }); });
+  var r = 'same';
+  try { r = localStorage.getItem('hudcmp-res') || r; } catch (e) {}
+  setRes(r);
 })();
 </script>
 
